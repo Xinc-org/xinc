@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<projet name="Project Name" interval="10">
+    <modificationsets>
+	    <svn directory="/path/to/project/build/dir"/>
+    </modificationsets>
+    <builder type="phing" buildfile="/path/to/phing/project/build.xml" target="test"/>
+    <publishers>
+        <phing buildfile="build.xml" target="success" publishonsuccess="true"/>
+        <phing buildfile="build.xml" target="failed" publishonfailure="false"/>
+    </publishers>
+</project>

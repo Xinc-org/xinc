@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<project name="Xinc Test Build File" basedir="." default="build">
+
+<target name="build">
+<echo message="starting build process... passing.."/>
+</target>
+
+<target name="success">
+<echo message="wohoo, build process worked..."/>
+</target>
+
+<target name="failed">
+<echo message="doh, build process failed..."/>
+</target>
+
+<target name="publish">
+<!-- Transform docbook with an imaginary XSLT file -->
+<xslt todir="output" style="build.xsl" overwrite="true">
+  <fileset dir=".">
+    <include name="xinc_log.xml" />
+  </fileset>
+</xslt>
+
+<!-- no lets do it differently! 
+<copy file="output/xinc_log.xml" tofile="/var/www/html/xinc/xinc.html"/>
+<copy file="output/log.xml" tofile="/var/www/html/xinc/build.html"/>
+-->
+
+</target>
+
+
+</project>

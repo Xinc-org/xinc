@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<project name="Steve-Museum" basedir="." default="build">
+    <target name="build"
+        <echo message="starting build process..."/>
+        <fail message="build forced to fail (for test)"/>
+    </target>
+</project>

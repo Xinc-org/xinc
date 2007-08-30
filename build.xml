@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project name="Xinc Build File" basedir="." default="build">	
+	<property file="xinc.properties"/>
+	
+	<target name="build" depends="update,test">
+		<echo message="starting build process... passing.."/>
+	</target>
+
+	<target name="update">
+		<exec command='svn update'/>
+	</target>
+
+	<!-- write code to execute on successful build results -->
+	<target name="success" depends="deploy">
+		<echo message="wohoo, build process worked..."/>
+	</target>
+
+	<!-- write code to execute on a failed build result -->
+	<target name="failed">
+	<echo message="doh, build process failed..."/>
+	</target>
+	
+	<!-- everything above this point is "contract" stuff -->
+
+	<target name="deploy">
+	<!--	<phing phingfile="build-deploy.xml" target="deploy"/>	-->
+		
+	</target>
+	
+	<target name="test">
+		<phing phingfile="build-test.xml" target="test-core"/>
+	</target>
+
+</project>
