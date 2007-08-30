@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Xinc_TestPhingBuilder" tests="4" failures="0" errors="0" time="4681757196">
+    <testcase name="testBuildFail" class="Xinc_TestPhingBuilder" time="1170439299"/>
+    <testcase name="testBuildPass" class="Xinc_TestPhingBuilder" time="1170439299"/>
+    <testcase name="testBuildError" class="Xinc_TestPhingBuilder" time="1170439299"/>
+    <testcase name="testBuildAlternateWorkingDir" class="Xinc_TestPhingBuilder" time="1170439299"/>
+  </testsuite>
+  <testsuite name="Xinc_TestXinc" tests="1" failures="0" errors="0" time="1170439299">
+    <testcase name="testX" class="Xinc_TestXinc" time="1170439299"/>
+  </testsuite>
+  <testsuite name="Xinc_ModificationSets_TestSVNModificationSet" tests="1" failures="0" errors="0" time="1170439308">
+    <testcase name="testCheckModified" class="Xinc_ModificationSets_TestSVNModificationSet" time="1170439308"/>
+  </testsuite>
+</testsuites>

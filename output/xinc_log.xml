@@ -1,0 +1,53 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Xinc Build Report </title>
+<style>
+			body {
+				font-family : Helvetica;
+				font-size : 16px;
+			}
+		
+			h3 {
+
+			}
+
+			div.target {
+
+
+			}
+
+			div.stacktrace {
+				color:red;
+			}
+
+		</style>
+</head>
+<body>
+<h1> Build Report 			 : </h1>
+<p><b style="color:blue">info</b>1170445337::sleeping for 10 seconds</p>
+<p><b style="color:blue">info</b>1170445327::sleeping for 10 seconds</p>
+<p><b style="color:green">debug</b>1170445327::modified ?? </p>
+<p><b style="color:green">debug</b>1170445327::svn checkout dir is examples/steve/ local revision @ 629 Remote Revision @ 629 
+</p>
+<p><b style="color:blue">info</b>1170445320::modification found building project</p>
+<p><b style="color:blue">info</b>1170445310::sleeping for 10 seconds</p>
+<p><b style="color:blue">info</b>1170445300::sleeping for 10 seconds</p>
+<p><b style="color:green">debug</b>1170445300::modified ?? </p>
+<p><b style="color:green">debug</b>1170445300::svn checkout dir is examples/steve/ local revision @ 629 Remote Revision @ 629 
+</p>
+<p><b style="color:blue">info</b>1170445293::modification found building project</p>
+<p><b style="color:blue">info</b>1170445283::sleeping for 10 seconds</p>
+<p><b style="color:blue">info</b>1170445273::sleeping for 10 seconds</p>
+<p><b style="color:green">debug</b>1170445273::modified ?? </p>
+<p><b style="color:green">debug</b>1170445273::svn checkout dir is examples/steve/ local revision @ 629 Remote Revision @ 629 
+</p>
+<p><b style="color:blue">info</b>1170445266::modification found building project</p>
+<p><b style="color:blue">info</b>1170445256::sleeping for 10 seconds</p>
+<p><b style="color:blue">info</b>1170445246::sleeping for 10 seconds</p>
+<p><b style="color:green">debug</b>1170445246::modified ?? </p>
+<p><b style="color:green">debug</b>1170445246::svn checkout dir is examples/steve/ local revision @ 629 Remote Revision @ 629 
+</p>
+<p><b style="color:blue">info</b>1170445238::modification found building project</p>
+</body>
+</html>

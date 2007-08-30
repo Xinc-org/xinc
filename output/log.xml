@@ -1,0 +1,153 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Xinc Build Report </title>
+<style>
+			body {
+				font-family : Helvetica;
+				font-size : 16px;
+			}
+		
+			h3 {
+
+			}
+
+			div.target {
+
+
+			}
+
+			div.stacktrace {
+				color:red;
+			}
+
+		</style>
+</head>
+<body>
+<h1> Build Report 			12.8538 seconds : </h1>
+<div class="target">
+<h3>generate-dataobjects: 0.0291 seconds</h3>
+<div class="task">gendbobj : 
+			0.0290 seconds</div>
+</div>
+<div class="target">
+<h3>prepare: 0.0005 seconds</h3>
+<div class="task">mkdir : 
+			0.0004 seconds</div>
+</div>
+<div class="target">
+<h3>test-api: 12.5353 seconds</h3>
+<div class="task">includepath : 
+			0.0003 secondsincludepath : 
+			0.0003 secondsincludepath : 
+			0.0004 secondsphpunit2 : 
+			12.5339 seconds</div>
+</div>
+<div class="target">
+<h3>generate-report: 0.0070 seconds</h3>
+<div class="task">phpunit2report : 
+			0.0068 seconds</div>
+</div>
+<div class="target">
+<h3>email-report: 0.1513 seconds</h3>
+<div class="task">mail : 
+			0.1509 seconds</div>
+</div>
+<div class="target">
+<h3>test: 0.0015 seconds</h3>
+<div class="task">fail : 
+			0.0012 seconds</div>
+</div>
+<div class="stacktrace">#0 /usr/share/pear/phing/tasks/system/PhingTask.php(150): PhingTask-&gt;processFile()
+#1 /usr/share/pear/phing/Task.php(254): PhingTask-&gt;main()
+#2 /usr/share/pear/phing/Target.php(240): Task-&gt;perform()
+#3 /usr/share/pear/phing/Target.php(263): Target-&gt;main()
+#4 /usr/share/pear/phing/Project.php(701): Target-&gt;performTasks()
+#5 /usr/share/pear/phing/Project.php(674): Project-&gt;executeTarget('test')
+#6 /usr/share/pear/phing/Phing.php(443): Project-&gt;executeTargets(Array)
+#7 /usr/share/pear/phing/Phing.php(163): Phing-&gt;runBuild()
+#8 /usr/share/pear/phing/Phing.php(191): Phing::start(Array, NULL)
+#9 /usr/share/pear/phing.php(41): Phing::fire(Array)
+#10 {main}</div>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">warn</b>[PHP Error] mysql_connect(): Access denied for user 'web_user'@'localhost' (using password: YES) [line 348 of /home/davide/workspace-n/steve-museum/lib/adodb/drivers/adodb-mysql.inc.php]</p>
+<p><b style="color:red">error</b>Execution of target "test" failed for the following reason: /home/davide/workspace-n/steve-museum/./dist/phing/build-test.xml:24:19: The Unit Tests Have Failed! please fix me</p>
+<p><b style="color:red">error</b>Execution of target "test" failed for the following reason: /home/davide/workspace-n/steve-museum/build.xml:54:43: Execution of the target buildfile failed. Aborting.</p>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<project name="Steve-Museum" basedir="." default="build">
+
+<target name="build">
+<echo message="starting build process..."/>
+</target>
+
+<target name="success">
+<echo message="wohoo, build process worked..."/>
+</target>
+
+<target name="failed">
+<echo message="doh, build process failed..."/>
+</target>
+
+
+</project>

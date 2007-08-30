@@ -3,10 +3,7 @@
 <project name="Steve-Museum" basedir="." default="build">
 
 <target name="build">
-<echo message="starting build process..."/>
-
-<exec command= "cd examples/steve; svn update"/>
-
+<echo message="starting build process... passing.."/>
 </target>
 
 <target name="success">
@@ -19,7 +16,7 @@
 
 <target name="publish">
 <!-- Transform docbook with an imaginary XSLT file -->
-<xslt todir="output" style="xsl/build.xsl" overwrite="true">
+<xslt todir="output" style="build.xsl" overwrite="true">
   <fileset dir=".">
     <include name="xinc_log.xml" />
   </fileset>

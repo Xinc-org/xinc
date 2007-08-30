@@ -1,0 +1,16 @@
+<project name="unstable" interval="10">
+
+<phingbuild buildFile="build.xml" target="build"/>
+
+<modificationSets>
+	<svnModificationSet svnCheckoutDirectory="examples/steve/"/>
+</modificationSets>
+  
+<publishers>
+  <phingPublisher buildFile="build.xml" target="succes" publishBuildStatus="true"/>
+  <phingPublisher buildFile="build.xml"  target="publish" publishBuildStatus="false"/>
+</publishers>
+
+</project>
+
+<!--  <svnModificationSet workingDirectory="."/>-->
