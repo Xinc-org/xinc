@@ -46,12 +46,12 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
                     $dir=opendir($statusDir);
                     while ($file=readdir($dir)) {
                         $project=array();
-                        $fullfile=$statusDir.'/'.$file;
+                        $fullfile=$statusDir.DIRECTORY_SEPARATOR.$file;
                         
                         if (!in_array($file, array('.', '..')) && is_dir($fullfile)) {
                             $project['name']=$file;
-                            $statusfile=$fullfile.'/status.ser';
-                            $xincProject=$fullfile.'/.xinc';
+                            $statusfile=$fullfile.DIRECTORY_SEPARATOR.'status.ser';
+                            $xincProject=$fullfile.DIRECTORY_SEPARATOR.'.xinc';
                             
                             if (file_exists($statusfile) && file_exists($xincProject)) {
                                 $ini=parse_ini_file($statusfile, true);

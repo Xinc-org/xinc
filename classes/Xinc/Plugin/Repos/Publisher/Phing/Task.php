@@ -46,7 +46,7 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher
         // validate if buildfile exists
         // try in working dir
         $workingdir=Xinc::getInstance()->getWorkingDir();
-        $file2 = $workingdir . '/' . $this->_buildFile;
+        $file2 = $workingdir . DIRECTORY_SEPARATOR . $this->_buildFile;
         $file = $this->_buildFile;
         
         if (!file_exists($file) && !file_exists($file2)) {

@@ -100,11 +100,20 @@ class Xinc
              * init the project-status files in the status dir
              */
             foreach ($this->_projects as $project) {
-                $projectDir = $this->_statusDir . '/' . $project->getName();
-                $xincProjectFile = $this->_statusDir . '/' . $project->getName() . '/.xinc';
+                $projectDir = $this->_statusDir . DIRECTORY_SEPARATOR . $project->getName();
+                $xincProjectFile = $this->_statusDir . DIRECTORY_SEPARATOR . $project->getName() . DIRECTORY_SEPARATOR . '.xinc';
                 
                 Xinc_Logger::getInstance()->info('Creating project-file '.$xincProjectFile);
-                exec('mkdir '.$projectDir.';touch '.$xincProjectFile);
+                if (!file_exists($projectDir)) {
+                    mkdir($projectDir);
+                }
+                if (!file_exists($xincProjectFile)) {
+                    touch($xincProjectFile);
+                }
+                /**
+                 * for windows compatibility use phps functions
+                 */
+                //exec_('mkdir '.$projectDir.';touch '.$xincProjectFile);
             }
         } catch(Exception $e) {
             Xinc_Logger::getInstance()->error($e->getMessage());

@@ -60,7 +60,7 @@ class Xinc_Project_Build_Status_Default implements Xinc_Project_Build_Status_Int
     public function unserialize()
     {
         $dir=Xinc::getInstance()->getStatusDir();
-        $filename = $dir . '/' . $this->_project->getName() . '/status.ser';
+        $filename = $dir . DIRECTORY_SEPARATOR . $this->_project->getName() . DIRECTORY_SEPARATOR. 'status.ser';
         $this->_project->debug('unserialize status');
         if (file_exists($filename)) {
             $statusData = parse_ini_file($filename, true);
@@ -100,7 +100,7 @@ class Xinc_Project_Build_Status_Default implements Xinc_Project_Build_Status_Int
          */
         $buildStatusData = array_merge($this->_properties, $buildStatusData);
         $buildStatusData['labels'] = $this->getBuildLabels();
-        $filename = $dir . '/' . $this->_project->getName() . '/status.ser';
+        $filename = $dir . DIRECTORY_SEPARATOR . $this->_project->getName() . DIRECTORY_SEPARATOR . 'status.ser';
         $statusdir = dirname($filename);
         if (!file_exists($statusdir)) {
             
@@ -137,16 +137,16 @@ class Xinc_Project_Build_Status_Default implements Xinc_Project_Build_Status_Int
         $month = date('m', $this->getBuildTime());
         $year = date('Y', $this->getBuildTime());
         $day = date('d', $this->getBuildTime());
-        $path = $year . '/' . $month . '/' . $day . '/' . $this->getBuildTime();
-        $historyPath = $dir . '/' . $path;
-        $historyTrack = $dir.'/.buildHistory';
+        $path = $year . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR . $day . DIRECTORY_SEPARATOR . $this->getBuildTime();
+        $historyPath = $dir . DIRECTORY_SEPARATOR . $path;
+        $historyTrack = $dir. DIRECTORY_SEPARATOR . '.buildHistory';
         $fh=fopen($historyTrack, 'a');
         if ($fh) {
             fputs($fh, $historyPath."\n");
             fclose($fh);
         }
-        $filename = $dir . '/' . $path . '/status.ser';
-        $logfile = $dir . '/' . $path . '/buildlog.xml';
+        $filename = $dir . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR .'status.ser';
+        $logfile = $dir . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . 'buildlog.xml';
         if (!file_exists($filename)) {
             $statusdir = dirname($filename);
             $res = mkdir($statusdir, 0755, true);

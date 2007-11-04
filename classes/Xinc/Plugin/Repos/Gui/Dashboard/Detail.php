@@ -54,14 +54,14 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                     
                     $handler=Xinc_Gui_Handler::getInstance();
                     $statusDir=$handler->getStatusDir();
-                    $fullStatusDir=$statusDir.'/'.$this->projectName;
+                    $fullStatusDir=$statusDir.DIRECTORY_SEPARATOR .$this->projectName;
                     if ($this->buildTimeStamp != null) {
                         $year=date('Y', $this->buildTimeStamp);
                         $month=date('m', $this->buildTimeStamp);
                         $day=date('d', $this->buildTimeStamp);
-                        $fullStatusDir.='/'.$year.'/'.$month.'/'.$day.'/'.$this->buildTimeStamp;
+                        $fullStatusDir.=DIRECTORY_SEPARATOR.$year.DIRECTORY_SEPARATOR.$month.DIRECTORY_SEPARATOR.$day.DIRECTORY_SEPARATOR.$this->buildTimeStamp;
                     }
-                    $statusFile=$fullStatusDir.'/status.ser';
+                    $statusFile=$fullStatusDir.DIRECTORY_SEPARATOR.'status.ser';
                     
                     if (!file_exists($fullStatusDir)) {
                         include 'view/detailerror.php';
@@ -74,11 +74,11 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                         $month=date('m', $buildTime);
                         $day=date('d', $buildTime);
                         if ($this->buildTimeStamp==null) {
-                            $detailDir=$fullStatusDir.'/'.$year.'/'.$month.'/'.$day.'/'.$buildTime;
+                            $detailDir=$fullStatusDir.DIRECTORY_SEPARATOR.$year.DIRECTORY_SEPARATOR.$month.DIRECTORY_SEPARATOR.$day.DIRECTORY_SEPARATOR.$buildTime;
                         } else {
                             $detailDir=$fullStatusDir;
                         }
-                        $logXmlFile=$detailDir.'/buildlog.xml';
+                        $logXmlFile=$detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
                         
                         if (file_exists($logXmlFile)) {
                             $this->logXml=new SimpleXMLElement(file_get_contents($logXmlFile));
@@ -101,11 +101,11 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     
     private function getHistoryBuilds($statusDir)
     {
-        $historyFile = $statusDir.'/'.$this->projectName.'/.buildHistory';
+        $historyFile = $statusDir.DIRECTORY_SEPARATOR.$this->projectName.DIRECTORY_SEPARATOR.'.buildHistory';
         $buildlines=file($historyFile);
         $builds=array();
         foreach ($buildlines as $buildline) {
-            $ini=parse_ini_file(trim($buildline).'/status.ser', true);
+            $ini=parse_ini_file(trim($buildline).DIRECTORY_SEPARATOR.'status.ser', true);
             $build=array();
             $build['build.time']=$ini['build.time'];
             $build['build.status']=$ini['build.status'];

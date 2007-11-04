@@ -84,7 +84,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
                                                     . '\'directory\' is not set');
         }
         $file=$this->_directory;
-        $file2=Xinc::getInstance()->getWorkingDir().'/'.$file;
+        $file2=Xinc::getInstance()->getWorkingDir().DIRECTORY_SEPARATOR.$file;
         if (!file_exists($file) && !file_exists($file2)) {
             Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
             return false;
