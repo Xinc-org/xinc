@@ -34,7 +34,7 @@ function show(type){
 <tr height="50">
 <td width="200"><strong>Status</strong></td>
 <td width="600" bgcolor="<?php echo $bgColor; ?>"></td>
-<td rowspan="4" valign="top"><strong>All Builds</strong>
+<td rowspan="5" valign="top"><strong>All Builds</strong>
 <table>
 
 <?php foreach ($this->historyBuilds as $history) {
