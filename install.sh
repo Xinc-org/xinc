@@ -37,14 +37,14 @@ then
     mkdir $INCLUDE
 fi
 
-if [ `which php` = "" ]; then
-	declare PHP_BIN = "/usr/bin/php"
+#if [ `which php` = "" ]; then
+#	declare PHP_BIN = "/usr/bin/php"
 	echo "Path to the PHP binary: [/usr/bin/php]"
 	read PHP_BIN
-else
-	PHP_BIN=`which php`
-	echo "Using Path to the PHP binary: $PHP_BIN\n"
-fi
+#else
+#	PHP_BIN=`which php`
+#	echo "Using Path to the PHP binary: $PHP_BIN\n"
+#fi
 
 
 echo "Directory to install the Xinc run script: [/bin]"
