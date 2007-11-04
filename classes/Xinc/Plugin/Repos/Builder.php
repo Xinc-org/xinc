@@ -22,19 +22,6 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/**
- * Short description for class
- *
- * Long description for class (if any)...
- *
- * @copyright  2005 Zend Technologies
- * @license    http://www.zend.com/license/3_0.txt   PHP License 3.0
- * @version    Release: @package_version@
- * @link       http://dev.zend.com/package/PackageName
- * @author     Arno Schneider
- * @since      Class available since Release 1.2.0
- * @deprecated Class deprecated in Release 2.0.0
- */
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Builder/Task.php';
 class Xinc_Plugin_Repos_Builder  extends Xinc_Plugin_Base

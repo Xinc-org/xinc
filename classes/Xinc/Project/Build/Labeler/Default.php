@@ -23,19 +23,6 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once 'Xinc/Project/Build/Labeler/Interface.php';
-/**
- * Short description for class
- *
- * Long description for class (if any)...
- *
- * @copyright  2005 Zend Technologies
- * @license    http://www.zend.com/license/3_0.txt   PHP License 3.0
- * @version    Release: @package_version@
- * @link       http://dev.zend.com/package/PackageName
- * @author     Arno Schneider
- * @since      Class available since Release 1.2.0
- * @deprecated Class deprecated in Release 2.0.0
- */
 class Xinc_Project_Build_Labeler_Default implements Xinc_Project_Build_Labeler_Interface
 {
     /**
