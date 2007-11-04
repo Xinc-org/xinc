@@ -71,7 +71,7 @@ Details</a></td>
 <a href="javascript:show('info');">show</a>)</td>
 </tr>
 <tr>
-<td colspan="2">
+<td colspan="2" valign="top">
 <table>
 <tr>
 <td width="200"><strong>Date</strong></td>
