@@ -1,6 +1,6 @@
 <?php
 class Page
-{
+{ 
     private $output;
 
     public function __construct()
