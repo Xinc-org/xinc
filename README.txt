@@ -24,4 +24,4 @@
 # 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ################################################################################
 
-See http://code.google.com/p/xinc/wiki/Xinc_2_0_Documentation for more information.
+See http://code.google.com/p/xinc/wiki/Documentation_2_0_Preview for more information.

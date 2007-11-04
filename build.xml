@@ -2,7 +2,7 @@
 <project name="Xinc Build File" basedir="." default="build">	
 	<property file="xinc.properties"/>
 	
-	<target name="build" depends="update,test">
+	<target name="build" depends="update">
 		<echo message="starting build process... passing.."/>
 	</target>
 
@@ -26,9 +26,9 @@
 	<!--	<phing phingfile="build-deploy.xml" target="deploy"/>	-->
 		
 	</target>
-	
-	<target name="test">
+	<!-- Currently we dont have test-cases YET-->
+	<!--<target name="test">
 		<phing phingfile="build-test.xml" target="test-core"/>
-	</target>
+	</target>-->
 
 </project>
