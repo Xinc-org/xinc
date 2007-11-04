@@ -71,6 +71,7 @@ class Xinc
      * Constructor.
      */
     function __construct() {
+        date_default_timezone_set('UTC');
         $this->_projects = array();
         $this->_parser = new Xinc_Parser();
         $this->pluginParser = new Xinc_Plugin_Parser();

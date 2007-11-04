@@ -59,6 +59,7 @@ class Xinc_Gui_Handler
      */
     public function __construct($pluginFile,$statusDir)
     {
+       date_default_timezone_set('UTC');
        $this->_pluginParser = new Xinc_Plugin_Parser();
        $this->_statusDir=$statusDir;
        $this->setPluginConfigFile($pluginFile);
