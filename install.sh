@@ -41,6 +41,9 @@ fi
 #	declare PHP_BIN = "/usr/bin/php"
 	echo "Path to the PHP binary: [/usr/bin/php]"
 	read PHP_BIN
+	if [ "$PHP_BIN" = "" ]; then
+	   PHP_BIN=/usr/bin/php
+	fi
 #else
 #	PHP_BIN=`which php`
 #	echo "Using Path to the PHP binary: $PHP_BIN\n"
