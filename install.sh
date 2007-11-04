@@ -142,12 +142,18 @@ fi
 cp web/index.php $WEB_DIR/
 cp web/.htaccess $WEB_DIR/
 
+echo "IP of Xinc web-application: [127.0.0.1]"
+read IP
+if [ "$IP" = "" ]; then
+	IP="127.0.0.1"
+fi
+
 echo "Port of Xinc web-application: [8080]"
 read PORT
 if [ "$PORT" = "" ]; then
 	PORT="8080"
 fi
-cat web/www.tpl.conf | sed -e "s#@INCLUDE@#$INCLUDE#" | sed -e "s#@WEB_DIR@#$WEB_DIR#" | sed -e "s#@PORT@#$PORT#" > $ETC/www.conf
+cat web/www.tpl.conf | sed -e "s#@INCLUDE@#$INCLUDE#" | sed -e "s#@WEB_DIR@#$WEB_DIR#" | sed -e "s#@PORT@#$PORT#" | sed -e "s#@IP@#$IP#" > $ETC/www.conf
 
 
 
