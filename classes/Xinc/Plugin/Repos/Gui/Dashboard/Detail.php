@@ -113,6 +113,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
             $build['build.time']=$ini['build.time'];
             $builds[]=$build;
         }
+        $builds = array_reverse($builds);
         return $builds;
     }
     
