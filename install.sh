@@ -74,7 +74,7 @@ if [ ! -f $ETC/config.xml ]
 then
     cp -R etc/xinc/config.xml $ETC/
 else
-	echo "Do you want to override $ETC/config.xml? [N / y]"
+	echo "Do you want to overwrite$ETC/config.xml? [N / y]"
 	read OVERWRITE_CONFIG
 	if [ "$OVERWRITE_CONFIG" = "y" ]; then
 		cp -Rf etc/xinc/config.xml $ETC/
@@ -84,7 +84,7 @@ if [ ! -f $ETC/plugins.xml ]
 then
     cp -R etc/xinc/plugins.xml $ETC/
 else
-	echo "Do you want to override $ETC/plugins.xml? [N / y]"
+	echo "Do you want to overwrite $ETC/plugins.xml? [N / y]"
 	read OVERWRITE_PLUGIN
 	if [ "$OVERWRITE_PLUGIN" = "y" ]; then
 		cp -Rf etc/xinc/plugins.xml $ETC/
