@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<project name="Simple Project Build File" basedir="@EXAMPLE_DIR@/SimpleProject" default="build">
+	<target name="prepare">
+		<mkdir dir="${project.basedir}/builds"/>
+	</target>
+	<target name="build" depends="prepare">
+		
+		<move file="${project.basedir}/release-${xinc.buildlabel}.tar.gz" todir="${project.basedir}/builds"/>
+	</target>
+</project>

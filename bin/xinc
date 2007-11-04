@@ -28,6 +28,7 @@ require 'Xinc.php';
 
 // defaults.
 $configFile = 'config.xml';
+$pluginConfigFile = 'plugins.xml';
 $logDir = 'log';
 $logFile = $logDir . '/xinc.xml';
 $statusDir = $logDir . '/xinc';
@@ -37,6 +38,8 @@ $statusDir = $logDir . '/xinc';
 for ($i = 0; $i < count($argv); $i++) {
 	if ($argv[$i] == '-f' && isset($argv[$i+1])) {
 		$configFile = $argv[$i+1];
+	} elseif ($argv[$i] == '-p' && isset($argv[$i+1])) {
+		$pluginConfigFile = $argv[$i+1];
 	} elseif ($argv[$i] == '-l' && isset($argv[$i+1])) {
 		$logFile = $argv[$i+1];
 	} elseif ($argv[$i] == '-s' && isset($argv[$i+1])) {
@@ -55,4 +58,4 @@ if (count($parts = explode('/', $logFile)) && $parts[0] == $logDir) {
 }
 
 // run xinc.
-Xinc::main($configFile, $logFile, $statusDir);
+Xinc::main($configFile, $pluginConfigFile, $logFile, $statusDir);

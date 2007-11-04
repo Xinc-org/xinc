@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project name="Simple Project Build File" basedir="@EXAMPLE_DIR@/SimpleProject" default="build">
+    <target name="build" depends="test, tar">
+        
+    </target>
+    <target name="tar">
+    	<tar destfile="${project.basedir}/release-${xinc.buildlabel}.tar.gz" compression="gzip">
+			 <fileset dir=".">
+				 <include name="index.php" />
+			 	 <include name="Page.php" />
+			 </fileset>
+			</tar>
+    </target>
+    <target name="test">
+        <phpunit haltonfailure="true" printsummary="true">
+            <batchtest>
+                <fileset dir=".">
+                     <include name="*Test.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
+    </target>
+</project>

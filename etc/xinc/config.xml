@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<xinc>
+    <project name="plugin-test" interval="10">
+     <schedule interval="20"/>
+    <modificationset>
+   
+    <svn directory="/yourDirectory/svnrepos">
+    </svn>
+    </modificationset>
+    <builders>
+    	<phingBuilder buildFile="/yourDirectory/build.xml"/>
+    </builders>
+    <publishers>
+    <onsuccess>
+    	<phingPublisher buildFile="/yourDirectory/publish.xml"/>
+    </onsuccess>
+    <onrecovery>
+    <email to="yourEmail@localhost" subject="Build Successfully recoverd for ${project.name}" message="The build with label ${build.label} was recovered from previous failures"/>
+    </onrecovery>
+    <onfailure>
+    <email to="yourEmail@localhost" subject="Build Failed for ${project.name}" message="The build with label ${build.label} failed"/>
+    </onfailure>
+    </publishers>
+    </project>
+</xinc>

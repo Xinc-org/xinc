@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<xinc>
+<project name="empty">
+</project>
+    <project name="SimpleProject">
+    	<schedule interval="240"/>
+        <modificationset>
+            <buildalways/>
+        </modificationset>
+        <builders>
+        	<phingBuilder buildfile="@EXAMPLE_DIR@/SimpleProject/build.xml" target="build"/>
+        </builders>
+        <publishers>
+            <onfailure>
+	            <email to="root" 
+	                   subject="Simple Project Name build failed"
+	                   message="The build failed."/>
+            </onfailure>
+            <onsuccess>
+            	<phingPublisher buildfile="@EXAMPLE_DIR@/SimpleProject/publish.xml" target="build"/>
+            </onsuccess>
+            <onrecovery>
+            	<email to="root" 
+	                   subject="Simple Project Name build was recovered"
+	                   message="The build passed after having failed before."/>
+            </onrecovery>
+        </publishers>
+    </project>
+</xinc>

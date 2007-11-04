@@ -4,7 +4,8 @@
 # package Xinc
 # author David Ellis
 # author Gavin Foster
-# version 1.0
+# author Arno Schneider
+# version 2.0
 # copyright 2007 David Ellis, One Degree Square
 # license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
 # 	This file is part of Xinc.
@@ -23,4 +24,4 @@
 # 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ################################################################################
 
-See http://xinc.entrypoint.biz/ for more information.
+See http://code.google.com/p/xinc/wiki/Xinc_2_0_Documentation for more information.
