@@ -115,15 +115,15 @@ class Xinc_Parser
     private function handleElements(&$element,&$project)
     {
 
-        foreach ($element->children() as $task) {
+        foreach ($element->children() as $taskName => $task) {
 
             try{
-                $taskObject = Xinc_Plugin_Repository::getInstance()->getTask($task->getName());
+                $taskObject = Xinc_Plugin_Repository::getInstance()->getTask($taskName);
             }
             catch(Exception $e){
                 //var_dump($e);
                 Xinc_Logger::getInstance()->error('undefined task "'
-                                                 .$task->getName().'"');
+                                                 .$taskName.'"');
                 throw new Xinc_Exception_MalformedConfig();
             }
             foreach ($task->attributes() as $a=>$b) {
