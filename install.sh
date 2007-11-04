@@ -146,7 +146,8 @@ if [ "$PORT" = "" ]; then
 fi
 cat web/www.tpl.conf | sed -e "s#@INCLUDE@#$INCLUDE#" | sed -e "s#@WEB_DIR@#$WEB_DIR#" | sed -e "s#@PORT@#$PORT#" > $ETC/www.conf
 
-echo "Please include $ETC/www.conf in your apache virtual hosts."
+echo "- Please include $ETC/www.conf in your apache virtual hosts."
+echo "- Please enable mod-rewrite."
 
 # copy Xinc classes to include path
 cp classes/Xinc.php $INCLUDE/
