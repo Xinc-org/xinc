@@ -71,7 +71,17 @@ class Xinc
      * Constructor.
      */
     function __construct() {
-        date_default_timezone_set('UTC');
+        /**
+         * See Issue 57.
+         * Will be substituted by configuration option
+         */
+        $defaultTimeZone = ini_get('date.timezone');
+        if (empty($defaultTimeZone)) {
+            /**
+             * Go for the safer version. date_default_timezone_* needs php >=5.1.0
+             */
+            ini_set('date.timezone', 'UTC');
+        }
         $this->_projects = array();
         $this->_parser = new Xinc_Parser();
         $this->pluginParser = new Xinc_Plugin_Parser();
