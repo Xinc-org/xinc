@@ -33,11 +33,11 @@ class Listener implements BuildListener
     const MSG_INFO = 2;
     const MSG_WARN = 1;
     const MSG_ERR = 0;
-    private $_mapSeverity=array(self::MSG_DEBUG   => Xinc_Logger::logLevelDebug,
-                                self::MSG_VERBOSE => Xinc_Logger::logLevelDebug,
-                                self::MSG_INFO => Xinc_Logger::logLevelInfo,
-                                self::MSG_WARN => Xinc_Logger::logLevelWarn,
-                                self::MSG_ERR => Xinc_Logger::logLevelError);
+    private $_mapSeverity=array(self::MSG_DEBUG   => Xinc_Logger::LOG_LEVEL_DEBUG,
+                                self::MSG_VERBOSE => Xinc_Logger::LOG_LEVEL_DEBUG,
+                                self::MSG_INFO => Xinc_Logger::LOG_LEVEL_INFO,
+                                self::MSG_WARN => Xinc_Logger::LOG_LEVEL_WARN,
+                                self::MSG_ERR => Xinc_Logger::LOG_LEVEL_ERROR);
     /**
      * Fired before any targets are started.
      *
