@@ -135,23 +135,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      */
     public function validate()
     {
-        exec('svn help', $output, $result);
+        exec('svn', $output, $result);
         /**
-         * See Issue 56
+         * See Issue 56, check r
          */
-        $foundSvn = false;
-        for ($i=0; $i < count($output); $i++) {
-            $parts=preg_split('/\s+/', $output[$i]);
-            /**
-             * make sure we get some help output from svn help, to assure that its
-             * installed
-             */
-            if ( $parts[0]=='usage:' && $parts[1]=='svn') {
-                $foundSvn = true;
-                break;
-            }
-        }
-        if (!$foundSvn) {
+        
+        if ($result != 1) {
             Xinc_Logger::getInstance()->error('command "svn" not found');
                 
             return false;
