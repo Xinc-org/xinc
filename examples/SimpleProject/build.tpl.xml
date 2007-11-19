@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="Simple Project Build File" basedir="@EXAMPLE_DIR@/SimpleProject" default="build">
-    <target name="build" depends="test, tar">
+    <target name="build" depends="test, tar, docs">
         
     </target>
     <target name="tar">
@@ -11,6 +11,18 @@
 			 </fileset>
 			</tar>
     </target>
+	<target name="docs">
+		<!-- Enable only if you have PHPDocumentor package for pear installed -->
+		<!--<mkdir dir="${project.basedir}/docs"/>
+	                <phpdoc title="API Documentation"
+	destdir="${project.basedir}/docs" sourcecode="no" output="HTML:Smarty:PHP">
+	                        <fileset dir="${project.basedir}">
+	                                <include name="*.php" />
+	
+	                        </fileset>
+	                </phpdoc> -->
+		
+	        </target>
     <target name="test">
         <phpunit haltonfailure="true" printsummary="true">
             <batchtest>

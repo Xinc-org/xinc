@@ -132,7 +132,8 @@ class Xinc_Logger
             $prioritystr .= ' ';
         }
         $message = ' '.$prioritystr.' '.$msg."\n";
-        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) echo $message;
+
+        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) fputs(STDERR,$message);
         if ($this->_logFile != null) error_log($message, 3, $this->_logFile);
     }
     
