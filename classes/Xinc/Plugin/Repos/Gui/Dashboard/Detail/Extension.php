@@ -37,7 +37,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension
     
     public function generate($tabPaneName)
     {
-        $id = strtolower(str_replace(' ','-',$this->getTitle()));
+        $id = strtolower(str_replace(' ', '-', $this->getTitle()));
         $result = call_user_func_array('sprintf', array(self::TEMPLATE, $id, $this->getTitle(),
                                        $tabPaneName, $id, $this->getContent()));
         

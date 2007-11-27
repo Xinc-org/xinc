@@ -412,7 +412,7 @@ class Xinc_Build implements Xinc_Build_Interface
         return $this->_labeler->getLabel($this);
     }
     
-	/**
+    /**
      * returns the labeler of this build
      *
      * @return Xinc_Build_Labeler

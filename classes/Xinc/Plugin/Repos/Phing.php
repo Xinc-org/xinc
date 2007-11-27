@@ -108,7 +108,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         switch ($returnValue) {
             case 0:
             case 1:
-                if (strstr(implode('',$output), "BUILD FINISHED")) {
+                if (strstr(implode('', $output), "BUILD FINISHED")) {
                     return true;
                 } else {
                     $build->setStatus(Xinc_Build_Interface::FAILED);

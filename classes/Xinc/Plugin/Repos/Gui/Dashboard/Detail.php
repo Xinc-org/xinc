@@ -56,8 +56,8 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
             
             $obj = call_user_func_array($extension, array($this->build));
             
-        	$this->_registerExtension('BUILD_DETAILS', $obj);
-         }
+            $this->_registerExtension('BUILD_DETAILS', $obj);
+        }
          
     }
     private function _getTemplate($name)
@@ -103,6 +103,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                 break;
             default:
                 $bgColor = 'gray';
+                break;
         }
         
         
@@ -139,6 +140,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                     break;
                 default:
                     $bgColor = 'gray';
+                    break;
             }
             $rows[] = call_user_func_array('sprintf', array($rowTpl,
                                                             $bgColor,
@@ -194,7 +196,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                     } else {
                         $this->project = new Xinc_Project();
                         $this->project->setName($this->projectName);
-                        $this->build = Xinc_Build::unserialize($this->project, $this->buildTimeStamp, Xinc_Gui_Handler::getInstance()->getStatusDir());
+                        $this->build = Xinc_Build::unserialize($this->project, 
+                                                               $this->buildTimeStamp,
+                                                               Xinc_Gui_Handler::getInstance()->getStatusDir());
                         $buildTime = $this->build->getBuildTime();
                         $year = date('Y', $buildTime);
                         $month = date('m', $buildTime);
@@ -246,9 +250,10 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                         $this->menu = '';
                         foreach ($this->_extensions['MAIN_MENU'] as $extension) {
                             
-                            $this->menu .= call_user_func_array($extension, array($this,
-                                                                                  'Details for ' .
-                                                                                  $this->build->getProject()->getName()));
+                            $this->menu .= call_user_func_array($extension,
+                                                                array($this,
+                                                                      'Details for ' .
+                                                                      $this->build->getProject()->getName()));
                             
                         }
                         include 'view/projectDetail.phtml';
