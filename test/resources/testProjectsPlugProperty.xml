@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xinc>
+<project>
+<property name="original" value="test"/>
+<property name="compare" value="${original}"/>
+</project>
+</xinc>

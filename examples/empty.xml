@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<xinc engine="Sunrise">
+<project name="empty">
+<schedule interval="10"/>
+</project>
+</xinc>

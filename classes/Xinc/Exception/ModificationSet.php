@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This exception is thrown when there is a problem found with the ModificationSet
  * 

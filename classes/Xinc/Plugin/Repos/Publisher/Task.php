@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -26,8 +26,7 @@ require_once 'Xinc/Plugin/Task/Base.php';
 
 class Xinc_Plugin_Repos_Publisher_Task extends Xinc_Plugin_Task_Base
 {
-    private $_subtasks=array();
-    private $_plugin;
+    
     
     public function validate()
     {
@@ -47,32 +46,27 @@ class Xinc_Plugin_Repos_Publisher_Task extends Xinc_Plugin_Task_Base
     
     public function registerTask(Xinc_Plugin_Task_Interface &$task)
     {
-        Xinc_Logger::getInstance()->debug('Registering Publisher: '.$task->getClassname());
+        Xinc_Logger::getInstance()->debug('Registering Publisher: ' . get_class($task));
         $this->_subtasks[]=$task;
 
     }
     
 
-    public function __construct(Xinc_Plugin_Interface &$p)
-    {
-        $this->_plugin=$p;
-    }
 
-
-    public function getBuildSlot()
+    public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::POST_PROCESS;
     }
-    public function process(Xinc_Project &$project)
+    public function process(Xinc_Build_Interface &$build)
     {
-        $project->info('Processing publishers');
+        $build->info('Processing publishers');
         
         foreach ( $this->_subtasks as $task ) {
             
-            $task->publish($project);
+            $task->publish($build);
 
         }
-        $project->info('Processing publishers done');
+        $build->info('Processing publishers done');
         //$project->setStatus(Xinc_Project_Build_Status_Interface::STOPPED);
 
     }

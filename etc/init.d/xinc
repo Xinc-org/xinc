@@ -25,16 +25,17 @@
 # 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ################################################################################
 
-CONFIG=@ETC@/config.xml
-PLUGINS=@ETC@/plugins.xml
+CONFIG=@ETC@/system.xml
+PROJECTS=@ETC@/conf.d/*.xml
 LOG=@LOG@/xinc.log
-STATUS=@LOG@/xinc
+STATUS=@STATUSDIR@
+DATADIR=@DATADIR@
  
 DAEMON=/bin/xinc
 NAME=xinc
 # send log output to text-log-file
 # logfile is going to be used for build-based logging only
-OPTIONS="-f $CONFIG -p $PLUGINS -s $STATUS -l $LOG"
+OPTIONS="-f $CONFIG -p $DATADIR -s $STATUS -w $DATADIR -l $LOG --- $PROJECTS"
 DESC="Xinc - Continuous Integration for PHP"
 
 # create the /etc/xinc/status directory if not exists
@@ -47,6 +48,7 @@ fi
 case "$1" in
   start)
 	log_begin_msg "Starting $DESC"
+	#log_begin_msg "$DAEMON -- $OPTIONS"
 	start-stop-daemon --start --background --exec $DAEMON -- $OPTIONS
 	log_end_msg $?
 	;;

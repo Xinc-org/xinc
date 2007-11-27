@@ -27,35 +27,63 @@
 require 'Xinc.php';
 
 // defaults.
-$configFile = 'config.xml';
-$pluginConfigFile = 'plugins.xml';
-$logDir = 'log';
-$logFile = $logDir . '/xinc.xml';
-$statusDir = $logDir . '/xinc';
-
+$configFile = 'system.xml';
+$defaultLogDir = 'log';
+$logDir = $defaultLogDir;
+$logFile = $logDir . '/xinc.log';
+$defaultStatusDir = 'status';
+$statusDir = $defaultStatusDir;
+$workingDir = '.';
+$logLevel = 2;
+$daemon = true;
+$projectFiles = array();
+$projects = false;
 // parse arguments for config and log file locations. 
 // @todo improve, give usage.
 for ($i = 0; $i < count($argv); $i++) {
 	if ($argv[$i] == '-f' && isset($argv[$i+1])) {
-		$configFile = $argv[$i+1];
+		$configFile = $argv[++$i];
 	} elseif ($argv[$i] == '-p' && isset($argv[$i+1])) {
-		$pluginConfigFile = $argv[$i+1];
+		$projectDir = $argv[++$i];
+	} elseif ($argv[$i] == '-w' && isset($argv[$i+1])) {
+		$workingDir = $argv[++$i];
+	
 	} elseif ($argv[$i] == '-l' && isset($argv[$i+1])) {
-		$logFile = $argv[$i+1];
+		$logFile = $argv[++$i];
+	} elseif ($argv[$i] == '-v' && isset($argv[$i+1])) {
+		$logLevel = $argv[++$i];
 	} elseif ($argv[$i] == '-s' && isset($argv[$i+1])) {
-		$statusDir = $argv[$i+1];
+		$statusDir = $argv[++$i];
+	} elseif ($argv[$i] == '---') {
+		$i++;
+		$projects = true;
+		$projectFiles[] = $argv[$i];
+	} else if ($projects) {
+		$projectFiles[] = $argv[$i];
 	}
 }
 
+$parameters = array($workingDir, $projectDir, $statusDir, $configFile, $logFile, $logLevel, $daemon);
+
+foreach ($projectFiles as $projectFile) {
+
+    $parameters[] = $projectFile;
+
+}
+
 // if log/status defaults are being used ensure the directories exist
-if (count($parts = explode('/', $logFile)) && $parts[0] == $logDir) {
+if ($defaultLogDir == $logDir) {
     if (!file_exists($logDir)) {
         mkdir($logDir);
     }
+}
+if ($defaultStatusDir == $statusDir) {
     if (!file_exists($statusDir)) {
         mkdir($statusDir);
     }
 }
 
+
 // run xinc.
-Xinc::main($configFile, $pluginConfigFile, $logFile, $statusDir);
+call_user_func_array('Xinc::main', $parameters);
+//Xinc::main($workingDir, $projectDir, $statusDir, $configFile, $logFile);

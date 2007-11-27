@@ -2,7 +2,7 @@
 /**
  * This class represents the project to be continuously integrated
  *
- * @package Xinc
+ * @package Xinc.Project
  * @author David Ellis
  * @author Gavin Foster
  * @author Arno Schneider
@@ -24,30 +24,11 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-require_once 'Xinc/Project/Event.php';
-require_once 'Xinc/Plugin/Task/Processor/Interface.php';
-require_once 'Xinc/Project/Build/Scheduler/Interface.php';
 
-class Xinc_Project implements Xinc_Plugin_Task_Processor_Interface
+require_once 'Xinc/Build/Scheduler/Interface.php';
+
+class Xinc_Project
 {
-    
-    /**
-     * Enter description here...
-     *
-     * @var Xinc_Project_Build_Status_Interface
-     */
-    private $_buildStatus;
-    
-    /**
-     * The next time this project will be built.
-     *
-     * @var Xinc_Project_Build_Scheduler_Interface
-     */
-    private $_scheduler;
-    
-    private $_labeler;
-
-    private $_ranOnce=false;
     /**
      * The name of the project.
      *
@@ -56,76 +37,19 @@ class Xinc_Project implements Xinc_Plugin_Task_Processor_Interface
     private $_name;
 
     /**
-     * The interval at which a new build is allowed to take place (seconds).
-     *
-     * @var integer
-     */
-    private $_interval;
-
-
-    /**
-     * Indicates the last build status (failed/passed).
-     *
-     * @var boolean
-     */
-    private $_lastBuildStatus;
-
-    /**
-     * Indicates the time that the last build occurred.
-     *
-     */
-    private $_lastBuildTime;
-
-    /**
-     * Listeners receive every single event of the Xinc-Process
-     * and can take action like stopping a built for example
-     *
-     * @var Xinc_Listener[]
-     */
-    private $_listeners=array();
-
-    /**
-     * Contains tasks that need to be executed for each Process Step
-     *
-     * @var Xinc_Plugin_Task_Interface[]
-     */
-    private $_slots=array();
-
-    /**
      * Current status of the project
      *
      * @see Xinc_Project_Status
      * @var integer
      */
-    private $_status=1;
-
-    public function setBuildStatus(Xinc_Project_Build_Status_Interface $buildStatus)
-    {
-        $this->_buildStatus = $buildStatus;
-        
-        $this->_buildStatus->setProject($this);
-    }
-    public function setBuildTime($timestamp)
-    {
-        $this->_buildStatus->setBuildTime($timestamp);
-        if($this->_scheduler instanceof Xinc_Project_Build_Scheduler_Interface ) {
-            $this->_scheduler->setLastBuildTime($timestamp);
-        }
-    }
-    public function addListener(Xinc_Listener_Interface &$listener)
-    {
-        $this->_listeners[]=$listener;
-    }
-
+    private $_status = 1;
+    
     /**
-     * Sets the build interval (seconds).
+     * The xml content of this projects configuration
      *
-     * @param integer $interval
+     * @var Xinc_Project_Config_File
      */
-    public function setInterval($interval)
-    {
-        $this->_interval = $interval;
-    }
+    private $_config;
 
     /**
      * Sets the project name for display purposes.
@@ -137,40 +61,22 @@ class Xinc_Project implements Xinc_Plugin_Task_Processor_Interface
         $this->_name = $name;
     }
 
-
     /**
-     * Returns the time that this project is due to be built.
      *
-     * @return integer
+     * @param Xinc_Project_Config_File $config
      */
-    public function getSchedule()
+    public function setConfig(Xinc_Project_Config_File &$config)
     {
-        $this->debug("Get schedule ");
-        if (! $this->_scheduler instanceof Xinc_Project_Build_Scheduler_Interface ) {
-            
-            if ( ! $this->_ranOnce ) {
-                
-                $this->_ranOnce = true;
-                return 0;
-            } else {
-                // will not be scheduled
-                return time()+1000;
-            }
-        } else {
-            return $this->_scheduler->getNextBuildTime();
-        }
+        $this->_config = $config;
     }
-
+    
     /**
-     * Returns the interval between the next build
-     *
-     * @return integer
+     * @return Xinc_Project_Config_File
      */
-    public function getInterval()
+    public function getConfig()
     {
-        return $this->_interval;
+        return $this->_config;
     }
-
     /**
      * Returns this project's name.
      *
@@ -182,67 +88,31 @@ class Xinc_Project implements Xinc_Plugin_Task_Processor_Interface
     }
 
     /**
-     * Reschedules the build for now() + interval in the future.
+     * sets the status of the project
      *
+     * @see Xinc_Project_Status
+     * @param integer $status
      */
-    public function setScheduler(Xinc_Project_Build_Scheduler_Interface &$scheduler)
-    {
-        Xinc_Logger::getInstance()->info('Setting scheduler for project ' 
-                                        . $scheduler->getName());
-        $this->_scheduler = $scheduler;
-    }
-
-    public function setBuildLabeler(Xinc_Project_Build_Labeler_Interface &$labeler)
-    {
-         Xinc_Logger::getInstance()->info('Setting labeler for project ');
-        $this->_labeler = $labeler;
-    }
-    /**
-     * Enter description here...
-     *
-     * @return Xinc_Project_Build_Labeler_Interface
-     */
-    public function getBuildLabeler()
-    {
-        return $this->_labeler;
-    }
-    /**
-     * when called will serialize the project structure to a disk
-     * for display to a website..
-     *
-     * @param $dir - the directory to serialize to.
-     */
-    public function serialize()
-    {
-        if ( $this->_buildStatus instanceof Xinc_Project_Build_Status_Interface ) {
-            $this->_buildStatus->serialize();
-        }
-    }
-    
-    public function __destruct()
-    {
-        $this->serialize();
-    }
-    
-
     public function setStatus($status)
     {
         $this->info('Setting status to '.$status);
-        $this->_buildStatus->setStatus($status);
-    }
-    public function getStatus()
-    {
-        return $this->_buildStatus->getStatus();
+        $this->_status = $status;
     }
     /**
-     * 
-     *
-     * @return Xinc_Project_Build_Status_Interface
+     * Retrieves the status of the current project
+     * @see Xinc_Project_Status
+     * @return integer
      */
-    public function getBuildStatus()
+    public function getStatus()
     {
-        return $this->_buildStatus;
+        return $this->_status;
     }
+
+    /**
+     * Logs a message of priority info
+     *
+     * @param string $message
+     */
     public function info($message)
     {
         Xinc_Logger::getInstance()->info('[project] ' 
@@ -250,6 +120,35 @@ class Xinc_Project implements Xinc_Plugin_Task_Processor_Interface
                                         . ': '.$message);
             
     }
+     /**
+     * Logs a message of priority warn
+     *
+     * @param string $message
+     */
+    public function warn($message)
+    {
+        Xinc_Logger::getInstance()->warn('[project] ' 
+                                        . $this->getName() 
+                                        . ': '.$message);
+            
+    }
+     /**
+     * Logs a message of priority verbose
+     *
+     * @param string $message
+     */
+    public function verbose($message)
+    {
+        Xinc_Logger::getInstance()->verbose('[project] ' 
+                                            . $this->getName() 
+                                            . ': '.$message);
+            
+    }
+    /**
+     * Logs a message of priority debug
+     *
+     * @param string $message
+     */
     public function debug($message)
     {
         Xinc_Logger::getInstance()->debug('[project] ' 
@@ -257,55 +156,16 @@ class Xinc_Project implements Xinc_Plugin_Task_Processor_Interface
                                          . ': '.$message);
             
     }
+    /**
+     * Logs a message of priority error
+     *
+     * @param string $message
+     */
     public function error($message)
     {
         Xinc_Logger::getInstance()->error('[project] ' 
                                          . $this->getName() 
                                          . ': '.$message);
             
-    }
-    public function process($slot)
-    {
-        $tasks=$this->getTasksForSlot($slot);
-        $event=new Xinc_Project_Event($slot, $slot, $this->getStatus());
-        $this->registerEvent($event);
-        foreach ($tasks as $task) {
-
-            $task->process($this);
-
-            /**
-             * The Post-Process continous on failure
-             */
-            if ($slot != Xinc_Plugin_Slot::POST_PROCESS) {
-                
-                if ($this->getStatus() != Xinc_Project_Build_Status_Interface::PASSED) {
-                    break;
-                }
-            }
-        }
-        $event = new Xinc_Project_Event($slot, $slot+1, $this->getStatus());
-        $this->registerEvent($event);
-        return $this->getStatus();
-    }
-
-    public function registerEvent(Xinc_Project_Event &$event)
-    {
-        if (!isset($this->_slots[Xinc_Plugin_Slot::PROJECT_LISTENER]) ||
-            !is_array($this->_slots[Xinc_Plugin_Slot::PROJECT_LISTENER])) return;
-        foreach ( $this->_slots[Xinc_Plugin_Slot::PROJECT_LISTENER] as $listener ) {
-            $listener->processEvent($event, $this);
-        }
-    }
-    public function getTasksForSlot($slot)
-    {
-        if(!isset($this->_slots[$slot])) return array();
-        return $this->_slots[$slot];
-    }
-
-    public function registerTask(Xinc_Plugin_Task_Interface  &$task)
-    {
-        $slot=$task->getBuildSlot();
-        if(!isset($this->_slots[$slot]))$this->_slots[$slot]=array();
-        $this->_slots[$slot][]=$task;
     }
 }

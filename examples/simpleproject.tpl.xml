@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<xinc>
+    <project name="SimpleProject">
+    <property name="dir" value="@EXAMPLE_DIR@/SimpleProject/"/>
+    	<schedule interval="30"/>
+        <modificationset>
+            <buildalways/>
+        </modificationset>
+        <builders>
+        	<phingBuilder buildfile="${dir}/build.xml" target="build"/>
+        </builders>
+        <publishers>
+            <onfailure>
+	            <email to="root" 
+	                   subject="${project.name} build ${build.number} failed"
+	                   message="The build failed."/>
+            </onfailure>
+            <onsuccess>
+            	<phingPublisher buildfile="${dir}/publish.xml" target="build"/>
+            </onsuccess>
+            <onrecovery>
+            	<email to="root" 
+	                   subject="${project.name} build ${build.number} was recovered"
+	                   message="The build passed after having failed before."/>
+            </onrecovery>
+        </publishers>
+    </project>
+    
+    <project name="SimpleProject2">
+    <property name="dir" value="@EXAMPLE_DIR@/SimpleProject/"/>
+    	<schedule interval="120"/>
+        <modificationset>
+            <buildalways/>
+        </modificationset>
+        <builders>
+        	<phingBuilder buildfile="${dir}/build.xml" target="build"/>
+        </builders>
+        <publishers>
+            <onfailure>
+	            <email to="root" 
+	                   subject="${project.name} build ${build.number} failed"
+	                   message="The build failed."/>
+            </onfailure>
+            <onsuccess>
+            	<phingPublisher buildfile="${dir}/publish.xml" target="build"/>
+            </onsuccess>
+            <onrecovery>
+            	<email to="root" 
+	                   subject="${project.name} build ${build.number} was recovered"
+	                   message="The build passed after having failed before."/>
+            </onrecovery>
+        </publishers>
+    </project>
+</xinc>

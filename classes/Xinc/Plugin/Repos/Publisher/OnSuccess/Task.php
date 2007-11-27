@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,7 +27,6 @@ require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 class Xinc_Plugin_Repos_Publisher_OnSuccess_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
    
-    private $_plugin;
     public function getName()
     {
         return 'onsuccess';
@@ -43,31 +42,28 @@ class Xinc_Plugin_Repos_Publisher_OnSuccess_Task extends Xinc_Plugin_Repos_Publi
         }
         return true;
     }
-    public function __construct(Xinc_Plugin_Interface &$plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-    public function publish(Xinc_Project &$project)
+
+    public function publish(Xinc_Build_Interface &$build)
     {
         /**
          * We only process on success. 
          * Failed builds are not processed by this publisher
          */
-        if ($project->getStatus() != Xinc_Project_Build_Status_Interface::PASSED ) return;
+        if ($build->getStatus() != Xinc_Build_Interface::PASSED ) return;
         
-        $published=false;
-        $project->info('Publishing with OnSuccess Publishers');
+        $published = false;
+        $build->info('Publishing with OnSuccess Publishers');
         foreach ($this->_subtasks as $task) {
-            $published=true;
-            $project->info('Publishing with OnSuccess Publisher: '.$task->getClassname());
-            $task->publish($project);
-            if ($project->getStatus() != Xinc_Project_Build_Status_Interface::PASSED) {
-                $project->error('Error while publishing on Success. OnSuccess-Publish-Process stopped');
+            $published = true;
+            $build->info('Publishing with OnSuccess Publisher: ' . get_class($task));
+            $task->publish($build);
+            if ($build->getStatus() != Xinc_Build_Interface::PASSED) {
+                $build->error('Error while publishing on Success. OnSuccess-Publish-Process stopped');
                 break;
             }
         }
         if (!$published) {
-            $project->info('No Publishers registered OnSuccess');
+            $build->info('No Publishers registered OnSuccess');
         }
     }
 }

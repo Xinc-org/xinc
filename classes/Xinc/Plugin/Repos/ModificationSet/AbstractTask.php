@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -25,16 +25,16 @@
 abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugin_Task_Base
 {
     
-    public final function process(Xinc_Project &$project)
+    public final function process(Xinc_Build_Interface &$build)
     {
         
-        if ( ($status=$this->checkModified($project))===true ) {
+        if ( ($status = $this->checkModified($build)) === true ) {
             
-            $project->setStatus(Xinc_Project_Build_Status_Interface::PASSED);
+            $build->setStatus(Xinc_Build_Interface::PASSED);
         } else if ( $status == -1 ) {
-            $project->setStatus(Xinc_Project_Build_Status_Interface::STOPPED);
+            $build->setStatus(Xinc_Build_Interface::STOPPED);
         } else {
-            $project->setStatus(Xinc_Project_Build_Status_Interface::FAILED);
+            $build->setStatus(Xinc_Build_Interface::FAILED);
         }
         
     }
@@ -43,7 +43,7 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugi
      * Check if this modification set has been modified
      *
      */
-    public abstract function checkModified(Xinc_Project &$project);
+    public abstract function checkModified(Xinc_Build_Interface &$build);
     
     /**
      * Check necessary variables are set

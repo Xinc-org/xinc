@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author David Ellis
  * @author Gavin Foster
  * @author Arno Schneider

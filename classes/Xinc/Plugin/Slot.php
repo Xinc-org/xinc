@@ -1,8 +1,8 @@
 <?php
 /**
- * This interface represents a publishing mechanism to publish build results
+ * Definition of Plugin Slots
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,35 +27,39 @@ class Xinc_Plugin_Slot
     /*
      * Plugin is loaded when Xinc-Daemon starts running
      */
-    const GLOBAL_INIT=0;
+    const GLOBAL_INIT = 0;
     /*
      * Plugin is loaded when Xinc Daemon starts running
      * and listens globally on all events (across projects)
      */ 
-    const GLOBAL_LISTENER=1; 
+    const GLOBAL_LISTENER = 1; 
     
     /*
      * Plugin is run in any slot (listeners)
      */
-    const PROJECT_LISTENER=2; 
+    const PROJECT_LISTENER = 2; 
     
     /*
      * Project is initialized when starting up Xinc daemon
      */
-    const PROJECT_INIT=3;
+    const PROJECT_INIT = 3;
     
     
-    const INIT_PROCESS=5;
+    const PROJECT_SET_VALUES = 4;
+    
+    const INIT_PROCESS = 5;
     /*
      * First step, ModificiationSets, BootStrappers etc
      */
-    const PRE_PROCESS=10; 
+    const PRE_PROCESS = 10; 
     /*
      * Builders
      */
-    const PROCESS=20; 
+    const PROCESS = 20; 
     /*
      * Publishers
      */
-    const POST_PROCESS=30; 
+    const POST_PROCESS = 30; 
+    
+    const SUBTASK = 40;
 }

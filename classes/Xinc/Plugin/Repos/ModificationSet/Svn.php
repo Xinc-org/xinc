@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author David Ellis
  * @author Gavin Foster
  * @author Arno Schneider
@@ -46,12 +46,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      *
      * @return boolean
      */
-    public function checkModified(Xinc_Project &$project, $dir)
+    public function checkModified(Xinc_Build_Interface &$build, $dir)
     {
         if (!file_exists($dir)) {
             //throw new Xinc_Exception_ModificationSet('Subversion checkout '
             //                                        . 'directory not present');
-            $project->error('Subversion checkout directory'
+            $build->error('Subversion checkout directory'
                                              . ' not present');
             return -1;
         }
@@ -81,13 +81,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $localRevision = $this->getRevision($localSet);
             $remoteRevision = $this->getRevision($remoteSet);
                 
-            $project->debug('Subversion checkout dir is '.$dir.' '
+            $build->debug('Subversion checkout dir is '.$dir.' '
                            .'local revision @ '.$localRevision.' '
                            .'Remote Revision @ '.$remoteRevision);
             chdir($cwd);
             return $localRevision < $remoteRevision;
         } else {
-            //var_dump($output);
             chdir($cwd);
             throw new Xinc_Exception_ModificationSet('Subversion checkout directory '
                                                     . 'is not a working copy.');
@@ -135,7 +134,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      */
     public function validate()
     {
-        exec('svn', $output, $result);
+        exec('svn 2>&1', $output, $result);
         /**
          * See Issue 56, check r
          */

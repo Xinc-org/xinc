@@ -27,10 +27,18 @@
 # 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ################################################################################
 
+INTERACTIVE=true
+
+if [ "$1" = "--non-interactive" ]; then
+	INTERACTIVE=false
+	echo "Installing with default values"
+fi
+
+DEFAULT_INCLUDE=/usr/share/php
 echo "Directory to install the Xinc PHP files: [/usr/share/php]"
-read INCLUDE
+if [ "$INTERACTIVE" = true ]; then read INCLUDE; fi
 if [ "$INCLUDE" = "" ]; then
-    INCLUDE=/usr/share/php
+    INCLUDE=$DEFAULT_INCLUDE
 fi
 if [ ! -d $INCLUDE ]
 then
@@ -40,7 +48,7 @@ fi
 #if [ `which php` = "" ]; then
 #	declare PHP_BIN = "/usr/bin/php"
 	echo "Path to the PHP binary: [/usr/bin/php]"
-	read PHP_BIN
+if [ "$INTERACTIVE" = true ]; then read PHP_BIN; fi
 	if [ "$PHP_BIN" = "" ]; then
 	   PHP_BIN=/usr/bin/php
 	fi
@@ -51,7 +59,7 @@ fi
 
 
 echo "Directory to install the Xinc run script: [/bin]"
-read BIN
+if [ "$INTERACTIVE" = true ]; then read BIN; fi
 if [ "$BIN" = "" ]; then
     BIN=/bin
 fi
@@ -61,37 +69,49 @@ then
 fi
 
 echo "Directory to keep the Xinc config files: [/etc/xinc]"
-read ETC
+if [ "$INTERACTIVE" = true ]; then read ETC; fi
+
 if [ "$ETC" = "" ]; then
     ETC=/etc/xinc
 fi
 if [ ! -d $ETC ]
 then
     mkdir $ETC
+    mkdir $ETC/conf.d
+else 
+    if [ ! -d $ETC/conf.d ]; then mkdir $ETC/conf.d; fi
 fi
+
 # copy Xinc config-files to Config-Directory
-if [ ! -f $ETC/config.xml ]
+if [ ! -f $ETC/system.xml ]
 then
-    cp -R etc/xinc/config.xml $ETC/
+    cp -R etc/xinc/system.xml $ETC/
 else
-	echo "Do you want to overwrite$ETC/config.xml? [N / y]"
-	read OVERWRITE_CONFIG
+	echo "Do you want to overwrite$ETC/system.xml? [N / y]"
+	if [ "$INTERACTIVE" = true ]; then read OVERWRITE_CONFIG; fi
 	if [ "$OVERWRITE_CONFIG" = "y" ]; then
-		cp -Rf etc/xinc/config.xml $ETC/
+		cp -Rf etc/xinc/system.xml $ETC/
 	fi
 fi
-if [ ! -f $ETC/plugins.xml ]
+
+
+echo "Directory to keep the Xinc Projects and Status information: [/var/xinc]"
+if [ "$INTERACTIVE" = true ]; then read XINCDIR; fi
+if [ "$XINCDIR" = "" ]; then
+    XINCDIR=/var/xinc
+fi
+DATADIR="$XINCDIR/projects"
+STATUSDIR="$XINCDIR/status"
+if [ ! -d $XINCDIR ]
 then
-    cp -R etc/xinc/plugins.xml $ETC/
-else
-	echo "Do you want to overwrite $ETC/plugins.xml? [N / y]"
-	read OVERWRITE_PLUGIN
-	if [ "$OVERWRITE_PLUGIN" = "y" ]; then
-		cp -Rf etc/xinc/plugins.xml $ETC/
-	fi
+    mkdir $XINCDIR -p
+    mkdir $DATADIR -p
+    mkdir $STATUSDIR -p
 fi
+
+
 echo "Directory to keep the Xinc log files: [/var/log]"
-read LOG
+if [ "$INTERACTIVE" = true ]; then read LOG; fi
 if [ "$LOG" = "" ]; then
     LOG=/var/log
 fi
@@ -101,7 +121,7 @@ then
 fi
 
 echo "Directory to install the Xinc start/stop daemon: [/etc/init.d]"
-read INIT
+if [ "$INTERACTIVE" = true ]; then read INIT; fi
 if [ "$INIT" = "" ]; then
     INIT=/etc/init.d
 fi
@@ -111,27 +131,28 @@ then
 fi
 
 echo "Do you want to install the SimpleProject example? [y / N]"
-read INSTALL_EXAMPLE
+if [ "$INTERACTIVE" = true ]; then read INSTALL_EXAMPLE; fi
 if [ "$INSTALL_EXAMPLE" = "y" ]; then
-    echo "Directory to install the Example to: [/etc/xinc/examples]"
-    read EXAMPLE_DIR
+    echo "Directory to install the Example to: [$DATADIR]"
+    if [ "$INTERACTIVE" = true ]; then read EXAMPLE_DIR; fi
     if [ "$EXAMPLE_DIR" = "" ]; then
-    	EXAMPLE_DIR=/etc/xinc/examples
+    	EXAMPLE_DIR=$DATADIR
 	fi
 	if [ ! -d $EXAMPLE_DIR ]
 	then
 	    mkdir $EXAMPLE_DIR -p
 	fi
 	cp -R examples/SimpleProject $EXAMPLE_DIR/
+	cp -R examples/empty.xml $ETC/conf.d/
 	cat $EXAMPLE_DIR/SimpleProject/build.tpl.xml | sed -e "s#@EXAMPLE_DIR@#$EXAMPLE_DIR#" > $EXAMPLE_DIR/SimpleProject/build.xml
 	rm $EXAMPLE_DIR/SimpleProject/build.tpl.xml
 	cat $EXAMPLE_DIR/SimpleProject/publish.tpl.xml | sed -e "s#@EXAMPLE_DIR@#$EXAMPLE_DIR#" > $EXAMPLE_DIR/SimpleProject/publish.xml
 	rm $EXAMPLE_DIR/SimpleProject/publish.tpl.xml
-	cat examples/config.tpl.xml | sed -e "s#@EXAMPLE_DIR@#$EXAMPLE_DIR#" > $ETC/config.xml
+	cat examples/simpleproject.tpl.xml | sed -e "s#@EXAMPLE_DIR@#$EXAMPLE_DIR#" > $ETC/conf.d/simpleproject.xml
 fi
 
 echo "Directory to install the Xinc web-application: [/var/www/xinc]"
-read WEB_DIR
+if [ "$INTERACTIVE" = true ]; then read WEB_DIR; fi
 if [ "$WEB_DIR" = "" ]; then
 	WEB_DIR="/var/www/xinc"
 fi
@@ -141,18 +162,21 @@ if [ ! -d $WEB_DIR ]; then
 fi
 cp web/index.php $WEB_DIR/
 cp web/.htaccess $WEB_DIR/
+cp web/* -Rf $WEB_DIR/ -Rf
+rm $WEB_DIR/www.tpl.conf
 
 echo "IP of Xinc web-application: [127.0.0.1]"
-read IP
+if [ "$INTERACTIVE" = true ]; then read IP; fi
 if [ "$IP" = "" ]; then
 	IP="127.0.0.1"
 fi
 
 echo "Port of Xinc web-application: [8080]"
-read PORT
+if [ "$INTERACTIVE" = true ]; then read PORT; fi
 if [ "$PORT" = "" ]; then
 	PORT="8080"
 fi
+
 cat web/www.tpl.conf | sed -e "s#@INCLUDE@#$INCLUDE#" | sed -e "s#@WEB_DIR@#$WEB_DIR#" | sed -e "s#@PORT@#$PORT#" | sed -e "s#@IP@#$IP#" > $ETC/www.conf
 
 
@@ -166,7 +190,7 @@ cat bin/xinc | sed -e "s#@PHP_BIN@#$PHP_BIN#" > $BIN/xinc
 chmod ugo+x $BIN/xinc
 
 # copy init.d script to init.d
-cat etc/init.d/xinc | sed -e "s#@ETC@#$ETC#" | sed -e "s#@LOG@#$LOG#" > $INIT/xinc
+cat etc/init.d/xinc | sed -e "s#@ETC@#$ETC#" | sed -e "s#@LOG@#$LOG#" | sed -e "s#@STATUSDIR@#$STATUSDIR#" | sed -e "s#@DATADIR@#$DATADIR#" > $INIT/xinc
 chmod ugo+x $INIT/xinc
 
 echo 'Xinc installation complete.';

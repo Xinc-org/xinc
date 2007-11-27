@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,8 +27,7 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
 
-    private $_plugin;
-    private $_subtasks=array();
+    
 
     /**
      * Directory containing the Subversion project.
@@ -46,14 +45,7 @@ class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task extends Xinc_Plugin_Rep
         $this->_subtasks[]=$task;
     }
 
-
-
-    public function __construct(Xinc_Plugin_Interface &$p)
-    {
-        $this->_plugin=$p;
-    }
-
-    public function getBuildSlot()
+    public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
@@ -61,7 +53,7 @@ class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task extends Xinc_Plugin_Rep
 
 
 
-    public function checkModified(Xinc_Project &$project)
+    public function checkModified(Xinc_Build_Interface &$build)
     {
         return $this->_plugin->checkModified();
     }

@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -30,7 +30,6 @@ class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher
     private $_to;
     private $_subject;
     private $_message;
-    private $_plugin;
     public function getName()
     {
         return 'email';
@@ -83,19 +82,16 @@ class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher
         }
         return true;
     }
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    
+    public function publish(Xinc_Build_Interface &$build)
     {
-        $this->_plugin = $plugin;
-    }
-    public function publish(Xinc_Project &$project)
-    {
-        $statusBefore = $project->getStatus();
-        $res = $this->_plugin->email($project, $this->_to, $this->_subject, $this->_message);
-        if (!$res && $statusBefore == Xinc_Project_Build_Status_Interface::PASSED ) {
+        $statusBefore = $build->getStatus();
+        $res = $this->_plugin->email($build->getProject(), $this->_to, $this->_subject, $this->_message);
+        if (!$res && $statusBefore == Xinc_Build_Interface::PASSED ) {
             /**
              * Status was PASSED, but now the publish process made it fail
              */
-            $project->setStatus(Xinc_Project_Build_Status_Interface::FAILED);
+            $build->setStatus(Xinc_Build_Interface::FAILED);
         }
     }
 }

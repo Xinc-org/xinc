@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xinc>
+<configuration>
+<setting/>
+</configuration>
+<engines>
+<engine classname="Xinc_Engine_SunriseCannotValidate" filename="test/classes/Xinc/Engine/SunriseCannotValidate.php"/>
+</engines>
+<plugins>
+</plugins>
+</xinc>

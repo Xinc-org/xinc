@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,7 +27,6 @@ require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 class Xinc_Plugin_Repos_Publisher_OnRecovery_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
    
-    private $_plugin;
     public function getName()
     {
         return 'onrecovery';
@@ -43,36 +42,32 @@ class Xinc_Plugin_Repos_Publisher_OnRecovery_Task extends Xinc_Plugin_Repos_Publ
         }
         return true;
     }
-    public function __construct(Xinc_Plugin_Interface &$plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-    public function publish(Xinc_Project &$project)
+    public function publish(Xinc_Build_Interface &$build)
     {
         /**
          * We only process on success. 
          * Failed builds are not processed by this publisher
          */
-        if ($project->getStatus() != Xinc_Project_Build_Status_Interface::PASSED ) return;
+        if ($build->getStatus() != Xinc_Build_Interface::PASSED ) return;
         /**
          * Only if we recovered from a previous failed build cycle
          */
-        $project->info('Last Build status: '.$project->getBuildStatus()->getProperty('lastbuild.status'));
-        if ($project->getBuildStatus()->getProperty('lastbuild.status') != '0') return;
+        $build->info('Last Build status: '.$build->getLastBuild()->getStatus());
+        if ($build->getLastBuild()->getStatus() != 0) return;
         
-        $published=false;
-        $project->info('Publishing with OnRecovery Publishers');
+        $published = false;
+        $build->info('Publishing with OnRecovery Publishers');
         foreach ($this->_subtasks as $task) {
-            $published=true;
-            $project->info('Publishing with OnRecovery Publisher: '.$task->getClassname());
-            $task->publish($project);
-            if ($project->getStatus() != Xinc_Project_Build_Status_Interface::PASSED) {
-                $project->error('Error while publishing on Recovery. OnRecovery-Publish-Process stopped');
+            $published = true;
+            $build->info('Publishing with OnRecovery Publisher: ' . get_class($task));
+            $task->publish($build);
+            if ($build->getStatus() != Xinc_Build_Interface::PASSED) {
+                $build->error('Error while publishing on Recovery. OnRecovery-Publish-Process stopped');
                 break;
             }
         }
         if (!$published) {
-            $project->info('No Publishers registered for OnRecovery');
+            $build->info('No Publishers registered for OnRecovery');
         }
     }
 }

@@ -3,9 +3,10 @@
  * The main control class.
  *
  * @package Xinc
+ * @author Arno Schneider
  * @author David Ellis
  * @author Gavin Foster
- * @version 1.0
+ * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
@@ -24,34 +25,81 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 require_once 'Xinc/Logger.php';
-require_once 'Xinc/Parser.php';
 require_once 'Xinc/Exception/MalformedConfig.php';
 require_once 'Xinc/Plugin/Parser.php';
-
-
+require_once 'Xinc/Config/Parser.php';
+require_once 'Xinc/Config.php';
+require_once 'Xinc/Project/Config.php';
+require_once 'Xinc/Engine/Repository.php';
+require_once 'Xinc/Build/Queue.php';
 
 class Xinc
 {
-    private static $_currentProject;
     
+    const DEFAULT_PROJECT_DIR = 'projects';
+    const DEFAULT_STATUS_DIR = 'status';
+    
+    /**
+     * Registry holds all the projects that the
+     * Xinc instance is currently holding
+     *
+     * @var Xinc_Project_Registry
+     */
+    private static $_projectRegistry;
+    /**
+     * Registry holds all configured Xinc Engines
+     *
+     * @var Xinc_Engine_Registry
+     */
+    private static $_engineRegistry;
+    
+    private $_defaultSleep = 30;
+    
+    /**
+     * Registry holding all scheduled builds
+     *
+     * @var Xinc_Build_Queue_Interface
+     */
+    private static $_buildQueue;
+    
+    
+    /**
+     * parses the generic <configuration/>
+     * element of each xinc config file
+     * and sets the overriding configuratio
+     * for the specific engine
+     *
+     * @var Xinc_Config_Parser
+     */
+    private $_configParser;
+    
+    private static $_currentBuild;
+    
+    private $_pluginParser;
+    private $_engineParser;
+    
+    /**
+     * Current working directory
+     * containing the default xinc projects
+     *
+     * @var string
+     */
     private $_workingDir;
     
+    /**
+     * Directory holding the projects
+     *
+     * @var string
+     */
+    private $_projectDir;
+
+    
     private static $_instance;
-    /**
-     * The projects that Xinc is going build.
-     *
-     * @var Project[]
-     */
-    private $_projects;
 
 
 
-    /**
-     * The parser.
-     *
-     * @var Parser
-     */
-    private $_parser;
+
+
 
     /**
      * The directory to drop xml status files
@@ -59,99 +107,59 @@ class Xinc
      */
     private $_statusDir;
 
-    /**
-     * Process queue keeps the projects in the order they have 
-     * to be processed
-     * format is array ( $project => $timestamp )
-     *
-     * @var Array
-     */
-    private $_processQueue = array ();
+
     /**
      * Constructor.
      */
-    function __construct() {
-        /**
-         * See Issue 57.
-         * Will be substituted by configuration option
-         */
-        $defaultTimeZone = ini_get('date.timezone');
-        if (empty($defaultTimeZone)) {
-            /**
-             * Go for the safer version. date_default_timezone_* needs php >=5.1.0
-             */
-            ini_set('date.timezone', 'UTC');
-        }
-        $this->_projects = array();
-        $this->_parser = new Xinc_Parser();
-        $this->pluginParser = new Xinc_Plugin_Parser();
+    private function __construct() {
         self::$_instance = &$this;
+        self::$_buildQueue = new Xinc_Build_Queue();
      
         
     }
     
     
-    public static function getInstance(){
+    public static function getInstance()
+    {
+        if (!isset(self::$_instance)) {
+            self::main();
+        }
+        
         return self::$_instance;
     }
-    public static function getCurrentProject(){
-        return self::$_currentProject;
-    }
+
     /**
      * Specify a config file to be parsed for project definitions.
      *
      * @param string $fileName
      * @throws Xinc_Exception_MalformedConfig
      */
-    function setConfigFile($fileName)
+    function setSystemConfigFile($fileName)
     {
+        
         try {
-            $this->_projects = $this->_parser->parse($fileName);
-            /**
-             * init the project-status files in the status dir
-             */
-            foreach ($this->_projects as $project) {
-                $projectDir = $this->_statusDir . DIRECTORY_SEPARATOR . $project->getName();
-                $xincProjectFile = $this->_statusDir . DIRECTORY_SEPARATOR . $project->getName() . DIRECTORY_SEPARATOR . '.xinc';
-                
-                Xinc_Logger::getInstance()->info('Creating project-file '.$xincProjectFile);
-                if (!file_exists($projectDir)) {
-                    mkdir($projectDir);
-                }
-                if (!file_exists($xincProjectFile)) {
-                    touch($xincProjectFile);
-                }
-                /**
-                 * for windows compatibility use phps functions
-                 */
-                //exec_('mkdir '.$projectDir.';touch '.$xincProjectFile);
-            }
+            $configFile = Xinc_Config_File::load($fileName);
+            
+            $this->_configParser = new Xinc_Config_Parser($configFile);
+            
+            $plugins = $this->_configParser->getPlugins();
+            
+            $this->_pluginParser = new Xinc_Plugin_Parser();
+            
+            $this->_pluginParser->parse($plugins);
+            
+            $engines = $this->_configParser->getEngines();
+            $this->_engineParser = new Xinc_Engine_Parser();
+            
+            $this->_engineParser->parse($engines);
+            
+            
         } catch(Exception $e) {
             Xinc_Logger::getInstance()->error($e->getMessage());
-            throw new Xinc_Exception_MalformedConfig();
+            throw new Xinc_Exception_MalformedConfig($e->getMessage());
         }
     }
-    function setPluginConfigFile($fileName)
-    {
-        try {
-            $this->pluginParser->parse($fileName);
-        } catch(Exception $e) {
-            Xinc_Logger::getInstance()->error("error parsing plugin-tasks:"
-                                             . $e->getMessage());
-                
-        }
-    }
-    /**
-     * Specify multiple config files to be parsed for project definitions.
-     *
-     * @param string[] $fileNames
-     */
-    function setConfigFiles($fileNames)
-    {
-        foreach ($fileNames as $fileName) {
-            $this->setConfigFile($fileName);
-        }
-    }
+
 
     /**
      * Set the directory in which to save project status files
@@ -163,132 +171,16 @@ class Xinc
         $this->_statusDir = $statusDir;
     }
 
+    /**
+     *
+     * @return String
+     */
     public function getStatusDir(){
         return $this->_statusDir;
     }
-    /**
-     * Set the projects to build.
-     *
-     * @param Project[] $projects
-     */
-    function setProjects($projects)
-    {
-        $this->_projects = $projects;
-    }
-
-    /**
-     * Adds the passed in project
-     *
-     * @param Project $project
-     */
-    function addProject($project)
-    {
-        $this->_projects[] = $project;
-    }
-
-    /**
-     * Gets the projects being built
-     *
-     * @return Project[] $projects
-     */
-    function getProjects()
-    {
-        return $this->_projects;
-    }
 
 
-    /**
-     * processes a single project
-     * @param Project $project
-     */
-    function processProject(Xinc_Project &$project)
-    {
-        self::$_currentProject=$project;
-        //if (time() < $project->getSchedule() || $project->getSchedule() == null ) return;
-        //if (time() < $project->getSchedule() ) return;
-
-        
-        $buildTime = time();
-        /**
-         * By default a project is not processed, unless
-         * a modification set sets it to PASSED
-         */
-        //$project->setStatus(Xinc_Project_Build_Status_Interface::STOPPED);
-        $project->process(Xinc_Plugin_Slot::INIT_PROCESS);
-        if ( Xinc_Project_Build_Status_Interface::STOPPED == $project->getStatus() ) {
-            Xinc_Logger::getInstance()->info('Build of Project stopped'
-                                             . ' in INIT phase');
-            //$project->serialize();
-            $project->setStatus(Xinc_Project_Build_Status_Interface::INITIAL);
-            Xinc_Logger::getInstance()->setBuildLogFile(null);
-            Xinc_Logger::getInstance()->flush();
-            self::$_currentProject=null;
-            return;
-        }                                
-        Xinc_Logger::getInstance()->info("CHECKING PROJECT " 
-                                        . $project->getName());
-        $project->process(Xinc_Plugin_Slot::PRE_PROCESS);
-        
-        if ( Xinc_Project_Build_Status_Interface::STOPPED == $project->getStatus() ) {
-            $project->info("Build of Project stopped, "
-                                             . "no build necessary");
-             //$project->setBuildTime($buildTime);
-            $project->setStatus(Xinc_Project_Build_Status_Interface::INITIAL);
-            Xinc_Logger::getInstance()->setBuildLogFile(null);
-            Xinc_Logger::getInstance()->flush();
-            return;
-        } else if ( Xinc_Project_Status::FAILED == $project->getStatus() ) {
-            $project->error("Build failed");
-            /**
-             * Process failed in the pre-process phase, we need
-             * to run post-process to maybe inform about the failed build
-             */
-            $project->process(Xinc_Plugin_Slot::POST_PROCESS);
-            //$project->reschedule();
-            //$project->serialize();
-           
-        } else if ( Xinc_Project_Status::PASSED == $project->getStatus() ) {
-
-            $project->info("Code not up to date, "
-                                            . "building project");
-            $project->setBuildTime($buildTime);
-            $project->process(Xinc_Plugin_Slot::PROCESS);
-            if ( Xinc_Project_Status::PASSED == $project->getStatus() ) {
-                $project->info("BUILD PASSED FOR PROJECT " 
-                                                . $project->getName());
-            } else if ( Xinc_Project_Status::STOPPED == $project->getStatus() ) {
-                $project->warn("BUILD STOPPED FOR PROJECT " 
-                                                . $project->getName());
-            } else {
-                $project->error("BUILD FAILED FOR PROJECT " 
-                                                . $project->getName());
-            }
-
-            $processingPast = $project->getStatus();
-            /**
-             * Post-Process is run on Successful and Failed Builds
-             */
-            $project->process(Xinc_Plugin_Slot::POST_PROCESS);
-            
-            if ( $processingPast == Xinc_Project_Status::PASSED ) {
-               
-            
-                $project->getBuildLabeler()->buildSuccessful();
-                $project->getBuildStatus()->buildSuccessful();
-                
-            } else {
-                $project->getBuildLabeler()->buildFailed();
-                $project->getBuildStatus()->buildFailed();
-            }
-            
-        }
-            //$project->publish();
-            //$project->reschedule();
-            //$project->serialize();
-            $project->setStatus(Xinc_Project_Build_Status_Interface::INITIAL);
-            self::$_currentProject=null;
-    }
-
+   
     /**
 
     /**
@@ -297,89 +189,212 @@ class Xinc
     * if the scheduled time has expired
     *
     */
-    function processProjects(){
-        foreach ($this->_projects as $project ) {
-            $this->processProject($project);
+    public function processBuildsRunOnce(){
+
+        while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
+            
+            $nextBuild->build();
+           
         }
+        
     }
 
-    public function setWorkingDir($dir){
-        $this->_workingDir=$dir;
+    /**
+    * Processes the projects that have been configured 
+    * in the config-file and executes each project
+    * if the scheduled time has expired
+    *
+    */
+    public function processBuildsDaemon(){
+        while (true) {
+            $nextBuildTime = Xinc::$_buildQueue->getNextBuildTime();
+            
+            Xinc_Logger::getInstance()->info('Next buildtime: ' . $nextBuildTime);
+            $now = time();
+            if ($nextBuildTime != null) {
+            
+                $sleep = $nextBuildTime - $now;
+            } else {
+                $sleep = $this->_defaultSleep;
+            }
+            if ($sleep > 0) {
+                Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
+                sleep($sleep);
+            }
+            while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
+                
+                $nextBuild->build();
+               
+            }
+        }
     }
-    public function getWorkingDir(){
+    
+    public function setWorkingDir($dir)
+    {
+        $this->_workingDir = $dir;
+    }
+    
+    public function setProjectDir($dir)
+    {
+        $this->_projectDir = $dir;
+    }
+    
+    public function getProjectDir()
+    {
+        return $this->_projectDir;
+    }
+    
+    public function getWorkingDir()
+    {
         return $this->_workingDir;
     }
     /**
      * Starts the continuous loop.
      */
-    protected function start($daemon,$minWait=10)
+    protected function start($daemon)
     {
-        /** figure out minimum time to wait between checking projects */
-        //$minWait = -1;
-        /**$processQueue=array();
-        foreach ($this->_projects as $project) {
-            $this->_processQueue[]=&$project;
-        }*/
         
-        //usort($this->_processQueue, array(&$this, "orderProcessQueue"));
-       
         if ($daemon) {
-            while ( true ) {
-                Xinc_Logger::getInstance()->debug('Sleeping for ' 
-                                                . $minWait . ' seconds');
-                //Xinc_Logger::getInstance()->flush();
-                sleep((float) $minWait);
-                //if ($this->_processQueue[0]->getSchedule() < time() ) {
-                //    $this->processProject($this->_processQueue[0]);
-               // }
-                foreach ($this->_projects as $project ) {
-                    if ($project->getSchedule() < time()) {
-                        $this->processProject($project);
-                    }
-                }
-                
-                //usort($this->_processQueue, array(&$this,"orderProcessQueue"));
-            }
+            $this->processBuildsDaemon();
+            
         } else {
             Xinc_Logger::getInstance()->info('Run-once mode '
                                             . '(project interval is negative)');
             //Xinc_Logger::getInstance()->flush();
-            $this->processProjects();
+            $this->processBuildsRunOnce();
         }
     }
 
-    /**
-     * Sorts the process in the order they
-     * need to be processed
-     *
-     * @param array $a
-     * @param array $b
-     * @return integer
-     */
-    public function orderProcessQueue($a,$b){
-        if ($a->getSchedule() == $b->getSchedule()) {
-            return 0;
-        }
-        return ($a->getSchedule() < $b->getSchedule()) ? -1 : 1;
-    }
+
     /**
      * Static main function called by bin script
+     * 
+     * @param string $workingDir pointing to the base working directory
+     * @param string $projectDir pointing to the directory where all the project data is
+     * @param string $statusDir directory pointing to the build-statuses for the projects
+     * @param string $systemConfigFile the system.xml file 
+     * @param string $logFile daemon log file
+     * @param integer $logLevel verbosity of the logging
+     * @param boolean $daemon determins if we are running as daemon or in run-once mode
+     * @param string $configFile1
+     * @param string $configFile2 ...
      */
-    public static function main($configFile, 
-                                $pluginConfigFile, 
-                                $logFile, $statusDir, $logLevel=0, $daemon=true)
+    public static function main($workingDir = null,
+                                $projectDir = null,
+                                $statusDir = null,
+                                $systemConfigFile = null,
+                                $logFile = null,
+                                $logLevel = 0,
+                                $daemon = true)
     {
+        
+        
+        if ($workingDir == null) {
+            $workingDir = dirname($_SERVER['argv'][0]);
+        }
+        /**
+         * Set up the logging
+         */
         $logger = Xinc_Logger::getInstance();
-        $logger->setXincLogFile($logFile);
+        
         $logger->setLogLevel($logLevel);
-        $xinc = new Xinc();
-        $xinc->setWorkingDir(dirname($_SERVER['argv'][0]));
-        $xinc->setStatusDir($statusDir);
-        $xinc->setPluginConfigFile($pluginConfigFile);
-        $xinc->setConfigFile($configFile);
+        if ($logFile == null) {
+            $logFile = $workingDir . DIRECTORY_SEPARATOR . 'xinc.log';
+            
+        }
+        $logger->setXincLogFile($logFile);
+        
+        $logger->info('Starting up Xinc');
         
         
+        if ($projectDir == null) {
+            $projectDir = $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR;
+        }
+        if ($statusDir == null) {
+            $statusDir = $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR;
+        }
         
-        $xinc->start($daemon);
+        if ($systemConfigFile == null) {
+            $systemConfigFile = $workingDir . DIRECTORY_SEPARATOR . 'system.xml';
+        }
+        
+        if ($logFile == null) {
+            $logFile = $workingDir . DIRECTORY_SEPARATOR . 'xinc.log';
+        }
+        $logger->info('- Workingdir:         ' . $workingDir);
+        $logger->info('- Projectdir:         ' . $projectDir);
+        $logger->info('- Statusdir:          ' . $statusDir);
+        $logger->info('- System Config File: ' . $systemConfigFile);
+        $logger->info('- Log Level:          ' . $logLevel);
+        $logger->info('- Daemon:             ' . ($daemon==true ? 'yes':'no'));
+        self::$_instance = new Xinc();
+        try {
+            self::$_instance->setWorkingDir($workingDir);
+
+            self::$_instance->setProjectDir($projectDir);
+
+            self::$_instance->setStatusDir($statusDir);
+
+            
+            self::$_instance->setSystemConfigFile($systemConfigFile);
+            
+            // get the project config files
+            if (func_num_args() > 7) {
+                
+                for ($i = 7; $i < func_num_args(); $i++) {
+                    $logger->info('Loading Project-File: ' . func_get_arg($i));
+                    self::$_instance->_addProjectFile(func_get_arg($i));
+                }
+            }
+            
+            self::$_instance->start($daemon);
+        } catch (Exception $e) {
+            // we need to catch everything here
+            $logger->error('Xinc stopped due to an uncaught exception: ' 
+                          . $e->getMessage() . ' in File : ' . $e->getFile() . ' on line ' . $e->getLine() 
+                          . $e->getTraceAsString());
+        }
+    }
+
+    private function _addProjectFile($fileName)
+    {
+        
+        
+        try {
+            $config = new Xinc_Project_Config($fileName);
+            $engineName = $config->getEngineName();
+            
+            $engine = Xinc_Engine_Repository::getInstance()->getEngine($engineName);
+            
+            $builds = $engine->parseProjects($config->getProjects());
+            
+            Xinc::$_buildQueue->addBuilds($builds);
+            
+        } catch (Xinc_Project_Config_Exception_FileNotFound $notFound) {
+            Xinc_Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
+        } catch (Xinc_Project_Config_Exception_InvalidEntry $invalid) {
+            Xinc_Logger::getInstance()->error('Project Config File has an invalid entry: ' . $invalid->getMessage());
+        } catch (Xinc_Engine_Exception_NotFound $engineNotFound) {
+            Xinc_Logger::getInstance()->error('Project Config File references an unknown Engine: ' 
+                                             . $engineNotFound->getMessage());
+        }
+    }
+    public static function &getCurrentBuild()
+    {
+        return self::$_currentBuild;
+    }
+    public static function setCurrentBuild(Xinc_Build_Interface &$build)
+    {
+        self::$_currentBuild = $build;
+    }
+    
+    public function getBuiltinProperties()
+    {
+        $properties = array();
+        $properties['xinc.workingdir'] = $this->getWorkingDir();
+        $properties['xinc.statusdir'] = $this->getStatusDir();
+        $properties['xinc.projectdir'] = $this->getProjectDir();
+        
+        return $properties;
     }
 }

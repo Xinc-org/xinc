@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,8 +27,7 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
 
-    private $_plugin;
-    private $_subtasks=array();
+    
 
     /**
      * Directory containing the Subversion project.
@@ -58,12 +57,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     }
 
 
-    public function __construct(Xinc_Plugin_Interface &$p)
-    {
-        $this->_plugin=$p;
-    }
-
-    public function getBuildSlot()
+    public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
@@ -71,9 +65,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
 
 
 
-    public function checkModified(Xinc_Project &$project)
+    public function checkModified(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->checkModified($project, $this->_directory);
+        return $this->_plugin->checkModified($build, $this->_directory);
     }
 
     public function validateTask()
@@ -82,9 +76,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
             throw new Xinc_Exception_MalformedConfig('Element modificationSet/svn'
                                                     . ' - required attribute '
                                                     . '\'directory\' is not set');
+            // @codeCoverageIgnoreStart
         }
-        $file=$this->_directory;
-        $file2=Xinc::getInstance()->getWorkingDir().DIRECTORY_SEPARATOR.$file;
+            // @codeCoverageIgnoreEnd
+        $file = $this->_directory;
+        $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file) && !file_exists($file2)) {
             Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
             return false;

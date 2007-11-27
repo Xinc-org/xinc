@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xinc>
+<configuration>
+<setting name="loglevel" value="1"/>
+</configuration>
+<engines>
+<engine classname="Xinc_Engine_Sunrise" filename="Xinc/Engine/Sunrise.php"/>
+</engines>
+<plugins>
+<plugin classname="Xinc_Plugin_Repos_Phing" filename="Xinc/Plugin/Repos/Phing.php"/>
+</plugins>
+</xinc>

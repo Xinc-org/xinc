@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,7 +27,6 @@ require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 class Xinc_Plugin_Repos_Publisher_OnFailure_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
    
-    private $_plugin;
     public function getName()
     {
         return 'onfailure';
@@ -43,28 +42,25 @@ class Xinc_Plugin_Repos_Publisher_OnFailure_Task extends Xinc_Plugin_Repos_Publi
         }
         return true;
     }
-    public function __construct(Xinc_Plugin_Interface &$plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-    public function publish(Xinc_Project &$project)
+
+    public function publish(Xinc_Build_Interface &$build)
     {
         /**
          * We only process on failure. 
          * Successful builds are not processed by this publisher
          */
-        if ($project->getStatus() != Xinc_Project_Build_Status_Interface::FAILED ) return;
+        if ($build->getStatus() != Xinc_Build_Interface::FAILED ) return;
         
-        $published=false;
-        $project->info('Publishing with OnFailure Publishers');
+        $published = false;
+        $build->info('Publishing with OnFailure Publishers');
         foreach ($this->_subtasks as $task) {
-            $published=true;
-            $project->info('Publishing with OnFailure Publisher: '.$task->getClassname());
-            $task->publish($project);
+            $published = true;
+            $build->info('Publishing with OnFailure Publisher: ' . get_class($task));
+            $task->publish($build);
            
         }
         if (!$published) {
-            $project->info('No Publishers registered OnFailure');
+            $build->info('No Publishers registered OnFailure');
         }
     }
 }

@@ -1,0 +1,32 @@
+<html>
+<title>Xinc Dashboard</title>
+<body>
+<?php echo $this->menu; ?>
+<table cellspacing="0" cellpadding="0" width="100%">
+<tr height="50">
+<td width="150"><strong>Project</strong></td>
+<td width="200"><strong>Last Build Time</strong></td>
+<td width="200"><strong>Label</strong></td>
+<td><strong>Status</strong></td>
+</tr>
+<?php
+
+while ($this->builds->hasNext()) {
+    $build = $this->builds->next();
+    $bgColor=$build->getStatus() == 1?'green':
+                                           ($build->getStatus() == -1 ?'gray':'red');
+    $text=$build->getStatus() == 1   ?'success':
+                                           ($build->getStatus() == -1 ?'stopped':'failed');
+?>
+<tr>
+<td><a href="/dashboard/detail?project=<?php echo $build->getProject()->getName(); ?>"><?php echo $build->getProject()->getName(); ?></a></td>
+<td><?php echo $build->getBuildTime()>0 ? date('Y-m-d H:i:s', $build->getBuildTime()) : ''; ?></td>
+<td><?php echo $build->getLabel(); ?></td>
+<td bgcolor="<?php echo $bgColor; ?>" style="color:white;text-align:center"><?php echo $text; ?></td>
+</tr>
+<?php 
+}
+?>
+</table>
+</body>
+</html>

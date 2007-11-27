@@ -2,10 +2,10 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -33,11 +33,11 @@ class Listener implements BuildListener
     const MSG_INFO = 2;
     const MSG_WARN = 1;
     const MSG_ERR = 0;
-    private $_mapSeverity=array(self::MSG_DEBUG   => Xinc_Logger::LOG_LEVEL_DEBUG,
-                                self::MSG_VERBOSE => Xinc_Logger::LOG_LEVEL_DEBUG,
-                                self::MSG_INFO => Xinc_Logger::LOG_LEVEL_INFO,
-                                self::MSG_WARN => Xinc_Logger::LOG_LEVEL_WARN,
-                                self::MSG_ERR => Xinc_Logger::LOG_LEVEL_ERROR);
+    private $_mapSeverity = array(self::MSG_DEBUG   => Xinc_Logger::LOG_LEVEL_DEBUG,
+                                  self::MSG_VERBOSE => Xinc_Logger::LOG_LEVEL_DEBUG,
+                                  self::MSG_INFO => Xinc_Logger::LOG_LEVEL_INFO,
+                                  self::MSG_WARN => Xinc_Logger::LOG_LEVEL_WARN,
+                                  self::MSG_ERR => Xinc_Logger::LOG_LEVEL_ERROR);
     /**
      * Fired before any targets are started.
      *
@@ -115,6 +115,11 @@ class Listener implements BuildListener
     public function messageLogged(BuildEvent $event)
     {
         $logger = Xinc_Logger::getInstance();
+        /**
+         * write to a temporary logfile
+         * - which will be read afterwards and the logentries will
+         * - be used to determine the status of the build
+         */
         switch ($event->getPriority()) {
             case self::MSG_DEBUG:
             case self::MSG_VERBOSE:
@@ -128,13 +133,13 @@ class Listener implements BuildListener
                 break;
             case self::MSG_ERR:
                 $logger->error('[phing] '.$event->getMessage());
-                Xinc::getCurrentProject()->setStatus(Xinc_Project_Build_Status_Interface::FAILED);
+                Xinc::getCurrentBuild()->setStatus(Xinc_Build_Interface::FAILED);
                 break;
         }
-        $exception=$event->getException();
-        if ($exception!=null) {
-            $logger->error('[phing] '.$exception->getMessage());
-            Xinc::getCurrentProject()->setStatus(Xinc_Project_Build_Status_Interface::FAILED);
+        $exception = $event->getException();
+        if ($exception != null) {
+            $logger->error('[phing] ' . $exception->getMessage());
+            Xinc::getCurrentBuild()->setStatus(Xinc_Build_Interface::FAILED);
         }
         
         

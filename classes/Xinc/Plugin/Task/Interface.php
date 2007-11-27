@@ -1,11 +1,11 @@
 <?php
 /**
- * This interface represents a publishing mechanism to publish build results
+ * Interface for Tasks that are executed during a build
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -23,21 +23,22 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once 'Xinc/Plugin/Slot.php';
-require_once 'Xinc/Project/Status.php';
 require_once 'Xinc/Plugin/Task/Processor/Interface.php';
 
-interface Xinc_Plugin_Task_Interface extends Xinc_Plugin_Task_Processor_Interface
+interface Xinc_Plugin_Task_Interface
 {
     /**
      * Returns the slot of the process the plugin is run
-     *
+     * @return
      */
-    public function getBuildSlot();
-        
+    public function getPluginSlot();
     public function validate();
-    public function getName();
-    public function getClassname();
-    //public function registerTask(Xinc_Plugin_Task_Interface  &$task);
     public function __construct(Xinc_Plugin_Interface &$plugin);
-    public function process(Xinc_Project &$project);
+    public function getName();
+    public function process(Xinc_Build_Interface &$build);
+    public function init(Xinc_Build_Interface &$build);
+    public function setXml(SimpleXMLElement $element);
+    public function registerTask(Xinc_Plugin_Task_Interface &$task);
+    public function getTasks();
+    public function getXml();
 }

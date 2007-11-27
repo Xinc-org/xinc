@@ -2,7 +2,7 @@
 /**
  * This class handles the core Frontend-Activity of Xinc
  * 
- * @package Xinc
+ * @package Xinc.Gui
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -25,7 +25,8 @@
 
 require_once 'Xinc/Gui/Event.php';
 require_once 'Xinc/Gui/Widget/Repository.php';
-require_once 'Xinc/Plugin/Parser.php';
+require_once 'Xinc/Config.php';
+require_once 'Xinc/Logger.php';
 
 class Xinc_Gui_Handler
 {
@@ -57,23 +58,12 @@ class Xinc_Gui_Handler
      * @param string $pluginFile
      * @param string $statusDir
      */
-    public function __construct($pluginFile,$statusDir)
+    public function __construct($configFile,$statusDir)
     {
-        /**
-        * See Issue 57.
-        * Will be substituted by configuration option
-        */
-        $defaultTimeZone = ini_get('date.timezone');
-        if (empty($defaultTimeZone)) {
-            /**
-             * Go for the safer version. date_default_timezone_* needs php >=5.1.0
-             */
-            ini_set('date.timezone', 'UTC');
-        }
-        $this->_pluginParser = new Xinc_Plugin_Parser();
-        $this->_statusDir=$statusDir;
-        $this->setPluginConfigFile($pluginFile);
-        self::$_instance=&$this;
+       
+        $this->_statusDir = $statusDir;
+        $this->setSystemConfigFile($configFile);
+        self::$_instance = &$this;
     }
     /**
      * Return an instance of Xinc_Gui_Handler
@@ -100,12 +90,15 @@ class Xinc_Gui_Handler
      *
      * @param string $fileName
      */
-    private function setPluginConfigFile($fileName)
+    private function setSystemConfigFile($fileName)
     {
         try {
-            $this->_pluginParser->parse($fileName);
+        
+            Xinc_Config::parse($fileName);
+            
         } catch(Exception $e) {
-            Xinc_Logger::getInstance()->error('error parsing plugin-tasks:'
+            var_dump($e);
+            Xinc_Logger::getInstance()->error('error parsing system:'
                                              . $e->getMessage());
                 
         }
@@ -125,7 +118,7 @@ class Xinc_Gui_Handler
         /**
          * Get the Widget to use for this Request from the Widget-Repository
          */
-        $widget=Xinc_Gui_Widget_Repository::getInstance()->getWidgetForPath($path);
+        $widget = Xinc_Gui_Widget_Repository::getInstance()->getWidgetForPath($path);
         if (!$widget instanceof Xinc_Gui_Widget_Interface ) {
             header('HTTP/1.0 404 Not Found');
             die;

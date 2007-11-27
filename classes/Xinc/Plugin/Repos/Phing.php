@@ -2,7 +2,7 @@
 /**
  * PUT DESCRIPTION HERE
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -72,30 +72,65 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
     }
     public function getTaskDefinitions()
     {
-        return array(new Xinc_Plugin_Repos_Builder_Phing_Task($this), new Xinc_Plugin_Repos_Publisher_Phing_Task($this));
+        return array(new Xinc_Plugin_Repos_Builder_Phing_Task($this),
+                     new Xinc_Plugin_Repos_Publisher_Phing_Task($this));
     }
-    public function build(Xinc_Project &$project, $buildfile,$target)
+    public function build(Xinc_Build_Interface &$build, $buildfile,$target)
     {
-        $phing=new Phing();
-        $arguments=array();
-        $arguments[]='-quiet';
-        $arguments[]='-listener';
-        $arguments[]='Xinc.Plugin.Repos.Phing.Listener';
-        $arguments[]='-buildfile';
-        $arguments[]=$buildfile;
-        $arguments[]=$target;
-        $phing->execute($arguments);
-        //$properties=$project->getBuildProperties()->getProperties();
-        //foreach ($properties as $key => $value) {
-        Phing::setDefinedProperty('xinc.buildlabel', $project->getBuildLabeler()->getBuildLabel());
+        //$phing = new Phing();
+        $logLevel = Xinc_Logger::getInstance()->getLogLevel();
+        $arguments = array();
+        
+        switch ($logLevel) {
+            case Xinc_Logger::LOG_LEVEL_VERBOSE :
+                $arguments[] = '-verbose';
+                break;
+        }
+        
+        //$arguments[] = '-quiet';
+        //$arguments[] = '-listener';
+        //$arguments[] = 'Xinc.Plugin.Repos.Phing.Listener';
+        $arguments[] = '-logger';
+        $arguments[] = 'phing.listener.DefaultLogger';
+        $arguments[] = '-buildfile';
+        $arguments[] = $buildfile;
+        $arguments[] = $target;
+        $arguments[] = '-Dxinc.buildlabel=' . $build->getLabel();
+        foreach ($build->getProperties()->getAllProperties() as $name => $value) {
+            $arguments[] = '-Dxinc.' . $name . '=' . $value;
+        }
+        exec('phing ' . implode(' ', $arguments) . ' 2>&1', $output, $returnValue);
+        
+        foreach ($output as $line) {
+            Xinc_Logger::getInstance()->info($line);
+        }
+        
+        switch ($returnValue) {
+            case 0:
+            case 1:
+                if (strstr(implode('',$output), "BUILD FINISHED")) {
+                    return true;
+                } else {
+                    $build->setStatus(Xinc_Build_Interface::FAILED);
+                    return false;
+                }
+                break;
+                
+            case -1:
+            case -2:
+                $build->setStatus(Xinc_Build_Interface::FAILED);
+                return false;
+                break;
+        }
+        //$phing->execute($arguments);
+        //Phing::setDefinedProperty('xinc.buildlabel', $build->getLabel());
+        //try {
+        //    $phing->runBuild();
+        //    return true;
         //}
-        try {
-            $phing->runBuild();
-            return true;
-        }
-        catch(Exception $e){
-            $project->setStatus(Xinc_Project_Build_Status_Interface::FAILED);
-            return false;
-        }
+        //catch(Exception $e){
+        //$build->setStatus(Xinc_Build_Interface::FAILED);
+        //return false;
+        //}
     }
 }

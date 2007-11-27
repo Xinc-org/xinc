@@ -2,10 +2,10 @@
 /**
  * The logging singleton.
  * 
- * @package Xinc
+ * @package Xinc.Logger
  * @author David Ellis
  * @author Gavin Foster
- * @version 1.0
+ * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
@@ -60,12 +60,12 @@ class Xinc_Logger
      */
     private $_max;
     
-    private $_logLevel;
-    const LOG_LEVEL_VERBOSE=0;
-    const LOG_LEVEL_DEBUG=1;
-    const LOG_LEVEL_INFO=2;
-    const LOG_LEVEL_WARN=3;
-    const LOG_LEVEL_ERROR=4;
+    private $_logLevel = 2;
+    const LOG_LEVEL_VERBOSE = 0;
+    const LOG_LEVEL_DEBUG = 1;
+    const LOG_LEVEL_INFO = 2;
+    const LOG_LEVEL_WARN = 3;
+    const LOG_LEVEL_ERROR = 4;
     
     /**
      * Log levels
@@ -90,7 +90,14 @@ class Xinc_Logger
     }
     public function setLogLevel($level)
     {
+        
         $this->_logLevel = $level;
+        $this->info("Setting loglevel to $level");
+    }
+    
+    public function getLogLevel()
+    {
+        return $this->_logLevel;
     }
     /**
      * Singleton getInstance method.
@@ -118,7 +125,9 @@ class Xinc_Logger
             return;
         }
         
-        $this->_logQueue[] = new Xinc_Logger_Message($priority[1], time(), $msg);
+        $logTime = time();
+        
+        $this->_logQueue[] = new Xinc_Logger_Message($priority[1], $logTime, $msg);
         
         if (count($this->_logQueue)>$this->_max) {
             
@@ -128,13 +137,15 @@ class Xinc_Logger
 
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
+        $timestr = '[' . date('Y-m-d H:i:s', $logTime) . ']';
         while (strlen($prioritystr) < 7) {
             $prioritystr .= ' ';
         }
-        $message = ' '.$prioritystr.' '.$msg."\n";
-
-        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) fputs(STDERR,$message);
-        if ($this->_logFile != null) error_log($message, 3, $this->_logFile);
+        $message = ' ' . $prioritystr . '  ' . $timestr . ' ' . $msg."\n";
+        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) fputs(STDERR, $message);
+        if ($this->_logFile != null) {
+            error_log($message, 3, $this->_logFile);
+        }
     }
     
     /**
@@ -191,7 +202,10 @@ class Xinc_Logger
      */
     public function flush()
     {
-        if ( null == $this->_buildLogFile) return;
+        if ( null == $this->_buildLogFile) {
+            $this->_resetLogQueue();
+            return;
+        }
         
         $this->doc = new DOMDocument();
         $this->doc->formatOutput = true;
@@ -199,7 +213,7 @@ class Xinc_Logger
         $buildElement = $this->doc->createElement('build');
         $this->doc->appendChild($buildElement);
         
-        for ($i=count($this->_logQueue)-1;$i>=0; $i--) {
+        for ($i = count($this->_logQueue)-1; $i >= 0; $i--) {
             $message = $this->_logQueue[$i];
             $messageElement = $this->doc->createElement('message', $message->message);
             $messageElement->setAttribute('priority', $message->priority);
@@ -207,8 +221,10 @@ class Xinc_Logger
             $messageElement->setAttribute('time', date('Y-m-d H:i:s', $message->timestamp));
             $buildElement->appendChild($messageElement);
         }
+        $this->info('Flushing log to: ' . $this->_buildLogFile);
         
         file_put_contents($this->_buildLogFile, $this->doc->saveXML());
+        
         $this->_resetLogQueue();
     }
     
@@ -230,5 +246,10 @@ class Xinc_Logger
     public function setXincLogFile($logFile)
     {
         $this->_logFile = $logFile;
+    }
+    
+    public static function tearDown()
+    {
+        self::$_instance = null;
     }
 }

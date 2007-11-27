@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,8 +27,8 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 
 class Xinc_Plugin_Repos_Gui_Homepage_Widget implements Xinc_Gui_Widget_Interface
 {
-    private $_plugin;
-    private $_widgets = array();
+    protected $_plugin;
+    private $_extensions = array();
     
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
@@ -45,8 +45,7 @@ class Xinc_Plugin_Repos_Gui_Homepage_Widget implements Xinc_Gui_Widget_Interface
                     $done = array();
                     echo '<ul>';
                     foreach ($widgets as $path => $widget) {
-                        $title=$widget->getTitle();
-                        //$paths=$widget->getPaths();
+                        $title = $widget->getTitle();
                         if (!in_array(get_class($widget), $done) &&  $widget->registerMainMenu()) {
                             $done[] = get_class($widget);
                             echo '<li><a href="'.$path.'">'.$title.'</a></li>';
@@ -68,11 +67,20 @@ class Xinc_Plugin_Repos_Gui_Homepage_Widget implements Xinc_Gui_Widget_Interface
     }
     public function getPaths()
     {
-        return array('/');
+        return array('/oldindex');
     }
     
-    public function registerWidget(Xinc_Gui_Widget_Interface &$widget)
+    public function init()
     {
-        $this->_widgets[] = $widget;
+        
+    }
+    
+    public function registerExtension($extension, $callback)
+    {
+        $this->_extensions[$extension] = $callback;
+    }
+    public function getExtensionPoints()
+    {
+        return array();
     }
 }

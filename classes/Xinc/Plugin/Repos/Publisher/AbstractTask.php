@@ -2,7 +2,7 @@
 /**
  * PUT DESCRIPTION HERE
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -27,27 +27,22 @@ require_once 'Xinc/Plugin/Task/Base.php';
 abstract class Xinc_Plugin_Repos_Publisher_AbstractTask extends Xinc_Plugin_Task_Base
 {
 
-    /**
-     * Enter description here...
-     *
-     * @var Xinc_Plugin_Repos_Publisher_AbstractTask[]
-     */
-    protected $_subtasks = array();
     
-    public final function process(Xinc_Project &$project)
+    
+    public final function process(Xinc_Build_Interface &$build)
     {
         
-        if ( ($status=$this->publish($project))===true ) {
+        if ( ($status = $this->publish($build)) === true ) {
             
-            $project->setStatus(Xinc_Project_Build_Status_Interface::PASSED);
+            $build->setStatus(Xinc_Build_Interface::PASSED);
         } else if ( $status == -1 ) {
-            $project->setStatus(Xinc_Project_Build_Status_Interface::STOPPED);
+            $build->setStatus(Xinc_Build_Interface::STOPPED);
         } else {
-            $project->setStatus(Xinc_Project_Build_Status_Interface::FAILED);
+            $build->setStatus(Xinc_Build_Interface::FAILED);
         }
         
     }
-    public function getBuildSlot()
+    public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::POST_PROCESS;
     }
@@ -64,9 +59,9 @@ abstract class Xinc_Plugin_Repos_Publisher_AbstractTask extends Xinc_Plugin_Task
     }
     public function registerTask(Xinc_Plugin_Task_Interface &$task)
     {
-        Xinc_Logger::getInstance()->debug('Registering Subtask: '.$task->getClassname());
+        Xinc_Logger::getInstance()->debug('Registering Subtask: ' . get_class($task));
         $this->_subtasks[] = $task;
     }
     public abstract function validateTask();
-    public abstract function publish(Xinc_Project &$project);
+    public abstract function publish(Xinc_Build_Interface &$build);
 }

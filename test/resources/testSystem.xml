@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xinc>
+<configuration>
+<setting/>
+</configuration>
+<engines>
+<engine classname="Xinc_Engine_Sunrise" filename="Xinc/Engine/Sunrise.php"/>
+</engines>
+<plugins>
+</plugins>
+</xinc>

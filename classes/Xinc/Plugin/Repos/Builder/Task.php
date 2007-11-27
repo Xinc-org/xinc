@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -26,8 +26,8 @@ require_once 'Xinc/Plugin/Task/Base.php';
 
 class Xinc_Plugin_Repos_Builder_Task extends Xinc_Plugin_Task_Base
 {
-    private $_subtasks=array();
-    private $_plugin;
+   
+    
     
     public function validate()
     {
@@ -50,31 +50,25 @@ class Xinc_Plugin_Repos_Builder_Task extends Xinc_Plugin_Task_Base
         $this->_subtasks[]=$task;
 
     }
-    
-
-    public function __construct(Xinc_Plugin_Interface &$p)
-    {
-        $this->_plugin=$p;
-    }
 
 
-    public function getBuildSlot()
+    public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PROCESS;
     }
-    public function process(Xinc_Project &$project)
+    public function process(Xinc_Build_Interface &$build)
     {
-        $project->info('Processing builders');
+        $build->info('Processing builders');
         foreach ( $this->_subtasks as $task ) {
             
-            $task->process($project);
-            if ( $project->getStatus() != Xinc_Project_Build_Status_Interface::PASSED ) {
-                $project->error('Build FAILED ');
+            $task->process($build);
+            if ( $build->getStatus() != Xinc_Build_Interface::PASSED ) {
+                $build->error('Build FAILED ');
                 return;
             }
         }
-        $project->info('Processing builders done');
-        //$project->setStatus(Xinc_Project_Build_Status_Interface::STOPPED);
+        $build->info('Processing builders done');
+        //$project->setStatus(Xinc_Build_Interface::STOPPED);
 
     }
 

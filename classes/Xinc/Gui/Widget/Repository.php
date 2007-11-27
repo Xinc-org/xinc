@@ -4,7 +4,7 @@
  * that are defined by the loaded plugins.
  * 
  * 
- * @package Xinc
+ * @package Xinc.Gui
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -28,7 +28,7 @@
 /**
  * The Widget-Repository allows the Web-Frontend of Xinc to choose the right
  * plugin for execution based on the Http-Request
- *
+ * @package Xinc.Gui
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  * @version    2.0
  * @author     Arno Schneider
@@ -43,14 +43,14 @@ class Xinc_Gui_Widget_Repository
     /**
      * @var Xinc_Plugin_Task_Interface[]
      */
-    private $_definedWidgets=array();
+    private $_definedWidgets = array();
     
     /**
      * Contains all the registered widgets
      *
      * @var Xinc_Gui_Widget_Interface[]
      */
-    private $_widgets=array();
+    private $_widgets = array();
     
     /**
      * Return an instance of the Widget Repository
@@ -76,14 +76,15 @@ class Xinc_Gui_Widget_Repository
          *  Determine the Pathnames which
          * the Widget will be called for
          */
-        $paths=$widget->getPaths();
+        $paths = $widget->getPaths();
         foreach ($paths as $path) {
             /**
              * register the widget for the specified pathname
              */
             $this->_definedWidgets[$path] = $widget;
         }
-
+        $this->_widgets[] = $widget;
+        
     }
     /**
      * Determines the Widget that should be used
@@ -96,9 +97,9 @@ class Xinc_Gui_Widget_Repository
 
     public function &getWidgetForPath($path)
     {
-        $val=null;
+        $val = null;
         if (!isset($this->_definedWidgets[$path])) return $val;
-        $widget=$this->_definedWidgets[$path];
+        $widget = $this->_definedWidgets[$path];
         return $widget;
     }
     
@@ -109,6 +110,6 @@ class Xinc_Gui_Widget_Repository
      */
     public function getWidgets()
     {
-        return $this->_definedWidgets;
+        return $this->_widgets;
     }
 }

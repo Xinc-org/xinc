@@ -2,7 +2,7 @@
 /**
  * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
@@ -24,16 +24,22 @@
 */
 
 require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Build/Iterator.php';
+require_once 'Xinc/Project.php';
+require_once 'Xinc/Build.php';
 
 class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interface
 {
-    private $_plugin;
-    private $_widgets = array();
-    public $projects=array();
+    protected $_plugin;
+    private $_extensions = array();
+    public $projects = array();
+    public $menu;
+    public $builds;
     
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
+        $this->builds = new Xinc_Build_Iterator();
     }
     
     public function handleEvent($eventId)
@@ -41,37 +47,43 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
                     
-                    $handler=Xinc_Gui_Handler::getInstance();
-                    $statusDir=$handler->getStatusDir();
-                    $dir=opendir($statusDir);
-                    while ($file=readdir($dir)) {
-                        $project=array();
-                        $fullfile=$statusDir.DIRECTORY_SEPARATOR.$file;
+                    $handler = Xinc_Gui_Handler::getInstance();
+                    $statusDir = $handler->getStatusDir();
+                    $dir = opendir($statusDir);
+                    while ($file = readdir($dir)) {
+                        $project = array();
+                        $fullfile = $statusDir . DIRECTORY_SEPARATOR . $file;
                         
                         if (!in_array($file, array('.', '..')) && is_dir($fullfile)) {
                             $project['name']=$file;
-                            $statusfile=$fullfile.DIRECTORY_SEPARATOR.'status.ser';
-                            $xincProject=$fullfile.DIRECTORY_SEPARATOR.'.xinc';
+                            $statusfile = $fullfile . DIRECTORY_SEPARATOR . 'build.ser';
+                            //$xincProject = $fullfile . DIRECTORY_SEPARATOR . '.xinc';
                             
-                            if (file_exists($statusfile) && file_exists($xincProject)) {
-                                $ini=parse_ini_file($statusfile, true);
+                            if (file_exists($statusfile)) {
+                                //$ini = parse_ini_file($statusfile, true);
+                                $object = unserialize(file_get_contents($statusfile));
+                                //var_dump($object);
                                 
-                                $project['build.status']=$ini['build.status'];
-                                $project['build.label']= isset($ini['build.label'])?$ini['build.label']:'';
-                                $project['build.time']=$ini['build.time'];
-                                $this->projects[]=$project;
+                                //$project['build.status'] = $ini['build.status'];
+                                //$project['build.label'] = isset($ini['build.label'])?$ini['build.label']:'';
+                                //$project['build.time'] = $ini['build.time'];
+                                $this->builds->add($object);
                             } else if (file_exists($xincProject)) {
                                 $project['build.status'] = -10;
                                 $project['build.time'] = 0;
                                 $project['build.label'] = '';
                                 $this->projects[]=$project;
                             }
-                            
-                            
+                            $this->menu = '';
+                            foreach ($this->_extensions['MAIN_MENU'] as $extension) {
+                                
+                                $this->menu .= call_user_func_array($extension, array($this, 'Dashboard'));
+                                
+                            }
                             
                         }
                     }
-                    include 'view/overview.php';
+                    include 'view/overview.phtml';
                     
                 break;
             default:
@@ -88,11 +100,22 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function getPaths()
     {
-        return array('/dashboard', '/dashboard/');
+        return array('/','/dashboard', '/dashboard/');
     }
-    
-    public function registerWidget(Xinc_Gui_Widget_Interface &$widget)
+    public function init()
     {
-        $this->_widgets[] = $widget;
+        
+    }
+    public function registerExtension($extension, $callback)
+    {
+        
+        if (!isset($this->_extensions[$extension])) {
+            $this->_extensions[$extension] = array();
+        }
+        $this->_extensions[$extension][] = $callback;
+    }
+    public function getExtensionPoints()
+    {
+        return array();
     }
 }
