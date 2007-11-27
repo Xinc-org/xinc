@@ -196,3 +196,4 @@ chmod ugo+x $INIT/xinc
 echo 'Xinc installation complete.';
 echo "- Please include $ETC/www.conf in your apache virtual hosts."
 echo "- Please enable mod-rewrite."
+echo "- To start xinc execute: sudo /etc/init.d/xinc start"
