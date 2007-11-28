@@ -92,6 +92,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
                       DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                       DIRECTORY_SEPARATOR;
+        if (!is_dir($dirname)) return;
         $dh = opendir($dirname);
         if ($level==0) {
             $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeAddItem.html');
