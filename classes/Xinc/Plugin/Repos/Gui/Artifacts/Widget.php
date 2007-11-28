@@ -45,7 +45,30 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     
     public function handleEvent($eventId)
     {
+       global $_GET;
        
+       $project = new Xinc_Project();
+       $project->setName($_GET['p']);
+       try {
+           $build = Xinc_Build::unserialize($project, $_GET['buildtime'], Xinc_Gui_Handler::getInstance()->getStatusDir());
+           $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+           $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
+                         DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
+                         DIRECTORY_SEPARATOR;
+           $file = $_GET['file'];
+           $file = str_replace('../', '/', $file);
+           $file = str_replace('/..', '/', $file);
+           $fileName = $statusDir.$file;
+           if (file_exists($fileName)) {
+               header("Content-Type: " . mime_content_type($fileName));
+               readfile($fileName);
+           } else {
+               echo "Could not find artifact";
+           }
+           
+       } catch (Exception $e) {
+           echo "Could not find any artifacts";
+       }
     }
     public function registerMainMenu()
     {
@@ -57,17 +80,113 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function getPaths()
     {
-        return array('ARTIFACTS');
+        return array('/artifacts/get', '/artifacts/get/');
     }
     
-    public static function getArtifacts(Xinc_Build_Interface &$build)
+    private function _walkDir(Xinc_Build_Interface &$build, $dirname, &$arr, &$treeItems, $level=0)
+    {
+        $projectName = $build->getProject()->getName();
+        $buildTime = $build->getBuildTime();
+        $safeDirName = preg_replace('/\W/', '_', $dirname);
+        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
+                      DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
+                      DIRECTORY_SEPARATOR;
+        $dh = opendir($dirname);
+        if ($level==0) {
+            $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeAddItem.html');
+        } else {
+            $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeItemAddItem.html');
+        }
+        if ($dh) {
+            while ($file = readdir($dh)) {
+                if (!in_array($file, array('.', '..'))) {
+                    if (is_dir($dirname . DIRECTORY_SEPARATOR . $file)) {
+                        $safeFileDirname = $dirname . DIRECTORY_SEPARATOR . $file;
+                        $safeFileDirname = preg_replace('/\W/', '_', $safeFileDirname);
+                        $arr[$file] = array();
+                        if ($level == 0) {
+                            $params = array($template, 
+                                            $safeFileDirname,
+                                            $dirname . DIRECTORY_SEPARATOR . $file,
+                                            '#',
+                                            $safeFileDirname);
+                        } else {
+                            $params = array($template, 
+                                            $safeFileDirname,
+                                            $dirname . DIRECTORY_SEPARATOR . $file,
+                                            '#',
+                                            $safeDirName,
+                                            $safeFileDirname);
+                        }
+                        $result = call_user_func_array('sprintf', $params);
+                        $treeItems[] = $result;
+                        $this->_walkDir($build, $dirname . DIRECTORY_SEPARATOR . $file, $arr[$file], $level++);
+                    } else {
+                        $safeFileName = $dirname . DIRECTORY_SEPARATOR . $file;
+                        $safeFileName = preg_replace('/\W/', '_', $safeFileName);
+                        $artifactsFile = str_replace($statusDir, '', $dirname . DIRECTORY_SEPARATOR . $file);
+                        if ($level == 0 ){
+                            $params = array($template, 
+                                            $safeFileName,
+                                            $file,
+                                            '/artifacts/get/?p=' . 
+                                                                 $projectName .
+                                                                 '&buildtime=' .
+                                                                 $buildTime .
+                                                                 '&file=' .
+                                                                 $artifactsFile,
+                                            $safeFileName);
+                        } else {
+                            $params = array($template, 
+                                            $safeFileName,
+                                            $file,
+                                            '/artifacts/get/?p=' . 
+                                                                 $projectName .
+                                                                 '&buildtime=' .
+                                                                 $buildTime .
+                                                                 '&file=' .
+                                                                 $artifactsFile,
+                                            $safeDirName,
+                                            $safeFileName);
+                        }
+                        $result = call_user_func_array('sprintf', $params);
+                        
+                        $arr[] = $file;
+                        $treeItems[] = $result;
+                    }
+                }
+            }
+        }
+    }
+    
+    private function _getArtifactsTree(Xinc_Build_Interface &$build)
+    {
+        $dir = $this->_plugin->getArtifactsDir($build);
+        
+        $treeStructure = array();
+        $treeItems = array();
+        
+        $this->_walkDir($build, $dir, $treeStructure, $treeItems);
+        
+        $baseTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'tree.html');
+        $result = str_replace('{items}', implode("\n", $treeItems), $baseTemplate);
+        return $result;
+    }
+    private function _getTemplate($name)
+    {
+        $dir = dirname(__FILE__);
+        $fileName = $dir . DIRECTORY_SEPARATOR . $name;
+        return file_get_contents($fileName);
+    }
+    public function getArtifacts(Xinc_Build_Interface &$build)
     {
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $projectName = $build->getProject()->getName();
         $buildTimestamp = $build->getBuildTime();
         
         $detailExtension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('Artifacts');
-        $detailExtension->setContent("TEST");
+        $detailExtension->setContent($this->_getArtifactsTree($build));
         
         return $detailExtension;
     }

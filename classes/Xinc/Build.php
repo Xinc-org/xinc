@@ -597,9 +597,10 @@ class Xinc_Build implements Xinc_Build_Interface
     
     public function getStatusSubDir()
     {
+        $yearMonthDay = date("Ymd", $this->getBuildTime());
         $subDirectory = $this->getProject()->getName();
         $subDirectory .= DIRECTORY_SEPARATOR;
-        $subDirectory .= $yearMonthDay;
+        $subDirectory .= $yearMonthDay . DIRECTORY_SEPARATOR . $this->getBuildTime();
         
         return $subDirectory;
     }

@@ -17,6 +17,7 @@
             </onfailure>
             <onsuccess>
             	<phingPublisher buildfile="${dir}/publish.xml" target="build"/>
+            	<artifactspublisher file="${dir}/publish.xml"/>
             </onsuccess>
             <onrecovery>
             	<email to="root" 

@@ -205,4 +205,10 @@ interface Xinc_Build_Interface
      */
     public function getStatusSubDir();
     
+    /**
+     * Logs a message of severity info
+     *
+     * @param string $message
+     */
+    public function info($message);
 }
