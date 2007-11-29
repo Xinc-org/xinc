@@ -44,7 +44,7 @@ class Xinc_Plugin_Repos_Publisher_Artifacts_Task extends Xinc_Plugin_Repos_Publi
             
             Xinc_Logger::getInstance()->error('File must be specified for artifactspublisher.');
             return false;
-        } 
+        }
         return true;
     }
 

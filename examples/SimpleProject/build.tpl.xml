@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 <project name="Simple Project Build File" basedir="@EXAMPLE_DIR@/SimpleProject" default="build">
-    <target name="build" depends="test, tar">
+    <property name="report.dir" value="${project.basedir}/report"/>
+    <target name="build" depends="prepare, test, tar, generate-report">
         
+    </target>
+    <target name="prepare">
+    <mkdir dir="${report.dir}"/>
     </target>
     <target name="tar">
     	<tar destfile="${project.basedir}/release-${xinc.buildlabel}.tar.gz" compression="gzip">
@@ -18,6 +22,10 @@
                      <include name="*Test.php"/>
                 </fileset>
             </batchtest>
+            <formatter type="xml" todir="${report.dir}" outfile="logfile.xml"/>
         </phpunit>
     </target>
+    <target name="generate-report">
+  		<phpunit2report infile="${report.dir}/logfile.xml" styledir="resources/xsl" todir="report" format="noframes"/>
+  	</target>
 </project>

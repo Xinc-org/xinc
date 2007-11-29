@@ -64,18 +64,50 @@ class Xinc_Plugin_Repos_Artifacts  extends Xinc_Plugin_Base
      */
     public function registerArtifact(Xinc_Build_Interface &$build, $sourceFile)
     {
+        $sourceFile = realpath($sourceFile);
+        
         $statusDir = Xinc::getInstance()->getStatusDir();
+        
+        $projectDir = Xinc::getInstance()->getProjectDir();
+        
+        
         $subDir = $build->getStatusSubDir();
         $fullDir = $statusDir . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . self::ARTIFACTS_DIR;
         $targetFile = $fullDir . DIRECTORY_SEPARATOR . basename($sourceFile);
+        
+        /**
+         * Verify that the source is in the projectdir
+         */
+        $relativePath = str_replace($projectDir, '', $sourceFile);
+        if ($relativePath == $sourceFile) {
+            /**
+             * the filename was not within the project path,
+             * we need to prevent this file from being copied.
+             * 
+             * Future: run Xinc in a chroot environment per project
+             */
+            $build->error('Registering artifact: ' . $sourceFile . '->' . $targetFile . ' failed.');
+            $build->error('-- ' . $sourceFile . ' is not within project dir. Security Problem.');
+            return false;
+        }
+        
         if (!file_exists($fullDir)) {
             mkdir($fullDir, 0755, true);
         }
-        $res = copy($sourceFile, $targetFile);
-        if ($res) {
-            $status = 'OK';
+        if (is_dir($sourceFile)) {
+            exec('cp ' . $sourceFile . ' ' . $targetFile . ' -Rf', $out, $res);
+            if ($res==0) {
+                $status = 'OK';
+            } else {
+                $status = 'FAILURE';
+            }
         } else {
-            $status = 'FAILURE';
+            $res = copy($sourceFile, $targetFile);
+            if ($res) {
+                $status = 'OK';
+            } else {
+                $status = 'FAILURE';
+            }
         }
         $build->info('Registering artifact: ' . $sourceFile . '->' . $targetFile . ', result: ' . $status);
         return $res;
