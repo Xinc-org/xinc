@@ -365,12 +365,15 @@ class Xinc
                           . $e->getTraceAsString());
         }
     }
-
+    
     private function _addProjectFile($fileName)
     {
         
         
         try {
+            
+            file_put_contents($this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid', getmypid());
+            
             $config = new Xinc_Project_Config($fileName);
             $engineName = $config->getEngineName();
             

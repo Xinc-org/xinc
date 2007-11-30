@@ -30,6 +30,7 @@ PROJECTS=@ETC@/conf.d/*.xml
 LOG=@LOG@/xinc.log
 STATUS=@STATUSDIR@
 DATADIR=@DATADIR@
+PIDFILE=@STATUSDIR@/xinc.pid
  
 DAEMON=/bin/xinc
 NAME=xinc
@@ -39,30 +40,91 @@ OPTIONS="-f $CONFIG -p $DATADIR -s $STATUS -w $DATADIR -l $LOG --- $PROJECTS"
 DESC="Xinc - Continuous Integration for PHP"
 
 # create the /etc/xinc/status directory if not exists
+start_daemon=""
+logline="echo"
+start_daemon_end="&"
+start_daemon_option=""
+logend2=""
 if [ ! -r "$STATUS" ]; then
     mkdir $STATUS
 fi
+. /etc/rc.d/init.d/functions
+if [ -r /lib/lsb/init-functions ]; then
+ . /lib/lsb/init-functions
+ #logbegin="log_begin_msg"
+ #logend="log_end_msg"
+ logbegin="echo -n"
+ logend=`printf "echo .\n"`
 
-. /lib/lsb/init-functions
+else
+ logbegin="echo -n"
+ logend=`printf "echo .\n"`
+fi
+
+if [ -r /etc/init.d/functions ]; then
+    logline="echo"
+    logbegin="echo -n"
+    logend="echo"
+    
+    start_daemon="daemon"
+    start_daemon_options="--pidfile $PIDFILE"
+    start_daemon_end="&"
+    
+    stop_daemon="killproc -p $PIDFILE"
+    stop_daemon_options=""
+    stop_daemon_end=""
+    
+fi;
+
+if [ -x /sbin/start-stop-daemon ]; then
+  start_daemon="start-stop-daemon"
+  start_daemon_options=" --pidfile $PIDFILE --start --background --exec" 
+  start_daemon_end=""
+  
+  stop_daemon="start-stop-daemon"
+  stop_daemon_options="--pidfile $PIDFILE --stop --quiet --name $NAME"
+  stop_daemon_end=""
+fi
+
+start_xinc() {
+    $logbegin "Starting $DESC"
+    
+    if [ -r $PIDFILE ]; then
+     $logbegin "Xinc already running"
+     $logend
+     
+    else
+     #$logbegin "$start_daemon $start_daemon_options $DAEMON -- $OPTIONS $daemon_end"
+     $start_daemon $start_daemon_options $DAEMON -- $OPTIONS $start_daemon_end
+     $logend
+     
+    fi
+
+
+}
+
+stop_xinc() {
+    $logbegin "Stopping $DESC"
+    $stop_daemon $stop_daemon_options $stop_daemon_end
+    $logend
+    
+
+}
 
 case "$1" in
   start)
-	log_begin_msg "Starting $DESC"
-	#log_begin_msg "$DAEMON -- $OPTIONS"
-	start-stop-daemon --start --background --exec $DAEMON -- $OPTIONS
-	log_end_msg $?
+
+	start_xinc
 	;;
   stop)
-	log_begin_msg "Stopping $DESC"
-	start-stop-daemon --stop --quiet --name $NAME
-	log_end_msg $?
+	stop_xinc
 	;;
   restart|force-reload)
-	log_begin_msg "Restarting $DESC"
-	if start-stop-daemon --stop --quiet --name $NAME; then
-		start-stop-daemon --start --quiet --exec $DAEMON -- $OPTIONS
+	$logline "Restarting $DESC"
+	if stop_xinc; then
+		start_xinc
 	fi
-	log_end_msg $?
+	$logend
 	;;
   status)
 	echo -n "Status of $DESC: "
@@ -70,7 +132,9 @@ case "$1" in
 		echo "$NAME is not running."
 		exit 3
 	fi
-	if read pid < "$PIDFILE" && ps -p "$pid" > /dev/null 2>&1; then
+	read pid < "$PIDFILE"
+	ps -p "$pid" > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
 		echo "$NAME is running."
 		exit 0
 	else
