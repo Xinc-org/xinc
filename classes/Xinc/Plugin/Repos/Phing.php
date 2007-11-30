@@ -33,24 +33,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
     
     public function __construct()
     {
-        ini_set('track_errors', 1);
         
-        /* set classpath */
-        if (getenv('PHP_CLASSPATH')) {
-            define('PHP_CLASSPATH', getenv('PHP_CLASSPATH') . PATH_SEPARATOR . get_include_path());
-            ini_set('include_path', PHP_CLASSPATH);
-        } else if (!defined('PHP_CLASSPATH')) {
-            define('PHP_CLASSPATH', get_include_path());
-        }
-        /* Setup Phing environment */
-        Phing::startup();
-        
-        /* 
-          find phing home directory 
-           -- if Phing is installed from PEAR this will probably be null,
-           which is fine (I think).  Nothing uses phing.home right now.
-        */
-        Phing::setProperty('phing.home', getenv('PHING_HOME'));
     }
     
     public function validate()

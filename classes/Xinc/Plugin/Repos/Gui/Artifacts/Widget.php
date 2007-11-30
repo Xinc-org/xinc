@@ -29,6 +29,22 @@ require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 
+function mime_content_type2($fileName)
+{
+    $contentType = null;
+    if (function_exists('mime_content_type')) {
+        $contentType = mime_content_type($fileName);
+    } else if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
+
+        $contentType = finfo_file($finfo, $fileName);
+        finfo_close($finfo);
+    }
+
+    return $contentType;
+
+}
+
 class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interface
 {
     protected $_plugin;
@@ -45,30 +61,42 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     
     public function handleEvent($eventId)
     {
-       global $_GET;
-       
+       $query = $_SERVER['QUERY_STRING'];
+      
+       preg_match("/\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
+       if (count($matches)!=4) {
+           echo "Could not find artifact";
+           return;
+       }
+       $projectName = $matches[1];
+       $buildTime = $matches[2];
+       $file = $matches[3];
        $project = new Xinc_Project();
-       $project->setName($_GET['p']);
+       $project->setName($projectName);
        try {
            $build = Xinc_Build::unserialize($project,
-                                            $_GET['buildtime'],
+                                            $buildTime,
                                             Xinc_Gui_Handler::getInstance()->getStatusDir());
+           
            $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
            $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
                          DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                          DIRECTORY_SEPARATOR;
-           $file = $_GET['file'];
+
            /**
             * Replace multiple / slashes with just one
             */
            $fileName = $statusDir.$file;
            $fileName = preg_replace('/\\' . DIRECTORY_SEPARATOR . '+/', DIRECTORY_SEPARATOR, $fileName);
            $realfile = realpath($fileName);
-           
            if ($realfile != $fileName) {
                echo "Could not find artifact";
            } else if (file_exists($fileName)) {
-               header("Content-Type: " . mime_content_type($fileName));
+               //echo "here";
+               $contentType = mime_content_type2($fileName);
+               if (!empty($contentTypeheader)) {
+                   header("Content-Type: " . $contentType);
+               }
                readfile($fileName);
            } else {
                echo "Could not find artifact";
@@ -95,16 +123,19 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     {
         $projectName = $build->getProject()->getName();
         $buildTime = $build->getBuildTime();
-        $safeDirName = preg_replace('/\W/', '_', $dirname);
+        $safeDirName = 's' . md5($dirname);
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
                       DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                       DIRECTORY_SEPARATOR;
         if (!is_dir($dirname)) return;
         $dh = opendir($dirname);
+        $templateChoice = 0;
         if ($level==0) {
+            $templateChoice = 1;
             $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeAddItem.html');
         } else {
+            $templateChoice = 2;
             $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeItemAddItem.html');
         }
         if ($dh) {
@@ -112,9 +143,9 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
                 if (!in_array($file, array('.', '..'))) {
                     if (is_dir($dirname . DIRECTORY_SEPARATOR . $file)) {
                         $safeFileDirname = $dirname . DIRECTORY_SEPARATOR . $file;
-                        $safeFileDirname = preg_replace('/\W/', '_', $safeFileDirname);
+                        $safeFileDirname = 's' . md5($safeFileDirname);
                         $arr[$file] = array();
-                        if ($level == 0) {
+                        if ($templateChoice == 1) {
                             $params = array($template, 
                                             $safeFileDirname,
                                             $file,
@@ -128,38 +159,41 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
                                             $safeDirName,
                                             $safeFileDirname);
                         }
+                        
                         $result = call_user_func_array('sprintf', $params);
                         $treeItems[] = $result;
                         $this->_walkDir($build, $dirname . DIRECTORY_SEPARATOR . $file,
                                         $arr[$file], $treeItems, ++$level);
                     } else {
                         $safeFileName = $dirname . DIRECTORY_SEPARATOR . $file;
-                        $safeFileName = preg_replace('/\W/', '_', $safeFileName);
+                        $safeFileName = 's' . md5($safeFileName);
                         $artifactsFile = str_replace($statusDir, '', $dirname . DIRECTORY_SEPARATOR . $file);
-                        if ($level == 0 ) {
+                        if ($templateChoice == 1) {
                             $params = array($template, 
                                             $safeFileName,
                                             $file,
-                                            '/artifacts/get/?p=' . 
+                                            '/artifacts/get/?/' . 
                                                                  $projectName .
-                                                                 '&buildtime=' .
+                                                                 '/' .
                                                                  $buildTime .
-                                                                 '&file=' .
+                                                                 '/' .
                                                                  $artifactsFile,
                                             $safeFileName);
+                                            
                         } else {
                             $params = array($template, 
                                             $safeFileName,
                                             $file,
-                                            '/artifacts/get/?p=' . 
+                                            '/artifacts/get/?/' . 
                                                                  $projectName .
-                                                                 '&buildtime=' .
+                                                                 '/' .
                                                                  $buildTime .
-                                                                 '&file=' .
+                                                                 '/' .
                                                                  $artifactsFile,
                                             $safeDirName,
                                             $safeFileName);
                         }
+                        
                         $result = call_user_func_array('sprintf', $params);
                         
                         $arr[] = $file;
@@ -178,6 +212,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $treeItems = array();
         
         $this->_walkDir($build, $dir, $treeStructure, $treeItems);
+        
         $baseTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'tree.html');
         $result = str_replace('{items}', implode("\n", $treeItems), $baseTemplate);
         return $result;

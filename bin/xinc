@@ -85,5 +85,5 @@ if ($defaultStatusDir == $statusDir) {
 
 
 // run xinc.
-call_user_func_array('Xinc::main', $parameters);
+call_user_func_array(array('Xinc','main'), $parameters);
 //Xinc::main($workingDir, $projectDir, $statusDir, $configFile, $logFile);

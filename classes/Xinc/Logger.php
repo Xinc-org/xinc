@@ -206,24 +206,30 @@ class Xinc_Logger
             $this->_resetLogQueue();
             return;
         }
-        
-        $this->doc = new DOMDocument();
-        $this->doc->formatOutput = true;
-    
-        $buildElement = $this->doc->createElement('build');
-        $this->doc->appendChild($buildElement);
-        
+        $messageElements = array();
         for ($i = count($this->_logQueue)-1; $i >= 0; $i--) {
             $message = $this->_logQueue[$i];
-            $messageElement = $this->doc->createElement('message', $message->message);
-            $messageElement->setAttribute('priority', $message->priority);
-            $messageElement->setAttribute('timestamp', $message->timestamp);
-            $messageElement->setAttribute('time', date('Y-m-d H:i:s', $message->timestamp));
-            $buildElement->appendChild($messageElement);
+            $messageString  = '<message priority="' . $message->priority . '" ';
+            $messageString .= 'timestamp="' . $message->timestamp . '" ';
+            $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp) . '">';
+            $messageString .= htmlentities(utf8_encode($message->message));
+            $messageString .= '</message>';
+            
+            $messageElements[] = $messageString;
         }
+        $buildXml  = '<?xml version="1.0"?>';
+        $buildXml .= "\n";
+        $buildXml .= '<build>';
+        $buildXml .= "\n";
+        $buildXml .= implode("\n", $messageElements);
+        $buildXml .= "\n";
+        $buildXml .= '</build>';
         $this->info('Flushing log to: ' . $this->_buildLogFile);
-        
-        file_put_contents($this->_buildLogFile, $this->doc->saveXML());
+        $dirName = dirname($this->_buildLogFile);
+        if (!file_exists($dirName)) {
+            mkdir($dirName, 0755, true);
+        }
+        file_put_contents($this->_buildLogFile, $buildXml);
         
         $this->_resetLogQueue();
     }

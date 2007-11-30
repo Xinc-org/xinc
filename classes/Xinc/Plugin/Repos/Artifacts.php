@@ -96,6 +96,7 @@ class Xinc_Plugin_Repos_Artifacts  extends Xinc_Plugin_Base
         }
         if (is_dir($sourceFile)) {
             exec('cp ' . $sourceFile . ' ' . $targetFile . ' -Rf', $out, $res);
+            exec('chmod 755 ' . $targetFile . ' -Rf', $out, $res2);
             if ($res==0) {
                 $status = 'OK';
             } else {
@@ -104,6 +105,7 @@ class Xinc_Plugin_Repos_Artifacts  extends Xinc_Plugin_Base
         } else {
             $res = copy($sourceFile, $targetFile);
             if ($res) {
+                chmod($targetFile,0755);
                 $status = 'OK';
             } else {
                 $status = 'FAILURE';

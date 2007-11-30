@@ -65,7 +65,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
         if ($result == 0) {
             $localSet = implode("\n", $output);
-
+            
             $url = $this->getURL($localSet);
                 
             $output = '';
@@ -119,13 +119,106 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      */
     public function getRevision($result)
     {
+        /**
+         * get the version
+         */
+        exec('svn --version', $versionOutput);
+        $versionLine = $versionOutput[0];
+        preg_match('/.*? (\d.\d.\d) .*?/', $versionLine, $matches);
+        $version = $matches[1];
+        list($major, $minor, $point) = split('\.', $version);
+        
+        Xinc_Logger::getInstance()->debug('Using svn version: ' . "$major.$minor.$point");
+        switch ($major) {
+            case 1:
+                switch ($minor) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        /**
+                         * Get after URL
+                         */
+                        return $this->_getRevisionOldOld($result);
+                        break;
+                    default:
+                        /**
+                         * take after UUID
+                         */
+                        return $this->_getRevisionNew($result);
+                }
+                break;
+            default:
+                /**
+                 * Use the /Revision/ pattern
+                 * */
+                return $this->_getRevisionOld($result);
+                break;
+        }
+        
+        
+    }
+    
+    /**
+     * Takes the svn info output of a working copy
+     * and looks for R[eé]vision to identify the current revision of
+     * the working dir. This is only used for very old svn versions, since
+     * we cannot identify them correclty for all locales
+     * 
+     * @param $result the svn info output
+     * @return integer the revision number
+     */
+    protected function _getRevisionOld($result)
+    {
         $list = split("\n", $result);
         foreach ($list as $row) {
             $field = split(':', $row);
-            if (preg_match('/Revision/', $field[0])) {
+            if (preg_match('/R[eé]vision/', $field[0])) {
                 return trim($field[1]);
             }
         }
+        return null;
+    }
+    
+    /**
+     * Relying on the output of version 1.4 and up to have the
+     * actual revision one line after the UUID line. Return
+     * 
+     * @param $result the svn info output
+     * @return integer the revision number
+     */
+    protected function _getRevisionNew($result)
+    {
+        $list = split("\n", $result);
+        for ($i=0; $i<count($list); $i++) {
+            $field = split(':', $list[$i]);
+            if (preg_match('/.*UUID.*/', $field[0])) {
+                $revisionRow = $list[$i+1];
+                $revisionField = split(':', $revisionRow);
+                return trim($revisionField[1]);
+            }
+        }
+        return null;
+    }
+     /**
+     * Relying on the output of version >1.3 and up to have the
+     * actual revision one line after the URL line.
+     * 
+     * @param $result the svn info output
+     * @return integer the revision number
+     */
+    protected function _getRevisionOldOld($result)
+    {
+        $list = split("\n", $result);
+        for ($i=0; $i<count($list); $i++) {
+            $field = split(':', $list[$i]);
+            if (preg_match('/.*URL.*/', $field[0])) {
+                $revisionRow = $list[$i+1];
+                $revisionField = split(':', $revisionRow);
+                return trim($revisionField[1]);
+            }
+        }
+        return null;
     }
     /**
      * Check necessary variables are set

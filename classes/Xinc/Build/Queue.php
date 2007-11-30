@@ -38,6 +38,9 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
      */
     private $_builds;
     
+    private $_lastBuild;
+    
+    private $_queue=array();
     
     public function __construct()
     {
@@ -87,12 +90,26 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
             if ($build->getNextBuildTime() < $nextBuildTime || $nextBuildTime == null) {
                 if ($build->getStatus() != Xinc_Build_Interface::STOPPED) {
                     $nextBuildTime = $build->getNextBuildTime();
+                    /**
+                     * Need to write to queue here and have a FIFO
+                     * check before if not already in queue
+                     */
+                    if (!in_array($build, $this->_queue)) {
+                        $this->_queue[] = $build;
+                    }
                 }
             }
         }
-        
+        usort($this->_queue,array(&$this,'sortQueue'));
         $this->_builds->rewind();
         return $nextBuildTime;
+    }
+    
+    public function sortQueue($a, $b)
+    {
+        if ($a->getNextBuildTime() == $b->getNextBuildTime()) return 0;
+        
+        return $a->getNextBuildTime()<$b->getNextBuildTime() ? 1:-1;
     }
     
     /**
@@ -103,6 +120,10 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
      */
     public function getNextBuild()
     {
+        if (count($this->_queue)<1) {
+            $this->getNextBuildTime();
+        }
+        return array_shift($this->_queue);
         
         $now = time();
         $nextBuildTime = $now;
@@ -117,10 +138,12 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
             if ($build->getNextBuildTime() <= $now && 
                 $build->getNextBuildTime() <= $nextBuildTime &&
                 $build->getNextBuildTime() != null &&
-                $build->getStatus() != Xinc_Build_Interface::STOPPED) {
+                $build->getStatus() != Xinc_Build_Interface::STOPPED &&
+                ($this->_builds->count()>1 && $build != $this->_lastBuild)) {
                     
                 $nextBuildTime = $build->getNextBuildTime();
                 $nextBuild = $build;
+                $this->_lastBuild = $build;
             }
         }
         

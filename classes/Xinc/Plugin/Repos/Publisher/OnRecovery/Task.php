@@ -53,7 +53,7 @@ class Xinc_Plugin_Repos_Publisher_OnRecovery_Task extends Xinc_Plugin_Repos_Publ
          * Only if we recovered from a previous failed build cycle
          */
         $build->info('Last Build status: '.$build->getLastBuild()->getStatus());
-        if ($build->getLastBuild()->getStatus() != 0) return;
+        if ($build->getLastBuild()->getStatus() !== 0) return;
         
         $published = false;
         $build->info('Publishing with OnRecovery Publishers');
