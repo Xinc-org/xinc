@@ -34,13 +34,16 @@ class Xinc_Engine_Sunrise_TestParser extends Xinc_BaseTest
     public function testExample()
     {
         $workingdir = getcwd();
-       
-        Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_ModificationSet());
-        Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_Builder());
-        Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_ModificationSet_BuildAlways());
+        try {
+            Xinc_Plugin_Repository::getInstance()->tearDown();
+            Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_ModificationSet());
+            Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_Builder());
+            Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_ModificationSet_BuildAlways());
         
-        Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_Phing());
-        
+            Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_Phing());
+        } catch (Exception $e) {
+            var_dump($e);
+        }
         $configFileName = $workingdir .'/test/resources/testSunriseExampleProject.xml';
        
         
