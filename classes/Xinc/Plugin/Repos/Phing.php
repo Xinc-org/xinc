@@ -69,7 +69,12 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 $arguments[] = '-verbose';
                 break;
         }
-        
+        $oldPwd = getcwd();
+        /**
+         * set workingdir
+         */
+        $workingdir = Xinc::getInstance()->getProjectDir() . $build->getProject()->getName();
+        chdir($workingdir);
         //$arguments[] = '-quiet';
         //$arguments[] = '-listener';
         //$arguments[] = 'Xinc.Plugin.Repos.Phing.Listener';
@@ -79,11 +84,13 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         $arguments[] = $buildfile;
         $arguments[] = $target;
         $arguments[] = '-Dxinc.buildlabel=' . $build->getLabel();
+        $arguments[] = '-Dprojectname=' . $build->getProject()->getName();
+        $arguments[] = '-Dcctimestamp=' . $build->getBuildTime();
         foreach ($build->getProperties()->getAllProperties() as $name => $value) {
             $arguments[] = '-Dxinc.' . $name . '=' . $value;
         }
         exec('phing ' . implode(' ', $arguments) . ' 2>&1', $output, $returnValue);
-        
+        chdir($oldPwd);
         foreach ($output as $line) {
             Xinc_Logger::getInstance()->info($line);
         }

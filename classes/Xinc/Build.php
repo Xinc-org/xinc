@@ -387,6 +387,7 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function setNumber($no)
     {
+    	$this->info('Setting Buildnumber to:' . $no);
         $this->getProperties()->set('build.number', $no);
         $this->_no = $no;
     }

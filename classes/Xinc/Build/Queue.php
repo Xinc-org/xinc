@@ -123,7 +123,13 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         //if (count($this->_queue)<1) {
         //    $this->getNextBuildTime();
         //}
-        return array_shift($this->_queue);
+        if (isset($this->_queue[0])) {
+            if ($this->_queue[0]->getNextBuildTime() < time()) {
+                return array_shift($this->_queue);
+            }
+        }
+        return null;
+        
         
         $now = time();
         $nextBuildTime = $now;

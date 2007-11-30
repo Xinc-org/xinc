@@ -47,7 +47,10 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
         /**
          * Increasing the build number, if it fails we need to decrease again
          */
-        if ($build->getLastBuild()->getStatus() == Xinc_Build_Interface::PASSED) {
+        if ($build->getLastBuild()->getStatus() === Xinc_Build_Interface::PASSED 
+            ||
+            ($build->getLastBuild()->getStatus() === null &&
+             $build->getLastBuild()->getStatus() !== Xinc_Build_Interface::STOPPED)) {
             $build->setNumber($build->getNumber()+1);
             //$this->updateBuildTasks($build);
         }
@@ -56,6 +59,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
         if ( Xinc_Build_Interface::STOPPED === $build->getStatus() ) {
             Xinc_Logger::getInstance()->info('Build of Project stopped'
                                              . ' in INIT phase');
+            
             //$project->serialize();
             //$build->setBuildTime($buildTime);
             //$build->setStatus(Xinc_Build_Interface::INITIALIZED);
@@ -130,6 +134,9 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             
         } else if ( Xinc_Build_Interface::INITIALIZED === $build->getStatus() ) {
             //$build->setBuildTime($buildTime);
+            if ($build->getLastBuild()->getStatus() === null) {
+                $build->setNumber($build->getNumber()-1);
+            }
             $build->setStatus(Xinc_Build_Interface::STOPPED);
             $build->serialize();
         }
