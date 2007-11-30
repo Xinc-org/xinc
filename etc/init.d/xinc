@@ -40,10 +40,17 @@ OPTIONS="-f $CONFIG -p $DATADIR -s $STATUS -w $DATADIR -l $LOG --- $PROJECTS"
 DESC="Xinc - Continuous Integration for PHP"
 
 # create the /etc/xinc/status directory if not exists
-start_daemon=""
+
 logline="echo"
+
+# default daemon behaviour if no helper scripts are defined
+start_daemon=""
 start_daemon_end="&"
-start_daemon_option=""
+start_daemon_options=""
+stop_daemon="killall xinc;"
+stop_daemon_end="rm $PIDFILE"
+stop_daemon_options=""
+
 logend2=""
 if [ ! -r "$STATUS" ]; then
     mkdir $STATUS
