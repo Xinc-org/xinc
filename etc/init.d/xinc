@@ -55,7 +55,7 @@ logend2=""
 if [ ! -r "$STATUS" ]; then
     mkdir $STATUS
 fi
-. /etc/rc.d/init.d/functions
+#. /etc/rc.d/init.d/functions
 if [ -r /lib/lsb/init-functions ]; then
  . /lib/lsb/init-functions
  #logbegin="log_begin_msg"
