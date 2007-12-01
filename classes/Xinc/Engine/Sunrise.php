@@ -139,6 +139,9 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             }
             $build->setStatus(Xinc_Build_Interface::STOPPED);
             $build->serialize();
+        } else {
+            $build->setStatus(Xinc_Build_Interface::STOPPED);
+            $build->setLastBuild();
         }
     }
     

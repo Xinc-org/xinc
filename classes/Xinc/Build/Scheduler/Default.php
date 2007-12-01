@@ -38,7 +38,7 @@ class Xinc_Build_Scheduler_Default implements Xinc_Build_Scheduler_Interface
      */
     public function getNextBuildTime(Xinc_Build_Interface &$build)
     {
-        if ($build->getLastBuild()->getBuildTime() == null) {
+        if ($build->getLastBuild()->getBuildTime() == null && $build->getStatus() !== Xinc_Build_Interface::STOPPED) {
             if (!isset($this->_nextBuildTime)) {
                 $this->_nextBuildTime = time();
             }

@@ -207,10 +207,11 @@ class Xinc
     */
     public function processBuildsDaemon(){
         while (true) {
+            $now = time();
             $nextBuildTime = Xinc::$_buildQueue->getNextBuildTime();
             
-            Xinc_Logger::getInstance()->info('Next buildtime: ' . $nextBuildTime);
-            $now = time();
+            Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
+            
             if ($nextBuildTime != null) {
             
                 $sleep = $nextBuildTime - $now;

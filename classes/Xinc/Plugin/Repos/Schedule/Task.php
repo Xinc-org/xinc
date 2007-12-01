@@ -76,9 +76,12 @@ class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Base implements X
     
     public function getNextBuildTime(Xinc_Build_Interface &$build)
     {
+        if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
+            return null;
+        }
         //var_dump($build);
         $lastBuild = $build->getLastBuild()->getBuildTime();
-        
+        //Xinc_Logger::getInstance()->info('Last build for : ' . $build->getProject()->getName() . ': '.date('Y-m-d H:i:s' , $lastBuild));
         if ($lastBuild != null ) {
             $nextBuild = $this->getInterval() + $lastBuild;
             /**
@@ -86,12 +89,12 @@ class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Base implements X
              */
             //echo time(). ' - ' . $lastBuild .'='.(time()-$lastBuild)."\n";
             if ($nextBuild + $this->getInterval() < time()) {
-                //echo "We are here\n";
-                $nextBuild = time() - 1;
+                
+                $nextBuild = time();
             }
         } else {
             // never ran, schedule for now
-            $nextBuild = time() - 1;
+            $nextBuild = time();
         }
         $build->debug('getNextBuildTime '
                               . ': lastbuild: ' 

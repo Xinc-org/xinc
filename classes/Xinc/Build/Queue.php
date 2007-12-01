@@ -87,18 +87,23 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         $build = null;
         while ($this->_builds->hasNext()) {
             $build = $this->_builds->next();
-            if ($build->getNextBuildTime() < $nextBuildTime || $nextBuildTime == null) {
+            if ($build->getNextBuildTime() <= $nextBuildTime || $nextBuildTime === null) {
                 if ($build->getStatus() != Xinc_Build_Interface::STOPPED) {
-                    $nextBuildTime = $build->getNextBuildTime();
-                    /**
-                     * Need to write to queue here and have a FIFO
-                     * check before if not already in queue
-                     */
-                    if (!in_array($build, $this->_queue)) {
-                        $this->_queue[] = $build;
+                    $buildTime = $build->getNextBuildTime();
+                    
+                    if ($buildTime !== null) {
+                        $nextBuildTime = $buildTime;
+                        /**
+                         * Need to write to queue here and have a FIFO
+                         * check before if not already in queue
+                         */
+                        if (!in_array($build, $this->_queue)) {
+                            $this->_queue[] = $build;
+                        }
                     }
                 }
             }
+        
         }
         usort($this->_queue, array(&$this, 'sortQueue'));
         $this->_builds->rewind();
@@ -109,7 +114,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
     {
         if ($a->getNextBuildTime() == $b->getNextBuildTime()) return 0;
         
-        return $a->getNextBuildTime()<$b->getNextBuildTime() ? 1:-1;
+        return $a->getNextBuildTime()<$b->getNextBuildTime() ? -1:1;
     }
     
     /**
@@ -123,8 +128,9 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         //if (count($this->_queue)<1) {
         //    $this->getNextBuildTime();
         //}
+        usort($this->_queue, array(&$this, 'sortQueue'));
         if (isset($this->_queue[0])) {
-            if ($this->_queue[0]->getNextBuildTime() < time()) {
+            if ($this->_queue[0]->getNextBuildTime() <= time()) {
                 return array_shift($this->_queue);
             }
         }
