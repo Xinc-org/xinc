@@ -100,7 +100,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
                 }
             }
         }
-        usort($this->_queue,array(&$this,'sortQueue'));
+        usort($this->_queue, array(&$this, 'sortQueue'));
         $this->_builds->rewind();
         return $nextBuildTime;
     }

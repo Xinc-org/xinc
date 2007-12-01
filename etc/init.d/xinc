@@ -97,7 +97,7 @@ start_xinc() {
     $logbegin "Starting $DESC"
     
     if [ -r $PIDFILE ]; then
-     $logbegin "Xinc already running"
+     $logbegin ":Xinc already running"
      $logend
      
     else
@@ -112,9 +112,10 @@ start_xinc() {
 
 stop_xinc() {
     $logbegin "Stopping $DESC"
+    #$logbegin $stop_daemon $stop_daemon_options $stop_daemon_end
     $stop_daemon $stop_daemon_options $stop_daemon_end
     $logend
-    
+    rm -f $PIDFILE
 
 }
 

@@ -86,7 +86,7 @@ class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Base implements X
              */
             //echo time(). ' - ' . $lastBuild .'='.(time()-$lastBuild)."\n";
             if ($nextBuild + $this->getInterval() < time()) {
-            	//echo "We are here\n";
+                //echo "We are here\n";
                 $nextBuild = time() - 1;
             }
         } else {

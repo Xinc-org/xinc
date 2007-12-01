@@ -25,7 +25,8 @@
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Gui/Artifacts/Widget.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Artifacts/Task.php';
-class Xinc_Plugin_Repos_Artifacts  extends Xinc_Plugin_Base
+
+class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
 {
     const ARTIFACTS_DIR = 'artifacts';
     
@@ -105,7 +106,7 @@ class Xinc_Plugin_Repos_Artifacts  extends Xinc_Plugin_Base
         } else {
             $res = copy($sourceFile, $targetFile);
             if ($res) {
-                chmod($targetFile,0755);
+                chmod($targetFile, 0755);
                 $status = 'OK';
             } else {
                 $status = 'FAILURE';
