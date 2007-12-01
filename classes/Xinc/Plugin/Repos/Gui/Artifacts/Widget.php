@@ -94,7 +94,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
            } else if (file_exists($fileName)) {
                //echo "here";
                $contentType = mime_content_type2($fileName);
-               if (!empty($contentTypeheader)) {
+               if (!empty($contentType)) {
                    header("Content-Type: " . $contentType);
                }
                readfile($fileName);
