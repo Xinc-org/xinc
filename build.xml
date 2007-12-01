@@ -26,7 +26,7 @@
 	<!--	<phing phingfile="build-deploy.xml" target="deploy"/>	-->
 		
 	</target>
-	<!-- Currently we dont have test-cases YET-->
+	<!-- Currently we dont have test-cases YET -->
 	<target name="test">
 		<phing phingfile="build-test.xml" target="test"/>
 	</target>
