@@ -29,22 +29,6 @@ require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 
-function mime_content_type2($fileName)
-{
-    $contentType = null;
-    if (function_exists('mime_content_type')) {
-        $contentType = mime_content_type($fileName);
-    } else if (function_exists('finfo_open')) {
-        $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
-
-        $contentType = finfo_file($finfo, $fileName);
-        finfo_close($finfo);
-    }
-
-    return $contentType;
-
-}
-
 class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interface
 {
     protected $_plugin;
@@ -58,7 +42,21 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $this->_plugin = $plugin;
         
     }
+    public function mime_content_type2($fileName)
+    {
+        $contentType = null;
+        if (function_exists('mime_content_type')) {
+            $contentType = mime_content_type($fileName);
+        } else if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
     
+            $contentType = finfo_file($finfo, $fileName);
+            finfo_close($finfo);
+        }
+    
+        return $contentType;
+    
+    }
     public function handleEvent($eventId)
     {
        $query = $_SERVER['REQUEST_URI'];
@@ -94,7 +92,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
                echo "Could not find artifact";
            } else if (file_exists($fileName)) {
                //echo "here";
-               $contentType = mime_content_type2($fileName);
+               $contentType = $this->mime_content_type2($fileName);
                if (!empty($contentType)) {
                    header("Content-Type: " . $contentType);
                }
