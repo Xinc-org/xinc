@@ -124,7 +124,6 @@ class Xinc_Gui_Handler
          * Determine called Pathname
          */
         $path  = $_SERVER['REDIRECT_URL'];
-        
         /**
          * Get the Widget to use for this Request from the Widget-Repository
          */

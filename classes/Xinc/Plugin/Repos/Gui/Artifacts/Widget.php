@@ -61,16 +61,17 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     
     public function handleEvent($eventId)
     {
-       $query = $_SERVER['QUERY_STRING'];
-      
-       preg_match("/\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
-       if (count($matches)!=4) {
+       $query = $_SERVER['REQUEST_URI'];
+       
+       preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
+       
+       if (count($matches)!=6) {
            echo "Could not find artifact";
            return;
        }
-       $projectName = $matches[1];
-       $buildTime = $matches[2];
-       $file = $matches[3];
+       $projectName = $matches[3];
+       $buildTime = $matches[4];
+       $file = $matches[5];
        $project = new Xinc_Project();
        $project->setName($projectName);
        try {
@@ -172,7 +173,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
                             $params = array($template, 
                                             $safeFileName,
                                             $file,
-                                            '/artifacts/get/?/' . 
+                                            '/artifacts/get/' . 
                                                                  $projectName .
                                                                  '/' .
                                                                  $buildTime .
@@ -184,7 +185,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
                             $params = array($template, 
                                             $safeFileName,
                                             $file,
-                                            '/artifacts/get/?/' . 
+                                            '/artifacts/get/' . 
                                                                  $projectName .
                                                                  '/' .
                                                                  $buildTime .

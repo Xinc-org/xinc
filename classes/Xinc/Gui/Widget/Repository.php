@@ -97,9 +97,23 @@ class Xinc_Gui_Widget_Repository
 
     public function &getWidgetForPath($path)
     {
-        $val = null;
-        if (!isset($this->_definedWidgets[$path])) return $val;
-        $widget = $this->_definedWidgets[$path];
+        $widget = null;
+        if (!isset($this->_definedWidgets[$path])) {
+            // find the largest match
+            $largest = 0;
+            foreach ($this->_definedWidgets as $pathReg => $widgetItem) {
+                
+                if(($match = strstr($path, $pathReg)) !== false && strpos($path, $pathReg)==0) {
+                    if (strlen($pathReg)>$largest) {
+                        
+                        $largest = strlen($pathReg);
+                        $widget = $widgetItem;
+                    }
+                }
+            }
+        } else {
+            $widget = $this->_definedWidgets[$path];
+        }
         return $widget;
     }
     
