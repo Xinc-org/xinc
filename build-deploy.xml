@@ -10,7 +10,7 @@
 	</target>
 	
 	<target name="restart">
-		<exec command="/etc/init.d/xinc restart" dir="${project.basedir}"/>
+		<exec command="/etc/init.d/xinc restart" spawn="true" dir="${project.basedir}"/>
 	</target>
   	
 

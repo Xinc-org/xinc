@@ -108,6 +108,7 @@ restart_xinc() {
 		retval=$?
 		while [ $retval -eq 0 ]; do
 			$restart_daemon_wait
+			echo -n "."
 			ps -p "$pid" > /dev/null 2>&1
 			retval=$?
 		done
