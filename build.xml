@@ -41,7 +41,7 @@
 			<include name="install.sh"/>
 			<include name="resources"/>
 			<include name="web"/>
-			</fileset>
+			</fileset> 
 		</copy>
 		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp/">
 		<fileset>
