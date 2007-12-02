@@ -35,19 +35,37 @@
 		
 	<mkdir dir="${project.basedir}/temp/${xincversion}"/>
 		<copy todir="${project.basedir}/temp/${xincversion}">
-		<fileset dir="${project.basedir}">
-			<include name="bin"/>
-			<include name="classes"/>
-			<include name="etc"/>
-			<include name="examples"/>
+		<fileset dir="${project.basedir}/bin">
+			<include name="*/**"/>
+		</fileset>
+			<fileset dir="${project.basedir}/classes">
+						<include name="*/**"/>
+					</fileset>
+			<fileset dir="${project.basedir}/etc">
+									<include name="*/**"/>
+								</fileset>
+			<fileset dir="${project.basedir}/examples">
+												<include name="*/**"/>
+											</fileset>
+			<fileset dir="${project.basedir}/resources">
+															<include name="*/**"/>
+														</fileset>
+			<fileset dir="${project.basedir}/web">
+																		<include name="*/**"/>
+																	</fileset>
+			<fileset dir="${project.basedir}">
 			<include name="install.sh"/>
-			<include name="resources"/>
-			<include name="web"/>
-			</fileset> 
+				<include name="README.txt"/>
+			</fileset>
+
+			<fileset dir="${project.basedir}">
+						<include name="install.sh"/>
+						</fileset>
+			
 		</copy>
-		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp/">
-		<fileset dir="."> 
-			<include name="${xincversion}"/>
+		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp/" compression="gzip">
+		<fileset dir="${xincversion}"> 
+			<include name="*/**"/>
 			</fileset>
 		</tar>
 		<delete dir="${project.basedir}/temp" includeemptydirs="true"/>
