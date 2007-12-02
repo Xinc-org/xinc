@@ -3,7 +3,7 @@
 	
 
 	<target name="deploy" depends="install, restart">
-
+	<!-- Calls the install script and then restarts xinc -->
   	</target>
 	<target name="install">
 		<exec command="./install --non-interactive" dir="${project.basedir}" checkreturn="true"/>
