@@ -58,9 +58,9 @@
 			</fileset>
 
 		</copy>
-		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp/" compression="gzip">
-			<fileset dir="${xincversion}">
-				<include name="*/**" />
+		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp" compression="gzip">
+			<fileset dir=".">
+				<include name="${xincversion}/*/**" />
 			</fileset>
 		</tar>
 		<delete dir="${project.basedir}/temp" includeemptydirs="true" />
