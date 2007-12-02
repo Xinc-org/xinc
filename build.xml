@@ -54,7 +54,7 @@
 			</fileset>
 
 			<fileset dir="${project.basedir}">
-				<include name="install.sh" />
+				<include name="install.sh" /> 
 			</fileset>
 
 		</copy> 
