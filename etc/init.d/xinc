@@ -102,7 +102,13 @@ restart_xinc() {
 	$logbegin "Restarting $DESC"
 	$restart_daemon
 	$restart_daemon_wait
-	
+	read pid < "$PIDFILE"
+	ps -p "$pid" > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		$restart_daemon_wait
+	else
+		rm $PIDFILE
+	fi
 	start_xinc
 
 }
