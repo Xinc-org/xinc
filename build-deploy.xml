@@ -6,7 +6,7 @@
 	<!-- Calls the install script and then restarts xinc -->
   	</target>
 	<target name="install">
-		<exec command="./install --non-interactive" dir="${project.basedir}" checkreturn="true"/>
+		<exec command="./install.sh --non-interactive" dir="${project.basedir}" checkreturn="true"/>
 	</target>
 	
 	<target name="restart">
