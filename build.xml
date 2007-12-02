@@ -2,7 +2,8 @@
 <project name="Xinc Build File" basedir="." default="build">	
 	<property file="xinc.properties"/>
 	
-	<target name="build" depends="update, test, deploy">
+	<target name="build" depends="update, test, tarball, deploy">
+		
 		<echo message="starting build process... passing.."/>
 	</target>
 
@@ -27,6 +28,29 @@
 		
 	</target>
 	<!-- Currently we dont have test-cases YET -->
+	<target name="tarball">
+		<property name="${xincversion}" value="${pkg.name}-${xinc.build.number}"/>
+	<mkdir dir="${project.basedir}/temp"/>
+	<mkdir dir="${project.basedir}/temp/${xincversion}"/>
+		<copy todir="${project.basedir}/temp/${xincversion}">
+		<fileset dir="${project.basedir}">
+			<include name="bin"/>
+			<include name="classes"/>
+			<include name="etc"/>
+			<include name="examples"/>
+			<include name="install.sh"/>
+			<include name="resources"/>
+			<include name="web"/>
+			</fileset>
+		</copy>
+		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp/">
+		<fileset>
+			<include name="${xincversion}"/>
+			</fileset>
+		</tar>
+		<delete dir="${project.basedir}/temp" includeemptydirs="true"/>
+	</target>
+		
 	<target name="test">
 		<phing phingfile="build-test.xml" target="test"/>
 	</target>
