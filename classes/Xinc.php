@@ -220,7 +220,10 @@ class Xinc
             }
             if ($sleep > 0) {
                 Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
-                sleep($sleep);
+                for ($i=0; $i<$sleep/100; $i++) {
+                    usleep(10000);
+                }
+                //sleep($sleep);
             }
             while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
                 
@@ -256,7 +259,11 @@ class Xinc
     {
         
         if ($daemon) {
-            $this->processBuildsDaemon();
+            
+            register_tick_function(array(&$this, '_checkShutdown'));
+            declare(ticks=2) {
+                $this->processBuildsDaemon();
+            }
             
         } else {
             Xinc_Logger::getInstance()->info('Run-once mode '
@@ -410,5 +417,22 @@ class Xinc
         $properties['xinc.projectdir'] = $this->getProjectDir();
         
         return $properties;
+    }
+    /**
+     * Checks if a special shutdown file exists 
+     * and exits if it does
+     *
+     */
+    private function _checkShutdown()
+    {
+        $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
+        if (file_exists($file)) {
+            $statInfo = stat($file);
+            $fileUid = $statInfo['uid'];
+            if ($fileUid == getmyuid()) {
+                unlink($file);
+                exit();
+            }
+        }
     }
 }

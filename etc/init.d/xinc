@@ -81,7 +81,12 @@ if [ -r /etc/init.d/functions ]; then
     stop_daemon_options=""
     stop_daemon_end=""
     
+
+    
 fi;
+
+    restart_daemon="touch $STATUSDIR/.shutdown";
+    restart_daemon_wait="sleep 10s"
 
 if [ -x /sbin/start-stop-daemon ]; then
   start_daemon="start-stop-daemon"
@@ -92,6 +97,15 @@ if [ -x /sbin/start-stop-daemon ]; then
   stop_daemon_options="--pidfile $PIDFILE --stop --quiet --name $NAME"
   stop_daemon_end=""
 fi
+
+restart_xinc() {
+	$logbegin "Restarting $DESC"
+	$restart_daemon
+	$restart_daemon_wait
+	
+	start_xinc
+
+}
 
 start_xinc() {
     $logbegin "Starting $DESC"
@@ -128,11 +142,12 @@ case "$1" in
 	stop_xinc
 	;;
   restart|force-reload)
-	$logline "Restarting $DESC"
-	if stop_xinc; then
-		start_xinc
-	fi
-	$logend
+	#$logline "Restarting $DESC"
+	#if stop_xinc; then
+	#	start_xinc
+	#fi
+	#$logend
+	restart_xinc
 	;;
   status)
 	echo -n "Status of $DESC: "
