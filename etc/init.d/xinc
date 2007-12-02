@@ -85,7 +85,7 @@ if [ -r /etc/init.d/functions ]; then
     
 fi;
 
-restart_daemon="touch $STATUSDIR/.shutdown";
+restart_daemon="touch $STATUS/.shutdown";
 restart_daemon_wait="sleep 1s"
 
 if [ -x /sbin/start-stop-daemon ]; then
