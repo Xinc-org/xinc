@@ -259,11 +259,11 @@ class Xinc
     {
         
         if ($daemon) {
-            
+            declare(ticks=2);
             register_tick_function(array(&$this, 'checkShutdown'));
-            declare(ticks=2) {
-                $this->processBuildsDaemon();
-            }
+            register_shutdown_function(array(&$this,'shutdown'));
+            $this->processBuildsDaemon();
+            
             
         } else {
             Xinc_Logger::getInstance()->info('Run-once mode '
@@ -436,5 +436,10 @@ class Xinc
                 exit();
             }
         }
+    }
+    
+    public function shutdown()
+    {
+        unlink($this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid');
     }
 }
