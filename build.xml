@@ -30,6 +30,7 @@
 	<!-- Currently we dont have test-cases YET -->
 	<target name="tarball">
 		<property name="xincversion" value="${pkg.name}-${xinc.build.number}" />
+		<delete dir="${project.basedir}/builds" />
 		<mkdir dir="${project.basedir}/builds" />
 		<mkdir dir="${project.basedir}/temp" />
 
@@ -64,6 +65,7 @@
 			</fileset>
 		</tar>
 		<delete dir="${project.basedir}/temp" includeemptydirs="true" />
+		
 	</target>
 
 	<target name="test">
