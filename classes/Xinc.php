@@ -207,6 +207,7 @@ class Xinc
     */
     public function processBuildsDaemon(){
         while (true) {
+            declare(ticks=2);
             $now = time();
             $nextBuildTime = Xinc::$_buildQueue->getNextBuildTime();
             
@@ -259,10 +260,13 @@ class Xinc
     {
         
         if ($daemon) {
-            declare(ticks=2);
-            register_tick_function(array(&$this, 'checkShutdown'));
-            register_shutdown_function(array(&$this,'shutdown'));
+            $res=register_tick_function(array(&$this, 'checkShutdown'));
+            Xinc_Logger::getInstance()->info('Registering shutdown function: ' . ($res?'OK':'NOK'));
+            
+            
+            
             $this->processBuildsDaemon();
+            
             
             
         } else {
@@ -432,7 +436,8 @@ class Xinc
             Xinc_Logger::getInstance()->info('info:' . var_export($statInfo,true));
             $fileUid = $statInfo['uid'];
             if ($fileUid == getmyuid()) {
-                unlink($file);
+                exec('rm -f ' . $file);
+                exec('rm -f ' . $this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid');
                 exit();
             }
         }

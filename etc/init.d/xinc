@@ -86,7 +86,7 @@ if [ -r /etc/init.d/functions ]; then
 fi;
 
 restart_daemon="touch $STATUSDIR/.shutdown";
-restart_daemon_wait="sleep 2s"
+restart_daemon_wait="sleep 1s"
 
 if [ -x /sbin/start-stop-daemon ]; then
   start_daemon="start-stop-daemon"
@@ -102,12 +102,15 @@ restart_xinc() {
 	$logbegin "Restarting $DESC"
 	$restart_daemon
 	$restart_daemon_wait
-	read pid < "$PIDFILE"
-	ps -p "$pid" > /dev/null 2>&1
-	if [ $? -eq 0 ]; then
-		$restart_daemon_wait
-	else
-		rm $PIDFILE
+	if [ -r $PIDFILE ]; then
+		read pid < "$PIDFILE"
+		ps -p "$pid" > /dev/null 2>&1
+		retval=$?
+		while [ $retval -eq 0 ]; doe
+			$restart_daemon_wait
+			ps -p "$pid" > /dev/null 2>&1
+			retval=$?
+		done
 	fi
 	start_xinc
 
