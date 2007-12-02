@@ -99,6 +99,12 @@ if [ -x /sbin/start-stop-daemon ]; then
 fi
 
 restart_xinc() {
+
+
+	if [ $1 ]; then
+	   sleep $1
+	fi
+	
 	$logbegin "Restarting $DESC"
 	$restart_daemon
 	$restart_daemon_wait
@@ -157,7 +163,7 @@ case "$1" in
 	#	start_xinc
 	#fi
 	#$logend
-	restart_xinc
+	restart_xinc $2
 	;;
   status)
 	echo -n "Status of $DESC: "
