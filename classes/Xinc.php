@@ -439,18 +439,18 @@ class Xinc
         if (file_exists($file) && $this->buildActive == false) {
             Xinc_Logger::getInstance()->info('Preparing to shutdown');
             $statInfo = stat($file);
-            Xinc_Logger::getInstance()->info('info:' . var_export($statInfo,true));
             $fileUid = $statInfo['uid'];
+            /**
+             * Only the user running xinc cann issue a shutdown
+             */
             if ($fileUid == getmyuid()) {
-                exec('rm -f ' . $file);
-                exec('rm -f ' . $this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid');
+                unlink($file);
+                unlink($this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid');
                 exit();
+            } else {
+                // delete the file
+                unlink($file);
             }
         }
-    }
-    
-    public function shutdown()
-    {
-        unlink($this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid');
     }
 }
