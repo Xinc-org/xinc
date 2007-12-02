@@ -11,7 +11,7 @@
 	
 	<target name="restart">
 		<!-- Sleeping 15seconds before restarting, will give us enough time to publish the artifacts-->
-		<exec command="/etc/init.d/xinc restart 15" spawn="true" dir="${project.basedir}"/>
+		<exec command="/etc/init.d/xinc restart" spawn="true" dir="${project.basedir}"/>
 	</target>
   	
 

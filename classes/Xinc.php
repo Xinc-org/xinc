@@ -55,6 +55,8 @@ class Xinc
     
     private $_defaultSleep = 30;
     
+    public $buildActive=false;
+    
     /**
      * Registry holding all scheduled builds
      *
@@ -220,14 +222,18 @@ class Xinc
                 $sleep = $this->_defaultSleep;
             }
             if ($sleep > 0) {
+                $this->buildActive=false;
                 Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
                 for ($i=0; $i<$sleep*100; $i++) {
                     usleep(10000);
+                    /**
+                     * Check for forceonly builds here
+                     */
                 }
                 //sleep($sleep);
             }
             while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
-                
+                $this->buildActive=true;
                 $nextBuild->build();
                
             }
@@ -430,7 +436,7 @@ class Xinc
     public function checkShutdown()
     {
         $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
-        if (file_exists($file)) {
+        if (file_exists($file) && $this->buildActive == false) {
             Xinc_Logger::getInstance()->info('Preparing to shutdown');
             $statInfo = stat($file);
             Xinc_Logger::getInstance()->info('info:' . var_export($statInfo,true));
