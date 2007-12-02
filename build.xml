@@ -36,20 +36,14 @@
 
 		<mkdir dir="${project.basedir}/temp/${xincversion}" />
 		<copy todir="${project.basedir}/temp/${xincversion}">
-			<fileset dir="${project.basedir}/bin">
-				<include name="*/**" />
-			</fileset>
+
 			<fileset dir="${project.basedir}">
+				<include name="bin/*/**" />
 				<include name="classes/*/**" />
-
 				<include name="etc/*/**" />
-
 				<include name="examples/*/**" />
-
 				<include name="resources/*/**" />
-
 				<include name="web/*/**" />
- 
 				<include name="install.sh" />
 				<include name="README.txt" />
 			</fileset>
