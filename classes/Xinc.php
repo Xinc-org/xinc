@@ -220,7 +220,7 @@ class Xinc
             }
             if ($sleep > 0) {
                 Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
-                for ($i=0; $i<$sleep/100; $i++) {
+                for ($i=0; $i<$sleep*100; $i++) {
                     usleep(10000);
                 }
                 //sleep($sleep);
