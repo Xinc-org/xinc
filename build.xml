@@ -44,7 +44,7 @@
 			</fileset> 
 		</copy>
 		<tar destfile="${project.basedir}/builds/${xincversion}.tar.gz" basedir="${project.basedir}/temp/">
-		<fileset dir=".">
+		<fileset dir="."> 
 			<include name="${xincversion}"/>
 			</fileset>
 		</tar>
