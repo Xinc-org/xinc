@@ -30,18 +30,38 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
     const NAME = 'Sunrise';
     
     private $_heartBeat;
+    /**
+     * The current build
+     *
+     * @var Xinc_Build_Interface
+     */
+    public $build;
+    
+    public function __construct()
+    {
+        register_shutdown_function(array(&$this, 'shutdown'));
+    }
     
     public function getName()
     {
         return self::NAME;
     }
+    
+    public function shutdown()
+    {
+        if ($this->build != null) {
+            $this->build->serialize();
+        }
+    }
+    
     public function build(Xinc_Build_Interface &$build)
     {
-        
+        $this->build=$build;
         $buildTime = time();
         $build->setBuildTime($buildTime);
         if ( Xinc_Build_Interface::STOPPED === $build->getStatus() ) {
             
+            $this->build = null;
             return;
         }
         /**
@@ -66,6 +86,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             //Xinc_Logger::getInstance()->setBuildLogFile(null);
             //Xinc_Logger::getInstance()->flush();
             $build->setLastBuild();
+            $this->build = null;
             return;
         }                                
 
@@ -83,6 +104,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             $build->setLastBuild();
             //Xinc_Logger::getInstance()->setBuildLogFile(null);
             //Xinc_Logger::getInstance()->flush();
+            $this->build = null;
             return;
         } else if ( Xinc_Build_Interface::FAILED === $build->getStatus() ) {
             //$build->setBuildTime($buildTime);
@@ -131,7 +153,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             
             
             $build->serialize();
-            
+            $this->build = null;
         } else if ( Xinc_Build_Interface::INITIALIZED === $build->getStatus() ) {
             //$build->setBuildTime($buildTime);
             if ($build->getLastBuild()->getStatus() === null) {
