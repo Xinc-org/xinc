@@ -30,8 +30,9 @@
 	<!-- Currently we dont have test-cases YET -->
 	<target name="tarball">
 		<property name="xincversion" value="${pkg.name}-${xinc.build.number}"/>
-	<mkdir dir="${project.basedir}/temp"/>
 		<mkdir dir="${project.basedir}/builds"/>
+	<mkdir dir="${project.basedir}/temp"/>
+		
 	<mkdir dir="${project.basedir}/temp/${xincversion}"/>
 		<copy todir="${project.basedir}/temp/${xincversion}">
 		<fileset dir="${project.basedir}">
