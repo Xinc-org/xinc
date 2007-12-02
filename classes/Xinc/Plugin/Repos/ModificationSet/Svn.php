@@ -67,7 +67,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $localSet = implode("\n", $output);
             
             $url = $this->getURL($localSet);
-                
+
             $output = '';
             $result = 9;
             exec('svn info ' . $url, $output, $result);
@@ -81,7 +81,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $localRevision = $this->getRevision($localSet);
             $remoteRevision = $this->getRevision($remoteSet);
                 
-            $build->debug('Subversion checkout dir is '.$dir.' '
+            $build->info('Subversion checkout dir is '.$dir.' '
                            .'local revision @ '.$localRevision.' '
                            .'Remote Revision @ '.$remoteRevision);
             chdir($cwd);

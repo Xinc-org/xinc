@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="Xinc Build File For Deployment" basedir="." default="deploy">	
+	
+
+	<target name="deploy" depends="install, restart">
+
+  	</target>
+	<target name="install">
+		<exec command="./install --non-interactive" dir="${project.basedir}" checkreturn="true"/>
+	</target>
+	
+	<target name="restart">
+		<exec command="/etc/init.d/xinc restart" dir="${project.basedir}"/>
+	</target>
+  	
+
+</project>
