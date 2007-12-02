@@ -260,7 +260,7 @@ class Xinc
         
         if ($daemon) {
             
-            register_tick_function(array(&$this, '_checkShutdown'));
+            register_tick_function(array(&$this, 'checkShutdown'));
             declare(ticks=2) {
                 $this->processBuildsDaemon();
             }
@@ -423,11 +423,13 @@ class Xinc
      * and exits if it does
      *
      */
-    private function _checkShutdown()
+    public function checkShutdown()
     {
         $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
         if (file_exists($file)) {
+            Xinc_Logger::getInstance()->info('Preparing to shutdown');
             $statInfo = stat($file);
+            Xinc_Logger::getInstance()->info('info:' . var_export($statInfo,true));
             $fileUid = $statInfo['uid'];
             if ($fileUid == getmyuid()) {
                 unlink($file);
