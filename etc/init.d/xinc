@@ -106,7 +106,7 @@ restart_xinc() {
 		read pid < "$PIDFILE"
 		ps -p "$pid" > /dev/null 2>&1
 		retval=$?
-		while [ $retval -eq 0 ]; doe
+		while [ $retval -eq 0 ]; do
 			$restart_daemon_wait
 			ps -p "$pid" > /dev/null 2>&1
 			retval=$?
