@@ -69,6 +69,7 @@ else
 fi
 
 if [ -r /etc/init.d/functions ]; then
+    . /etc/init.d/functions
     logline="echo"
     logbegin="echo -n"
     logend="echo"
