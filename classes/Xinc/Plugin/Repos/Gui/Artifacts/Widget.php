@@ -45,12 +45,13 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     public function mime_content_type2($fileName)
     {
         $contentType = null;
-        if (function_exists('finfo_open')) {
+        /**if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
             if(!$finfo) return;
             $contentType = finfo_file($finfo, $fileName);
             finfo_close($finfo);
-        } else if (function_exists('mime_content_type')) {
+        } else*/
+        if (function_exists('mime_content_type')) {
             $contentType = mime_content_type($fileName);
         }
     
