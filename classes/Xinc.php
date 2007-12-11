@@ -120,7 +120,9 @@ class Xinc
         
     }
     
-    
+    /**
+     * @return Xinc
+     */
     public static function getInstance()
     {
         if (!isset(self::$_instance)) {
@@ -229,8 +231,8 @@ class Xinc
                     /**
                      * Check for forceonly builds here
                      */
+                    
                 }
-                //sleep($sleep);
             }
             while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
                 $this->buildActive=true;

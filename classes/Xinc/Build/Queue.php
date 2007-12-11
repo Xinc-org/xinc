@@ -91,15 +91,16 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
                 if ($build->getStatus() != Xinc_Build_Interface::STOPPED) {
                     $buildTime = $build->getNextBuildTime();
                     
-                    if ($buildTime !== null) {
+                    if ($buildTime !== null && !$build->isQueued()) {
                         $nextBuildTime = $buildTime;
                         /**
                          * Need to write to queue here and have a FIFO
                          * check before if not already in queue
                          */
-                        if (!in_array($build, $this->_queue)) {
+                        //if (!in_array($build, $this->_queue)) {
                             $this->_queue[] = $build;
-                        }
+                            $build->enqueue();
+                        //}
                     }
                 }
             }
@@ -131,7 +132,10 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         usort($this->_queue, array(&$this, 'sortQueue'));
         if (isset($this->_queue[0])) {
             if ($this->_queue[0]->getNextBuildTime() <= time()) {
-                return array_shift($this->_queue);
+                
+                $build = array_shift($this->_queue);
+                $build->dequeue();
+                return $build;
             }
         }
         return null;

@@ -57,11 +57,16 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension
         return $this->_content;
     }
     
-    public function generate($tabPaneName)
+    public function generate($templateFile)
     {
+        $templateContent = file_get_contents($templateFile);
         $id = strtolower(str_replace(' ', '-', $this->getTitle()));
-        $result = call_user_func_array('sprintf', array(self::TEMPLATE, $id, $this->getTitle(),
-                                       $tabPaneName, $id, $this->getContent()));
+        
+        $result = str_replace(array('{id}', '{content}', '{title}'), 
+                              array($id, $this->getContent(), $this->getTitle()),
+                              $templateContent);
+        /**$result = call_user_func_array('sprintf', array(self::TEMPLATE, $id, $this->getTitle(),
+                                       $tabPaneName, $id, $this->getContent()));*/
         
         return $result;
     }

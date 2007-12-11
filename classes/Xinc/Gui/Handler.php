@@ -5,7 +5,7 @@
  * @package Xinc.Gui
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@ require_once 'Xinc/Gui/Event.php';
 require_once 'Xinc/Gui/Widget/Repository.php';
 require_once 'Xinc/Config.php';
 require_once 'Xinc/Logger.php';
+require_once 'Xinc/Api/Handler.php';
 
 class Xinc_Gui_Handler
 {
@@ -53,6 +54,12 @@ class Xinc_Gui_Handler
     private static $_instance;
     
     /**
+     *
+     * @var Xinc_Api_Handler
+     */
+    private $_apiHandler;
+    
+    /**
      * Constructor: parses plugins and sets status dir
      *
      * @param string $pluginFile
@@ -74,6 +81,8 @@ class Xinc_Gui_Handler
         $this->_statusDir = $statusDir;
         $this->setSystemConfigFile($configFile);
         self::$_instance = &$this;
+        
+        $this->_apiHandler = Xinc_Api_Handler::getInstance();
     }
     /**
      * Return an instance of Xinc_Gui_Handler
@@ -124,11 +133,20 @@ class Xinc_Gui_Handler
          * Determine called Pathname
          */
         $path  = $_SERVER['REDIRECT_URL'];
+        
+        if (strpos($path, $this->_apiHandler->getBasePath())===0) {
+            $this->_apiHandler->processCall($path);
+            return;
+        }
         /**
          * Get the Widget to use for this Request from the Widget-Repository
          */
         $widget = Xinc_Gui_Widget_Repository::getInstance()->getWidgetForPath($path);
         if (!$widget instanceof Xinc_Gui_Widget_Interface ) {
+            /**
+             * Try Api Handler
+             */
+            
             header('HTTP/1.0 404 Not Found');
             die;
         }

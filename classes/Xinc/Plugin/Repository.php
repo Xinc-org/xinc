@@ -5,7 +5,7 @@
  * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -137,6 +137,11 @@ class Xinc_Plugin_Repository
         $widgets = $plugin->getGuiWidgets();
         foreach ($widgets as $widget) {
             Xinc_Gui_Widget_Repository::getInstance()->registerWidget($widget);
+        }
+        
+        $apiModules = $plugin->getApiModules();
+        foreach ($apiModules as $apiMod) {
+            Xinc_Api_Module_Repository::getInstance()->registerModule($apiMod);
         }
         
         $this->_plugins[] = $plugin;

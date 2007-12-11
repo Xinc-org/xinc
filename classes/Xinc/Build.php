@@ -30,9 +30,18 @@ require_once 'Xinc/Build/Exception/Serialization.php';
 require_once 'Xinc/Build/Labeler/Default.php';
 require_once 'Xinc/Build/Scheduler/Default.php';
 require_once 'Xinc/Project/Status.php';
+require_once 'Xinc/Build/Statistics.php';
 
 class Xinc_Build implements Xinc_Build_Interface
 {
+    
+    /**
+     * Are we queued?
+     *
+     * @var boolean
+     */
+    private $_isQueued=false;
+    
     /**
      * @var Xinc_Engine_Interface
      */
@@ -47,6 +56,12 @@ class Xinc_Build implements Xinc_Build_Interface
      * @var Xinc_Build_Properties
      */
     private $_properties;
+    
+    /**
+     *
+     * @var Xinc_Build_Statistics
+     */
+    private $_statistics;
     
     /**
      * 
@@ -129,6 +144,7 @@ class Xinc_Build implements Xinc_Build_Interface
         
         $this->_buildTimestamp = $buildTimestamp;
         $this->_properties = new Xinc_Build_Properties();
+        $this->_statistics = new Xinc_Build_Statistics();
         $this->setLabeler(new Xinc_Build_Labeler_Default());
         $this->setScheduler(new Xinc_Build_Scheduler_Default());
     }
@@ -156,6 +172,14 @@ class Xinc_Build implements Xinc_Build_Interface
     public function &getProperties()
     {
         return $this->_properties;
+    }
+    
+    /**
+     * @return Xinc_Build_Statistics
+     */
+    public function &getStatistics()
+    {
+        return $this->_statistics;
     }
      /**
      * sets the build time for this build
@@ -340,6 +364,12 @@ class Xinc_Build implements Xinc_Build_Interface
                 throw new Xinc_Build_Exception_Unserialization($project,
                                                                $buildTimestamp);
             } else {
+                /**
+                 * compatibility with old Xinc_Build w/o statistics object
+                 */
+                if ($unserialized->getStatistics() === null) {
+                    $unserialized->_statistics = new Xinc_Build_Statistics();
+                }
                 return $unserialized;
             }
         }
@@ -377,7 +407,7 @@ class Xinc_Build implements Xinc_Build_Interface
         
         return array('_no','_project', '_buildTimestamp',
                      '_properties', '_status', '_lastBuild',
-                     '_labeler','_engine');
+                     '_labeler', '_engine', '_statistics');
     }
     
         /**
@@ -629,5 +659,28 @@ class Xinc_Build implements Xinc_Build_Interface
         while ($subtasks->hasNext()) {
             $this->_updateTask($subtasks->next());
         }
+    }
+    
+    public function enqueue()
+    {
+        $this->_isQueued = true;
+    }
+    
+    /**
+     * check if build is in queue mode
+     *
+     */
+    public function isQueued()
+    {
+        return $this->_isQueued;
+    }
+    
+    /**
+     * remove build from queue mode
+     *
+     */
+    public function dequeue()
+    {
+        $this->_isQueued = false;
     }
 }

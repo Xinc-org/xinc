@@ -1,0 +1,49 @@
+<div id="tree-div-{projectname}-{buildtime}" style="overflow:auto; height:300px;width:100%;border:1px solid #c3daf9;"></div>
+
+<script type="text/javascript">
+initTree = function(){
+   
+   var Tree = Ext.tree;
+    
+    var tree = new Tree.TreePanel({
+        el:'tree-div-{projectname}-{buildtime}',
+        autoScroll:true,
+        animate:true,
+        enableDD:false,
+        containerScroll: true, 
+        loader: new Tree.TreeLoader({
+            dataUrl:'/api/artifacts/list/json/',
+                 baseParams: {lib:'yui', p: '{projectname}', buildtime: '{buildtime}'}
+        })
+    });
+    
+    tree.on('click',function(node) {
+      if(node.leaf==true) {
+      	window.open('/api/artifacts/get/json/{projectname}/{buildtime}/'+node.id);
+      }
+      return false;
+    
+    }
+    );
+
+    // set the root node
+    var root = new Tree.AsyncTreeNode({
+        text: 'Artifacts',
+        draggable:false,
+        id:'source'
+    });
+    tree.setRootNode(root);
+
+    // render the tree
+    tree.render();
+    root.expand();
+   
+            
+            
+           
+        
+};
+
+
+initTree();
+</script>

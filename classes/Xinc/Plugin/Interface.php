@@ -5,7 +5,7 @@
  * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -33,5 +33,15 @@ interface Xinc_Plugin_Interface
      */
     public function getTaskDefinitions();
     
+    /**
+     * 
+     * @return Xinc_Gui_Widget_Interface[]
+     */
     public function getGuiWidgets();
+    
+    /**
+     * 
+     * @return Xinc_Api_Module_Interface[]
+     */
+    public function getApiModules();
 }

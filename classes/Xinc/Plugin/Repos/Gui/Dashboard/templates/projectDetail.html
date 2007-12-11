@@ -1,0 +1,73 @@
+
+<script type="text/javascript">
+function openTab(name,build){
+var tab=Ext.getCmp('project-'+name+'-'+build);
+
+if(tab) {
+ tab.show();
+ return;
+}
+Ext.getCmp('doc-body').add(new Ext.Panel({
+id: 'project-'+name+'-'+build,
+autoScroll: true,
+title: name,
+plugins: new Ext.ux.TabCloseMenu(),
+autoLoad: {url: '/dashboard/detail?project='+name, scripts: true},
+closable:true
+})).show();return false;
+
+}
+
+function openDetailTab(name,build, label){
+var tab=Ext.getCmp('project-'+name+'-'+build);
+
+if(tab) {
+ tab.show();
+ return;
+}
+var c=Ext.getCmp('doc-body').add(new Ext.Panel({
+id: 'project-'+name+'-'+build,
+autoScroll: true,
+title: label + ' - ' + name,
+plugins: new Ext.ux.TabCloseMenu(),
+autoLoad: {url: '/dashboard/detail?project='+name+'&timestamp='+build, scripts: true},
+closable:true
+}));
+c.show();
+return false;
+
+}
+
+</script>
+<link rel="stylesheet" type="text/css" href="/ext-2.0/resources/css/ext-all.css" />
+
+
+
+
+<div id="welcome">
+    <!-- <div class="col">
+        <div id="search">     	
+        </div>
+    </div>-->
+    <div class="col-last-wide">
+       
+              <?php
+
+foreach ($this->getTabs('BUILD_SELECTOR') as $tab) {
+    echo $tab->generate(dirname(__FILE__) . '/rightBlock.html');
+}
+
+?>      
+    </div>
+    <div id="test" class="col-wide">
+    <div id="build-details"  class="body-wrap">
+    <?php
+   foreach ($this->getTabs('BUILD_DETAILS') as $tab) {
+    echo $tab->generate(dirname(__FILE__) . '/leftBlock.html');
+}
+?>
+</div>
+</div>
+</div>
+
+

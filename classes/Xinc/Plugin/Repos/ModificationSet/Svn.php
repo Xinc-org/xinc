@@ -146,6 +146,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                          * take after UUID
                          */
                         return $this->_getRevisionNew($result);
+                        break;
                 }
                 break;
             default:

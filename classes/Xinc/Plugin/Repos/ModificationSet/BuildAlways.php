@@ -3,11 +3,9 @@
  * This interface represents a publishing mechanism to publish build results
  * 
  * @package Xinc.Plugin
- * @author David Ellis
- * @author Gavin Foster
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify

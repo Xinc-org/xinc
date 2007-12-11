@@ -43,6 +43,12 @@ class Xinc_Build_Properties
         $this->_properties[$name] = $value;
     }
     
+    /**
+     * Returns the property value of the questioned keyname
+     *
+     * @param String $name
+     * @return mixed String or null if not found
+     */
     public function get($name)
     {
         if (isset($this->_properties[$name])) {
@@ -52,6 +58,11 @@ class Xinc_Build_Properties
         }
     }
     
+    /**
+     * returns all the properties in an array
+     *
+     * @return array
+     */
     public function getAllProperties()
     {
         return $this->_properties;

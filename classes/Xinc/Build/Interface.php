@@ -62,6 +62,13 @@ interface Xinc_Build_Interface
      * @return Xinc_Build_Properties
      */
     public function &getProperties();
+    
+    /**
+     * returns the build statistics
+     *
+     * @return Xinc_Build_Statistics
+     */
+    public function &getStatistics();
     /**
      * sets the build time for this build
      *
@@ -211,4 +218,22 @@ interface Xinc_Build_Interface
      * @param string $message
      */
     public function info($message);
+    
+    /**
+     * Put build into queue mode
+     *
+     */
+    public function enqueue();
+    
+    /**
+     * check if build is in queue mode
+     *
+     */
+    public function isQueued();
+    
+    /**
+     * remove build from queue mode
+     *
+     */
+    public function dequeue();
 }

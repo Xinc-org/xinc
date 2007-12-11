@@ -5,7 +5,7 @@
  * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -69,20 +69,21 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     private function _generateLogDetailTab()
     {
         $i = count($this->logXml->children());
-        $rowTpl = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'logDetailsRow.html');
+       
         $rows = array();
         foreach ($this->logXml->children() as $logEntry) { 
-            $row = call_user_func_array('sprintf', array($rowTpl, $i--, 
-                                                         $logEntry['time'], 
-                                                         $logEntry['priority'], 
-                                                         $logEntry ));
-            $rows[] = $row;
+           
+            $rows[] = '[' . $i-- . ',' 
+                     . $logEntry['timestamp'] 
+                     . ',"' . $logEntry['priority'] 
+                     . '","' . str_replace("\n", '\\n', addcslashes($logEntry, '"\'')) 
+                     . '"]';
         }
+        $logTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'logJs.html');
         
-        $tabTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'logDetails.html');
-        
-        $content = call_user_func_array('sprintf', array($tabTemplate,
-                                                         implode("\n", $rows)));
+        $content = str_replace(array('{data}','{projectname}','{buildtime}'),
+                               array(implode(',', $rows), $this->projectName, $this->build->getBuildTime()),
+                               $logTemplate);
         
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('Log Messages');
         $extension->setContent($content);
@@ -123,37 +124,11 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         
         
         
-        $tabTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'allbuilds.html');
-        $rowTpl = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'allbuildsRow.html');
-        $rows = array();
-        while ($this->historyBuilds->hasNext()) {
-            $build = $this->historyBuilds->next();
-            switch ($build->getStatus()) {
-                case 1:
-                    $bgColor = 'green';
-                    break;
-                case -1:
-                    $bgColor = 'gray';
-                    break;
-                case 0:
-                    $bgColor = 'red';
-                    break;
-                default:
-                    $bgColor = 'gray';
-                    break;
-            }
-            $rows[] = call_user_func_array('sprintf', array($rowTpl,
-                                                            $bgColor,
-                                                            $build->getProject()->getName(),
-                                                            $build->getBuildTime(),
-                                                            $bgColor,
-                                                            date('Y-m-d H:i:s', $build->getBuildTime()),
-                                                            $bgColor,
-                                                            $build->getLabel()));
-        }
-        
-        $content = call_user_func_array('sprintf', array($tabTemplate,
-                                                         implode("\n", $rows)));
+        $content = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'allBuildsJs.html');
+
+        $content = str_replace(array('{projectname}','{buildtime}'), 
+                               array($this->projectName,$this->build->getBuildTime()),
+                               $content);
         
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('All Builds');
         $extension->setContent($content);
@@ -256,7 +231,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                                                                       $this->build->getProject()->getName()));
                             
                         }
-                        include 'view/projectDetail.phtml';
+                        include 'templates/projectDetail.html';
                     }
                     
                 break;

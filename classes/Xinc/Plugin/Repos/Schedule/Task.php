@@ -5,7 +5,7 @@
  * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -81,7 +81,7 @@ class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Base implements X
         }
         //var_dump($build);
         $lastBuild = $build->getLastBuild()->getBuildTime();
-        //Xinc_Logger::getInstance()->info('Last build for : ' . $build->getProject()->getName() . ': '.date('Y-m-d H:i:s' , $lastBuild));
+        
         if ($lastBuild != null ) {
             $nextBuild = $this->getInterval() + $lastBuild;
             /**

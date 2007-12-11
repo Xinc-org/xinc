@@ -58,6 +58,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
     {
         $this->build=$build;
         $buildTime = time();
+        $startTime = time() + microtime(true);
         $build->setBuildTime($buildTime);
         if ( Xinc_Build_Interface::STOPPED === $build->getStatus() ) {
             
@@ -151,8 +152,15 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
              */
             $build->process(Xinc_Plugin_Slot::POST_PROCESS);
             
+            /**
+             * set the "time it took to build" on the build
+             */
+            $endTime = time() + microtime(true);
+            $build->getStatistics()->set('build.duration', $endTime - $startTime);
+            
             
             $build->serialize();
+            
             $this->build = null;
         } else if ( Xinc_Build_Interface::INITIALIZED === $build->getStatus() ) {
             //$build->setBuildTime($buildTime);

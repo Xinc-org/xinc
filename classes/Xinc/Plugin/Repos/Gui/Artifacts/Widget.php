@@ -45,13 +45,12 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     public function mime_content_type2($fileName)
     {
         $contentType = null;
-        if (function_exists('mime_content_type')) {
-            $contentType = mime_content_type($fileName);
-        } else if (function_exists('finfo_open')) {
+        if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
-    
             $contentType = finfo_file($finfo, $fileName);
             finfo_close($finfo);
+        } else if (function_exists('mime_content_type')) {
+            $contentType = mime_content_type($fileName);
         }
     
         return $contentType;
@@ -228,8 +227,13 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $projectName = $build->getProject()->getName();
         $buildTimestamp = $build->getBuildTime();
         
+        $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'artifactsJs.html');
+        
+        $template = str_replace(array('{projectname}', '{buildtime}'),
+                                array($projectName, $buildTimestamp), $template);
+        
         $detailExtension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('Artifacts');
-        $detailExtension->setContent($this->_getArtifactsTree($build));
+        $detailExtension->setContent($template);
         
         return $detailExtension;
     }

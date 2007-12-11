@@ -5,7 +5,7 @@
  * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -46,6 +46,10 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     {
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
+                
+                    $query = $_SERVER['REQUEST_URI'];
+
+                    
                     
                     $handler = Xinc_Gui_Handler::getInstance();
                     $statusDir = $handler->getStatusDir();
@@ -83,7 +87,12 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
                             
                         }
                     }
+                    if (preg_match('/\/dashboard\/projects.*/', $query)) {
+                        include_once 'view/projects.html';
+                        
+                    } else {
                     include 'view/overview.phtml';
+                    }
                     
                 break;
             default:
@@ -100,7 +109,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function getPaths()
     {
-        return array('/','/dashboard', '/dashboard/');
+        return array('/dashboard', '/dashboard/');
     }
     public function init()
     {
