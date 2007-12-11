@@ -65,8 +65,12 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
     public function mime_content_type2($fileName)
     {
         $contentType = null;
+        if(preg_match('/.*?.tar\.gz/', $fileName)) {
+            return 'application/x-gzip';
+        }
         if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
+            if(!$finfo) return;
             $contentType = finfo_file($finfo, $fileName);
             finfo_close($finfo);
         } else if (function_exists('mime_content_type')) {
