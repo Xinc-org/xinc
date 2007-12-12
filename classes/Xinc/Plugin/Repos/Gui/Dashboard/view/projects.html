@@ -12,7 +12,10 @@ id: 'project-'+name+'-'+build,
 autoScroll: true,
 title: name,
 plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name+'&r='+Math.random(), scripts: true},
+autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
+nocache: true,
+    text: "Loading...",
+    timeout: 30},
 closable:true
 });
 tab.on('close',function(p) {
