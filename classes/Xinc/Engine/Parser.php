@@ -98,7 +98,7 @@ class Xinc_Engine_Parser
         
         $engine = new $classname;
         
-        if (!in_array('Xinc_Engine_Interface', class_implements($engine))) {
+        if (!$engine instanceof Xinc_Engine_Interface) {
             
             throw new Xinc_Engine_Exception_Invalid((string)$attributes->classname);
         }

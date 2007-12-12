@@ -90,7 +90,7 @@ class Xinc_Plugin_Repository
             switch ($taskSlot) {
                 case Xinc_Plugin_Slot::PROJECT_SET_VALUES: 
                         // make sure the task implements the setter interface
-                        if (!in_array('Xinc_Plugin_Task_Setter_Interface', class_implements($task))) {
+                        if (!$task instanceof Xinc_Plugin_Task_Setter_Interface) {
                             Xinc_Logger::getInstance()->error('cannot register task '
                                                              . $fullTaskName
                                                              . ' it does not implement the required interface '

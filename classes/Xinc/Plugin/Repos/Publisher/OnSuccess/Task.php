@@ -35,7 +35,7 @@ class Xinc_Plugin_Repos_Publisher_OnSuccess_Task extends Xinc_Plugin_Repos_Publi
     {
         
         foreach ( $this->_subtasks as $task ) {
-            if ( !in_array('Xinc_Plugin_Repos_Publisher_AbstractTask', class_parents($task)) ) {
+            if (!$task instanceof Xinc_Plugin_Repos_Publisher_AbstractTask) {
                 return false;
             }
                 

@@ -31,7 +31,7 @@ class Xinc_Plugin_Repos_Publisher_Task extends Xinc_Plugin_Task_Base
     public function validate()
     {
         foreach ( $this->_subtasks as $task ) {
-            if ( !in_array('Xinc_Plugin_Repos_Publisher_AbstractTask', class_parents($task)) ) {
+            if (!$task instanceof Xinc_Plugin_Repos_Publisher_AbstractTask) {
                 return false;
             }
                 

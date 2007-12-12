@@ -95,9 +95,9 @@ allbuilds = function(){
                 
                     if (record.data.status == 1 ) {
                       return 'build-successful-css';
-                    } else if (record.data.status == -1 ) {
-                    return 'build-failed-css';
                     } else if (record.data.status == 0 ) {
+                    return 'build-failed-css';
+                    } else if (record.data.status == -1 ) {
                     return 'build-stopped-css';
                     }
                     

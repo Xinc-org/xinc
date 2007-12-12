@@ -62,8 +62,8 @@ class Xinc_Engine_Sunrise_TestParser extends Xinc_BaseTest
          * Expecting one Xinc_Build
          */
         $this->assertTrue(count($result) == 1, 'Should have one item in the array');
-        $this->assertTrue(in_array('Xinc_Build_Interface', class_implements($result[0]))
-                         , 'Object has to implement the Xinc_Build_Interface');
+        $this->assertTrue($result[0] instanceof Xinc_Build_Interface, 
+                          'Object has to implement the Xinc_Build_Interface');
         
     }
 

@@ -1,6 +1,6 @@
 
 <script type="text/javascript">
-function openTab(name, build){
+function openTab(name, build, label){
 var tab=Ext.getCmp('project-'+name +'-'+build);
 
 if(tab) {
@@ -10,7 +10,7 @@ return;
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
-title: name,
+title: label + ' - ' +name,
 autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
 autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
@@ -70,6 +70,7 @@ return false;
                 <ul id="legend" style="list-style:none;margin-left:0;">
 		            <li><img src="/images/passed.png" class="item-icon icon">Build passed</li>
 		            <li><img src="/images/failed.png" class="item-icon icon">Build failed</li>
+		            <li><img src="/images/stopped.png" class="item-icon icon">Build stopped</li>
 		           
 		        </ul>
             </div>
@@ -89,7 +90,7 @@ while ($this->builds->hasNext()) {
     $text=$build->getStatus() == 1   ?'success':
                                            ($build->getStatus() == -1 ?'stopped':'failed');
 $detailUrl=<<<EOJ
-openTab('{$build->getProject()->getName()}','{$build->getBuildTime()}');
+openTab('{$build->getProject()->getName()}','{$build->getBuildTime()}', '{$build->getLabel()}');
 EOJ;
 ?>
  <tr class="method-row">

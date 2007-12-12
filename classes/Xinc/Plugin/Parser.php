@@ -83,7 +83,7 @@ class Xinc_Plugin_Parser
         
         $plugin = new $classname;
         
-        if (!in_array('Xinc_Plugin_Interface', class_implements($plugin))) {
+        if (!$plugin instanceof Xinc_Plugin_Interface) {
             throw new Xinc_Plugin_Exception_Invalid((string)$attributes->classname);
         }
         
