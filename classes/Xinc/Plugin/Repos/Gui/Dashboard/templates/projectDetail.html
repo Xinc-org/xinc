@@ -4,8 +4,10 @@ function openTab(name,build){
 var tab=Ext.getCmp('project-'+name+'-'+build);
 
 if(tab) {
- tab.show();
- return;
+ if(tab.rendered) {
+   tab.show();
+   return;
+ }
 }
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
@@ -32,8 +34,10 @@ function openDetailTab(name,build, label){
 var tab=Ext.getCmp('project-'+name+'-'+build);
 
 if(tab) {
- tab.show();
- return;
+ if(tab.rendered) {
+   tab.show();
+   return;
+ }
 }
 var c=Ext.getCmp('doc-body').add(new Ext.Panel({
 id: 'project-'+name+'-'+build,
