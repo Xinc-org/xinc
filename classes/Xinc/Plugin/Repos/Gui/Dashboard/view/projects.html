@@ -117,5 +117,12 @@ EOJ;
 </div>
 </div>
 </div>
+<script>
+function refreshMainPanel()
+{
+Ext.getCmp('welcome-panel').load({url: '/dashboard/projects', scripts: true, nocache:true, timeout:30});
+}
+setTimeout('refreshMainPanel()',60000);
+</script>
 
 

@@ -85,6 +85,10 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
         if ($limit==null) {
             $limit = $totalCount;
         }
+        /**
+         * turn it upside down so the latest builds appear first
+         */
+        $buildHistoryArr = array_reverse($buildHistoryArr, true);
         $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);
         
         $builds = array();
@@ -105,7 +109,7 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
             
         }
         
-        $builds = array_reverse($builds);
+        //$builds = array_reverse($builds);
         
         $object = new stdClass();
         $object->totalcount = $totalCount;
