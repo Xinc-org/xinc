@@ -74,8 +74,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
-                throw new Xinc_Exception_ModificationSet('Problem with remote '
-                                                        . 'Subversion repository');
+                /**throw new Xinc_Exception_ModificationSet('Problem with remote '
+                                                          . 'Subversion repository');*/
+                /**
+                 * Dont throw exception, but log error and make build fail
+                 */
+                $build->error('Problem with remote '
+                             . 'Subversion repository, output: ' . $remoteSet);
+                $build->setStatus(Xinc_Build_Interface::FAILED);
+                return true;
             }
 
             $localRevision = $this->getRevision($localSet);
