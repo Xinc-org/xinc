@@ -12,12 +12,15 @@ id: 'project-'+name+'-'+build,
 autoScroll: true,
 title: name,
 plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name, scripts: true},
+autoLoad: {url: '/dashboard/detail?project='+name+'&r='+Math.random(), scripts: true},
 closable:true
+});
+tab.on('close',function(p) {
+ p.destroy();
+ alert(p);
 });
 var c=Ext.getCmp('doc-body').add(tab);
 //tab.load({url: '/dashboard/detail?project='+name, scripts: true});
-
 c.show();
 return false;
 

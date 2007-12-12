@@ -7,14 +7,21 @@ if(tab) {
  tab.show();
  return;
 }
-Ext.getCmp('doc-body').add(new Ext.Panel({
+var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
 title: name,
 plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name, scripts: true},
+autoLoad: {url: '/dashboard/detail?project='+name+'&r='+Math.random(), scripts: true},
 closable:true
-})).show();return false;
+});
+tab.on('close',function(p) {
+ p.destroy();
+ alert(p);
+});
+var c=Ext.getCmp('doc-body').add(tab);
+c.show();
+return false;
 
 }
 
@@ -30,7 +37,7 @@ id: 'project-'+name+'-'+build,
 autoScroll: true,
 title: label + ' - ' + name,
 plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name+'&timestamp='+build, scripts: true},
+autoLoad: {url: '/dashboard/detail?project='+name+'&timestamp='+build+'&r='+Math.random(), scripts: true},
 closable:true
 }));
 c.show();
