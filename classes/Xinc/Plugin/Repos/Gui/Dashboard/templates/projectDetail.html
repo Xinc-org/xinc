@@ -4,15 +4,15 @@ function openTab(name,build){
 var tab=Ext.getCmp('project-'+name+'-'+build);
 
 if(tab) {
- if(tab.rendered) {
    tab.show();
    return;
- }
+ 
 }
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
 title: name,
+autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
 autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
 nocache: true,
@@ -34,14 +34,13 @@ function openDetailTab(name,build, label){
 var tab=Ext.getCmp('project-'+name+'-'+build);
 
 if(tab) {
- if(tab.rendered) {
    tab.show();
    return;
- }
 }
 var c=Ext.getCmp('doc-body').add(new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
+autoDestroy: true,
 title: label + ' - ' + name,
 plugins: new Ext.ux.TabCloseMenu(),
 autoLoad: {url: '/dashboard/detail?project='+name+'&timestamp='+build, scripts: true,

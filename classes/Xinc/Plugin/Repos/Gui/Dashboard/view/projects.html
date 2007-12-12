@@ -4,15 +4,14 @@ function openTab(name, build){
 var tab=Ext.getCmp('project-'+name +'-'+build);
 
 if(tab) {
- if(tab.rendered) {
-   tab.show();
-   return;
- }
+tab.show();
+return;
 }
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
 title: name,
+autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
 autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
 nocache: true,
