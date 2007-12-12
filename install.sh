@@ -160,10 +160,11 @@ fi
 if [ ! -d $WEB_DIR ]; then
     mkdir $WEB_DIR -p
 fi
-cp web/index.php $WEB_DIR/
+# cp web/handler.php $WEB_DIR/
 cp web/.htaccess $WEB_DIR/
 cp web/* -Rf $WEB_DIR/ -Rf
 rm $WEB_DIR/www.tpl.conf
+rm $WEB_DIR/handler.php.tpl
 
 echo "IP of Xinc web-application: [127.0.0.1]"
 if [ "$INTERACTIVE" = true ]; then read IP; fi
@@ -178,6 +179,7 @@ if [ "$PORT" = "" ]; then
 fi
 
 cat web/www.tpl.conf | sed -e "s#@INCLUDE@#$INCLUDE#" | sed -e "s#@WEB_DIR@#$WEB_DIR#" | sed -e "s#@PORT@#$PORT#" | sed -e "s#@IP@#$IP#" > $ETC/www.conf
+cat web/handler.php.tpl | sed -e "s#@STATUSDIR@#$STATUSDIR#" | sed -e "s#@ETC@#$ETC#" > $WEB_DIR/handler.php
 
 
 
