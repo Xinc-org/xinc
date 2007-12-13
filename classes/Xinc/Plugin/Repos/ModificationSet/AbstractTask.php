@@ -37,6 +37,8 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugi
             $build->setStatus(Xinc_Build_Interface::STOPPED);
         } else if ( $status === Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED ) {
             $build->setStatus(Xinc_Build_Interface::FAILED);
+        } else if ( $status === false ) {
+            $build->setStatus(Xinc_Build_Interface::STOPPED);
         }
         
     }
