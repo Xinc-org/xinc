@@ -25,3 +25,4 @@
 ################################################################################
 
 See http://code.google.com/p/xinc/wiki/Documentation_2_0_Preview for more information.
+See http://www.xinc.eu for a demo installation
