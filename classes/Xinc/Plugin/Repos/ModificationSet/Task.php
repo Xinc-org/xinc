@@ -58,6 +58,13 @@ class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Base
             if ( $build->getStatus() == Xinc_Build_Interface::PASSED ) {
                 
                 return;
+                
+            } else if ($build->getStatus() == Xinc_Build_Interface::FAILED) {
+                /**
+                 * if the modification cannot be detected make the build fail
+                 * See Issue 79
+                 */
+                return;
             }
         }
         $build->setStatus(Xinc_Build_Interface::STOPPED);

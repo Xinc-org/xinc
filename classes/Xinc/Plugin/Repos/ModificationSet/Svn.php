@@ -82,7 +82,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $build->error('Problem with remote '
                              . 'Subversion repository, output: ' . $remoteSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
-                return true;
+                /**
+                 * return -1 instead of true, see Issue 79
+                 */
+                return -1;
             }
 
             $localRevision = $this->getRevision($localSet);
