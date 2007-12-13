@@ -53,7 +53,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             //                                        . 'directory not present');
             $build->error('Subversion checkout directory'
                                              . ' not present');
-            return -1;
+            return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
         }
 
         $cwd = getcwd();
@@ -86,7 +86,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 /**
                  * return -2 instead of true, see Issue 79
                  */
-                return -2;
+                return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
             }
 
             $localRevision = $this->getRevision($localSet);
@@ -104,7 +104,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $build->setStatus(Xinc_Build_Interface::FAILED);
             //throw new Xinc_Exception_ModificationSet('Subversion checkout directory '
             //                                        . 'is not a working copy.');
-            return -2;
+            return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
         }
     }
 

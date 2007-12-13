@@ -116,7 +116,18 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
              * to run post-process to maybe inform about the failed build
              */
             $build->process(Xinc_Plugin_Slot::POST_PROCESS);
-
+            /**
+             * Issue 79, we need to serialize the build after failure in preprocess
+             */
+            /**
+             * set the "time it took to build" on the build
+             */
+            $endTime = time() + microtime(true);
+            $build->getStatistics()->set('build.duration', $endTime - $startTime);
+            
+            $build->serialize();
+            $this->build = null;
+            
         } else if ( Xinc_Build_Interface::PASSED === $build->getStatus() ) {
 
             $build->info("Code not up to date, "

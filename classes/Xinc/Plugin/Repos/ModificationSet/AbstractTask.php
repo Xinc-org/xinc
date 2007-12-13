@@ -24,6 +24,8 @@
 */
 abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugin_Task_Base
 {
+    const STOPPED = -1;
+    const FAILED = -2;
     
     public final function process(Xinc_Build_Interface &$build)
     {
@@ -31,9 +33,9 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugi
         if ( ($status = $this->checkModified($build)) === true ) {
             
             $build->setStatus(Xinc_Build_Interface::PASSED);
-        } else if ( $status == -1 ) {
+        } else if ( $status === Xinc_Plugin_Repos_ModificationSet_AbstractTask::STOPPED ) {
             $build->setStatus(Xinc_Build_Interface::STOPPED);
-        } else {
+        } else if ( $status === Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED ) {
             $build->setStatus(Xinc_Build_Interface::FAILED);
         }
         
