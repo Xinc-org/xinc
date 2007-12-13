@@ -74,6 +74,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
+                chdir($cwd);
                 /**throw new Xinc_Exception_ModificationSet('Problem with remote '
                                                           . 'Subversion repository');*/
                 /**
@@ -83,9 +84,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                              . 'Subversion repository, output: ' . $remoteSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 /**
-                 * return -1 instead of true, see Issue 79
+                 * return -2 instead of true, see Issue 79
                  */
-                return -1;
+                return -2;
             }
 
             $localRevision = $this->getRevision($localSet);
@@ -98,8 +99,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             return $localRevision < $remoteRevision;
         } else {
             chdir($cwd);
-            throw new Xinc_Exception_ModificationSet('Subversion checkout directory '
-                                                    . 'is not a working copy.');
+            $build->error('Subversion checkout directory '
+                         . 'is not a working copy.');
+            $build->setStatus(Xinc_Build_Interface::FAILED);
+            //throw new Xinc_Exception_ModificationSet('Subversion checkout directory '
+            //                                        . 'is not a working copy.');
+            return -2;
         }
     }
 
