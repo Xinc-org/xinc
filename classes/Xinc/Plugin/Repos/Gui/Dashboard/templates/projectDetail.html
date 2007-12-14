@@ -7,7 +7,7 @@
 }
 </style>
 <script type="text/javascript">
-function openTab(name,build){
+function openTab(name,build,label){
 var tab=Ext.getCmp('project-'+name+'-'+build);
 
 if(tab) {
@@ -18,7 +18,7 @@ if(tab) {
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
-title: name,
+title: name + ' - ' + label,
 autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
 autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
