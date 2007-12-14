@@ -52,13 +52,13 @@ logxml = function(){
             {id:'id',header: "ID", width: 40, sortable: true, dataIndex: 'id'},
             {header: "Date", width: 75, sortable: false, dataIndex: 'date',renderer:formatDate},
             {header: "Priority", width: 75, sortable: true, dataIndex: 'priority'},
-            {header: "Message", dataIndex: 'message', id:'message', autoWidth:true}
+            {header: "Message", dataIndex: 'message', id:'message', autoWidth:false }
         ],
         stripeRows: true,
         autoExpandColumn: 'message',
         bufferResize: true,
         height:350,
-        autoWidth: true,
+        width:'100%',
         title:false,
         autoScroll: true
     });

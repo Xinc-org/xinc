@@ -1,4 +1,11 @@
-
+<style>
+#welcome {
+    position:relative;
+    top:0;
+    left: 0;
+    zoom:1;
+}
+</style>
 <script type="text/javascript">
 function openTab(name,build){
 var tab=Ext.getCmp('project-'+name+'-'+build);
@@ -75,15 +82,18 @@ foreach ($this->getTabs('BUILD_SELECTOR') as $tab) {
 
 ?>      
     </div>
+    <!-- -->
     <div id="test" class="col-wide">
-    <div id="build-details"  class="body-wrap">
+     <div id="build-details-{projectname}"  class="body-wrap">
+    
     <?php
    foreach ($this->getTabs('BUILD_DETAILS') as $tab) {
     echo $tab->generate(dirname(__FILE__) . '/leftBlock.html');
 }
 ?>
+ </div>
 </div>
-</div>
+<!-- </div>-->
 </div>
 
 
