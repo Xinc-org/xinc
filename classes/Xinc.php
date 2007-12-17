@@ -6,6 +6,7 @@
  * @author Arno Schneider
  * @author David Ellis
  * @author Gavin Foster
+ * @author Jamie Talbot
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -32,6 +33,7 @@ require_once 'Xinc/Config.php';
 require_once 'Xinc/Project/Config.php';
 require_once 'Xinc/Engine/Repository.php';
 require_once 'Xinc/Build/Queue.php';
+require_once 'Xinc/Config/Getopt.php';
 
 class Xinc
 {
@@ -99,7 +101,26 @@ class Xinc
     private static $_instance;
 
 
-
+    /**
+     * Short command line arguments.
+     * @var string
+     */
+    private static $_shortOptions = 'f:p:w:l:s:v:ho';
+        
+    /**
+     * Long command line arguments.
+     * @var array
+     */
+    private static $_longOptions = array(
+                                         'config-file=',
+                                         'project-dir=',
+                                         'working-dir=',
+                                         'log-file=',
+                                         'status-dir=',
+                                         'verbose=',
+                                         'help',
+                                         'once'
+                                    );
 
 
 
@@ -261,6 +282,14 @@ class Xinc
     {
         return $this->_workingDir;
     }
+    
+    public function getShortOptions() {
+        return self::$_shortOptions;
+    }
+    
+    public function getLongOptions() {
+        return self::$_longOptions;
+    }
     /**
      * Starts the continuous loop.
      */
@@ -299,13 +328,7 @@ class Xinc
      * @param string $configFile1
      * @param string $configFile2 ...
      */
-    public static function main($workingDir = null,
-                                $projectDir = null,
-                                $statusDir = null,
-                                $systemConfigFile = null,
-                                $logFile = null,
-                                $logLevel = 0,
-                                $daemon = true)
+    public static function main($args = '')
     {
         /**
          * See Issue 57.
@@ -319,44 +342,40 @@ class Xinc
             ini_set('date.timezone', 'UTC');
         }
         
-        if ($workingDir == null) {
-            $workingDir = dirname($_SERVER['argv'][0]);
-        }
+        $arguments = Xinc::handleArguments($args);
+        
+        $workingDir = isset($arguments['workingDir']) ? $arguments['workingDir'] : dirname($_SERVER['argv'][0]);
         /**
          * Set up the logging
          */
         $logger = Xinc_Logger::getInstance();
         
         $logger->setLogLevel($logLevel);
-        if ($logFile == null) {
-            $logFile = $workingDir . DIRECTORY_SEPARATOR . 'xinc.log';
-            
-        }
+        $logger->setLogLevel($arguments['logLevel']);
+        
+        $logFile = isset($arguments['logFile']) ?
+                         $arguments['logFile'] : $workingDir . DIRECTORY_SEPARATOR . 'xinc.log';
         $logger->setXincLogFile($logFile);
         
         $logger->info('Starting up Xinc');
         
+        $projectDir = isset($arguments['projectDir']) ? 
+                            $arguments['projectDir'] :
+                            $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR;
+        $statusDir = isset($arguments['statusDir']) ?
+                           $arguments['statusDir'] :
+                           $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR;
+
+        $systemConfigFile = isset($arguments['configFile']) ?
+                                  $arguments['configFile'] : $workingDir . DIRECTORY_SEPARATOR . 'system.xml';
         
-        if ($projectDir == null) {
-            $projectDir = $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR;
-        }
-        if ($statusDir == null) {
-            $statusDir = $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR;
-        }
         
-        if ($systemConfigFile == null) {
-            $systemConfigFile = $workingDir . DIRECTORY_SEPARATOR . 'system.xml';
-        }
-        
-        if ($logFile == null) {
-            $logFile = $workingDir . DIRECTORY_SEPARATOR . 'xinc.log';
-        }
         $logger->info('- Workingdir:         ' . $workingDir);
         $logger->info('- Projectdir:         ' . $projectDir);
         $logger->info('- Statusdir:          ' . $statusDir);
         $logger->info('- System Config File: ' . $systemConfigFile);
-        $logger->info('- Log Level:          ' . $logLevel);
-        $logger->info('- Daemon:             ' . ($daemon==true ? 'yes':'no'));
+        $logger->info('- Log Level:          ' . $arguments['logLevel']);
+        $logger->info('- Daemon:             ' . ($arguments['daemon'] ? 'yes' : 'no'));
         self::$_instance = new Xinc();
         try {
             self::$_instance->setWorkingDir($workingDir);
@@ -369,15 +388,14 @@ class Xinc
             self::$_instance->setSystemConfigFile($systemConfigFile);
             
             // get the project config files
-            if (func_num_args() > 7) {
-                
-                for ($i = 7; $i < func_num_args(); $i++) {
-                    $logger->info('Loading Project-File: ' . func_get_arg($i));
-                    self::$_instance->_addProjectFile(func_get_arg($i));
+            if (isset($arguments['projectFiles'])) {
+                foreach ($arguments['projectFiles'] as $projectFile) {
+                    $logger->info('Loading Project-File: ' . $projectFile);
+                    self::$_instance->_addProjectFile($projectFile);
                 }
             }
             
-            self::$_instance->start($daemon);
+            self::$_instance->start($arguments['daemon']);
         } catch (Exception $e) {
             // we need to catch everything here
             $logger->error('Xinc stopped due to an uncaught exception: ' 
@@ -385,7 +403,77 @@ class Xinc
                           . $e->getTraceAsString());
         }
     }
-    
+    /**
+     * Handles command line arguments.
+     * @return array The array of parsed arguments.
+     */
+    public static function handleArguments($commandLine = '') 
+    {
+        if ($commandLine) {
+            if (!is_array($commandLine)) {
+                $commandLine = explode(' ', $commandLine);
+            }
+        } else {
+            $commandLine = $_SERVER['argv']; 
+        }
+        $arguments = array('daemon' => true, 'logLevel' => Xinc_Logger::LOG_LEVEL_INFO);
+      
+        try {
+            $options = Xinc_Config_Getopt::getopt($commandLine, self::$_shortOptions, self::$_longOptions);
+        } catch (Xinc_Config_Exception_Getopt $e) {
+            Xinc_Logger::getInstance()->error('Handling Arguments: ' . $e->getMessage());
+        }
+
+        if (isset($options[1])) {
+            $arguments['projectFiles'] = $options[1];
+        }
+        
+        foreach ($options[0] as $option) {
+            switch ($option[0]) {
+                case '--config-file':
+                case 'f':
+                    $arguments['configFile'] = $option[1];
+                    break;
+                
+                case '--once':
+                case 'o':
+                    $arguments['daemon'] = false;
+                    break;
+
+                case '--project-dir':
+                case 'p':
+                    $arguments['projectDir'] = $option[1];
+                    break;
+                    
+                case '--working-dir':
+                case 'w':
+                    $arguments['workingDir'] = $option[1];
+                    break;
+                
+                case '--log-file':
+                case 'l':
+                    $arguments['logFile'] = $option[1];
+                    break;
+
+                case '--status-dir':
+                case 's':
+                    $arguments['statusDir'] = $option[1];
+                    break;
+                
+                case '--verbose':
+                case 'v':
+                    $arguments['logLevel'] = $option[1];
+                    break;
+                    
+                case '--help': 
+                    self::showHelp();
+                    exit;
+            }
+        }
+      
+        // Do some arguments.
+        return $arguments;
+    }
     private function _addProjectFile($fileName)
     {
         
@@ -454,5 +542,18 @@ class Xinc
                 unlink($file);
             }
         }
+    }
+    public static function showHelp()
+    {
+        echo "Usage: xinc [switches] [project-file-1 [project-file-2 ...]]\n\n";
+
+        echo "  -f --config-file <file>   The config file to use.\n" .
+             "  -p --project-dir <dir>    The project directory.\n" .
+             "  -w --working-dir <dir>    The working directory.\n" .
+             "  -l --log-file <file>      The log file to use.\n" . 
+             "  -v --verbose <level>      The level of information to log (default 2).\n" . 
+             "  -s --status-dir <dir>     The status directory to use.\n" . 
+             "  -o --once                 Run once and exit.\n";
+             "  -h --help                 Prints this help message.\n";
     }
 }
