@@ -45,6 +45,7 @@ class Xinc_Gui_Widget_Repository
      */
     private $_definedWidgets = array();
     
+    private $_widgetClasses = array();
     /**
      * Contains all the registered widgets
      *
@@ -84,7 +85,17 @@ class Xinc_Gui_Widget_Repository
             $this->_definedWidgets[$path] = $widget;
         }
         $this->_widgets[] = $widget;
+        $this->_widgetClasses[get_class($widget)] = $widget;
         
+    }
+
+
+    public function &getWidgetByClassName($name)
+    {
+        if (isset($this->_widgetClasses[$name])) {
+            return $this->_widgetClasses[$name];
+        }
+        return null;
     }
     /**
      * Determines the Widget that should be used
@@ -93,8 +104,7 @@ class Xinc_Gui_Widget_Repository
      *
      * @param String $path Pathname of the HTTP-Request
      * @return Xinc_Gui_Widget_Interface
-     */
-
+     */    
     public function &getWidgetForPath($path)
     {
         

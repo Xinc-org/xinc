@@ -8,6 +8,7 @@
 </style>
 <script type="text/javascript">
 function openTab(name,build,label){
+
 var tab=Ext.getCmp('project-'+name+'-'+build);
 
 if(tab) {
@@ -39,7 +40,6 @@ return false;
 
 function openDetailTab(name,build, label){
 var tab=Ext.getCmp('project-'+name+'-'+build);
-
 if(tab) {
    tab.show();
    return;

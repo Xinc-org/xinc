@@ -59,8 +59,33 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
         return true;
     }
 
+    /**
+     * Name of a property containing a boolean value
+     * - if true the builder will process
+     *
+     * @var string
+     */
+    private $_if = null;
+    
+    public function setIf($if)
+    {
+        $this->_if = $if;
+    }
+    
     public function build(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->build($build, (string)$this->_buildFile, (string)$this->_target);
+        if ($this->_if !== null) {
+            $build->info('Checking condidition property: ' . $this->_if);
+            $ifProp = $build->getProperties()->get($this->_if);
+            if ($ifProp === true) {
+               $build->info('--' . $this->_if . ' == true --> building');
+               return $this->_plugin->build($build, (string)$this->_buildFile, (string)$this->_target);
+            } else {
+               $build->info('--' . $this->_if . ' == false --> not building');
+               return true;
+            }
+        } else {
+           return $this->_plugin->build($build, (string)$this->_buildFile, (string)$this->_target);
+        }
     }
 }

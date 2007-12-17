@@ -32,8 +32,12 @@ require_once 'Xinc/Build.php';
 class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
 {
     protected $_plugin;
+    
+    const TEMPLATE = 'MenuItems={"id":"xinc","text":"Menu","singleClickExpand":true, "children":[%s]};';
 
     private $_menu = array();
+    
+    private $_extensions = array();
     
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
@@ -84,28 +88,43 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
     
     public function init()
     {
-        $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
-        $classes = array();
-        foreach ($widgets as $widget) {
-            if ($widget->registerMainMenu()) {
-                $this->_menu[] = $widget;
-                
-                
-            } 
-            $widget->registerExtension('MAIN_MENU', array(&$this,'getMenu'));
-            
-            
-        }
+        $indexWidget = Xinc_Gui_Widget_Repository::getInstance()->
+                                                   getWidgetByClassName('Xinc_Plugin_Repos_Gui_Index_Widget');
         
-        
+        $indexWidget->registerExtension('MAIN_MENU', array(&$this,'generateMenu'));
         
     }
+    
+    public function generateMenu()
+    {
+        $menuItems = array();
+        if (isset($this->_extensions['MAIN_MENU_ITEMS'])) {
+            foreach ($this->_extensions['MAIN_MENU_ITEMS'] as $extension) {
+                
+                $item = call_user_func_array($extension, array());
+                
+                if (!$item instanceof Xinc_Plugin_Repos_Gui_Menu_Item) {
+                    continue;
+                }
+                $menuItems[] = $item->generate();
+            } 
+        }
+        
+        $menuStr = call_user_func_array('sprintf',
+                                        array(self::TEMPLATE,implode(",", $menuItems)));
+        return $menuStr;
+    }
+    
     public function registerExtension($extension, $callback)
     {
-        $this->_extensions[$extension] = $callback;
+        
+        if (!isset($this->_extensions[$extension])) {
+            $this->_extensions[$extension] = array();
+        }
+        $this->_extensions[$extension][] = $callback;
     }
     public function getExtensionPoints()
     {
-        return array();
+        return array('MAIN_MENU_ITEMS');
     }
 }

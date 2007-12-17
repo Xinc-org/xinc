@@ -1,0 +1,29 @@
+<h3>{TITLE}</h3>
+<div>
+
+<div style="float: left; padding-left: 5px;" width="600" height="300"><canvas id="{ID}" width="600" height="300"></canvas></div>
+<div style="clear: both; height: 1px; width: 1px;">&nbsp</div>
+</div>
+ 
+ <script type="text/javascript">
+var options{ID} = {
+   "IECanvasHTC": "/plotkit/PlotKit/iecanvas.htc",
+   "colorScheme": PlotKit.Base.palette(PlotKit.Base.baseColors()[0]),
+   //"padding": {left: 0, right: 0, top: 10, bottom: 30},
+   "xTicks": [{XAXIS}],
+   "drawYAxis": true
+};
+function drawGraph{ID}() {
+
+    var layout = new PlotKit.Layout("{TYPE}", options{ID});
+    layout.addDataset("sqrt", [{DATASET}]);
+    layout.evaluate();
+    var canvas = MochiKit.DOM.getElement("{ID}");
+    var plotter = new PlotKit.SweetCanvasRenderer(canvas, layout, options{ID});
+    plotter.render();
+}
+
+
+
+MochiKit.DOM.addLoadEvent(drawGraph{ID});
+</script>

@@ -36,7 +36,7 @@ DAEMON=/bin/xinc
 NAME=xinc
 # send log output to text-log-file
 # logfile is going to be used for build-based logging only
-OPTIONS="-f $CONFIG -p $DATADIR -s $STATUS -w $DATADIR -l $LOG --- $PROJECTS"
+OPTIONS="-f $CONFIG -p $DATADIR -s $STATUS -w $DATADIR -l $LOG $PROJECTS"
 DESC="Xinc - Continuous Integration for PHP"
 
 # create the /etc/xinc/status directory if not exists

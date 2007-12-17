@@ -24,14 +24,11 @@
 */
 
 require_once 'Xinc/StreamLogger.php';
-
-
-
 require_once 'PHPUnit/Framework/TestCase.php';
 
 class Xinc_BaseTest extends PHPUnit_Framework_TestCase
 {
-    public static $registered=false;
+    public static $registered = false;
     
     public function __construct()
     {
@@ -41,8 +38,9 @@ class Xinc_BaseTest extends PHPUnit_Framework_TestCase
             $cwd = dirname(dirname(dirname(__FILE__)));
             $testDir = $cwd;
             $configFile = $testDir . '/resources/testSystem.xml';
-            Xinc::main($testDir, $testDir, null, $configFile, 
-                       "xinclogger://test", Xinc_Logger::LOG_LEVEL_DEBUG, false);
+            $debug = Xinc_Logger::LOG_LEVEL_DEBUG;
+            $commandLine = "-w $testDir -p $testDir -f $configFile -l xinclogger://test -o -v $debug";
+            Xinc::main($commandLine);
             
             //Xinc::getInstance()->setStatusDir($testDir);
             //Xinc_Logger::getInstance()->setXincLogFile("xinclogger://test");

@@ -47,6 +47,7 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
                 
+                    // Build Main Menu
                     
                     include 'view/index.phtml';
                     
@@ -56,6 +57,18 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
                 break;
         }
     }
+    
+    public function getMenu()
+    {
+        if (!isset($this->_extensions['MAIN_MENU'])) {
+            return;
+        }
+        
+        $obj = call_user_func_array($this->_extensions['MAIN_MENU'], array());
+        return $obj;
+        
+    }
+    
     public function registerMainMenu()
     {
         return true;
@@ -74,14 +87,12 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
     }
     public function registerExtension($extension, $callback)
     {
-        
-        if (!isset($this->_extensions[$extension])) {
-            $this->_extensions[$extension] = array();
-        }
-        $this->_extensions[$extension][] = $callback;
+        $this->_extensions[$extension] = $callback;
     }
+    
+   
     public function getExtensionPoints()
     {
-        return array();
+        return array('MAIN_MENU');
     }
 }

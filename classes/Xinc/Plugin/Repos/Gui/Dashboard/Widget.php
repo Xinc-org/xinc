@@ -27,6 +27,8 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
+require_once 'Xinc/Plugin/Repos/Gui/Menu/Item.php';
+require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Projects/Menu.php';
 
 class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interface
 {
@@ -113,7 +115,54 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function init()
     {
+        $menuWidget = Xinc_Gui_Widget_Repository::getInstance()->
+                                                  getWidgetByClassName('Xinc_Plugin_Repos_Gui_Menu_Widget');
         
+        $menuWidget->registerExtension('MAIN_MENU_ITEMS', array(&$this,'generateDashboardMenuItem'));
+        
+        $menuWidget->registerExtension('MAIN_MENU_ITEMS', array(&$this,'generateProjectsMenuItem'));
+    }
+    
+    public function generateDashboardMenuItem()
+    {
+        $menuItem = new Xinc_Plugin_Repos_Gui_Menu_Item('widget-dashboard',
+                                                        'Dashboard', 
+                                                        true,
+                                                        '/dashboard/projects',
+                                                        'icon-dashboard',
+                                                        'Dashboard',
+                                                        true,
+                                                        true);
+        return $menuItem;
+    }
+    public function generateProjectsMenuItem()
+    {
+        
+        if (isset($this->_extensions['PROJECT_MENU_ITEM'])) {
+            $menuItem = new Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu('projects',
+                                                                          'Projects',
+                                                                          true,
+                                                                          null,
+                                                                          null,
+                                                                          'Projects',
+                                                                          true,
+                                                                          false);
+            foreach ($this->_extensions['PROJECT_MENU_ITEM'] as $extension) {
+                
+                $menuItem->registerSubExtension($extension);
+            }
+        } else {
+            $menuItem = new Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu('projects',
+                                                                          'Projects',
+                                                                          true,
+                                                                          null,
+                                                                          null,
+                                                                          'Projects',
+                                                                          true,
+                                                                          false);
+        }
+        
+        return $menuItem;
     }
     public function registerExtension($extension, $callback)
     {
@@ -125,6 +174,6 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function getExtensionPoints()
     {
-        return array();
+        return array('PROJECT_MENU_ITEM');
     }
 }

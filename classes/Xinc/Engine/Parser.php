@@ -75,19 +75,12 @@ class Xinc_Engine_Parser
         $plugins = array();
         
         $attributes = $pluginXml->attributes();
-        
-        
-        $res = @include_once((string)$attributes->filename);
-        
-        $included = self::_findIncluded((string)$attributes->filename);
-        
-        if ($res !== true && !$included) {
-            
-            throw new Xinc_Engine_Exception_FileNotFound((string)$attributes->classname,
-                                                         (string)$attributes->filename);
+                
+        if (!@include_once((string)$attributes->filename)) {
+            throw new Xinc_Engine_Exception_FileNotFound((string)$attributes->classname, (string)$attributes->filename);
         }
-        if (!class_exists((string)$attributes->classname)) {
-            
+        
+        if (!class_exists((string)$attributes->classname)) {            
             throw new Xinc_Engine_Exception_ClassNotFound((string)$attributes->classname,
                                                           (string)$attributes->filename);
         }
@@ -98,14 +91,10 @@ class Xinc_Engine_Parser
         
         $engine = new $classname;
         
-        if (!$engine instanceof Xinc_Engine_Interface) {
-            
+        if (!$engine instanceof Xinc_Engine_Interface) {            
             throw new Xinc_Engine_Exception_Invalid((string)$attributes->classname);
         }
         
         Xinc_Engine_Repository::getInstance()->registerEngine($engine, $default);
-
-    }
-
-    
+    }    
 }

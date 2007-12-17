@@ -20,7 +20,10 @@
 	<plugin filename="Xinc/Plugin/Repos/Gui/Menu.php" classname="Xinc_Plugin_Repos_Gui_Menu"/>
 	<plugin filename="Xinc/Plugin/Repos/Api.php" classname="Xinc_Plugin_Repos_Api"/>
 	<plugin filename="Xinc/Plugin/Repos/Gui/Index.php" classname="Xinc_Plugin_Repos_Gui_Index"/>
+	<plugin filename="Xinc/Plugin/Repos/Gui/Statistics.php" classname="Xinc_Plugin_Repos_Gui_Statistics"/>
+	
 </plugins>
+
 <engines>
 <engine classname="Xinc_Engine_Sunrise" filename="Xinc/Engine/Sunrise.php" default="default"/>
 </engines>

@@ -94,13 +94,13 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     {
         switch ($this->build->getStatus()) {
             case 1:
-                $bgColor = 'green';
+                $bgColor = '#04de04';
                 break;
             case -1:
                 $bgColor = 'gray';
                 break;
             case 0:
-                $bgColor = 'red';
+                $bgColor = '#f40204';
                 break;
             default:
                 $bgColor = 'gray';
