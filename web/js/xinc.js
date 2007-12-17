@@ -1,6 +1,66 @@
+function openMenuTab(id, title, url, iconClass, scripts, framed, height){
+var isExternal = url.substring(0, 7) == "http://";
+//alert(isExternal);
+
+
+if(height == null) {
+ height='100%';
+}
+
+var tab=Ext.getCmp(id);
+if(tab) {
+tab.show();
+return;
+}
+if(!isExternal && !framed) {
+var tab=new Ext.Panel({
+id: id,
+autoScroll: true,
+title: title,
+autoDestroy: true,
+plugins: new Ext.ux.TabCloseMenu(),
+iconCls: iconClass,
+autoLoad: {url: url, scripts: scripts,
+nocache: true,
+    text: "Loading...",
+    timeout: 30,
+    frame: true},
+closable:true
+});
+tab.on('close',function(p) {
+ p.destroy();
+ alert(p);
+});
+} else {
+var tab=new Ext.ux.ManagedIframePanel({
+id: id,
+autoScroll: true,
+autoShow: true,
+title: title,
+autoDestroy: true,
+plugins: new Ext.ux.TabCloseMenu(),
+type:'iframepanel',
+defaultSrc : url,
+iframeStyle : {overflow:'auto', height: height},
+//body: new IFrameComp({ id: id, url: url }),
+//body: new Ext.ux.ManagedIFrame({ src:url, frameBorder: 0, cls:'x-panel-body',width: '500px', height: '300px', id:'iframe'+id}),
+closable:true
+});
+tab.on('close',function(p) {
+ p.destroy();
+ alert(p);
+});
+}
+
+var c=Ext.getCmp('doc-body').add(tab);
+//tab.load({url: '/dashboard/detail?project='+name, scripts: true});
+c.show();
+return false;
+
+}
+
 Ext.BLANK_IMAGE_URL = '/ext-2.0/resources/s.gif';
 
-Docs = {};
 
 ApiPanel = function() {
     ApiPanel.superclass.constructor.call(this, {
@@ -28,14 +88,19 @@ ApiPanel = function() {
             id:'root',
             expanded:true,
             //children:[Docs.classData]
-            children:[]
+            children:[MenuItems]
+            
          }),
         collapseFirst:false
     });
     // no longer needed!
     //new Ext.tree.TreeSorter(this, {folderSort:true,leafAttr:'isClass'});
-
+   
     this.getSelectionModel().on('beforeselect', function(sm, node){
+        if (node.attributes.url != null) {
+            openMenuTab(node.attributes.id,node.attributes.title,node.attributes.url,node.attributes.iconCls,node.attributes.scripts, node.attributes.iframe, node.attributes.height);
+            return false;
+        }
         return node.isLeaf();
     });
 };
@@ -58,7 +123,8 @@ Ext.extend(ApiPanel, Ext.tree.TreePanel, {
             }
             parts[last] = cls;
 
-            this.selectPath('/root/apidocs/'+parts.join('/'));
+            //this.selectPath('/root/xinc/');//+parts.join('/'));
+            
         }
     }
 });
@@ -133,7 +199,7 @@ MainPanel = function(){
         activeTab: 0,
 
         items: {
-            id:'welcome-panel',
+            id:'widget-dashboard',
             title: 'Dashboard',
             autoLoad: {url: '/dashboard/projects', callback: this.initSearch, scope: this, scripts: true, nocache:true, timeout:30},
             iconCls:'icon-dashboard',
@@ -193,7 +259,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
     },
 
     loadClass : function(href, cls, member){
-        var id = 'docs-' + cls;
+        var id = 'menu-' + cls;
         var tab = this.getComponent(id);
         if(tab){
             this.setActiveTab(tab);
