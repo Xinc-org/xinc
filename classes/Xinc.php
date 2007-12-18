@@ -350,7 +350,6 @@ class Xinc
          */
         $logger = Xinc_Logger::getInstance();
         
-        $logger->setLogLevel($logLevel);
         $logger->setLogLevel($arguments['logLevel']);
         
         $logFile = isset($arguments['logFile']) ?
