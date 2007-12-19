@@ -70,7 +70,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
             $output = '';
             $result = 9;
-            exec('svn info ' . $url, $output, $result);
+            exec('svn info ' . $url . ' 2>&1', $output, $result);
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
