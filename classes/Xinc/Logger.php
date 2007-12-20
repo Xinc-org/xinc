@@ -5,6 +5,7 @@
  * @package Xinc.Logger
  * @author David Ellis
  * @author Gavin Foster
+ * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 David Ellis, One Degree Square
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -24,6 +25,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once 'Xinc/Logger/Message.php';
+require_once 'Xinc/Logger/Exception/NonWriteable.php';
 
 class Xinc_Logger
 {
@@ -117,11 +119,12 @@ class Xinc_Logger
      *
      * @param string $priority
      * @param string $msg
+     * @param resource $fileHandle to write to instead of logfile
      */
-    private function log($priority, $msg)
+    private function log($priority, $msg, $fileHandle = null)
     {
         /** @todo parse log level to display from a config */
-        if ($priority[0] < $this->_logLevel) {
+        if ($priority[0] < $this->_logLevel && $fileHandle === null) {
             return;
         }
         
@@ -144,7 +147,13 @@ class Xinc_Logger
         $message = ' ' . $prioritystr . '  ' . $timestr . ' ' . $msg."\n";
         if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) fputs(STDERR, $message);
         if ($this->_logFile != null) {
-            error_log($message, 3, $this->_logFile);
+            if ($fileHandle !== null) {
+                fputs($fileHandle, $message);
+            } else {
+                error_log($message, 3, $this->_logFile);
+            }
+        } else if ($fileHandle !== null) {
+            fputs($fileHandle, $message);
         }
     }
     
@@ -152,50 +161,64 @@ class Xinc_Logger
      * Log a message with priority 'error'.
      *
      * @param string $msg
+     * @param resource fileHandle
      */
-    public function error($msg)
+    public function error($msg, $fileHandle = null)
     {
-        $this->log(self::$logLevelError, $msg);
+        $this->log(self::$logLevelError, $msg, $fileHandle);
     }
     
     /**
      * Log a message with priority 'warn'.
      *
      * @param string $msg
+     * @param resource fileHandle
      */
-    public function warn($msg)
+    public function warn($msg, $fileHandle = null)
     {
-        $this->log(self::$logLevelWarn, $msg);
+        $this->log(self::$logLevelWarn, $msg, $fileHandle = null);
     }
     
     /**
      * Log a message with priority 'info'.
      *
      * @param string $msg
+     * @param resource fileHandle
      */
-    public function info($msg)
+    public function info($msg, $fileHandle = null)
     {
-        $this->log(self::$logLevelInfo, $msg);
+        $this->log(self::$logLevelInfo, $msg, $fileHandle = null);
     }
     
     /**
      * Log a message with priority 'debug'.
      *
      * @param string $msg
+     * @param resource fileHandle
      */
-    public function debug($msg)
+    public function debug($msg, $fileHandle = null)
     {
-        $this->log(self::$logLevelDebug, $msg);
+        $this->log(self::$logLevelDebug, $msg, $fileHandle);
     }
     /**
      * Log a message with priority 'verbose'.
      *
      * @param string $msg
+     * @param resource fileHandle
      */
-    public function verbose($msg)
+    public function verbose($msg, $fileHandle = null)
     {
-        $this->log(self::$logLevelVerbose, $msg);
+        $this->log(self::$logLevelVerbose, $msg, $fileHandle = null);
     }    
+    /**
+     * Empty the log queue
+     *
+     */
+    public function emptyLogQueue()
+    {
+        $this->_resetLogQueue();
+    }
+    
     /**
      * Flush the log queue to the log file.
      *
@@ -251,6 +274,14 @@ class Xinc_Logger
     
     public function setXincLogFile($logFile)
     {
+        
+        $parentDir = dirname($logFile);
+        
+        if (!is_writeable($logFile) && !is_writeable($parentDir)) {
+            $this->error('Cannot open "' . $logFile . '" for writing', STDERR);
+            throw new Xinc_Logger_Exception_NonWriteable($logFile);
+            
+        }
         $this->_logFile = $logFile;
     }
     

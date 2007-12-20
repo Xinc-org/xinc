@@ -45,6 +45,11 @@ then
     mkdir $INCLUDE
 fi
 
+if [ ! -d $INCLUDE/data/Xinc ]
+then
+   mkdir $INCLUDE/data/Xinc -p
+fi
+
 #if [ `which php` = "" ]; then
 #	declare PHP_BIN = "/usr/bin/php"
 	echo "Path to the PHP binary: [/usr/bin/php]"
@@ -186,6 +191,7 @@ cat web/handler.php.tpl | sed -e "s#@STATUSDIR@#$STATUSDIR#" | sed -e "s#@ETC@#$
 # copy Xinc classes to include path
 cp classes/Xinc.php $INCLUDE/
 cp -R classes/Xinc $INCLUDE/
+cp -Rf data/* $INCLUDE/data/Xinc
 
 # copy bin script to bin
 cat bin/xinc | sed -e "s#@PHP_BIN@#$PHP_BIN#" > $BIN/xinc

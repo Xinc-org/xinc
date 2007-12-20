@@ -27,8 +27,9 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
-
-require_once 'Xinc/Plugin/Repos/Gui/Menu/Item.php';
+require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
+require_once 'Xinc/Plugin/Repos/Gui/Statistics/Menu/Item.php';
+require_once 'Xinc/Data/Repository.php';
 
 
 class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interface
@@ -64,19 +65,14 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
            default:    
                
                
-               include 'templates/graphbase.html';
+               include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
+                                                               . 'statistics' . DIRECTORY_SEPARATOR
+                                                               . 'graphbase.phtml');
                break;
        }
        //
     }
-    public function registerMainMenu()
-    {
-        return false;
-    }
-    public function getTitle()
-    {
-        return 'Menu';
-    }
+
     public function getPaths()
     {
         return array('/statistics', '/statistics/');
@@ -90,22 +86,63 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         if (isset($this->_extensions['STATISTIC_GRAPH'])) {
             foreach ($this->_extensions['STATISTIC_GRAPH'] as $extension) {
                 
-                $obj = call_user_func_array($extension, array($project));
                 
-                if ($obj instanceof Xinc_Plugin_Repos_Gui_Statistics_Graph) {
-                    $contents[] = $obj->generate();
-                }
+                //$obj = call_user_func_array($extension, array($project));
+                
+                //if ($obj instanceof Xinc_Plugin_Repos_Gui_Statistics_Graph) {
+                $contents[] = $extension->generate(array('Build duration in seconds' =>
+                                                         $this->_getHistoryBuilds($project, 0, 15)
+                                                        ), array('#1c4a7e','#bb5b3d'));
+                //}
             }
         }
         return implode("\n", $contents);
     }
-    
+    private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
+    {
+        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        $historyFile = $statusDir . DIRECTORY_SEPARATOR . $project->getName() . '.history';
+        
+        $buildHistoryArr = unserialize(file_get_contents($historyFile));
+        $totalCount = count($buildHistoryArr);
+        if ($limit==null) {
+            $limit = $totalCount;
+        }
+        /**
+         * turn it upside down so the latest builds appear first
+         */
+        $buildHistoryArr = array_reverse($buildHistoryArr, true);
+        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);
+        
+        $builds = array();
+        
+        foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
+            try {
+                $buildObject = Xinc_Build::unserialize($project,
+                                                       $buildTimestamp,
+                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                $builds[] = array('number'=>$buildObject->getNumber(),
+                                  'y'=>$buildObject->getStatistics()->get('build.duration'),
+                                  'xlabel'=>$buildObject->getNumber());
+            } catch (Exception $e) {
+                // TODO: Handle
+               
+                
+            }
+            
+        }
+        
+        $builds = array_reverse($builds, true);
+        
+        return $builds;
+    }
     public function init()
     {
         $indexWidget = Xinc_Gui_Widget_Repository::getInstance()->
                                                    getWidgetByClassName('Xinc_Plugin_Repos_Gui_Dashboard_Widget');
+        $extension = new Xinc_Plugin_Repos_Gui_Statistics_Menu_Item($this);
         
-        $indexWidget->registerExtension('PROJECT_MENU_ITEM', array(&$this,'generateStatisticsMenu'));
+        $indexWidget->registerExtension('PROJECT_MENU_ITEM', $extension);
         
     }
     
@@ -113,7 +150,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     {
         $numberOfGraphs = count($this->_extensions['STATISTIC_GRAPH']);
         $graphHeight = 350;
-        $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Item('statistics-' . $project->getName(),
+        $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('statistics-' . $project->getName(),
                                                               'Statistics',
                                                               true,
                                                               '/statistics/?project=' . $project->getName(), null,
@@ -122,14 +159,20 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         return $statisticsMenu;
     }
     
-    public function registerExtension($extension, $callback)
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
     {
-        if (!isset($this->_extensions[$extension])) {
-            $this->_extensions[$extension] = array();
+        if (!isset($this->_extensions[$extensionPoint])) {
+            $this->_extensions[$extensionPoint] = array();
         }
-        $this->_extensions[$extension][] = $callback;
+        $this->_extensions[$extensionPoint][] = $extension;
         
     }
+    
+    public function getExtensions()
+    {
+        return $this->_extensions;
+    }
+    
     public function getExtensionPoints()
     {
         return array('STATISTIC_GRAPH');

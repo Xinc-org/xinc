@@ -28,6 +28,8 @@ require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
+require_once 'Xinc/Plugin/Repos/Gui/Artifacts/Extension/Dashboard.php';
+require_once 'Xinc/Data/Repository.php';
 
 class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interface
 {
@@ -106,122 +108,9 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
            echo "Could not find any artifacts";
        }
     }
-    public function registerMainMenu()
-    {
-        return false;
-    }
-    public function getTitle()
-    {
-        return 'Dashboard';
-    }
     public function getPaths()
     {
         return array('/artifacts/get', '/artifacts/get/');
-    }
-    
-    private function _walkDir(Xinc_Build_Interface &$build, $dirname, &$arr, &$treeItems, $level=0)
-    {
-        $projectName = $build->getProject()->getName();
-        $buildTime = $build->getBuildTime();
-        $safeDirName = 's' . md5($dirname);
-        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
-        $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
-                      DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
-                      DIRECTORY_SEPARATOR;
-        if (!is_dir($dirname)) return;
-        $dh = opendir($dirname);
-        $templateChoice = 0;
-        if ($level==0) {
-            $templateChoice = 1;
-            $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeAddItem.html');
-        } else {
-            $templateChoice = 2;
-            $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'treeItemAddItem.html');
-        }
-        if ($dh) {
-            while ($file = readdir($dh)) {
-                if (!in_array($file, array('.', '..'))) {
-                    if (is_dir($dirname . DIRECTORY_SEPARATOR . $file)) {
-                        $safeFileDirname = $dirname . DIRECTORY_SEPARATOR . $file;
-                        $safeFileDirname = 's' . md5($safeFileDirname);
-                        $arr[$file] = array();
-                        if ($templateChoice == 1) {
-                            $params = array($template, 
-                                            $safeFileDirname,
-                                            $file,
-                                            '#',
-                                            $safeFileDirname);
-                        } else {
-                            $params = array($template, 
-                                            $safeFileDirname,
-                                            $file,
-                                            '#',
-                                            $safeDirName,
-                                            $safeFileDirname);
-                        }
-                        
-                        $result = call_user_func_array('sprintf', $params);
-                        $treeItems[] = $result;
-                        $this->_walkDir($build, $dirname . DIRECTORY_SEPARATOR . $file,
-                                        $arr[$file], $treeItems, ++$level);
-                    } else {
-                        $safeFileName = $dirname . DIRECTORY_SEPARATOR . $file;
-                        $safeFileName = 's' . md5($safeFileName);
-                        $artifactsFile = str_replace($statusDir, '', $dirname . DIRECTORY_SEPARATOR . $file);
-                        if ($templateChoice == 1) {
-                            $params = array($template, 
-                                            $safeFileName,
-                                            $file,
-                                            '/artifacts/get/' . 
-                                                                 $projectName .
-                                                                 '/' .
-                                                                 $buildTime .
-                                                                 '/' .
-                                                                 $artifactsFile,
-                                            $safeFileName);
-                                            
-                        } else {
-                            $params = array($template, 
-                                            $safeFileName,
-                                            $file,
-                                            '/artifacts/get/' . 
-                                                                 $projectName .
-                                                                 '/' .
-                                                                 $buildTime .
-                                                                 '/' .
-                                                                 $artifactsFile,
-                                            $safeDirName,
-                                            $safeFileName);
-                        }
-                        
-                        $result = call_user_func_array('sprintf', $params);
-                        
-                        $arr[] = $file;
-                        $treeItems[] = $result;
-                    }
-                }
-            }
-        }
-    }
-    
-    private function _getArtifactsTree(Xinc_Build_Interface &$build)
-    {
-        $dir = $this->_plugin->getArtifactsDir($build);
-        
-        $treeStructure = array();
-        $treeItems = array();
-        
-        $this->_walkDir($build, $dir, $treeStructure, $treeItems);
-        
-        $baseTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'tree.html');
-        $result = str_replace('{items}', implode("\n", $treeItems), $baseTemplate);
-        return $result;
-    }
-    private function _getTemplate($name)
-    {
-        $dir = dirname(__FILE__);
-        $fileName = $dir . DIRECTORY_SEPARATOR . $name;
-        return file_get_contents($fileName);
     }
     public function getArtifacts(Xinc_Build_Interface &$build)
     {
@@ -229,27 +118,33 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $projectName = $build->getProject()->getName();
         $buildTimestamp = $build->getBuildTime();
         
-        $template = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'artifactsJs.html');
+        $templateFile = Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
+                                                                . 'dashboard' . DIRECTORY_SEPARATOR
+                                                                . 'detail' . DIRECTORY_SEPARATOR
+                                                                . 'extension' . DIRECTORY_SEPARATOR
+                                                                .'artifactsJs.phtml');
         
-        $template = str_replace(array('{projectname}', '{buildtime}'),
+        $template = file_get_contents($templateFile);
+        
+        $content = str_replace(array('{projectname}', '{buildtime}'),
                                 array($projectName, $buildTimestamp), $template);
-        
-        $detailExtension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('Artifacts');
-        $detailExtension->setContent($template);
-        
-        return $detailExtension;
+        return $content;
     }
     
     public function init()
     {
-        $detailWidget = Xinc_Gui_Widget_Repository::getInstance()->getWidgetForPath("/dashboard/detail");
+        $detailWidget = Xinc_Gui_Widget_Repository::getInstance()->
+                                                    getWidgetByClassName('Xinc_Plugin_Repos_Gui_Dashboard_Detail');
         
-        $detailWidget->registerExtension('BUILD_DETAILS', array(&$this,'getArtifacts'));
+        $extension = new Xinc_Plugin_Repos_Gui_Artifacts_Extension_Dashboard();
+        $extension->setWidget($this);
+        
+        $detailWidget->registerExtension('BUILD_DETAILS', $extension);
         
     }
-    public function registerExtension($extension, $callback)
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
     {
-        $this->_extensions[$extension] = $callback;
+        $this->_extensions[$extensionPoint] = $extension;
     }
     public function getExtensionPoints()
     {

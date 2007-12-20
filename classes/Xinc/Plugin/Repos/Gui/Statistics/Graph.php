@@ -27,9 +27,10 @@
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 
+require_once 'Xinc/Gui/Widget/Extension/Interface.php';
+require_once 'Xinc/Data/Repository.php';
 
-
-class Xinc_Plugin_Repos_Gui_Statistics_Graph
+class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extension_Interface
 {
     private $_id;
     
@@ -39,14 +40,43 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph
     
     private $_data;
     
-    const TEMPLATE = 'templates/graph.html';
+    private $_bgColor;
     
-    public function __construct($title = 'Graph', $type = 'line', $data = array())
+    private $_colorScheme;
+    
+    private $_labelColor;
+    
+    private $_customColor = array();
+    
+    /**
+     *
+     * @param string $title
+     * @param string $type
+     * @param string $bgColor
+     * @param string $colorScheme
+     * @param string $labelColor
+     */
+    public function __construct($title = 'Graph', $type = 'line',
+                                $bgColor = '#f2f2f2', $colorScheme = 'blue',
+                                $labelColor = '#000000')
     {
-        $this->_id = md5($title . $type . $data . time() . rand(0, 100000));
+        $this->_id = md5($title . $type . $bgColor . $colorScheme . $labelColor . time() . rand(0, 100000));
         $this->_title = $title;
         $this->_type = $type;
-        $this->_data = $data;
+        $this->_bgColor = $bgColor;
+        $this->_colorScheme = $colorScheme;
+        $this->_labelColor = $labelColor;
+    }
+    
+    private function _getTemplateFileName($type = 'line')
+    {
+        $base = Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR . 'statistics');
+        switch ($type) {
+            case 'line':
+            default:
+                return $base . DIRECTORY_SEPARATOR . 'linegraph.phtml';
+                break;
+        }
     }
     
     public function getId()
@@ -65,34 +95,70 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph
     }
     public function getXAxis()
     {
-        $data = array();
+        $dataSet = array();
         $x = 0;
-        foreach ($this->_data as $item) {
-            $data[] = '{v:' . $x++ . ', label:\'' . $item['xlabel'] . '\'}' . "\n"; 
+        foreach ($this->_data as $sitem) {
+            foreach ($sitem as $item) {
+                $dataSet[] = '{v:' . $x++ . ', label:\'' . $item['xlabel'] . '\'}' . "\n";
+            } 
+            break;
         }
-        return implode(',', $data);
+        return implode(',', $dataSet);
     }
-    public function getDataSet()
+    public function getDataSet($data)
     {
-        $data = array();
+        $dataSet = array();
         $x = 0;
-        foreach ($this->_data as $item) {
-            $data[] = '[' . $x++ . ',' . $item['y'] . ']'; 
+        foreach ($data as $item) {
+            $dataSet[] = '[' . $x++ . ',' . $item['y'] . ']'; 
         }
-        return implode(',', $data);
+        return implode(',', $dataSet);
+    }
+    public function getDataSets()
+    {
+        return $this->_data;
+    }
+    public function generate($data = array(), $colorScheme = array())
+    {
+        $this->_data = $data;
+        $this->_customColors = $colorScheme;
+        $base = dirname(__FILE__);
+        $filename = $this->_getTemplateFileName($this->_type);
+        
+        ob_start();
+        include_once($filename);
+        
+       $contents = ob_get_clean();
+       return $contents;
+       /** $contents = str_replace(array('{ID}', '{TITLE}' ,
+                                      '{DATASET}' , '{TYPE}',
+                                      '{XAXIS}', '{BGCOLOR}',
+                                      '{COLORSCHEME}', '{LABELCOLOR}'),
+                                array($this->getId(), $this->getTitle(),
+                                      $this->getDataSet($data), $this->getType(),
+                                      $this->getXAxis($data), $this->getBgColor(),
+                                      $this->getColorScheme(), $this->getLabelColor()),
+                                $contents);
+        return $contents;*/
     }
     
-    public function generate()
+    public function getBgColor()
     {
-        $base = dirname(__FILE__);
-        $filename = $base . DIRECTORY_SEPARATOR . self::TEMPLATE;
-        $contents = file_get_contents($filename);
-        
-        $contents = str_replace(array('{ID}', '{TITLE}' , '{DATASET}' , '{TYPE}', '{XAXIS}'),
-                                array($this->getId(), $this->getTitle(),
-                                      $this->getDataSet(), $this->getType(),
-                                      $this->getXAxis()),
-                                $contents);
-        return $contents;
+        return $this->_bgColor;
+    }
+    
+    public function getColorScheme()
+    {
+        return $this->_colorScheme;
+    }
+    
+    public function getLabelColor()
+    {
+        return $this->_labelColor;
+    }
+    
+    public function getExtensionPoint()
+    {
+        return 'STATISTIC_GRAPH';
     }
 }

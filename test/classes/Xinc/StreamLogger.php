@@ -28,7 +28,10 @@ class Xinc_StreamLogger
         //echo $data;
         return strlen($data);
     }
-
+    function url_stat($data)
+    {
+        return array("mode"=>0777);
+    }
     function stream_tell()
     {
         return $this->position;

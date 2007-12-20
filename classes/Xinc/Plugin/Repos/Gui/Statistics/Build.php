@@ -28,7 +28,7 @@ require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 
-require_once 'Xinc/Plugin/Repos/Gui/Menu/Item.php';
+require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph.php';
 
 
@@ -50,24 +50,17 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
     {
        
     }
-    public function registerMainMenu()
-    {
-        return false;
-    }
-    public function getTitle()
-    {
-        return 'Menu';
-    }
+
+
     public function getPaths()
     {
-        
+        return array();
     }
     
     public function getBuildDurationGraph(Xinc_Project &$project)
     {
         
-        $graph = new Xinc_Plugin_Repos_Gui_Statistics_Graph('Build Duration in seconds', 'line',
-                                                            $this->_getHistoryBuilds($project, 0, 25));
+        $graph = new Xinc_Plugin_Repos_Gui_Statistics_Graph('Build Duration in seconds', 'line', '#f2f2f2', 'blue');
         return $graph;
     }
     private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
@@ -113,7 +106,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
         $statisticWidget = Xinc_Gui_Widget_Repository::getInstance()->
                                                        getWidgetByClassName('Xinc_Plugin_Repos_Gui_Statistics_Widget');
         
-        $statisticWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
+        $statisticWidget->registerExtension('STATISTIC_GRAPH', $this->getBuildDurationGraph());
         //$statisticWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
         //$statisticWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
         //$indexWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
@@ -121,7 +114,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
     }
     
    
-    public function registerExtension($extension, $callback)
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
     {
        
         

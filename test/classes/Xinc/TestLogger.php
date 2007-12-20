@@ -35,9 +35,12 @@ class Xinc_TestLogger extends Xinc_BaseTest
         Xinc_Logger::tearDown();
         $this->sharedFixture = Xinc_Logger::getInstance();
         $this->sharedFixture->setLogLevel(Xinc_Logger::LOG_LEVEL_DEBUG);
-        
-        $this->sharedFixture->setXincLogFile("xinclogger://test");
-        $this->sharedFixture->setBuildLogFile("xinclogger://test");
+        try {
+            $this->sharedFixture->setXincLogFile("xinclogger://test");
+            $this->sharedFixture->setBuildLogFile("xinclogger://test");
+        } catch (Exception $e) {
+            var_dump($e);
+        }
     }
     
     public function testLogLevel()

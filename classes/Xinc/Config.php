@@ -44,7 +44,7 @@ class Xinc_Config
     {
         $configFile = Xinc_Config_File::load($fileName);
         $configParser = new Xinc_Config_Parser($configFile);
-        
+
         self::_parsePlugins($configParser->getPlugins());
         self::_parseEngines($configParser->getEngines());
     }
@@ -55,6 +55,7 @@ class Xinc_Config
         $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
         
         foreach ($widgets as $path => $widget) {
+            //echo "Init on: " . get_class($widget) . "\n<br>";
             $widget->init();
         }
         

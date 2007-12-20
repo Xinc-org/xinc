@@ -27,6 +27,12 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Build/Iterator.php';
 
+require_once 'Xinc/Data/Repository.php';
+
+require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Summary.php';
+require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Log.php';
+require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Builds.php';
+
 class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interface
 {
     public $menu;
@@ -44,19 +50,15 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     {
         $this->_plugin = $plugin;
     }
-    public function registerMainMenu()
-    {
-        return false;
-    }
-    private function _generateExternalDetailTabs()
+
+    private function _generateExternalExtensions()
     {
         
 
         foreach ($this->_extensions['BUILD_DETAILS'] as $extension) { 
             
-            $obj = call_user_func_array($extension, array($this->build));
-            
-            $this->_registerExtension('BUILD_DETAILS', $obj);
+            //$obj = call_user_func_array($extension, array($this->build));
+            $this->_registerExtension('BUILD_DETAILS', $extension);
         }
          
     }
@@ -66,73 +68,19 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         $fileName = $dir . DIRECTORY_SEPARATOR . $name;
         return file_get_contents($fileName);
     }
-    private function _generateLogDetailTab()
+    private function _generateLogView()
     {
-        $i = count($this->logXml->children());
-       
-        $rows = array();
-        foreach ($this->logXml->children() as $logEntry) { 
-           
-            $rows[] = '[' . $i-- . ',' 
-                     . $logEntry['timestamp'] 
-                     . ',"' . $logEntry['priority'] 
-                     . '","' . str_replace("\n", '\\n', addcslashes($logEntry, '"\'')) 
-                     . '"]';
-        }
-        $logTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'logJs.html');
-        
-        $content = str_replace(array('{data}','{projectname}','{buildtime}'),
-                               array(implode(',', $rows), $this->projectName, $this->build->getBuildTime()),
-                               $logTemplate);
-        
-        $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('Log Messages');
-        $extension->setContent($content);
-        
+        $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Log();
         $this->_registerExtension('BUILD_DETAILS', $extension);
     }
-    private function _generateOverviewTab()
+    private function _generateSummaryView()
     {
-        switch ($this->build->getStatus()) {
-            case 1:
-                $bgColor = '#04de04';
-                break;
-            case -1:
-                $bgColor = 'gray';
-                break;
-            case 0:
-                $bgColor = '#f40204';
-                break;
-            default:
-                $bgColor = 'gray';
-                break;
-        }
-        
-        
-        $tabTemplate = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'overviewTab.html');
-        $content = call_user_func_array('sprintf', array($tabTemplate,
-                                                         $bgColor,
-                                                         date('Y-m-d H:i:s', $this->build->getBuildTime()),
-                                                         $this->build->getLabel()));
-        
-        $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('Overview');
-        $extension->setContent($content);
-        
+        $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary();
         $this->_registerExtension('BUILD_DETAILS', $extension);
     }
-    private function _generateAllBuildsTab()
+    private function _generateBuildsView()
     {
-        
-        
-        
-        $content = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'allBuildsJs.html');
-
-        $content = str_replace(array('{projectname}','{buildtime}'), 
-                               array($this->projectName,$this->build->getBuildTime()),
-                               $content);
-        
-        $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension('All Builds');
-        $extension->setContent($content);
-        
+        $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Builds();
         $this->_registerExtension('BUILD_SELECTOR', $extension);
     }
     public function getTabs($name)
@@ -165,9 +113,15 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                     $statusFile = $fullStatusDir . DIRECTORY_SEPARATOR . 'build.ser';
                     
                     if (!file_exists($fullStatusDir)) {
-                        include 'view/detailerror.phtml';
+                        include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
+                                                                        . 'dashboard' . DIRECTORY_SEPARATOR
+                                                                        . 'detail' . DIRECTORY_SEPARATOR
+                                                                        . 'detailerror.phtml');
                     } else if (!file_exists($statusFile)) {
-                        include 'view/detailerror.phtml';
+                        include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
+                                                                        . 'dashboard' . DIRECTORY_SEPARATOR
+                                                                        . 'detail' . DIRECTORY_SEPARATOR
+                                                                        . 'detailerror.phtml');
                     } else {
                         $this->project = new Xinc_Project();
                         $this->project->setName($this->projectName);
@@ -208,30 +162,25 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                         /**
                          * Generate the build selector on the right
                          */
-                        $this->_generateAllBuildsTab();
+                        $this->_generateBuildsView();
                         /**
                          * Overview info tab
                          */
-                        $this->_generateOverviewTab();
+                        $this->_generateSummaryView();
                         /**
                          * Generate the tab for the log messages
                          */
-                        $this->_generateLogDetailTab();
+                        $this->_generateLogView();
                         /**
                          * Generate the external tabs that were registered through a hook
                          */
-                        $this->_generateExternalDetailTabs();
+                        $this->_generateExternalExtensions();
                         
-                        $this->menu = '';
-                        foreach ($this->_extensions['MAIN_MENU'] as $extension) {
-                            
-                            $this->menu .= call_user_func_array($extension,
-                                                                array($this,
-                                                                      'Details for ' .
-                                                                      $this->build->getProject()->getName()));
-                            
-                        }
-                        include 'templates/projectDetail.html';
+                        
+                        include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
+                                                                        . 'dashboard' . DIRECTORY_SEPARATOR
+                                                                        . 'detail' . DIRECTORY_SEPARATOR
+                                                                        . 'projectDetail.phtml');
                     }
                     
                 break;
@@ -262,10 +211,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         return new Xinc_Build_Iterator($builds);
     }
     
-    public function getTitle()
-    {
-        return 'Dashboard';
-    }
+
     public function getPaths()
     {
         return array('/dashboard/detail', '/dashboard/detail/');
@@ -276,7 +222,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     }
     
     private function _registerExtension($extensionPoint,
-                                        Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension &$detail)
+                                        Xinc_Gui_Widget_Extension_Interface &$detail)
     {
         if (!isset($this->_internalExtensions[$extensionPoint])) {
             $this->_internalExtensions[$extensionPoint] = array();
@@ -284,13 +230,13 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         $this->_internalExtensions[$extensionPoint][] = $detail;
     }
     
-    public function registerExtension($extension, $callback)
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
     {
         
-        if (!isset($this->_extensions[$extension])) {
-            $this->_extensions[$extension] = array();
+        if (!isset($this->_extensions[$extensionPoint])) {
+            $this->_extensions[$extensionPoint] = array();
         }
-        $this->_extensions[$extension][] = $callback;
+        $this->_extensions[$extensionPoint][] = $extension;
     }
     public function getExtensionPoints()
     {

@@ -27,6 +27,7 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
+require_once 'Xinc/Data/Repository.php';
 
 class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
 {
@@ -48,8 +49,8 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
             case Xinc_Gui_Event::PAGE_LOAD: 
                 
                     // Build Main Menu
-                    
-                    include 'view/index.phtml';
+                    //echo Xinc_Data_Repository::getInstance()->get('templates/index/index.html');
+                    include Xinc_Data_Repository::getInstance()->get('templates/index/index.phtml');
                     
                     
                 break;
@@ -64,19 +65,12 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
             return;
         }
         
-        $obj = call_user_func_array($this->_extensions['MAIN_MENU'], array());
+        $obj = $this->_extensions['MAIN_MENU']->getMenuContent();
         return $obj;
         
     }
     
-    public function registerMainMenu()
-    {
-        return true;
-    }
-    public function getTitle()
-    {
-        return 'Index';
-    }
+
     public function getPaths()
     {
         return array('/');
@@ -85,9 +79,9 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
     {
         
     }
-    public function registerExtension($extension, $callback)
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
     {
-        $this->_extensions[$extension] = $callback;
+        $this->_extensions[$extensionPoint] = $extension;
     }
     
    

@@ -39,6 +39,7 @@ interface Xinc_Plugin_Interface
      */
     public function getGuiWidgets();
     
+    
     /**
      * 
      * @return Xinc_Api_Module_Interface[]

@@ -59,10 +59,6 @@ abstract class Xinc_Plugin_Task_Base implements Xinc_Plugin_Task_Interface
         $this->_plugin = $plugin;
     }
     
-    public function getAllowedParentElements()
-    {
-        return array();
-    }
     public function init(Xinc_Build_Interface &$build)
     {
         

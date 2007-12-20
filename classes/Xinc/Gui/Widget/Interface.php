@@ -1,6 +1,6 @@
 <?php
 /**
- * PUT DESCRIPTION HERE
+ * Interface for a gui widget
  * 
  * @package Xinc.Gui
  * @author Arno Schneider
@@ -22,6 +22,8 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+require_once 'Xinc/Gui/Widget/Extension/Interface.php';
+
 interface Xinc_Gui_Widget_Interface
 {
     /**
@@ -83,26 +85,10 @@ interface Xinc_Gui_Widget_Interface
     /**
      * Register an extensions
      *
-     * @param string $extension name of the extension point
-     * @param array $callback Needs to be executable by call_user_func_array
+     * @param string $extensionPoint
+     * @param Xinc_Gui_Widget_Extension $extension extension
      */
-    public function registerExtension($extension, $callback);
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension);
     
-    /**
-     * return true if the widget should be registered in the
-     * main menu.
-     * if it is a "sub-widget" return false
-     *
-     * @return boolean whether to register the widget in the main-menu
-     *
-     */
-    public function registerMainMenu();
-    
-    /**
-     * Returns the name of the widget as
-     * it should be displayed in any menu / title
-     *
-     */
-    public function getTitle();
     
 }

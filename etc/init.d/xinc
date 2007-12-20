@@ -31,6 +31,7 @@ LOG=@LOG@/xinc.log
 STATUS=@STATUSDIR@
 DATADIR=@DATADIR@
 PIDFILE=@STATUSDIR@/xinc.pid
+SHUTDOWN_FILE=@STATUSDIR@/.shutdown
  
 DAEMON=/bin/xinc
 NAME=xinc
@@ -86,7 +87,7 @@ if [ -r /etc/init.d/functions ]; then
     
 fi;
 
-restart_daemon="touch $STATUS/.shutdown";
+restart_daemon="touch $SHUTDOWN_FILE";
 restart_daemon_wait="sleep 1s"
 
 if [ -x /sbin/start-stop-daemon ]; then
@@ -120,6 +121,7 @@ restart_xinc() {
 			retval=$?
 		done
 	fi
+	$logend
 	start_xinc
 
 }
@@ -144,9 +146,26 @@ start_xinc() {
 stop_xinc() {
     $logbegin "Stopping $DESC"
     #$logbegin $stop_daemon $stop_daemon_options $stop_daemon_end
-    $stop_daemon $stop_daemon_options $stop_daemon_end
-    $logend
-    rm -f $PIDFILE
+    #$stop_daemon $stop_daemon_options $stop_daemon_end
+    #$logend
+    #rm -f $PIDFILE
+    $restart_daemon
+	$restart_daemon_wait
+	if [ -r $PIDFILE ]; then
+		read pid < "$PIDFILE"
+		ps -p "$pid" > /dev/null 2>&1
+		retval=$?
+		while [ $retval -eq 0 ]; do
+			$restart_daemon_wait
+			echo -n "."
+			ps -p "$pid" > /dev/null 2>&1
+			retval=$?
+		done
+	fi
+	$logend
+	if [ -f $SHUTDOWN_FILE ]; then
+	  rm -f $SHUTDOWN_FILE
+	fi;
 
 }
 

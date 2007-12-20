@@ -24,6 +24,7 @@
 */
 class Xinc_Config_Exception_FileNotFound extends Exception
 {
+    private $_fileName;
     /**
      * constructor, generates an Exception Message
      *
@@ -31,6 +32,12 @@ class Xinc_Config_Exception_FileNotFound extends Exception
      */
     public function __construct($fileName)
     {
+        $this->_fileName;
         parent::__construct('Config File: ' . $fileName . ' was not found');
+    }
+    
+    public function getFileName()
+    {
+        return $this->_fileName;
     }
 }

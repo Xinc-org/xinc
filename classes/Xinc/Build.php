@@ -583,7 +583,7 @@ class Xinc_Build implements Xinc_Build_Interface
     public function build()
     {
         Xinc_Logger::getInstance()->setBuildLogFile(null);
-        Xinc_Logger::getInstance()->flush();
+        Xinc_Logger::getInstance()->emptyLogQueue();
         Xinc::setCurrentBuild($this);
         Xinc_Logger::getInstance()->setBuildLogFile(Xinc::getInstance()->getStatusDir() 
                                                    . DIRECTORY_SEPARATOR 
@@ -591,7 +591,7 @@ class Xinc_Build implements Xinc_Build_Interface
                                                    . DIRECTORY_SEPARATOR
                                                    . 'buildlog.xml');
         $this->getEngine()->build($this);
-        Xinc_Logger::getInstance()->flush();
+        //Xinc_Logger::getInstance()->flush();
         Xinc_Logger::getInstance()->setBuildLogFile(null);
 
         if (Xinc_Build_Interface::STOPPED != $this->getStatus()) {

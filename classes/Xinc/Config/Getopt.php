@@ -39,12 +39,20 @@ require_once 'Xinc/Config/Exception/Getopt.php';
  */
 class Xinc_Config_Getopt
 {
+    /**
+     * Enter description here...
+     *
+     * @param array $args
+     * @param unknown_type $shortOptions
+     * @param unknown_type $longOptions
+     * @return unknown
+     * @throws Xinc_Config_Exception_Getopt
+     */
     public static function getopt(array $args, $shortOptions, $longOptions = null)
     {
         if (empty($args)) {
             return array(array(), array());
         }
-
         $opts = array();
         $nonOpts = array();
 
@@ -91,7 +99,7 @@ class Xinc_Config_Getopt
         for ($i = 0; $i < strlen($arg); $i++) {
             $opt = $arg{$i};
             $optArg = null;
-
+            
             if (($spec = strstr($shortOptions, $opt)) === false || $arg{$i} == ':') {
                 throw new Xinc_Config_Exception_Getopt("unrecognized option -- $opt");
             }

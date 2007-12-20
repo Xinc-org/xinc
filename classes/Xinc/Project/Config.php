@@ -81,6 +81,10 @@ class Xinc_Project_Config
             
             foreach ($projectConfig->attributes() as $name => $value ) {
                 $method = 'set' . ucfirst(strtolower($name));
+                /**
+                 * Catch unsupported methods by checking if method exists or 
+                 * having a magic function __set and __get on all objects
+                 */
                 $projectObject->$method((string)$value);
             }
             $projectObject->setConfig($projectConfig);

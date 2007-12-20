@@ -22,7 +22,7 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension
+abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension implements Xinc_Gui_Widget_Extension_Interface
 {
 
     const TEMPLATE = '<div class="tab-page" id="%s-page">
@@ -33,41 +33,22 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension
 %s
 </div>
 ';
+
+
+    public abstract function getTitle();
     
+    public abstract function getContent(Xinc_Build_Interface &$build);
     
-    private $_title;
-    
-    private $_content;
-    
-    public function __construct($title)
-    {
-        $this->_title = $title;
-    }
-    public function getTitle()
-    {
-        return $this->_title;
-    }
-    public function setContent($content)
-    {
-        $this->_content = $content;
-    }
-    
-    public function getContent()
-    {
-        return $this->_content;
-    }
-    
-    public function generate($templateFile)
+    public final function generate(Xinc_Build_Interface &$build, $templateFile)
     {
         $templateContent = file_get_contents($templateFile);
         $id = strtolower(str_replace(' ', '-', $this->getTitle()));
         
         $result = str_replace(array('{id}', '{content}', '{title}'), 
-                              array($id, $this->getContent(), $this->getTitle()),
+                              array($id, $this->getContent($build), $this->getTitle()),
                               $templateContent);
-        /**$result = call_user_func_array('sprintf', array(self::TEMPLATE, $id, $this->getTitle(),
-                                       $tabPaneName, $id, $this->getContent()));*/
-        
         return $result;
     }
+    
+   
 }

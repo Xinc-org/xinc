@@ -112,7 +112,6 @@ class Xinc_Gui_Handler
     private function setSystemConfigFile($fileName)
     {
         try {
-        
             Xinc_Config::parse($fileName);
             
         } catch(Exception $e) {
@@ -142,6 +141,7 @@ class Xinc_Gui_Handler
          * Get the Widget to use for this Request from the Widget-Repository
          */
         $widget = Xinc_Gui_Widget_Repository::getInstance()->getWidgetForPath($path);
+        
         if (!$widget instanceof Xinc_Gui_Widget_Interface ) {
             /**
              * Try Api Handler

@@ -78,6 +78,14 @@ class Xinc_Gui_Widget_Repository
          * the Widget will be called for
          */
         $paths = $widget->getPaths();
+        //echo "Registering: " . get_class($widget) . "\n<br>";
+        /**
+         * protect us against "bad" plugins which dont return the expected array
+         */
+        if (!is_array($paths)) {
+            $paths = array();
+        }
+        
         foreach ($paths as $path) {
             /**
              * register the widget for the specified pathname
@@ -107,7 +115,6 @@ class Xinc_Gui_Widget_Repository
      */    
     public function &getWidgetForPath($path)
     {
-        
         $widget = null;
         if (!isset($this->_definedWidgets[$path])) {
             // find the largest match

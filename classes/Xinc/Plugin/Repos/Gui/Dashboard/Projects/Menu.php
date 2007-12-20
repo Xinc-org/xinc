@@ -22,18 +22,20 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Repos/Gui/Menu/Item.php';
+require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 require_once 'Xinc/Build/Iterator.php';
 
-class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gui_Menu_Item
+class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gui_Menu_Extension_Item
 {
     
     private $_subMenus = array();
     
     public function registerSubExtension($extension)
     {
-       
-        $this->_subMenus[] = $extension;
+        if (!in_array($extension, $this->_subMenus)) {
+            $this->_subMenus[] = $extension;
+        }
+        
     }
     
     protected function _generateChildren()
@@ -66,15 +68,19 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gu
              */
             
             $children = array();
-            foreach ($this->_subMenus as $sub) {
-                $subExtension = call_user_func_array($sub, array($build->getProject()));
-                $children[] = $subExtension->generate();
+            foreach ($this->_subMenus as $subExtension) {
+                
+                $item = $subExtension->getItem($build->getProject());
+                if (!$item instanceof Xinc_Plugin_Repos_Gui_Menu_Extension_Item) {
+                    continue;
+                }
+                $children[] = $item->generate();
             }
             
-            $item = new Xinc_Plugin_Repos_Gui_Menu_Item('project-' . $build->getProject()->getName()
+            $item = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('project-' . $build->getProject()->getName()
                                                         . '-' . $build->getBuildTime(),
                                                         $build->getProject()->getName(),
-                                                        true,
+                                                        false,
                                                         '/dashboard/detail?project='
                                                         . $build->getProject()->getName()
                                                         . '&timestamp=' . $build->getBuildTime(),

@@ -40,6 +40,7 @@
 			<fileset dir="${project.basedir}">
 				<include name="bin/*/**" />
 				<include name="classes/*/**" />
+				<include name="data/*/**"/>
 				<include name="etc/*/**" />
 				<include name="examples/*/**" />
 				<include name="resources/*/**" />

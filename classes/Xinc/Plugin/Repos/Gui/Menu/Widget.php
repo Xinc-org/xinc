@@ -28,6 +28,8 @@ require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 
+require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Menu.php';
+
 
 class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
 {
@@ -49,49 +51,20 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
     {
        
     }
-    public function registerMainMenu()
-    {
-        return false;
-    }
-    public function getTitle()
-    {
-        return 'Menu';
-    }
+
     public function getPaths()
     {
         return array('MENU');
     }
-    
-    private function _getTemplate($name)
-    {
-        $dir = dirname(__FILE__);
-        $fileName = $dir . DIRECTORY_SEPARATOR . $name;
-        return file_get_contents($fileName);
-    }
-    public function getMenu(Xinc_Gui_Widget_Interface &$widget, $position)
-    {
-        $name = $widget->getTitle();
-        $menuArr = array();
-        $menuTpl = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'menu.html');
-        $menuItemTpl = $this->_getTemplate('templates' . DIRECTORY_SEPARATOR . 'menuItem.html');
-        foreach ($this->_menu as $widgetItem) {
-            $paths = $widgetItem->getPaths();
-            if (get_class($widget) != get_class($widgetItem)) {
-                $menuStr = call_user_func_array('sprintf', array($menuItemTpl, $paths[0], $widgetItem->getTitle()));
-                $menuArr[] = $menuStr;
-            }
-        }
-        
-        $content = str_replace(array('{here}','{rows}'), array($position, implode("\n", $menuArr)), $menuTpl);
-        return $content;
-    }
+
     
     public function init()
     {
         $indexWidget = Xinc_Gui_Widget_Repository::getInstance()->
                                                    getWidgetByClassName('Xinc_Plugin_Repos_Gui_Index_Widget');
         
-        $indexWidget->registerExtension('MAIN_MENU', array(&$this,'generateMenu'));
+        $extension = new Xinc_Plugin_Repos_Gui_Menu_Extension_Menu($this);
+        $indexWidget->registerExtension('MAIN_MENU', $extension);
         
     }
     
@@ -101,12 +74,12 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
         if (isset($this->_extensions['MAIN_MENU_ITEMS'])) {
             foreach ($this->_extensions['MAIN_MENU_ITEMS'] as $extension) {
                 
-                $item = call_user_func_array($extension, array());
+                //$item = call_user_func_array($extension, array());
                 
-                if (!$item instanceof Xinc_Plugin_Repos_Gui_Menu_Item) {
+                if (!$extension instanceof Xinc_Plugin_Repos_Gui_Menu_Extension_Item) {
                     continue;
                 }
-                $menuItems[] = $item->generate();
+                $menuItems[] = $extension->generate();
             } 
         }
         
@@ -115,13 +88,18 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
         return $menuStr;
     }
     
-    public function registerExtension($extension, $callback)
+    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
     {
         
-        if (!isset($this->_extensions[$extension])) {
-            $this->_extensions[$extension] = array();
+        if (!isset($this->_extensions[$extensionPoint])) {
+            $this->_extensions[$extensionPoint] = array();
         }
-        $this->_extensions[$extension][] = $callback;
+        $this->_extensions[$extensionPoint][] = $extension;
+    }
+    
+    public function getExtensions()
+    {
+        return $this->_extensions;
     }
     public function getExtensionPoints()
     {

@@ -38,8 +38,9 @@ class Xinc_BaseTest extends PHPUnit_Framework_TestCase
             $cwd = dirname(dirname(dirname(__FILE__)));
             $testDir = $cwd;
             $configFile = $testDir . '/resources/testSystem.xml';
+            $statusDir = $cwd . '/status';
             $debug = Xinc_Logger::LOG_LEVEL_DEBUG;
-            $commandLine = "-w $testDir -p $testDir -f $configFile -l xinclogger://test -o -v $debug";
+            $commandLine = "-s $statusDir -w $testDir -p $testDir -f $configFile -l xinclogger://test -o -v $debug";
             Xinc::main($commandLine);
             
             //Xinc::getInstance()->setStatusDir($testDir);
