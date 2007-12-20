@@ -10,7 +10,7 @@
 function openTab(name,build,label){
 
 var tab=Ext.getCmp('project-'+name+'-'+build);
-
+var title= name + ' - ' + label;
 if(tab) {
    tab.show();
    return;
@@ -18,6 +18,9 @@ if(tab) {
 }
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
+tbar: [
+				title
+	            ],
 autoScroll: true,
 title: name + ' - ' + label,
 autoDestroy: true,

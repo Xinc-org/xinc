@@ -16,7 +16,11 @@ if(!isExternal && !framed) {
 var tab=new Ext.Panel({
 id: id,
 autoScroll: true,
+tabTip: title,
 title: title,
+tbar: [
+				title
+	            ],
 autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
 iconCls: iconClass,
@@ -37,6 +41,10 @@ id: id,
 autoScroll: true,
 autoShow: true,
 title: title,
+tbar: [
+				title
+	            ],
+tabTip: title,
 autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
 type:'iframepanel',
@@ -46,6 +54,8 @@ iframeStyle : {overflow:'auto', height: height},
 //body: new Ext.ux.ManagedIFrame({ src:url, frameBorder: 0, cls:'x-panel-body',width: '500px', height: '300px', id:'iframe'+id}),
 closable:true
 });
+tab.tabTip=title;
+tab.qtip=title;
 tab.on('close',function(p) {
  p.destroy();
  alert(p);
@@ -197,7 +207,6 @@ MainPanel = function(){
         plugins: new Ext.ux.TabCloseMenu(),
         enableTabScroll: true,
         activeTab: 0,
-
         items: {
             id:'widget-dashboard',
             title: 'Dashboard',
@@ -239,7 +248,6 @@ Ext.extend(MainPanel, Ext.TabPanel, {
     onClick: function(e, target){
         if(target = e.getTarget('a:not(.exi)', 3)){
             var cls = Ext.fly(target).getAttributeNS('ext', 'cls');
-            
             e.stopEvent();
             if(cls){
                 var member = Ext.fly(target).getAttributeNS('ext', 'member');
@@ -247,7 +255,18 @@ Ext.extend(MainPanel, Ext.TabPanel, {
             }else if(target.className == 'inner-link'){
                 this.getActiveTab().scrollToSection(target.href.split('#')[1]);
             }else if(target.className=='external'){
-                window.open(target.href);
+            
+                if (target.href.lastIndexOf('.html') > 0) {
+                   openMenuTab(target.href, target.href, target.href, null, true, true);
+                } else {
+                   window.open(target.href);
+                }
+            } else {
+            
+            	if (target.href.lastIndexOf('.html') > 0) {
+                   openMenuTab(target.href, target.href, target.href, null, true, true);
+                   return false;
+                }
             }
         }else if(target = e.getTarget('.micon', 2)){
             e.stopEvent();

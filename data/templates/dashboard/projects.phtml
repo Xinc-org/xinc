@@ -2,7 +2,7 @@
 <script type="text/javascript">
 function openTab(name, build, label){
 var tab=Ext.getCmp('project-'+name +'-'+build);
-
+var title= name + ' - ' + label;
 if(tab) {
 tab.show();
 return;
@@ -10,6 +10,9 @@ return;
 var tab=new Ext.Panel({
 id: 'project-'+name+'-'+build,
 autoScroll: true,
+tbar: [
+				title
+	            ],
 title: label + ' - ' +name,
 autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
@@ -32,10 +35,6 @@ return false;
 
 </script>
 <link rel="stylesheet" type="text/css" href="/ext-2.0/resources/css/ext-all.css" />
-
-
-
-
 <div id="welcome">
     <!-- <div class="col">
         <div id="search">     	

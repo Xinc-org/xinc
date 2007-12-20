@@ -117,6 +117,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $projectName = $build->getProject()->getName();
         $buildTimestamp = $build->getBuildTime();
+        $buildLabel = $build->getLabel();
         
         $templateFile = Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
                                                                 . 'dashboard' . DIRECTORY_SEPARATOR
@@ -126,8 +127,8 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         
         $template = file_get_contents($templateFile);
         
-        $content = str_replace(array('{projectname}', '{buildtime}'),
-                                array($projectName, $buildTimestamp), $template);
+        $content = str_replace(array('{projectname}', '{buildtime}' , '{buildlabel}'),
+                                array($projectName, $buildTimestamp, $buildLabel), $template);
         return $content;
     }
     
