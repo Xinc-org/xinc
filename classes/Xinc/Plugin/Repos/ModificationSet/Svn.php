@@ -88,7 +88,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                  */
                 //return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
                 // dont make build fail if there are timeouts
-                return true;
+                return false;
             }
 
             $localRevision = $this->getRevision($localSet);
