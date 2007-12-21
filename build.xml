@@ -68,6 +68,7 @@
 		<phpdoc title="Xinc Documentation"
 		  destdir="${project.basedir}/doc"
 		  sourcecode="no"
+			quiet="true" 
 		  output="HTML:Smarty:PHP">
 		   <fileset dir="./classes">
 		      <include name="**/*.php" />
