@@ -69,7 +69,7 @@
 		
 		 <mkdir dir="${project.basedir}/doc"/>
 		
-		<exec command="phpdoc -d ${project.basedir}/classes -t ${project.basedir}/doc -o HTML:Smarty:PHP"/>
+		<exec command="phpdoc -d ${project.basedir}/classes -t ${project.basedir}/doc -o HTML:frames:phpedit -p on"/>
 		
 	</target>
 	<target name="test">
