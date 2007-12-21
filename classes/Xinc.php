@@ -349,15 +349,7 @@ class Xinc
     /**
      * Static main function called by bin script
      * 
-     * @param string $workingDir pointing to the base working directory
-     * @param string $projectDir pointing to the directory where all the project data is
-     * @param string $statusDir directory pointing to the build-statuses for the projects
-     * @param string $systemConfigFile the system.xml file 
-     * @param string $logFile daemon log file
-     * @param integer $logLevel verbosity of the logging
-     * @param boolean $daemon determins if we are running as daemon or in run-once mode
-     * @param string $configFile1
-     * @param string $configFile2 ...
+     * @param $args string argument string handled by Xinc_Config_GetOpt
      */
     public static function main($args = '')
     {
