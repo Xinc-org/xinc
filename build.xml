@@ -64,8 +64,9 @@
 	</target>
 	<target name="doc">
 		<mkdir dir="${project.basedir}/doc"/>
+		
 		<phpdoc title="Xinc Documentation"
-		  destdir="doc"
+		  destdir="${project.basedir}/doc"
 		  sourcecode="no"
 		  output="HTML:Smarty:PHP">
 		   <fileset dir="./classes">
