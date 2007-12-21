@@ -64,16 +64,8 @@
 	</target>
 	<target name="doc">
 		<mkdir dir="${project.basedir}/doc"/>
+		<exec command="phpdoc -d ${project.basedir}/classes -t ${project.basedir}/doc -o HTML:Smarty:PHP"/>
 		
-		<phpdoc title="Xinc Documentation"
-		  destdir="${project.basedir}/doc"
-		  sourcecode="no"
-			quiet="true" 
-		  output="HTML:Smarty:PHP">
-		   <fileset dir="./classes">
-		      <include name="**/*.php" />
-		   </fileset>
-		</phpdoc>
 	</target>
 	<target name="test">
 		<phing phingfile="build-test.xml" target="test" />
