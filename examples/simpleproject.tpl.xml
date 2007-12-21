@@ -10,6 +10,7 @@
         	<phingBuilder buildfile="${dir}/build.xml" target="build"/>
         </builders>
         <publishers>
+        	<!-- <phpUnitTestResults file="${dir}/report/logfile.xml"/>-->
             <onfailure>
 	            <email to="root" 
 	                   subject="${project.name} build ${build.number} failed"

@@ -30,7 +30,10 @@ require_once 'Xinc/Project/Exception.php';
 class Xinc_Engine_Iterator extends Xinc_Iterator
 {
   
-    
+    /**
+     *
+     * @param Xinc_Engine_Interface[] $array
+     */
     public function __construct($array)
     {
         foreach ($array as $element) {

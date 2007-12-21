@@ -67,6 +67,12 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
      */
     private $_if = null;
     
+    /**
+     * sets the name of a property
+     * - only if that property is TRUE the build will take place
+     *
+     * @param string $if name of a conditional property
+     */
     public function setIf($if)
     {
         $this->_if = $if;

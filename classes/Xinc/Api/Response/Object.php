@@ -28,11 +28,21 @@ class Xinc_Api_Response_Object
 {
     private $_response;
     
+    /**
+     * Set the response value for the api call
+     *
+     * @param string $res
+     */
     public function set($res)
     {
         $this->_response = $res;
     }
     
+    /**
+     * Get the response value from the api call
+     *
+     * @return string
+     */
     public function get()
     {
         return $this->_response;

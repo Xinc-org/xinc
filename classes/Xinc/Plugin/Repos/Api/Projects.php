@@ -28,21 +28,32 @@ require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 class Xinc_Plugin_Repos_Api_Projects implements Xinc_Api_Module_Interface
 {
     /**
-     * Enter description here...
      *
      * @var Xinc_Plugin_Interface
      */
     protected $_plugin;
     
+    /**
+     *
+     * @param Xinc_Plugin_Interface $plugin
+     */
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
         
     }
+    /**
+     *
+     * @return string
+     */
     public function getName()
     {
         return 'projects';
     }
+    /**
+     *
+     * @return array
+     */
     public function getMethods()
     {
         return array('list');
@@ -60,6 +71,11 @@ class Xinc_Plugin_Repos_Api_Projects implements Xinc_Api_Module_Interface
        
     }
     
+    /**
+     *
+     * @param array $params
+     * @return Xinc_Api_Response_Object
+     */
     private function _getProjects($params)
     {
         
@@ -72,7 +88,12 @@ class Xinc_Plugin_Repos_Api_Projects implements Xinc_Api_Module_Interface
     }
    
    
-    
+    /**
+     *
+     * @param integer $start
+     * @param integer $limit
+     * @return array
+     */
     private function _getProjectListing($start, $limit=null)
     {
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();

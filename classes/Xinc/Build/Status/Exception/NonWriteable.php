@@ -36,6 +36,10 @@ class Xinc_Build_Status_Exception_NonWriteable extends Exception
         parent::__construct('Status directory ' . $dirName . ' is not writeable');
     }
     
+    /**
+     *
+     * @return string the directory
+     */
     public function getDirectory()
     {
         return $this->_dir;

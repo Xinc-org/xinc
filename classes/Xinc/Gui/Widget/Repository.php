@@ -97,7 +97,12 @@ class Xinc_Gui_Widget_Repository
         
     }
 
-
+    /**
+     * Gets a registered widget by its classname
+     *
+     * @param string $name
+     * @return Xinc_Gui_Widget_Interface or null
+     */
     public function &getWidgetByClassName($name)
     {
         if (isset($this->_widgetClasses[$name])) {

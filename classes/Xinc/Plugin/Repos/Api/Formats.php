@@ -1,6 +1,6 @@
 <?php
 /**
- * Api to get information about builds
+ * Registering several api formats with the api handler
  * 
  * @package Xinc.Plugin
  * @author Arno Schneider
@@ -29,12 +29,15 @@ require_once 'Xinc/Api/Handler.php';
 class Xinc_Plugin_Repos_Api_Formats implements Xinc_Api_Module_Interface
 {
     /**
-     * Enter description here...
      *
      * @var Xinc_Plugin_Interface
      */
     protected $_plugin;
     
+    /**
+     *
+     * @param Xinc_Plugin_Interface $plugin
+     */
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
@@ -42,14 +45,29 @@ class Xinc_Plugin_Repos_Api_Formats implements Xinc_Api_Module_Interface
         Xinc_Api_Handler::getInstance()->registerResponseFormat(new Xinc_Plugin_Repos_Api_Format_Json());
         
     }
+    
+    /**
+     *
+     * @return string
+     */
     public function getName()
     {
         return '_register_formats_';
     }
+    /**
+     *
+     * @return array
+     */
     public function getMethods()
     {
         return array();
     }
+    
+    /**
+     *
+     * @param string $methodName
+     * @param array $params
+     */
     public function processCall($methodName, $params = array())
     {
 

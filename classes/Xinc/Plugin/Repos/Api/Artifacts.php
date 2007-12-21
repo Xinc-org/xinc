@@ -39,14 +39,30 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         $this->_plugin = $plugin;
         
     }
+    /**
+     *
+     * @return string
+     */
     public function getName()
     {
         return 'artifacts';
     }
+    /**
+     * returns methods of this api
+     *
+     * @return array
+     */
     public function getMethods()
     {
         return array('get', 'list');
     }
+    /**
+     * Process an api call with the requested methodname and parameters
+     *
+     * @param string $methodName
+     * @param array $params
+     * @return mixed
+     */
     public function processCall($methodName, $params = array())
     {
 
@@ -62,6 +78,12 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
        
        
     }
+    /**
+     * determine the mime content type of a file
+     *
+     * @param string $fileName
+     * @return string
+     */
     public function mime_content_type2($fileName)
     {
         $contentType = null;
@@ -81,6 +103,12 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         return $contentType;
     
     }
+    
+    /**
+     * Load the requested artifacts file and output it to the browser
+     *
+     * @param array $params
+     */
     private function _getArtifactFile($params)
     {
         /**$projectName = $params['p'];
@@ -138,6 +166,12 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         }
     }
 
+    /**
+     * Get the list of registered artifacts
+     *
+     * @param array $params
+     * @return Xinc_Api_Response_Object
+     */
     private function _getArtifacts($params)
     {
         $projectName = isset($params['p']) ? $params['p'] : null;
@@ -162,7 +196,13 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         $responseObject->set($artifacts);
         return $responseObject;
     }
-    
+    /**
+     * Build the artifacts tree
+     *
+     * @param Xinc_Build_Interface $build
+     * @param string $dirname
+     * @return array
+     */
     private function _getArtifactsTree(Xinc_Build_Interface &$build, $dirname)
     {
         $projectName = $build->getProject()->getName();
@@ -195,7 +235,14 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
     }
     
    
-    
+    /**
+     * Get history of all the builds for a project
+     *
+     * @param string $projectName
+     * @param integer $start
+     * @param integer $limit
+     * @return stdClass
+     */
     private function _getHistoryBuilds($projectName, $start, $limit=null)
     {
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();

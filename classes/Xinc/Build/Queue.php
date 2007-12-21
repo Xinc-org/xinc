@@ -42,6 +42,10 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
     
     private $_queue=array();
     
+    /**
+     * constructor for build queue
+     *
+     */
     public function __construct()
     {
         $this->_builds = new Xinc_Build_Iterator();
@@ -101,6 +105,12 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
                             $this->_queue[] = $build;
                             $build->enqueue();
                         //}
+                    } else {
+                        /**
+                         * we need to check if a scheduled build has a lower build time
+                         * but we dont want to queue it again
+                         */
+                        $nextBuildTime = $buildTime;
                     }
                 }
             }
@@ -111,6 +121,13 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         return $nextBuildTime;
     }
     
+    /**
+     * Sorts the builds in the queue by buildtime
+     *
+     * @param Xinc_Build_Interface $a
+     * @param Xinc_Build_Interface $b
+     * @return integer
+     */
     public function sortQueue($a, $b)
     {
         if ($a->getNextBuildTime() == $b->getNextBuildTime()) return 0;

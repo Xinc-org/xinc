@@ -46,7 +46,8 @@ class Xinc_Engine_Repository
         return Xinc_Engine_Repository::$_instance;
     }
     /**
-     * Enter description here...
+     * Register a engine with the repository so that
+     * builds can use it
      *
      * @param Xinc_Engine_Interface $engine
      * @param boolean $default
@@ -109,6 +110,10 @@ class Xinc_Engine_Repository
         }
     }
 
+    /**
+     * remove reference of instance
+     *
+     */
     public static function tearDown()
     {
         self::$_instance = null;

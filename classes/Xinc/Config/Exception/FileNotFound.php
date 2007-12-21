@@ -36,6 +36,10 @@ class Xinc_Config_Exception_FileNotFound extends Exception
         parent::__construct('Config File: ' . $fileName . ' was not found');
     }
     
+    /**
+     *
+     * @return string
+     */
     public function getFileName()
     {
         return $this->_fileName;

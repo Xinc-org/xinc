@@ -38,7 +38,12 @@ class Xinc_Plugin_Repos_Api_Format_Json implements Xinc_Api_Response_Format_Inte
         return $result;
     }
     
-    
+    /**
+     * Encodes a php object in the json format
+     *
+     * @param object $a
+     * @return string
+     */
     private function _json_encode($a)
     {
         if (is_null($a)) return 'null';

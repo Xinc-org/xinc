@@ -27,6 +27,11 @@ require_once 'Xinc/Plugin/Task/Base.php';
 abstract class Xinc_Plugin_Repos_Builder_AbstractTask extends Xinc_Plugin_Task_Base
 {
 
+    /**
+     * abstract process for a builder
+     *
+     * @param Xinc_Build_Interface $build
+     */
     public final function process(Xinc_Build_Interface &$build)
     {
         

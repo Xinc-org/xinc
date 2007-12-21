@@ -85,7 +85,13 @@ class Xinc_Project_Config
                  * Catch unsupported methods by checking if method exists or 
                  * having a magic function __set and __get on all objects
                  */
-                $projectObject->$method((string)$value);
+                if (method_exists($projectObject, $method)) {
+                    $projectObject->$method((string)$value);
+                } else {
+                    Xinc_Logger::getInstance()->error('Trying to set "'
+                                                     . $name
+                                                     .'" on Xinc_Project failed. No such setter.');
+                }
             }
             $projectObject->setConfig($projectConfig);
             $projects[] = $projectObject;

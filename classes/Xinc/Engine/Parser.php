@@ -54,6 +54,7 @@ class Xinc_Engine_Parser
      *
      * @param string $filename
      * @return boolean
+     * @deprecated 
      */
     private static function _findIncluded($filename)
     {
@@ -66,7 +67,7 @@ class Xinc_Engine_Parser
     }
     
     /**
-     * Enter description here...
+     * Loads an engine
      *
      * @param SimpleXMLElement $pluginXml
      */

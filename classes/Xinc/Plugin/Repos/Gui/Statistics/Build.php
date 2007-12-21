@@ -107,9 +107,6 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
                                                        getWidgetByClassName('Xinc_Plugin_Repos_Gui_Statistics_Widget');
         
         $statisticWidget->registerExtension('STATISTIC_GRAPH', $this->getBuildDurationGraph());
-        //$statisticWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
-        //$statisticWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
-        //$indexWidget->registerExtension('STATISTIC_GRAPH', array(&$this,'getBuildDurationGraph'));
         
     }
     

@@ -34,19 +34,39 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
      */
     protected $_plugin;
     
+    /**
+     *
+     * @param Xinc_Plugin_Interface $plugin
+     */
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
         
     }
+    
+    /**
+     *
+     * @return string
+     */
     public function getName()
     {
         return 'builds';
     }
+    /**
+     *
+     * @return array
+     */
     public function getMethods()
     {
         return array('get');
     }
+    
+    /**
+     *
+     * @param string $methodName
+     * @param array $params
+     * @return Xinc_Api_Response_Object
+     */
     public function processCall($methodName, $params = array())
     {
 
@@ -59,7 +79,12 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
        
        
     }
-    
+    /**
+     * get builds and return them
+     *
+     * @param array $params
+     * @return Xinc_Api_Response_Object
+     */
     private function _getBuilds($params)
     {
         
@@ -73,7 +98,14 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
     }
    
    
-    
+    /**
+     * Get a list of all builds of a project
+     *
+     * @param string $projectName
+     * @param integer $start
+     * @param integer $limit
+     * @return stdClass
+     */
     private function _getHistoryBuilds($projectName, $start, $limit=null)
     {
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();

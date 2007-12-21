@@ -36,6 +36,10 @@ class Xinc_Build_Status_Exception_NoDirectory extends Exception
         parent::__construct('Status directory ' . $dirName . ' is not a directory');
     }
     
+    /**
+     *
+     * @return string the directory
+     */
     public function getDirectory()
     {
         return $this->_dir;

@@ -27,6 +27,11 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugi
     const STOPPED = -1;
     const FAILED = -2;
     
+    /**
+     * abstract process of a modification set
+     *
+     * @param Xinc_Build_Interface $build
+     */
     public final function process(Xinc_Build_Interface &$build)
     {
         

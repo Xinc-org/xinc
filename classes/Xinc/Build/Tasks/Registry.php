@@ -69,6 +69,11 @@ class Xinc_Build_Tasks_Registry
         return $this->_slots[$slot];
     }
     
+    /**
+     * Get all tasks registered
+     *
+     * @return Xinc_Build_Tasks_Iterator
+     */
     public function getTasks()
     {
         $buildTaskIterator = new Xinc_Build_Tasks_Iterator();

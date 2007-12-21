@@ -42,10 +42,6 @@ abstract class Xinc_Plugin_Repos_Configuration_AbstractTask extends Xinc_Plugin_
         return true;
     }
 
-    public function getAllowedParentElements()
-    {
-        return array(new Xinc_Plugin_Repos_Configuration_Task($this->_plugin));
-    }
     
     public function process(Xinc_Build_Interface &$build){
           

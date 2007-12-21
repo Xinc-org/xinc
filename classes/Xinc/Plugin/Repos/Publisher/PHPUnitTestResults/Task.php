@@ -1,8 +1,8 @@
 <?php
 /**
- * Interface for a Gui Extension
+ * This interface represents a publishing mechanism to publish build results
  * 
- * @package Xinc.Gui
+ * @package Xinc.Plugin
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 Arno Schneider, Barcelona
@@ -22,13 +22,33 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-interface Xinc_Gui_Widget_Extension_Interface
+require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
+
+class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-    /**
-     * Get the extension point for this widget extension
-     *
-     */
-    public function getExtensionPoint();
+   
+    private $_file;
     
+    public function setFile($file)
+    {
+        $this->_file = $file;
+    }
     
+    public function getName()
+    {
+        return 'phpUnitTestResults';
+    }
+    public function validateTask()
+    {
+        if (!isset($this->_file)) {
+            return false;
+        }
+       
+        return true;
+    }
+
+    public function publish(Xinc_Build_Interface &$build)
+    {
+        return $this->_plugin->registerResults($build,$this->_file);
+    }
 }

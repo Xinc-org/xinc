@@ -29,7 +29,10 @@ require_once 'Xinc/Iterator.php';
 class Xinc_Config_Element_Iterator extends Xinc_Iterator
 {
   
-    
+    /**
+     *
+     * @param SimpleXMLElement[] $array
+     */
     public function __construct($array)
     {
         foreach ($array as $xmlElement) {

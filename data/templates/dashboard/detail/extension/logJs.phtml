@@ -1,3 +1,6 @@
+<style>
+.x-grid3-col-message { white-space:normal;}
+</style>
 <div id="log-grid-{projectname}-{buildtime}">
 
 </div>
@@ -13,6 +16,7 @@ logxml = function(){
                 '<b>{0}</b>',
                 value.dateFormat('Y-m-d H:i:s'));
     }
+   
     // example of custom renderer function
     function change(val){
         if(val > 0){
@@ -52,13 +56,13 @@ logxml = function(){
             {id:'id',header: "ID", width: 40, sortable: true, dataIndex: 'id'},
             {header: "Date", width: 75, sortable: false, dataIndex: 'date',renderer:formatDate},
             {header: "Priority", width: 75, sortable: true, dataIndex: 'priority'},
-            {header: "Message", dataIndex: 'message', id:'message', autoWidth:false }
+            {header: "Message", dataIndex: 'message', id:'message', autoWidth:true, autoScroll:true }
         ],
         stripeRows: true,
         autoExpandColumn: 'message',
         bufferResize: true,
         height:350,
-        width:'100%',
+        width:600,
         title:false,
         autoScroll: true
     });

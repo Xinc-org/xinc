@@ -37,16 +37,29 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
      */
     public $build;
     
+    /**
+     * constructor, registering a shutdown function
+     *
+     */
     public function __construct()
     {
         register_shutdown_function(array(&$this, 'shutdown'));
     }
     
+    /**
+     * get the name of this engine
+     *
+     * @return string
+     */
     public function getName()
     {
         return self::NAME;
     }
     
+    /**
+     * serializes the build before shutting down
+     *
+     */
     public function shutdown()
     {
         if ($this->build != null) {
@@ -54,6 +67,11 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
         }
     }
     
+    /**
+     * Process a build
+     *
+     * @param Xinc_Build_Interface $build
+     */
     public function build(Xinc_Build_Interface &$build)
     {
         $this->build=$build;

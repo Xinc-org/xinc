@@ -25,8 +25,17 @@
 interface Xinc_Engine_Interface
 {
 
+    /**
+     * get the name of the engine
+     * @return string
+     */
     public function getName();
 
+    /**
+     * process the build
+     *
+     * @param Xinc_Build_Interface $build
+     */
     public function build(Xinc_Build_Interface &$build);
     
     /**

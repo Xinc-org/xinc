@@ -62,6 +62,11 @@ class Xinc_Config_File extends SimpleXMLElement
         return $file;
     }
     
+    /**
+     * validate the config file
+     * - make sure only allowed tags are present
+     *
+     */
     protected function _validate()
     {
         $array = array('xinc');
@@ -77,6 +82,13 @@ class Xinc_Config_File extends SimpleXMLElement
         }
     }
     
+    /**
+     * Creates an xpath like array of all elements
+     *
+     * @param SimpleXMLElement $element
+     * @param string $parent
+     * @param array $array
+     */
     private function _walkXml($element, $parent, &$array)
     {
         foreach ($element->children() as $elementName => $element) {

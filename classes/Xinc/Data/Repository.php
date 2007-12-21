@@ -35,6 +35,10 @@ class Xinc_Data_Repository
     
     private $_baseDir;
     
+    /**
+     * Constructor for the data repository
+     *
+     */
     private function __construct()
     {
         $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
@@ -57,6 +61,12 @@ class Xinc_Data_Repository
         }
         return Xinc_Data_Repository::$_instance;
     }
+    /**
+     * Calculates the absolute pathname of a file
+     *
+     * @param string $fileName
+     * @return string
+     */
     public function get($fileName)
     {
         return $this->_baseDir . DIRECTORY_SEPARATOR . $fileName;

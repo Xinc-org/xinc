@@ -30,7 +30,11 @@ require_once 'Xinc/Build/Exception/Invalid.php';
 class Xinc_Build_Iterator extends Xinc_Iterator
 {
   
-    
+    /**
+     * Creates an iterator for Xinc_Build's
+     *
+     * @param Xinc_Build_Interface[] $array
+     */
     public function __construct($array = array())
     {
         foreach ($array as $element) {

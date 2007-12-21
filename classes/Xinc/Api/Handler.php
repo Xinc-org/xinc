@@ -47,16 +47,33 @@ class Xinc_Api_Handler
         return Xinc_Api_Handler::$_instance;
     }
     
+    /**
+     * Constructor for the api handler, setting up the baseurl for the api calls
+     *
+     * @param string $basePath baseurl for the API calls
+     */
     private function __construct($basePath = '/api')
     {
         $this->_basePath = $basePath;
     }
     
+    /**
+     * Register a response format with the api handler
+     * - Calls to a api contain the request for a specific response forma
+     *   like json etc.
+     *
+     * @param Xinc_Api_Response_Format_Interface $format
+     */
     public function registerResponseFormat(Xinc_Api_Response_Format_Interface &$format)
     {
         $this->_responseFormats[$format->getName()] = $format;
     }
     
+    /**
+     * Processes the call to a specific api url
+     *
+     * @param String $path
+     */
     public function processCall($path)
     {
         
@@ -87,6 +104,11 @@ class Xinc_Api_Handler
         }
     }
     
+    /**
+     * Returns the baseurl of the api handler
+     *
+     * @return string
+     */
     public function getBasePath()
     {
         return $this->_basePath;

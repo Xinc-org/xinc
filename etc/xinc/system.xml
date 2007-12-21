@@ -14,6 +14,7 @@
 	<plugin filename="Xinc/Plugin/Repos/Publisher/OnRecovery.php" classname="Xinc_Plugin_Repos_Publisher_OnRecovery"/>
 	<plugin filename="Xinc/Plugin/Repos/Publisher/OnFailure.php" classname="Xinc_Plugin_Repos_Publisher_OnFailure"/>
 	<plugin filename="Xinc/Plugin/Repos/Publisher/Email.php" classname="Xinc_Plugin_Repos_Publisher_Email"/>
+	<plugin filename="Xinc/Plugin/Repos/Publisher/PHPUnitTestResults.php" classname="Xinc_Plugin_Repos_Publisher_PHPUnitTestResults"/>
 	<plugin filename="Xinc/Plugin/Repos/Gui/Dashboard.php" classname="Xinc_Plugin_Repos_Gui_Dashboard"/>
 	<plugin filename="Xinc/Plugin/Repos/Artifacts.php" classname="Xinc_Plugin_Repos_Artifacts"/>
 	<plugin filename="Xinc/Plugin/Repos/Gui/Menu.php" classname="Xinc_Plugin_Repos_Gui_Menu"/>

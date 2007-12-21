@@ -38,6 +38,12 @@ class Xinc_Build_Labeler_Default implements Xinc_Build_Labeler_Interface
      */
     private $_prefix = 'BUILD.';
 
+    /**
+     * Return the label for this build
+     *
+     * @param Xinc_Build_Interface $build
+     * @return string
+     */
     public function getLabel(Xinc_Build_Interface &$build)
     {
         $buildNo = $build->getNumber();

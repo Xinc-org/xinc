@@ -34,6 +34,10 @@ class Xinc_Config_Parser
      */
     private $_configFile;
     
+    /**
+     *
+     * @param Xinc_Config_File $configFile
+     */
     public function __construct(Xinc_Config_File $configFile)
     {
         $this->_configFile = $configFile;
