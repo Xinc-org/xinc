@@ -63,7 +63,12 @@
 		
 	</target>
 	<target name="doc">
-		<mkdir dir="${project.basedir}/doc"/>
+		<!--
+		 Why does phpdoc task break? 
+		 -->
+		
+		 <mkdir dir="${project.basedir}/doc"/>
+		
 		<exec command="phpdoc -d ${project.basedir}/classes -t ${project.basedir}/doc -o HTML:Smarty:PHP"/>
 		
 	</target>
