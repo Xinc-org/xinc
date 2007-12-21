@@ -66,7 +66,7 @@
 		<!--
 		 Why does phpdoc task break? 
 		 -->
-		
+		 <delete dir="${project.basedir}/doc" includesfile="true"/>
 		 <mkdir dir="${project.basedir}/doc"/>
 		
 		<exec command="phpdoc -d ${project.basedir}/classes -t ${project.basedir}/doc -o HTML:frames:phpedit -p on"/>
