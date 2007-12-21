@@ -66,6 +66,7 @@
 		<!--
 		 Why does phpdoc task break? 
 		 -->
+		
 		 <delete dir="${project.basedir}/doc"/>
 		 <mkdir dir="${project.basedir}/doc"/>
 		
