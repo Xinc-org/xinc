@@ -41,16 +41,16 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary extends Xinc_Plug
 
         switch ($build->getStatus()) {
             case 1:
-                $bgColor = '#04de04';
+                $image = '/images/passed.png';
                 break;
             case -1:
-                $bgColor = 'gray';
+                $image = '/images/stopped.png';
                 break;
             case 0:
-                $bgColor = '#f40204';
+                $image = '/images/failed.png';
                 break;
             default:
-                $bgColor = 'gray';
+                $image = '/images/stopped.png';
                 break;
         }
         
@@ -67,7 +67,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary extends Xinc_Plug
         $overviewTemplate = file_get_contents($overviewTemplateFile);
         
         $content = call_user_func_array('sprintf', array($overviewTemplate,
-                                                         $bgColor,
+                                                         $image,
                                                          date('Y-m-d H:i:s', $build->getBuildTime()),
                                                          $build->getLabel()));
         

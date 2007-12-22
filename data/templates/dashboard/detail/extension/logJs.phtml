@@ -54,9 +54,9 @@ logxml = function(){
         store: store,
         columns: [
             {id:'id',header: "ID", width: 40, sortable: true, dataIndex: 'id'},
-            {header: "Date", width: 75, sortable: false, dataIndex: 'date',renderer:formatDate},
-            {header: "Priority", width: 75, sortable: true, dataIndex: 'priority'},
-            {header: "Message", dataIndex: 'message', id:'message', autoWidth:true, autoScroll:true }
+            {header: "Date", width: 140, sortable: false, dataIndex: 'date',renderer:formatDate},
+            {header: "Prio", width: 40, sortable: true, dataIndex: 'priority'},
+            {header: "Message", dataIndex: 'message', id:'message', autoScroll:true }
         ],
         stripeRows: true,
         autoExpandColumn: 'message',
