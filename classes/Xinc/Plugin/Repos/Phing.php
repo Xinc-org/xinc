@@ -58,7 +58,17 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         return array(new Xinc_Plugin_Repos_Builder_Phing_Task($this),
                      new Xinc_Plugin_Repos_Publisher_Phing_Task($this));
     }
-    public function build(Xinc_Build_Interface &$build, $buildfile,$target)
+    
+    /**
+     * Enter description here...
+     *
+     * @param Xinc_Build_Interface $build
+     * @param string $buildfile
+     * @param string $target
+     * @param string $workingDir
+     * @return boolean
+     */
+    public function build(Xinc_Build_Interface &$build, $buildfile, $target, $workingDir = null)
     {
         //$phing = new Phing();
         $logLevel = Xinc_Logger::getInstance()->getLogLevel();
@@ -71,14 +81,18 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         }
         $oldPwd = getcwd();
         /**
-         * set workingdir
+         * set workingdir if not set from task,
+         * use project dir
          */
-        $workingdir = Xinc::getInstance()->getProjectDir() . DIRECTORY_SEPARATOR . $build->getProject()->getName();
-        if (is_dir($workingdir)) {
-            Xinc_Logger::getInstance()->debug('Switching to directory: ' . $workingdir);
-            
-            chdir($workingdir);
+        if ($workingDir == null) {
+            $workingDir = Xinc::getInstance()->getProjectDir() . DIRECTORY_SEPARATOR . $build->getProject()->getName();
         }
+        if (is_dir($workingDir)) {
+            Xinc_Logger::getInstance()->debug('Switching to directory: ' . $workingDir);
+            
+            chdir($workingDir);
+        }
+        
         //$arguments[] = '-quiet';
         //$arguments[] = '-listener';
         //$arguments[] = 'Xinc.Plugin.Repos.Phing.Listener';
@@ -116,15 +130,6 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 return false;
                 break;
         }
-        //$phing->execute($arguments);
-        //Phing::setDefinedProperty('xinc.buildlabel', $build->getLabel());
-        //try {
-        //    $phing->runBuild();
-        //    return true;
-        //}
-        //catch(Exception $e){
-        //$build->setStatus(Xinc_Build_Interface::FAILED);
-        //return false;
-        //}
+        return false;
     }
 }

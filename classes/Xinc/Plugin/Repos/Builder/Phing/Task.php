@@ -28,19 +28,41 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
 {
     private $_buildFile = 'build.xml';
     private $_target = 'build';
+    private $_workingDir = null;
 
+    /**
+     * returns the name of this task
+     *
+     * @return string
+     */
     public function getName()
     {
         return 'phingBuilder';
     }
+    /**
+     * sets the name of the buildfile to call
+     *
+     * @param string $file
+     */
     public function setBuildFile($file)
     {
-        $this->_buildFile = $file;
+        $this->_buildFile = (string) $file;
     }
+    /**
+     * sets the target property. defines which phing target should be called
+     *
+     * @param string $target
+     */
     public function setTarget($target)
     {
-        $this->_target = $target;
+        $this->_target = (string) $target;
     }
+    /**
+     * Validate if all information the task needs to run
+     * properly have been set
+     *
+     * @return boolean
+     */
     public function validateTask()
     {
         // validate if buildfile exists
@@ -78,6 +100,21 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
         $this->_if = $if;
     }
     
+    /**
+     * sets the working dir for the current phing task
+     *
+     * @param string $workingDir
+     */
+    public function setWorkingDir($workingDir)
+    {
+        $this->_workingDir = $workingDir;
+    }
+    /**
+     * The parent builder task will call this method
+     *
+     * @param Xinc_Build_Interface $build
+     * @return boolean
+     */
     public function build(Xinc_Build_Interface &$build)
     {
         if ($this->_if !== null) {
@@ -85,13 +122,13 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
             $ifProp = $build->getProperties()->get($this->_if);
             if ($ifProp === true) {
                $build->info('--' . $this->_if . ' == true --> building');
-               return $this->_plugin->build($build, (string)$this->_buildFile, (string)$this->_target);
+               return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_workingDir);
             } else {
                $build->info('--' . $this->_if . ' == false --> not building');
                return true;
             }
         } else {
-           return $this->_plugin->build($build, (string)$this->_buildFile, (string)$this->_target);
+           return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_workingDir);
         }
     }
 }

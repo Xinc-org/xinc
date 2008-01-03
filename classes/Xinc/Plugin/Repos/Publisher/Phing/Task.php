@@ -28,18 +28,32 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher
 {
     private $_buildFile = 'build.xml';
     private $_target = 'build';
+    private $_workingDir = null;
+    
     public function getName()
     {
         return 'phingPublisher';
     }
+    
     public function setBuildFile($file)
     {
-        $this->_buildFile = $file;
+        $this->_buildFile = (string) $file;
     }
     public function setTarget($target)
     {
-        $this->_target = $target;
+        $this->_target = (string) $target;
     }
+    
+    public function setWorkingDir($workingDir)
+    {
+        $this->_workingDir = $workingDir;
+    }
+    /**
+     * Validate if all information the task needs to run
+     * properly have been set
+     *
+     * @return boolean
+     */
     public function validateTask()
     {
         // validate if buildfile exists
@@ -58,8 +72,14 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher
         return true;
     }
 
+    /**
+     * The parent publisher calls this method
+     *
+     * @param Xinc_Build_Interface $build
+     * @return boolean
+     */
     public function publish(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->build($build, (string)$this->_buildFile, (string)$this->_target);
+        return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_workingDir);
     }
 }

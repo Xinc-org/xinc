@@ -64,6 +64,12 @@ abstract class Xinc_Plugin_Repos_Builder_AbstractTask extends Xinc_Plugin_Task_B
     {
         
     }
+    
+    /**
+     * Validate if all information the task needs to run
+     * properly have been set
+     * @return boolean
+     */
     public abstract function validateTask();
     public abstract function build(Xinc_Build_Interface &$build);
 }

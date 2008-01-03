@@ -552,9 +552,9 @@ class Xinc
     public function getBuiltinProperties()
     {
         $properties = array();
-        $properties['xinc.workingdir'] = $this->getWorkingDir();
-        $properties['xinc.statusdir'] = $this->getStatusDir();
-        $properties['xinc.projectdir'] = $this->getProjectDir();
+        $properties['workingdir'] = $this->getWorkingDir();
+        $properties['statusdir'] = $this->getStatusDir();
+        $properties['projectdir'] = $this->getProjectDir();
         
         return $properties;
     }
