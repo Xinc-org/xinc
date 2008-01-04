@@ -101,11 +101,11 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         $arguments[] = '-buildfile';
         $arguments[] = $buildfile;
         $arguments[] = $target;
-        $arguments[] = '-Dxinc.buildlabel=' . $build->getLabel();
-        $arguments[] = '-Dprojectname=' . $build->getProject()->getName();
-        $arguments[] = '-Dcctimestamp=' . $build->getBuildTime();
+        $arguments[] = '-Dxinc.buildlabel=' . $this->_encodeParam($build->getLabel());
+        $arguments[] = '-Dprojectname=' . $this->_encodeParam($build->getProject()->getName());
+        $arguments[] = '-Dcctimestamp=' . $this->_encodeParam($build->getBuildTime());
         foreach ($build->getProperties()->getAllProperties() as $name => $value) {
-            $arguments[] = '-Dxinc.' . $name . '=' . $value;
+            $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
         exec('phing ' . implode(' ', $arguments) . ' 2>&1', $output, $returnValue);
         chdir($oldPwd);
@@ -131,5 +131,10 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 break;
         }
         return false;
+    }
+    
+    private function _encodeParam($value)
+    {
+        return '"'. str_replace('"', '\"', $value) .'"';
     }
 }
