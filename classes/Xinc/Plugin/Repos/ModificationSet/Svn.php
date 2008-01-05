@@ -264,7 +264,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
              * check if we have the svn info --xml option
              */
             exec('svn info --xml 2>&1', $output, $result);
-            if (trim($output[1])=='<info>') {
+            /**
+             * We need to check 1 and 2 for <info> since it depends 
+             * if the place where its called is a working copy or not
+             */
+            if (trim($output[1])=='<info>' || trim($output[2])=='<info>') {
                 return true;
             } else {
                 Xinc_Logger::getInstance()->error('SVN version does not support "svn info --xml".' 
