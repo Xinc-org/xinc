@@ -61,16 +61,22 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
         $output = '';
         $result = 9;
-        exec('svn info', $output, $result);
+        exec('svn info --xml', $output, $result);
 
         if ($result == 0) {
             $localSet = implode("\n", $output);
             
-            $url = $this->getURL($localSet);
-
+            try {
+                $url = $this->getURL($localSet);
+            } catch (Exception $e) {
+                $build->error('Problem with remote '
+                             . 'Subversion repository, cannot get URL of working copy ' . $localSet);
+                $build->setStatus(Xinc_Build_Interface::FAILED);
+                return false;
+            }
             $output = '';
             $result = 9;
-            exec('svn info ' . $url . ' 2>&1', $output, $result);
+            exec('svn info ' . $url . ' --xml 2>&1', $output, $result);
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
@@ -90,9 +96,23 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 // dont make build fail if there are timeouts
                 return false;
             }
-
-            $localRevision = $this->getRevision($localSet);
-            $remoteRevision = $this->getRevision($remoteSet);
+            try {
+                $localRevision = $this->getRevision($localSet);
+            } catch (Exception $e) {
+                $build->error('Problem with remote '
+                             . 'Subversion repository, cannot get revision of working copy ' . $localSet);
+                $build->setStatus(Xinc_Build_Interface::FAILED);
+                return false;
+            }
+            try {
+                $remoteRevision = $this->getRevision($remoteSet);
+            } catch (Exception $e) {
+                $build->error('Problem with remote '
+                             . 'Subversion repository, cannot get revision of remote repos ' . $remoteSet);
+                $build->setStatus(Xinc_Build_Interface::FAILED);
+                return false;
+            }
+            
                 
             $build->info('Subversion checkout dir is '.$dir.' '
                            .'local revision @ '.$localRevision.' '
@@ -115,16 +135,16 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      *
      * @param string $result
      * @return string
+     * @throws Exception
      */
     private function getUrl($result)
     {
-        $list = split("\n", $result);
-        foreach ($list as $row) {
-            $field = split(': ', $row);
-            if (preg_match('/URL/', $field[0])) {
-                return trim($field[1]);
-            }
-        }
+        
+        $xml = new SimpleXMLElement($result);
+        $urls = $xml->xpath('/info/entry/url');
+        $url = (string) $urls[0];
+        return $url;
+        
     }
 
     /**
@@ -133,47 +153,13 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      *
      * @param string $result
      * @return string
+     * @throws Exception
      */
     public function getRevision($result)
     {
-        /**
-         * get the version
-         */
-        exec('svn --version', $versionOutput);
-        $versionLine = $versionOutput[0];
-        preg_match('/.*? (\d.\d.\d) .*?/', $versionLine, $matches);
-        $version = $matches[1];
-        list($major, $minor, $point) = split('\.', $version);
-        
-        Xinc_Logger::getInstance()->debug('Using svn version: ' . "$major.$minor.$point");
-        switch ($major) {
-            case 1:
-                switch ($minor) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                        /**
-                         * Get after URL
-                         */
-                        return $this->_getRevisionOldOld($result);
-                        break;
-                    default:
-                        /**
-                         * take after UUID
-                         */
-                        return $this->_getRevisionNew($result);
-                        break;
-                }
-                break;
-            default:
-                /**
-                 * Use the /Revision/ pattern
-                 * */
-                return $this->_getRevisionOld($result);
-                break;
-        }
-        
+
+        return $this->_getRevisionXml($result);
+
         
     }
     
@@ -185,6 +171,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      * 
      * @param $result the svn info output
      * @return integer the revision number
+     * @deprecated 
      */
     protected function _getRevisionOld($result)
     {
@@ -197,6 +184,22 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         }
         return null;
     }
+    /**
+     * Enter description here...
+     *
+     * @param string $xmlString
+     * @return integer
+     * @throws Exception
+     */
+    private function _getRevisionXml($xmlString)
+    {
+        $xml = new SimpleXMLElement($xmlString);
+        $commits = $xml->xpath("/info/entry/commit");
+        $commit = $commits[0];
+        $attributes = $commit->attributes();
+        $rev = (int)$attributes->revision;
+        return $rev;
+    }
     
     /**
      * Relying on the output of version 1.4 and up to have the
@@ -204,6 +207,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      * 
      * @param $result the svn info output
      * @return integer the revision number
+     * @deprecated 
      */
     protected function _getRevisionNew($result)
     {
@@ -224,6 +228,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      * 
      * @param $result the svn info output
      * @return integer the revision number
+     * @deprecated 
      */
     protected function _getRevisionOldOld($result)
     {
@@ -245,7 +250,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      */
     public function validate()
     {
-        exec('svn 2>&1', $output, $result);
+        exec('svn 2>&1', $dummy, $result);
         /**
          * See Issue 56, check r
          */
@@ -255,7 +260,18 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 
             return false;
         } else {
-            return true;
+            /**
+             * check if we have the svn info --xml option
+             */
+            exec('svn info --xml 2>&1', $output, $result);
+            if (trim($output[1])=='<info>') {
+                return true;
+            } else {
+                Xinc_Logger::getInstance()->error('SVN version does not support "svn info --xml".' 
+                                                  . ' This is used to gather info about svn working copies.'
+                                                  . 'Please upgrade your svn version.');
+                return false;
+            }
         }
 
     }

@@ -30,6 +30,8 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher
     private $_target = 'build';
     private $_workingDir = null;
     
+    private $_params = null;
+    
     public function getName()
     {
         return 'phingPublisher';
@@ -42,6 +44,11 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher
     public function setTarget($target)
     {
         $this->_target = (string) $target;
+    }
+    
+    public function setParams($params)
+    {
+        $this->_params = $params;
     }
     
     public function setWorkingDir($workingDir)
@@ -80,6 +87,6 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher
      */
     public function publish(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_workingDir);
+        return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_params, $this->_workingDir);
     }
 }

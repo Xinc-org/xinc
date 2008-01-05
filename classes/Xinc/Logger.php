@@ -88,7 +88,7 @@ class Xinc_Logger
     private function __construct() 
     {
         $this->_logQueue = array();
-        $this->_max = 500;
+        $this->_max = 50;
     }
     public function setLogLevel($level)
     {
@@ -132,11 +132,7 @@ class Xinc_Logger
         
         $this->_logQueue[] = new Xinc_Logger_Message($priority[1], $logTime, $msg);
         
-        if (count($this->_logQueue)>$this->_max) {
-            
-            $this->flush();
-            
-        }
+        
 
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
@@ -154,6 +150,12 @@ class Xinc_Logger
             }
         } else if ($fileHandle !== null) {
             fputs($fileHandle, $message);
+        }
+        
+        if (count($this->_logQueue)>$this->_max) {
+            
+            $this->flush();
+            
         }
     }
     
@@ -247,7 +249,7 @@ class Xinc_Logger
         $buildXml .= implode("\n", $messageElements);
         $buildXml .= "\n";
         $buildXml .= '</build>';
-        $this->info('Flushing log to: ' . $this->_buildLogFile);
+        
         $dirName = dirname($this->_buildLogFile);
         if (!file_exists($dirName)) {
             mkdir($dirName, 0755, true);

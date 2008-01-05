@@ -22,6 +22,9 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+require_once 'Xinc/Plugin/Task/Base.php';
+
 abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugin_Task_Base
 {
     const STOPPED = -1;

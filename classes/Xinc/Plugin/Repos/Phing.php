@@ -60,15 +60,16 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
     }
     
     /**
-     * Enter description here...
+     * calling phing
      *
      * @param Xinc_Build_Interface $build
      * @param string $buildfile
      * @param string $target
+     * @param string $extraParams
      * @param string $workingDir
      * @return boolean
      */
-    public function build(Xinc_Build_Interface &$build, $buildfile, $target, $workingDir = null)
+    public function build(Xinc_Build_Interface &$build, $buildfile, $target, $extraParams = null, $workingDir = null)
     {
         //$phing = new Phing();
         $logLevel = Xinc_Logger::getInstance()->getLogLevel();
@@ -107,7 +108,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         foreach ($build->getProperties()->getAllProperties() as $name => $value) {
             $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
-        exec('phing ' . implode(' ', $arguments) . ' 2>&1', $output, $returnValue);
+        exec('phing ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . '2>&1', $output, $returnValue);
         chdir($oldPwd);
         foreach ($output as $line) {
             Xinc_Logger::getInstance()->info($line);
