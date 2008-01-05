@@ -88,7 +88,7 @@ class Xinc_Logger
     private function __construct() 
     {
         $this->_logQueue = array();
-        $this->_max = 50;
+        $this->_max = 500;
     }
     public function setLogLevel($level)
     {
