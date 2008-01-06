@@ -78,16 +78,7 @@ class Xinc_Engine_Sunrise_Parser
                 $build = Xinc_Build::unserialize($project);
                 $build->setBuildTime(null);
                 
-                $build->getProperties()->set('project.name', $project->getName());
-                $build->getProperties()->set('build.number', $build->getNumber());
-                $build->getProperties()->set('build.label', $build->getLabel());
                 
-                
-                $builtinProps = Xinc::getInstance()->getBuiltinProperties();
-                
-                foreach ($builtinProps as $prop => $value) {
-                    $build->getProperties()->set($prop, $value);
-                }
                 
                 
             } catch (Xinc_Build_Exception_NotFound $e) {
@@ -99,6 +90,18 @@ class Xinc_Engine_Sunrise_Parser
             if (!$build instanceof Xinc_Build_Interface) {
                 $build = new Xinc_Build($this->_engine, $project);
             }
+            
+            $build->getProperties()->set('project.name', $project->getName());
+            $build->getProperties()->set('build.number', $build->getNumber());
+            $build->getProperties()->set('build.label', $build->getLabel());
+            
+            
+            $builtinProps = Xinc::getInstance()->getBuiltinProperties();
+            
+            foreach ($builtinProps as $prop => $value) {
+                $build->getProperties()->set($prop, $value);
+            }
+            
             $taskRegistry = new Xinc_Build_Tasks_Registry();
             $this->_parseTasks($build, $projectXml, $taskRegistry);
             

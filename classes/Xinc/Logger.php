@@ -88,7 +88,7 @@ class Xinc_Logger
     private function __construct() 
     {
         $this->_logQueue = array();
-        $this->_max = 500;
+        $this->_max = 50;
     }
     public function setLogLevel($level)
     {
@@ -242,18 +242,29 @@ class Xinc_Logger
             
             $messageElements[] = $messageString;
         }
+        
+        
+        $dirName = dirname($this->_buildLogFile);
+        if (!file_exists($dirName)) {
+            mkdir($dirName, 0755, true);
+            $previousLogMessages = '';
+        } else if (file_exists($this->_buildLogFile)) {
+            $previousLogMessagesArr = file($this->_buildLogFile);
+            array_shift($previousLogMessagesArr);
+            array_shift($previousLogMessagesArr);
+            array_pop($previousLogMessagesArr);
+            $previousLogMessages = implode("\n", $previousLogMessagesArr);
+        }
+        
         $buildXml  = '<?xml version="1.0"?>';
         $buildXml .= "\n";
         $buildXml .= '<build>';
         $buildXml .= "\n";
         $buildXml .= implode("\n", $messageElements);
         $buildXml .= "\n";
+        $buildXml .= $previousLogMessages;
         $buildXml .= '</build>';
         
-        $dirName = dirname($this->_buildLogFile);
-        if (!file_exists($dirName)) {
-            mkdir($dirName, 0755, true);
-        }
         file_put_contents($this->_buildLogFile, $buildXml);
         
         $this->_resetLogQueue();

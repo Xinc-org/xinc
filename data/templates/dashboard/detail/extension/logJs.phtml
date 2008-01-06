@@ -5,12 +5,13 @@
 
 </div>
 <script type="text/javascript">
-Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+//Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 logxml = function(){
 
-    var myData = [
+    /**var myData = [
         {data}
-    ];
+    ];*/
+    
 	function formatDate(value, p, record) {
     return String.format(
                 '<b>{0}</b>',
@@ -38,6 +39,7 @@ logxml = function(){
     }
 
     // create the data store
+    /**
     var store = new Ext.data.SimpleStore({
         fields: [
            {name: 'id', type: 'int'},
@@ -47,7 +49,29 @@ logxml = function(){
         ]
     });
     store.setDefaultSort('id', 'desc');
-    store.loadData(myData);
+    store.loadData(myData);*/
+
+	// create the Data Store
+    var store = new Ext.data.Store({
+       proxy: new Ext.data.HttpProxy({
+            url: '/api/logmessages/get/json/?p={projectname}&buildtime={buildtime}&',
+            extraParams: {p:'{projectname}',buildtime:'{buildtime}'}
+        }),
+
+        // create reader that reads the Topic records
+        reader: new Ext.data.JsonReader({
+        	root: 'logmessages',
+        	totalProperty: 'totalmessages',
+            fields: [
+                 {name: 'id', type: 'int', dataIndex:'id'},
+           		{name: 'date', type: 'date', dateFormat: 'timestamp', dataIndex:'date'},
+           {name:'priority', dataIndex:'priority'},
+           {name:'message',dataIndex:'message'}
+               
+            ]
+        })
+    });
+    store.setDefaultSort('id', 'desc');
 
     // create the Grid
     var grid = new Ext.grid.GridPanel({
@@ -62,16 +86,37 @@ logxml = function(){
         autoExpandColumn: 'message',
         bufferResize: true,
         height:350,
+        loadMask: true,
         width:600,
         title:false,
-        autoScroll: true
+        autoScroll: true,
+        bbar: new Ext.PagingToolbar({
+            pageSize: 25,
+            store: store,
+            displayInfo: false,
+            displayMsg: '{0} - {1} of {2}',
+            emptyMsg: "No logmessages to display",
+            items:[
+              /**  '-', {
+                pressed: true,
+                enableToggle:true,
+                text: 'Show Preview',
+                cls: 'x-btn-text-icon details',
+                toggleHandler: toggleDetails
+            }*/]
+        })
     });
 
     grid.render('log-grid-{projectname}-{buildtime}');
-    
+        store.load({params:{start:0, limit:25, p: '{projectname}', buildtime:'{buildtime}'}});
 
-    grid.getSelectionModel().selectFirstRow();
-   
+    /**grid.getSelectionModel().selectFirstRow();*/
+    
+       function toggleDetails(btn, pressed){
+        var view = grid.getView();
+        view.showPreview = pressed;
+        view.refresh();
+    }
 };
 logxml();
 </script>

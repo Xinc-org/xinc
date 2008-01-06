@@ -585,11 +585,14 @@ class Xinc_Build implements Xinc_Build_Interface
         Xinc_Logger::getInstance()->setBuildLogFile(null);
         Xinc_Logger::getInstance()->emptyLogQueue();
         Xinc::setCurrentBuild($this);
+        
+        
         Xinc_Logger::getInstance()->setBuildLogFile(Xinc::getInstance()->getStatusDir() 
                                                    . DIRECTORY_SEPARATOR 
                                                    . $this->getProject()->getName()
                                                    . DIRECTORY_SEPARATOR
                                                    . 'buildlog.xml');
+        
         $this->getEngine()->build($this);
         //Xinc_Logger::getInstance()->flush();
         Xinc_Logger::getInstance()->setBuildLogFile(null);

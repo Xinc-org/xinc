@@ -133,7 +133,12 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         }
         return false;
     }
-    
+    /**
+     * Makes the passed properties command line safe
+     *
+     * @param string $value
+     * @return string
+     */
     private function _encodeParam($value)
     {
         return '"'. str_replace('"', '\"', $value) .'"';
