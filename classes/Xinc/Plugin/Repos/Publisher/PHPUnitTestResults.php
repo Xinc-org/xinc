@@ -38,7 +38,8 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
     {
         return array(new Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task($this));
     }
-	/**
+    
+    /**
      * Copies a file into a special test results directory for the build and
      * parse the xml file to generate statistics
      *
@@ -128,7 +129,7 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
             $unitStats = array('numberOfTests' => $testSuiteCount,
                                'numberOfFailures' => $failureCount,
                                'numberOfErrors' => $errorCount,
-                               'totalTime' => round($timeTaken,8) );
+                               'totalTime' => round($timeTaken, 8) );
             /**
              * set the statistics data
              */

@@ -37,7 +37,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Log extends Xinc_Plugin_R
     public function getContent(Xinc_Build_Interface &$build)
     {
 
-        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        /**$statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         
         $detailDir = $statusDir.DIRECTORY_SEPARATOR .$build->getProject()->getName();
         $year = date('Y', $build->getBuildTime());
@@ -66,7 +66,8 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Log extends Xinc_Plugin_R
                      . ',"' . $logEntry['priority'] 
                      . '","' . str_replace("\n", '\\n', addcslashes($logEntry, '"\'')) 
                      . '"]';
-        }
+        }*/
+        
         $logTemplateFile = Xinc_Data_Repository::getInstance()->get('templates'
                                                                    . DIRECTORY_SEPARATOR
                                                                    . 'dashboard'
@@ -78,8 +79,8 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Log extends Xinc_Plugin_R
                                                                    . 'logJs.phtml');
         $logTemplate = file_get_contents($logTemplateFile);
         
-        $content = str_replace(array('{data}','{projectname}','{buildtime}'),
-                               array(implode(',', $rows), $build->getProject()->getName(), $build->getBuildTime()),
+        $content = str_replace(array('{projectname}','{buildtime}'),
+                               array($build->getProject()->getName(), $build->getBuildTime()),
                                $logTemplate);
         
         return $content;

@@ -129,7 +129,9 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
             $ifProp = $build->getProperties()->get($this->_if);
             if ($ifProp === true) {
                $build->info('--' . $this->_if . ' == true --> building');
-               return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_params, $this->_workingDir);
+               return $this->_plugin->build($build, $this->_buildFile,
+                                            $this->_target, $this->_params,
+                                            $this->_workingDir);
             } else {
                $build->info('--' . $this->_if . ' == false --> not building');
                return true;

@@ -140,7 +140,9 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
             
             $attributes = $logEntry->attributes();
             $logmessages[] = array( 'id'=>$i--, 
-                     'date'=> (string)$attributes->timestamp,'priority'=>(string)$attributes->priority,'message'=>str_replace("\n", '\\n', addcslashes($logEntry, '"\'')));
+                     'date'=> (string)$attributes->timestamp,
+                     'priority'=>(string)$attributes->priority,
+                     'message'=>str_replace("\n", '\\n', addcslashes($logEntry, '"\'')));
         }
         $logmessages = array_slice($logmessages, $start, $limit, false);
 

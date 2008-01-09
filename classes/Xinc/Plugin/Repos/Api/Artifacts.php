@@ -24,6 +24,7 @@
 */
 require_once 'Xinc/Api/Module/Interface.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
+require_once 'Xinc/Build/Repository.php';
 
 class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
 {
@@ -126,14 +127,21 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
            die();
        }
        $projectName = $matches[5];
-       $buildTime = $matches[6];
+       $buildTime = $matches[6]; // if buildtime==latest, get latest build
+       // latest
+       // Xinc_Build_History::get()
        $file = $matches[7];
         $project = new Xinc_Project();
         $project->setName($projectName);
         try {
-            $build = Xinc_Build::unserialize($project,
+            /**$build = Xinc_Build::unserialize($project,
                                              $buildTime,
-                                             Xinc_Gui_Handler::getInstance()->getStatusDir());
+                                             Xinc_Gui_Handler::getInstance()->getStatusDir());*/
+            if ($buildTime == 'latest') {
+                $build = Xinc_Build_Repository::getLastBuild($project);
+            } else {
+                $build = Xinc_Build_Repository::getBuild($project, $buildTime);
+            }
            
             $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
             $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 

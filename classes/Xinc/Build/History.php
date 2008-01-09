@@ -1,8 +1,8 @@
 <?php
 /**
- * This interface represents a publishing mechanism to publish build results
+ * Build History retrieves the buildtimes of a project
  * 
- * @package Xinc.Plugin
+ * @package Xinc.Build
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 Arno Schneider, Barcelona
@@ -22,33 +22,36 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
+require_once 'Xinc/Project.php';
+require_once 'Xinc.php';
+
+class Xinc_Build_History
 {
-   
-    private $_file;
-    
-    public function setFile($file)
+    /**
+     * returns an array of build timestamps for a project
+     *
+     * @param Xinc_Project $project
+     * @return array
+     */
+    public static function get(Xinc_Project &$project)
     {
-        $this->_file = $file;
-    }
-    
-    public function getName()
-    {
-        return 'phpUnitTestResults';
-    }
-    public function validateTask()
-    {
-        if (!isset($this->_file)) {
-            return false;
+        $projectName = $project->getName();
+        
+        if (class_exists('Xinc_Gui_Handler')) {
+            // we are in gui mode
+            $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        } else {
+            $statusDir = Xinc::getInstance()->getStatusDir();
         }
-       
-        return true;
-    }
-
-    public function publish(Xinc_Build_Interface &$build)
-    {
-        return $this->_plugin->registerResults($build, $this->_file);
+        
+        $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
+        if (file_exists($historyFile)) {
+            $buildHistoryArr = @unserialize(file_get_contents($historyFile));
+        } else {
+            $buildHistoryArr = array();
+        }
+        
+        return $buildHistoryArr;
     }
 }

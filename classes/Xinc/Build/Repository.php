@@ -1,6 +1,6 @@
 <?php
 /**
- * Repository to get historic build information
+ * Build Repository provides helper methods to load builds of a project
  * 
  * @package Xinc.Build
  * @author Arno Schneider
@@ -22,7 +22,10 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-interface Xinc_Build_Repository_Interface
+require_once 'Xinc/Build/Repository/Interface.php';
+require_once 'Xinc/Build/History.php';
+
+class Xinc_Build_Repository implements Xinc_Build_Repository_Interface
 {
     /**
      * Gets a build defined by its project name and buildTime
@@ -33,7 +36,14 @@ interface Xinc_Build_Repository_Interface
      * @throws Xinc_Build_Exception_NotFound
      * @return Xinc_Build_Interface
      */
-    public static function getBuild(Xinc_Project &$project, $buildTime);
+    public static function getBuild(Xinc_Project &$project, $buildTime)
+    {
+        $statusDir = null;
+        if (class_exists('Xinc_Gui_Handler')) {
+            $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        }
+        return Xinc_Build::unserialize($project, $buildTime, $statusDir);
+    }
     
     /**
      * Gets the last build for a project.
@@ -45,5 +55,10 @@ interface Xinc_Build_Repository_Interface
      * @throws Xinc_Build_Exception_NotFound
      * @return Xinc_Build_Interface
      */
-    public static function getLastBuild(Xinc_Project &$project);
+    public static function getLastBuild(Xinc_Project &$project)
+    {
+        $buildHistoryArr = Xinc_Build_History::get($project);
+        $lastBuildTime = $buildHistoryArr[count($buildHistoryArr) - 1];
+        return self::getBuild($project, $lastBuildTime);
+    }
 }
