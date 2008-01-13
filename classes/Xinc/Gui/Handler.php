@@ -67,6 +67,7 @@ class Xinc_Gui_Handler
      */
     public function __construct($configFile,$statusDir)
     {
+        $statusDir = realpath($statusDir);
         /**
          * See Issue 57.
          * Will be substituted by configuration option
@@ -111,6 +112,7 @@ class Xinc_Gui_Handler
      */
     private function setSystemConfigFile($fileName)
     {
+        $fileName = realpath($fileName);
         try {
             Xinc_Config::parse($fileName);
             

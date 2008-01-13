@@ -22,6 +22,8 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+require_once 'Xinc/Gui/Widget/Extension/Interface.php';
+
 class Xinc_Plugin_Repos_Gui_Menu_Extension_Item implements Xinc_Gui_Widget_Extension_Interface
 {
 

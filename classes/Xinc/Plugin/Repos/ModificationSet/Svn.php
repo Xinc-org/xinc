@@ -76,7 +76,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             }
             $output = '';
             $result = 9;
-            exec('svn info ' . $url . ' --xml 2>&1', $output, $result);
+            
+            if (DIRECTORY_SEPARATOR == '/') {
+                // we are on Linux/Unix
+                $redirectErrors = ' 2>&1';
+            } else {
+                $redirectErrors = ' ';
+            }
+            
+            exec('svn info ' . $url . ' --xml' . $redirectErrors, $output, $result);
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
@@ -250,20 +258,32 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      */
     public function validate()
     {
-        exec('svn 2>&1', $dummy, $result);
+        if (DIRECTORY_SEPARATOR == '/') {
+            // we are on Linux/Unix
+            $redirectErrors = ' 2>&1';
+        } else {
+            $redirectErrors = ' ';
+        }
+        exec('svn help' . $redirectErrors, $dummy, $result);
         /**
          * See Issue 56, check r
          */
         
-        if ($result != 1) {
+        if ($result != 0) {
             Xinc_Logger::getInstance()->error('command "svn" not found');
                 
             return false;
         } else {
+            if (DIRECTORY_SEPARATOR == '/') {
+                // we are on Linux/Unix
+                $redirectErrors = ' 2>&1';
+            } else {
+                $redirectErrors = ' ';
+            }
             /**
              * check if we have the svn info --xml option
              */
-            exec('svn info --xml 2>&1', $output, $result);
+            exec('svn info --xml' . $redirectErrors, $output, $result);
             /**
              * We need to check 1 and 2 for <info> since it depends 
              * if the place where its called is a working copy or not

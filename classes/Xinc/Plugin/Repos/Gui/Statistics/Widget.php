@@ -159,7 +159,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         return $statisticsMenu;
     }
     
-    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
+    public function registerExtension($extensionPoint, &$extension)
     {
         if (!isset($this->_extensions[$extensionPoint])) {
             $this->_extensions[$extensionPoint] = array();

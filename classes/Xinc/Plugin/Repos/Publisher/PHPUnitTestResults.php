@@ -80,8 +80,12 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
             mkdir($fullDir, 0755, true);
         }
         if (is_dir($sourceFile)) {
-            exec('cp ' . $sourceFile . ' ' . $targetFile . ' -Rf', $out, $res);
-            exec('chmod 755 ' . $targetFile . ' -Rf', $out, $res2);
+            if (DIRECTORY_SEPARATOR == '\\') {
+                exec('xcopy /E /Y /I ' . $sourceFile . ' ' . $targetFile, $out, $res);
+                //chmod($targetFile, 0755);
+            } else {
+                exec('cp ' . $sourceFile . ' ' . $targetFile . ' -Rf', $out, $res);
+            }
             if ($res==0) {
                 $status = 'OK';
             } else {

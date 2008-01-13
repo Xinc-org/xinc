@@ -88,7 +88,7 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
         return $menuStr;
     }
     
-    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
+    public function registerExtension($extensionPoint, &$extension)
     {
         
         if (!isset($this->_extensions[$extensionPoint])) {

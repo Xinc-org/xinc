@@ -88,7 +88,7 @@ interface Xinc_Gui_Widget_Interface
      * @param string $extensionPoint
      * @param Xinc_Gui_Widget_Extension $extension extension
      */
-    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension);
+    public function registerExtension($extensionPoint, &$extension);
     
     
 }

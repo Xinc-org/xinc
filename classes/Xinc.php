@@ -166,28 +166,21 @@ class Xinc
      */
     function setSystemConfigFile($fileName)
     {
+        $fileName = realpath($fileName);
+        $configFile = Xinc_Config_File::load($fileName);
         
-        //try {
-            $configFile = Xinc_Config_File::load($fileName);
-            
-            $this->_configParser = new Xinc_Config_Parser($configFile);
-            
-            $plugins = $this->_configParser->getPlugins();
-            
-            $this->_pluginParser = new Xinc_Plugin_Parser();
-            
-            $this->_pluginParser->parse($plugins);
-            
-            $engines = $this->_configParser->getEngines();
-            $this->_engineParser = new Xinc_Engine_Parser();
-            
-            $this->_engineParser->parse($engines);
-            
-            
-        //} catch(Exception $e) {
-        //    Xinc_Logger::getInstance()->error($e->getMessage());
-        //    throw new Xinc_Exception_MalformedConfig($e->getMessage());
-        //}
+        $this->_configParser = new Xinc_Config_Parser($configFile);
+        
+        $plugins = $this->_configParser->getPlugins();
+        
+        $this->_pluginParser = new Xinc_Plugin_Parser();
+        
+        $this->_pluginParser->parse($plugins);
+        
+        $engines = $this->_configParser->getEngines();
+        $this->_engineParser = new Xinc_Engine_Parser();
+        
+        $this->_engineParser->parse($engines);
     }
 
 
@@ -202,6 +195,7 @@ class Xinc
          * we need to check if the statusdir is writeable otherwise
          * exit
          */
+        $statusDir = realpath($statusDir);
         if (!is_dir($statusDir)) {
             $parentDir = dirname($statusDir);
             if (!is_writeable($parentDir)) {
@@ -296,11 +290,13 @@ class Xinc
     
     public function setWorkingDir($dir)
     {
+        $dir = realpath($dir);
         $this->_workingDir = $dir;
     }
     
     public function setProjectDir($dir)
     {
+        $dir = realpath($dir);
         $this->_projectDir = $dir;
     }
     
@@ -398,6 +394,33 @@ class Xinc
             
             // get the project config files
             if (isset($arguments['projectFiles'])) {
+                /**
+                 * pre-process projectFiles
+                 */
+                $merge = array();
+                for($i = 0; $i<count($arguments['projectFiles']); $i++) {
+                    $projectFile = $arguments['projectFiles'][$i];
+                    if (!file_exists($projectFile) && strstr($projectFile,'*')) {
+                        // we are probably under windows and the command line does not
+                        // autoexpand *.xml
+                        $array = glob($projectFile);
+                        /**
+                         * get rid of the not expanded file
+                         */
+                        unset($arguments['projectFiles'][$i]);
+                        /**
+                         * merge the glob'ed files
+                         */
+                        $merge = array_merge($merge, $array);
+                    } else {
+                        $arguments['projectFiles'][$i] = realpath($projectFile);
+                    }
+                }
+                /**
+                 * merge all the autoglobbed files with the original ones
+                 */
+                $arguments['projectFiles'] = array_merge($arguments['projectFiles'], $merge);
+                
                 foreach ($arguments['projectFiles'] as $projectFile) {
                     $logger->info('Loading Project-File: ' . $projectFile);
                     self::$_instance->_addProjectFile($projectFile);

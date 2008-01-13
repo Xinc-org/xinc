@@ -131,6 +131,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
        // latest
        // Xinc_Build_History::get()
        $file = $matches[7];
+       $file = str_replace('/',DIRECTORY_SEPARATOR,$file);
         $project = new Xinc_Project();
         $project->setName($projectName);
         try {
@@ -190,7 +191,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         $buildtime = isset($params['buildtime']) ? (int)$params['buildtime'] : 0;
         $node = isset($params['node']) ? $params['node'] : '';
         $node = str_replace('source', '', $node);
-        $node = str_replace(',', DIRECTORY_SEPARATOR, $node);
+        $node = str_replace(',', '/', $node);
         $artifacts = array();
         try {
             $buildObject = Xinc_Build::unserialize($project,
@@ -236,7 +237,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
                     $leaf = true;
                 }
                 $items[] = array('text'=> $file,
-                                 'id'=> addslashes(str_replace('/', '/', $dirname . DIRECTORY_SEPARATOR . $file)),
+                                 'id'=> addslashes(str_replace(DIRECTORY_SEPARATOR, '/', $dirname . DIRECTORY_SEPARATOR . $file)),
                                  'cls'=> $class, 
                                  'leaf'=> $leaf);
             }

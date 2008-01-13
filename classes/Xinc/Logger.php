@@ -243,11 +243,12 @@ class Xinc_Logger
             $messageElements[] = $messageString;
         }
         
+        $previousLogMessages = '';
         
         $dirName = dirname($this->_buildLogFile);
         if (!file_exists($dirName)) {
             mkdir($dirName, 0755, true);
-            $previousLogMessages = '';
+            
         } else if (file_exists($this->_buildLogFile)) {
             $previousLogMessagesArr = file($this->_buildLogFile);
             array_shift($previousLogMessagesArr);

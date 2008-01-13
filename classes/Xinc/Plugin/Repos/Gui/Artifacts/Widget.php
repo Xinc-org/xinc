@@ -143,7 +143,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $detailWidget->registerExtension('BUILD_DETAILS', $extension);
         
     }
-    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
+    public function registerExtension($extensionPoint, &$extension)
     {
         $this->_extensions[$extensionPoint] = $extension;
     }

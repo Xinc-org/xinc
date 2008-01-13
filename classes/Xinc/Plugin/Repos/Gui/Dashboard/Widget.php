@@ -161,7 +161,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
         
         return $this->projectMenuItem;
     }
-    public function registerExtension($extension, Xinc_Gui_Widget_Extension_Interface &$ext)
+    public function registerExtension($extension, &$ext)
     {
         if ($extension == 'PROJECT_MENU_ITEM' && $this->projectMenuItem !== null) {
             $this->projectMenuItem->registerSubExtension($ext);

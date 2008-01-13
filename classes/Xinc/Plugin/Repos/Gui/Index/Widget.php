@@ -79,7 +79,7 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
     {
         
     }
-    public function registerExtension($extensionPoint, Xinc_Gui_Widget_Extension_Interface &$extension)
+    public function registerExtension($extensionPoint, &$extension)
     {
         $this->_extensions[$extensionPoint] = $extension;
     }
