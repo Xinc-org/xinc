@@ -61,19 +61,23 @@ class Xinc_Postinstall_postinstall
                 $this->_ui->outputData('Could not create ' . $dirName);
                 return $this->_failedInstall();
             }
-            $this->_undoTasks[] = 'rm ' . $dirName . ' -Rf';
+            $this->_undoTasks[] = 'rm -Rf ' . $dirName;
         }
         return true;
     }
     
     private function _copyFiles($src, $target, $extra = '')
     {
-        exec('cp ' . $src . ' ' . $target . ' ' . $extra, $out, $res);
+        $files = glob($src);
+        exec('cp ' . $extra . ' ' . $src . ' ' . $target, $out, $res);
         if ($res != 0) {
             $this->_ui->outputData('Could not copy "' . $src . '" to: ' . $target);
             return $this->_failedInstall();
         } else {
-            $this->_undoTasks[] = 'rm ' . $target . ' -Rf';
+            foreach ($files as $file) {
+                $baseFileName = basename($file);
+                $this->_undoTasks[] = 'rm -Rf ' . $target . DIRECTORY_SEPARATOR . $baseFileName;
+            }
             $this->_ui->outputData('Successfully copied ' . $src . '  to: ' . $target);
         }
         return true;
@@ -149,21 +153,28 @@ class Xinc_Postinstall_postinstall
                 $this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR . 'web/www.tpl.conf | sed -e "s#@INCLUDE@#'
                                . $pearPhpDir . '#" | sed -e "s#@WEB_DIR@#'.$wwwDir.'#" | sed -e "s#@PORT@#'
                                . $wwwPort . '#" | sed -e "s#@IP@#'.$wwwIp.'#" > '.$etcDir . '/www.conf');
+                               
+                $this->_undoTasks[] = 'rm -Rf ' . $etcDir . '/www.conf';
                 
                 $this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR
                                . 'web/handler.php.tpl | sed -e "s#@STATUSDIR@#'
                                . $statusDir . '#" | sed -e "s#@ETC@#'.$etcDir.'#" > '.$wwwDir.'/handler.php');
                 
+                $this->_undoTasks[] = 'rm -Rf ' . $wwwDir . '/handler.php';
+                               
                 $this->_execCmd('cat ' . $pearDataDir . '/etc/init.d/xinc | sed -e "s#@ETC@#' . $etcDir
                                . '#" | sed -e "s#@LOG@#'.$logDir.'#" | sed -e "s#@STATUSDIR@#'. $statusDir
                                .'#" | sed -e "s#@DATADIR@#'.$dataDir.'#" > '.$initDir.'/xinc');
                 $this->_execCmd('chmod ugo+x '.$initDir.'/xinc');
+                
+                $this->_undoTasks[] = 'rm -Rf ' . $initDir . '/xinc';
                 
                 $this->_ui->outputData('Xinc installation complete.');
                 $this->_ui->outputData("- Please include $etcDir/www.conf in your apache virtual hosts.");
                 $this->_ui->outputData("- Please enable mod-rewrite.");
                 $this->_ui->outputData("- To add projects to Xinc, copy the project xml to $etcConfDir");
                 $this->_ui->outputData("- To start xinc execute: sudo $initDir/xinc start");
+
                 break;
             case '_undoOnError' :
                    
