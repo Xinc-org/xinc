@@ -194,7 +194,7 @@ cp -R classes/Xinc $INCLUDE/
 cp -Rf data/* $INCLUDE/data/Xinc
 
 # copy bin script to bin
-cat bin/xinc | sed -e "s#@PHP_BIN@#$PHP_BIN#" | sed -e "s#@BIN_DIR@#$PHP_BIN#" > $BIN/xinc
+cat bin/xinc | sed -e "s#@PHP_BIN@#$PHP_BIN#" | sed -e "s#@BIN_DIR@#/bin#" > $BIN/xinc
 chmod ugo+x $BIN/xinc
 
 # copy init.d script to init.d
