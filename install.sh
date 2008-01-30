@@ -194,11 +194,11 @@ cp -R classes/Xinc $INCLUDE/
 cp -Rf data/* $INCLUDE/data/Xinc
 
 # copy bin script to bin
-cat bin/xinc | sed -e "s#@PHP_BIN@#$PHP_BIN#" | sed -e "s#@BIN_DIR@#/bin#" > $BIN/xinc
+cat bin/xinc | sed -e "s#@PHP_BIN@#$PHP_BIN#" > $BIN/xinc
 chmod ugo+x $BIN/xinc
 
 # copy init.d script to init.d
-cat etc/init.d/xinc | sed -e "s#@ETC@#$ETC#" | sed -e "s#@LOG@#$LOG#" | sed -e "s#@STATUSDIR@#$STATUSDIR#" | sed -e "s#@DATADIR@#$DATADIR#" > $INIT/xinc
+cat etc/init.d/xinc | sed -e "s#@BIN_DIR@#/bin#" | sed -e "s#@ETC@#$ETC#" | sed -e "s#@LOG@#$LOG#" | sed -e "s#@STATUSDIR@#$STATUSDIR#" | sed -e "s#@DATADIR@#$DATADIR#" > $INIT/xinc
 chmod ugo+x $INIT/xinc
 
 echo 'Xinc installation complete.';
