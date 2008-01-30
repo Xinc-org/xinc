@@ -180,6 +180,7 @@ class XincPEARPackageTask extends MatchingTask {
 			//$package->addInstallAs('bin/srvany.exe', 'srvany.exe');
 			$package->addReplacement('bin/xinc.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
 			$package->addReplacement('bin/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
+			$package->addReplacement('scripts/xinc-uninstall', 'pear-config', '@PHP_BIN@', 'php_bin');
 			$package->addReplacement('etc/init.d/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
 			$package->addReplacement('etc/init.d/xinc', 'pear-config', '@BIN_DIR@', 'bin_dir');
 		// creating a sub-section for non-windows
@@ -252,6 +253,7 @@ $package->addPostinstallTask($taskWin, 'Xinc/PostinstallWin.php');
         if (PEAR::isError($e)) {
             throw new BuildException("Unable to write package file.", new Exception($e->getMessage()));
         }
+        
         
 
     }

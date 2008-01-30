@@ -21,6 +21,8 @@ class Xinc_Postinstall_postinstall
     public $databaseExists;
     public $fixHandles = false;
     private $_undoTasks = array();
+    private $_uninstallFiles = array();
+    private $_uninstallDirs = array();
     
     public function init(&$config, &$pkg, $lastversion)
     {
@@ -58,9 +60,11 @@ class Xinc_Postinstall_postinstall
             
             $res = mkdir($dirName, $permission, true);
             if (!$res) {
+            	
                 $this->_ui->outputData('Could not create ' . $dirName);
                 return $this->_failedInstall();
             }
+            $this->_uninstallDirs[] = $dirName;
             $this->_undoTasks[] = 'rm -Rf ' . $dirName;
         }
         return true;
@@ -77,6 +81,7 @@ class Xinc_Postinstall_postinstall
             foreach ($files as $file) {
                 $baseFileName = basename($file);
                 $this->_undoTasks[] = 'rm -Rf ' . $target . DIRECTORY_SEPARATOR . $baseFileName;
+                $this->_uninstallFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
             }
             $this->_ui->outputData('Successfully copied ' . $src . '  to: ' . $target);
         }
@@ -88,13 +93,21 @@ class Xinc_Postinstall_postinstall
         exec($cmd, $out, $res);
         return $res;
     }
-    
+    private function _createUninstallInfo()
+    {
+        $uninstallFileFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'xinc.uninstall.files';
+        $uninstallDirFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'xinc.uninstall.dirs';
+        
+        file_put_contents($uninstallFileFile, implode("\n", $this->_uninstallFiles));
+        file_put_contents($uninstallDirFile, implode("\n", $this->_uninstallDirs));
+    }
     public function run($answers, $phase)
     {
         
         $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         $xincPhpDir = PEAR_Config::singleton()->get('php_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
+        $binDir = PEAR_Config::singleton()->get('bin_dir');
         
         switch($phase) {
             
@@ -130,13 +143,16 @@ class Xinc_Postinstall_postinstall
                 if ($installExamples) {
                     $res = $this->_execCmd('cat '.$dataDir . '/SimpleProject/build.tpl.xml | sed -e "s#@EXAMPLE_DIR@#' 
                                           . $dataDir . '#" > '.$dataDir.'/SimpleProject/build.xml');
+                    $this->_uninstallFiles[] = $dataDir.'/SimpleProject/build.xml';
                     $res = $this->_execCmd('rm ' . $dataDir . '/SimpleProject/build.tpl.xml');
                     $res = $this->_execCmd('cat '.$dataDir . '/SimpleProject/publish.tpl.xml | sed -e "s#@EXAMPLE_DIR@#'
                                           . $dataDir . '#" > '.$dataDir.'/SimpleProject/publish.xml');
+                    $this->_uninstallFiles[] = $dataDir.'/SimpleProject/publish.xml';
                     $res = $this->_execCmd('rm ' . $dataDir . '/SimpleProject/publish.tpl.xml');
                     $res = $this->_execCmd('cat ' . $pearDataDir
                                           . '/examples/simpleproject.tpl.xml | sed -e "s#@EXAMPLE_DIR@#'
                                           . $dataDir . '#" > '.$etcConfDir.'/simpleproject.xml');
+                    $this->_uninstallFiles[] = $etcConfDir.'/simpleproject.xml';
                 }
                 //exec($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'pear-install.sh');
                 $wwwDir = $answers['www_dir'];
@@ -145,6 +161,8 @@ class Xinc_Postinstall_postinstall
                 $this->_createDir($wwwDir, 0755);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '.htaccess', $wwwDir);
+                copy($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall', $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall');
+                chmod($binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall', 0755);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '*', $wwwDir, '-Rf');
                 $this->_execCmd('rm '.$wwwDir.'/www.tpl.conf');
@@ -153,7 +171,7 @@ class Xinc_Postinstall_postinstall
                 $this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR . 'web/www.tpl.conf | sed -e "s#@INCLUDE@#'
                                . $pearPhpDir . '#" | sed -e "s#@WEB_DIR@#'.$wwwDir.'#" | sed -e "s#@PORT@#'
                                . $wwwPort . '#" | sed -e "s#@IP@#'.$wwwIp.'#" > '.$etcDir . '/www.conf');
-                               
+                $this->_uninstallFiles[] = $etcDir . '/www.conf';
                 $this->_undoTasks[] = 'rm -Rf ' . $etcDir . '/www.conf';
                 
                 $this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR
@@ -161,20 +179,29 @@ class Xinc_Postinstall_postinstall
                                . $statusDir . '#" | sed -e "s#@ETC@#'.$etcDir.'#" > '.$wwwDir.'/handler.php');
                 
                 $this->_undoTasks[] = 'rm -Rf ' . $wwwDir . '/handler.php';
-                               
+                $this->_uninstallFiles[] = $wwwDir . '/handler.php';
+                
                 $this->_execCmd('cat ' . $pearDataDir . '/etc/init.d/xinc | sed -e "s#@ETC@#' . $etcDir
                                . '#" | sed -e "s#@LOG@#'.$logDir.'#" | sed -e "s#@STATUSDIR@#'. $statusDir
                                .'#" | sed -e "s#@DATADIR@#'.$dataDir.'#" > '.$initDir.'/xinc');
                 $this->_execCmd('chmod ugo+x '.$initDir.'/xinc');
                 
                 $this->_undoTasks[] = 'rm -Rf ' . $initDir . '/xinc';
+                $this->_uninstallFiles[] = $initDir . '/xinc';
                 
                 $this->_ui->outputData('Xinc installation complete.');
                 $this->_ui->outputData("- Please include $etcDir/www.conf in your apache virtual hosts.");
                 $this->_ui->outputData("- Please enable mod-rewrite.");
                 $this->_ui->outputData("- To add projects to Xinc, copy the project xml to $etcConfDir");
                 $this->_ui->outputData("- To start xinc execute: sudo $initDir/xinc start");
-
+                $this->_ui->outputData("UNINSTALL instructions:");
+                $this->_ui->outputData("- pear uninstall xinc/Xinc");
+                $this->_ui->outputData("- run: $binDir/xinc-uninstall to cleanup installed files");
+                /**
+                 * Handle uninstall info, write uninstall.ini into data dir
+                 */
+                $this->_createUninstallInfo();
+                
                 break;
             case '_undoOnError' :
                    

@@ -155,6 +155,7 @@
 		<append destFile="${build.src.dir}/etc/VERSION.TXT">Phing version ${version}</append>
 		
 		<chmod file="${build.src.dir}/bin/xinc" mode="755"/>
+		<chmod file="${build.src.dir}/scripts/xinc-uninstall" mode="755"/>
 		<!--<chmod file="${build.src.dir}/bin/pear-install.sh" mode="755"/>-->
 		
 	</target>
