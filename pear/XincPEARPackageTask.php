@@ -181,6 +181,7 @@ class XincPEARPackageTask extends MatchingTask {
 			$package->addReplacement('bin/xinc.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
 			$package->addReplacement('bin/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
 			$package->addReplacement('etc/init.d/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
+			$package->addReplacement('etc/init.d/xinc', 'pear-config', '@BIN_DIR@', 'bin_dir');
 		// creating a sub-section for non-windows
 			
 			

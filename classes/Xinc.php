@@ -196,17 +196,22 @@ class Xinc
          * exit
          */
         $statusDir = realpath($statusDir);
+        Xinc_Logger::getInstance()->verbose('Setting statusdir: ' . $statusDir);
         if (!is_dir($statusDir)) {
+        	Xinc_Logger::getInstance()->verbose('statusdir "' . $statusDir .'" does not exist. Trying to create');
             $parentDir = dirname($statusDir);
             if (!is_writeable($parentDir)) {
+            	Xinc_Logger::getInstance()->verbose('parentDir "' . $parentDir .'" not writeable.');
                 throw new Xinc_Build_Status_Exception_NonWriteable($statusDir);
             } else {
                 /**
                  * create the directory
                  */
                 mkdir($statusDir, 0755, true);
+                Xinc_Logger::getInstance()->verbose('creating statusdir "' . $statusDir .'"');
             }
         } else if (!is_writeable($statusDir)) {
+        	Xinc_Logger::getInstance()->verbose('statusDir "' . $statusDir .'" is not writeable.');
             throw new Xinc_Build_Status_Exception_NonWriteable($statusDir);
         }
         $this->_statusDir = $statusDir;
@@ -291,12 +296,14 @@ class Xinc
     public function setWorkingDir($dir)
     {
         $dir = realpath($dir);
+        Xinc_Logger::getInstance()->verbose('Setting workingdir: ' . $dir);
         $this->_workingDir = $dir;
     }
     
     public function setProjectDir($dir)
     {
         $dir = realpath($dir);
+        Xinc_Logger::getInstance()->verbose('Setting projectdir: ' . $dir);
         $this->_projectDir = $dir;
     }
     
@@ -453,10 +460,10 @@ class Xinc
      * @return array The array of parsed arguments.
      * @throws Xinc_Config_Exception_GetOpt
      */
-    public static function handleArguments($commandLine = '') 
+    public static function handleArguments($commandLine = null) 
     {
-        if ($commandLine) {
-            if (!is_array($commandLine)) {
+        if ($commandLine != null) {
+            if (!is_array($commandLine) && is_string($commandLine)) {
                 $commandLine = explode(' ', $commandLine);
             }
         } else {
@@ -477,7 +484,7 @@ class Xinc
                                              . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR);
       
         $options = Xinc_Config_Getopt::getopt($commandLine, self::$_shortOptions, self::$_longOptions);
-        
+        //echo 'Determined options: ' . var_export($options, true) . "\n";
         if (isset($options[1])) {
             $arguments['projectFiles'] = $options[1];
         } else {

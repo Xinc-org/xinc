@@ -33,7 +33,7 @@ DATADIR=@DATADIR@
 PIDFILE=@STATUSDIR@/xinc.pid
 SHUTDOWN_FILE=@STATUSDIR@/.shutdown
  
-DAEMON=/bin/xinc
+DAEMON=@BIN_DIR@/xinc
 NAME=xinc
 # send log output to text-log-file
 # logfile is going to be used for build-based logging only
