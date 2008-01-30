@@ -200,6 +200,7 @@ class XincPEARPackageTask extends MatchingTask {
 		// "package" dependencies
 		$package->addExtensionDep('required', 'xsl');
 		$package->addExtensionDep('required', 'xml');
+		$package->addPackageDepWithChannel( 'required', 'phing', 'pear.phing.info', '2.2.0');
 		$package->addPackageDepWithChannel( 'required', 'VersionControl_SVN', 'pear.php.net', '0.3.0alpha1');
 		$package->addPackageDepWithChannel( 'optional', 'PHPUnit', 'pear.phpunit.de', '2.3.0');
 		$package->addPackageDepWithChannel( 'optional', 'PhpDocumentor', 'pear.php.net', '1.3.0RC3');
