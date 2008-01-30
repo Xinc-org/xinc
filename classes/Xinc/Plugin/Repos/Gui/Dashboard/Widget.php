@@ -84,10 +84,14 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
                                 $this->projects[]=$project;
                             }
                             $this->menu = '';
-                            foreach ($this->_extensions['MAIN_MENU'] as $extension) {
-                                
-                                $this->menu .= call_user_func_array($extension, array($this, 'Dashboard'));
-                                
+                            if (isset($this->_extensions['MAIN_MENU'])) {
+                                if (is_array($this->_extensions['MAIN_MENU'])) {
+                                    foreach ($this->_extensions['MAIN_MENU'] as $extension) {
+                                        
+                                       $this->menu .= call_user_func_array($extension, array($this, 'Dashboard'));
+                                        
+                                    }
+                                }
                             }
                             
                         }
