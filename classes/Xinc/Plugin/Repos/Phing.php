@@ -27,7 +27,7 @@ require_once 'Xinc/Plugin/Repos/Builder/Phing/Task.php';
 
 require_once 'Xinc/Plugin/Repos/Publisher/Phing/Task.php';
 require_once 'Xinc/Plugin/Repos/Phing/Listener.php';
-require_once 'phing/Phing.php';
+
 class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
 {
     

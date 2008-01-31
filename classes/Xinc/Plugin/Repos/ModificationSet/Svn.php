@@ -29,6 +29,7 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
 
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/ModificationSet.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
 class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 {

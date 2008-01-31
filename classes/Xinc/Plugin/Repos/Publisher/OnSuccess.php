@@ -24,7 +24,7 @@
 */
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Publisher/OnSuccess/Task.php';
-require_once 'phing/Phing.php';
+
 class Xinc_Plugin_Repos_Publisher_OnSuccess  extends Xinc_Plugin_Base
 {
     

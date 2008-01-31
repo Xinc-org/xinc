@@ -24,7 +24,7 @@
 */
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Publisher/OnRecovery/Task.php';
-require_once 'phing/Phing.php';
+
 class Xinc_Plugin_Repos_Publisher_OnRecovery  extends Xinc_Plugin_Base
 {
     
