@@ -2,7 +2,7 @@
 <project name="Xinc Build File" basedir="." default="build">
 	<property file="xinc.properties" />
 
-	<target name="build" depends="update, test, doc, tarball, deploy">
+	<target name="build" depends="update, test, doc, tarball, pear, deploy">
 
 		<echo message="starting build process... passing.." />
 	</target>
@@ -27,6 +27,12 @@
 		<phing phingfile="build-deploy.xml" target="deploy" />
 
 	</target>
+	<target name="pear">
+			<phing phingfile="pear/build.xml" target="deploy">
+				<property name="version" value="${pkg.version}${xinc.build.number}"/>
+			</phing>
+
+		</target>
 	<!-- Currently we dont have test-cases YET -->
 	<target name="tarball">
 		<property name="xincversion" value="${pkg.name}-${xinc.build.number}" />
