@@ -30,7 +30,7 @@
 	<target name="pear">
 		<!-- Need to include xinc.properties in xinc build script, to have the same pkg.version available there -->
 		
-			<phing phingfile="pear/build.xml" target="deploy">
+			<phing phingfile="pear/build.xml" target="deploy" dir="pear">
 				<property name="version" value="${pkg.version}${xinc.build.number}"/>
 			</phing>
 
