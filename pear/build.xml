@@ -35,8 +35,8 @@
 	<fileset dir="${build.src.dir}/" id="web2">
 				<include name="web/**"/>
 		</fileset>
-	<fileset dir="${phingpkg.home}/docs" id="docs">
-		<include name="examples/**"/>
+	<fileset dir="${phingpkg.home}" id="docs">
+		<include name="sexamples/**"/>
 	</fileset>
 	<fileset dir="${build.src.dir}/" id="docs2">
 			<include name="examples/**"/>
