@@ -249,25 +249,44 @@ class Xinc_Logger
         if (!file_exists($dirName)) {
             mkdir($dirName, 0755, true);
             
-        } else if (file_exists($this->_buildLogFile)) {
-            $previousLogMessagesArr = file($this->_buildLogFile);
-            array_shift($previousLogMessagesArr);
-            array_shift($previousLogMessagesArr);
-            array_pop($previousLogMessagesArr);
-            $previousLogMessages = implode("\n", $previousLogMessagesArr);
         }
-        
-        $buildXml  = '<?xml version="1.0"?>';
-        $buildXml .= "\n";
-        $buildXml .= '<build>';
-        $buildXml .= "\n";
-        $buildXml .= implode("\n", $messageElements);
-        $buildXml .= "\n";
-        $buildXml .= $previousLogMessages;
-        $buildXml .= '</build>';
-        
-        file_put_contents($this->_buildLogFile, $buildXml);
-        
+        if (file_exists($this->_buildLogFile)) {
+            // copying to temporary file for later inclusion via fgets, less memory consuming
+            copy($this->_buildLogFile, $this->_buildLogFile . '.temp');
+        }
+        $fh = fopen($this->_buildLogFile, 'w+');
+        if (is_resource($fh)) {
+            fputs($fh, '<?xml version="1.0"?>');
+            fputs($fh, "\n");
+            fputs($fh, '<build>');
+            fputs($fh, "\n");
+            fputs($fh, implode("\n", $messageElements));
+            fputs($fh, "\n");
+            if (file_exists($this->_buildLogFile . '.temp')) {
+                $fht = fopen($this->_buildLogFile . '.temp', 'r');
+                if (is_resource($fht)) {
+                    $lineCounter = 0;
+                    while ($line = fgets($fht)) {
+                        // skip first two lines (xml decl and build opening element
+                        if ($lineCounter>2) {
+                            fputs($fh, $line);
+                        }
+                        $lineCounter++;
+                    }
+                    fclose($fht);
+                    unlink($this->_buildLogFile . '.temp');
+                } else {
+                    self::error('Cannot include previous log messages');
+                }
+            } else {
+                fputs($fh, '</build>');
+            }
+            //fputs($fh, $previousLogMessages);
+            fclose($fh);
+            //file_put_contents($this->_buildLogFile, $buildXml);
+        } else {
+            self::error('Cannot open: ' . $this->_buildLogFile . ' for writing.');
+        }
         $this->_resetLogQueue();
     }
     
