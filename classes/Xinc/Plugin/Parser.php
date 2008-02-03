@@ -43,7 +43,11 @@ class Xinc_Plugin_Parser
     {
         
         while ($iterator->hasNext()) {
-            self::_loadPlugin($iterator->next());
+            try {
+                self::_loadPlugin($iterator->next());
+            } catch (Exception $e) {
+                Xinc_Logger::getInstance()->error('Plugins: ' .$e->getMessage());
+            }
         }
   
     }

@@ -117,7 +117,7 @@ class Xinc_Gui_Handler
             Xinc_Config::parse($fileName);
             
         } catch(Exception $e) {
-            var_dump($e);
+            //var_dump($e);
             Xinc_Logger::getInstance()->error('error parsing system:'
                                              . $e->getMessage());
                 

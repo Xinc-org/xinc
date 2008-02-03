@@ -44,7 +44,11 @@ class Xinc_Engine_Parser
     {
         
         while ($iterator->hasNext()) {
-            self::_loadEngine($iterator->next());
+            try {
+                self::_loadEngine($iterator->next());
+            } catch (Exception $e) {
+                Xinc_Logger::getInstance()->error('Engine Support: ' . $e->getMessage());
+            }
         }
   
     }
