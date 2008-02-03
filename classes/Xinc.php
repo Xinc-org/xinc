@@ -39,6 +39,7 @@ require_once 'Xinc/Build/Status/Exception/NonWriteable.php';
 
 class Xinc
 {
+    const VERSION='@VERSION@';
     
     const DEFAULT_PROJECT_DIR = 'projects';
     const DEFAULT_STATUS_DIR = 'status';
@@ -110,7 +111,7 @@ class Xinc
      * Short command line arguments.
      * @var string
      */
-    private static $_shortOptions = 'f:p:w:l:s:v:ho';
+    private static $_shortOptions = 'f:p:w:l:s:v:h:o';
         
     /**
      * Long command line arguments.
@@ -124,7 +125,9 @@ class Xinc
                                          'status-dir=',
                                          'verbose=',
                                          'help',
-                                         'once'
+                                         'version',
+                                         'once',
+                                         'pid-file='
                                     );
 
 
@@ -135,6 +138,7 @@ class Xinc
      */
     private $_statusDir;
 
+    private $_pidFile;
 
     /**
      * Constructor.
@@ -183,7 +187,11 @@ class Xinc
         $this->_engineParser->parse($engines);
     }
 
-
+    public function setPidFile($pidFile)
+    {
+        $this->_pidFile = $pidFile;
+    }
+    
     /**
      * Set the directory in which to save project status files
      *
@@ -260,7 +268,7 @@ class Xinc
         /**
          * write pid file
          */
-        file_put_contents($this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid', getmypid());
+        file_put_contents($this->_pidFile, getmypid());
         while (true) {
             declare(ticks=2);
             $now = time();
@@ -293,6 +301,9 @@ class Xinc
         }
     }
     
+    /**
+     * @param string $dir
+     */
     public function setWorkingDir($dir)
     {
         $dir = realpath($dir);
@@ -300,6 +311,10 @@ class Xinc
         $this->_workingDir = $dir;
     }
     
+    /**
+     *
+     * @param string $dir
+     */
     public function setProjectDir($dir)
     {
         $dir = realpath($dir);
@@ -307,11 +322,19 @@ class Xinc
         $this->_projectDir = $dir;
     }
     
+    /**
+     *
+     * @return string
+     */
     public function getProjectDir()
     {
         return $this->_projectDir;
     }
     
+    /**
+     *
+     * @return string
+     */
     public function getWorkingDir()
     {
         return $this->_workingDir;
@@ -321,6 +344,11 @@ class Xinc
         return self::$_shortOptions;
     }
     
+    /**
+     * Returns Long options of xinc parameters
+     *
+     * @return array
+     */
     public function getLongOptions() {
         return self::$_longOptions;
     }
@@ -388,6 +416,8 @@ class Xinc
             $logger->info('- System Config File: ' . $arguments['configFile']);
             $logger->info('- Log Level:          ' . $arguments['logLevel']);
             $logger->info('- Daemon:             ' . ($arguments['daemon'] ? 'yes' : 'no'));
+            $logger->info('- PID File:           ' . $arguments['pidFile']);
+            
             self::$_instance = new Xinc();
         
             self::$_instance->setWorkingDir($arguments['workingDir']);
@@ -395,7 +425,8 @@ class Xinc
             self::$_instance->setProjectDir($arguments['projectDir']);
 
             self::$_instance->setStatusDir($arguments['statusDir']);
-
+            
+            self::$_instance->setPidFile($arguments['pidFile']);
             
             self::$_instance->setSystemConfigFile($arguments['configFile']);
             
@@ -534,16 +565,30 @@ class Xinc
                 case 'v':
                     $arguments['logLevel'] = $option[1];
                     break;
-                    
+                case '--pid-file':
+                    $arguments['pidFile'] = $option[1];
+                    break;
+                case '--version':
+                    self::printVersion();
+                    exit;
+                    break;
                 case '--help': 
                     self::showHelp();
                     exit;
             }
         }
-      
+        if (!isset($arguments['pidFile'])) {
+            $arguments['pidFile'] = $arguments['statusDir'] . DIRECTORY_SEPARATOR . 'xinc.pid';
+        }
         // Do some arguments.
         return $arguments;
     }
+    
+    /**
+     * Add a projectfile to the xinc processing
+     *
+     * @param string $fileName
+     */
     private function _addProjectFile($fileName)
     {
         
@@ -570,15 +615,28 @@ class Xinc
                                              . $engineNotFound->getMessage());
         }
     }
+    
     public static function &getCurrentBuild()
     {
         return self::$_currentBuild;
     }
+    
+    /**
+     * Sets the build that is currently being processed
+     *
+     * @param Xinc_Build_Interface $build
+     */
     public static function setCurrentBuild(Xinc_Build_Interface &$build)
     {
         self::$_currentBuild = $build;
     }
     
+    /**
+     * returns the builtin properties that can be used
+     * in all xinc config files
+     *
+     * @return array
+     */
     public function getBuiltinProperties()
     {
         $properties = array();
@@ -612,13 +670,18 @@ class Xinc
             }
         }
     }
+    /**
+     * shutsdown the xinc instance and cleans up pidfile etc
+     *
+     * @param boolean $exit
+     */
     private function shutDown($exit=false)
     {
         $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
         if (file_exists($file)) {
             unlink($file);
         }
-        $pidFile = $this->getStatusDir() . DIRECTORY_SEPARATOR . 'xinc.pid';
+        $pidFile = $this->_pidFile;
         if (file_exists($pidFile)) {
                 unlink($pidFile);
         }
@@ -627,17 +690,42 @@ class Xinc
             exit();
         }
     }
+    /**
+     * prints help message, describing different parameters to run xinc
+     *
+     */
     public static function showHelp()
     {
         echo "Usage: xinc [switches] [project-file-1 [project-file-2 ...]]\n\n";
 
-        echo "  -f --config-file <file>   The config file to use.\n" .
-             "  -p --project-dir <dir>    The project directory.\n" .
-             "  -w --working-dir <dir>    The working directory.\n" .
-             "  -l --log-file <file>      The log file to use.\n" . 
-             "  -v --verbose <level>      The level of information to log (default 2).\n" . 
-             "  -s --status-dir <dir>     The status directory to use.\n" . 
-             "  -o --once                 Run once and exit.\n";
+        echo "  -f --config-file=<file>   The config file to use.\n" .
+             "  -p --project-dir=<dir>    The project directory.\n" .
+             "  -w --working-dir=<dir>    The working directory.\n" .
+             "  -l --log-file=<file>      The log file to use.\n" . 
+             "  -v --verbose=<level>      The level of information to log (default 2).\n" . 
+             "  -s --status-dir=<dir>     The status directory to use.\n" . 
+             "  -o --once                 Run once and exit.\n" .
+             "  --pid-file=<file>         The directory to put the PID file" .
+             "  --version                 Prints the version of Xinc.\n" .
              "  -h --help                 Prints this help message.\n";
+    }
+    
+    /**
+     * Prints the version of xinc
+     *
+     */
+    public static function printVersion()
+    {
+        echo "Xinc version " . self::getVersion() . "\n";
+    }
+    
+    /**
+     * Returns the Version of Xinc
+     *
+     * @return string
+     */
+    public static function getVersion()
+    {
+        return self::VERSION;
     }
 }
