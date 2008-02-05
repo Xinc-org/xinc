@@ -41,6 +41,8 @@ class Xinc_Build_Repository implements Xinc_Build_Repository_Interface
         $statusDir = null;
         if (class_exists('Xinc_Gui_Handler')) {
             $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        } else if (class_exists('Xinc')) {
+            $statusDir = Xinc::getInstance()->getStatusDir();
         }
         return Xinc_Build::unserialize($project, $buildTime, $statusDir);
     }
@@ -57,8 +59,8 @@ class Xinc_Build_Repository implements Xinc_Build_Repository_Interface
      */
     public static function getLastBuild(Xinc_Project &$project)
     {
-        $buildHistoryArr = Xinc_Build_History::get($project);
-        $lastBuildTime = $buildHistoryArr[count($buildHistoryArr) - 1];
+        $lastBuildTime = Xinc_Build_History::getLastBuildTime($project);
+        //$lastBuildTime = $buildHistoryArr[count($buildHistoryArr) - 1];
         return self::getBuild($project, $lastBuildTime);
     }
 }

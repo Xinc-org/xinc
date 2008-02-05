@@ -69,6 +69,8 @@ class Xinc_Logger
     const LOG_LEVEL_WARN = 3;
     const LOG_LEVEL_ERROR = 4;
     
+    const DEFAULT_LOG_LEVEL = 2;
+    
     /**
      * Log levels
      *
@@ -80,6 +82,7 @@ class Xinc_Logger
     static $logLevelInfo = array(2, 'info');
     static $logLevelVerbose = array(0, 'verbose');
     
+    private $_logLevelSet = false;
     
     /**
      * Private singleton constructor.
@@ -92,9 +95,18 @@ class Xinc_Logger
     }
     public function setLogLevel($level)
     {
-        
-        $this->_logLevel = $level;
+        $this->_logLevelSet = true;
+        /**
+         * setting to info, so the loglevel change gets written to the log
+         */
+        $this->_logLevel = self::LOG_LEVEL_INFO;
         $this->info("Setting loglevel to $level");
+        $this->_logLevel = $level;
+    }
+    
+    public function logLevelSet()
+    {
+        return $this->_logLevelSet;
     }
     
     public function getLogLevel()
@@ -136,7 +148,7 @@ class Xinc_Logger
 
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
-        $timestr = '[' . date('Y-m-d H:i:s', $logTime) . ']';
+        $timestr = '[' . date('Y-m-d H:i:s', $logTime) . '-' . Xinc_Timezone::get() . ']';
         while (strlen($prioritystr) < 7) {
             $prioritystr .= ' ';
         }
@@ -236,7 +248,7 @@ class Xinc_Logger
             $message = $this->_logQueue[$i];
             $messageString  = '<message priority="' . $message->priority . '" ';
             $messageString .= 'timestamp="' . $message->timestamp . '" ';
-            $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp) . '">';
+            $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp) . '-' . Xinc_Timezone::get() . '">';
             $messageString .= htmlentities(utf8_encode($message->message));
             $messageString .= '</message>';
             

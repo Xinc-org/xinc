@@ -1,8 +1,8 @@
 <?php
 /**
- * PUT DESCRIPTION HERE
+ * Exception, build could not be added to the build history
  * 
- * @package Xinc.Plugin
+ * @package Xinc.Build
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 Arno Schneider, Barcelona
@@ -22,31 +22,14 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Task/Base.php';
-
-abstract class Xinc_Plugin_Repos_Configuration_AbstractTask extends Xinc_Plugin_Task_Base
+class Xinc_Build_Exception_HistoryStorage extends Exception
 {
-    public abstract function configure(Xinc_Build &$build);
-    
-    public function getPluginSlot(){
-        /**
-         * see Xinc/Plugin/Slot.php for available slots
-         */
-        return Xinc_Plugin_Slot::PROJECT_INIT;
-    }
-
-    public function validate()
+    /**
+     * constructor, generates an Exception Message
+     *
+     */
+    public function __construct()
     {
-        // do all necessary checks here to validate that the plugin
-        // can work properly
-        return true;
+        parent::__construct('Build could not be stored in build history');
     }
-
-    
-    public function process(Xinc_Build_Interface &$build){
-          
-        $this->configure($build);
-    }
-
-    
 }

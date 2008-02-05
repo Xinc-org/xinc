@@ -17,7 +17,8 @@ allbuilds = function(){
         	totalProperty: 'totalcount',
             fields: [
                 'label',
-                {name: 'buildtime',  type: 'date', dateFormat: 'timestamp'},
+                {name: 'buildtimeRaw',  type: 'date', dateFormat: 'timestamp'},
+                {name: 'buildtime',  type: 'string'},
                 'buildtimeRaw',
                 'status',
                 'totalcount'
@@ -25,7 +26,7 @@ allbuilds = function(){
             ]
         })
     });
-    store.setDefaultSort('buildtime', 'desc');
+    store.setDefaultSort('buildtimeRaw', 'desc');
 
     // pluggable renders
     function buildDetails(value, p, record) {
@@ -87,8 +88,9 @@ allbuilds = function(){
            header: "Timestamp",
            dataIndex: 'buildtime',
            width: 160,
-           hidden: false,
-           renderer: buildTime
+           hidden: false
+           /**,
+           renderer: buildTime*/
         }]);
 
     // by default columns are sortable

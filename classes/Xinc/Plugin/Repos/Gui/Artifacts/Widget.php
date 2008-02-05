@@ -80,9 +80,8 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
                                             $buildTime,
                                             Xinc_Gui_Handler::getInstance()->getStatusDir());
            
-           $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
-           $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
-                         DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
+           $statusDir = Xinc_Build_History::getBuildDir($project, $buildTime);
+           $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                          DIRECTORY_SEPARATOR;
 
            /**

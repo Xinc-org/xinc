@@ -25,9 +25,12 @@
 
 require_once 'Xinc/Gui/Event.php';
 require_once 'Xinc/Gui/Widget/Repository.php';
-require_once 'Xinc/Config.php';
+require_once 'Xinc/Config/Parser.php';
+require_once 'Xinc/Config/File.php';
+require_once 'Xinc/Plugin/Parser.php';
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Api/Handler.php';
+require_once 'Xinc/Timezone.php';
 
 class Xinc_Gui_Handler
 {
@@ -59,6 +62,10 @@ class Xinc_Gui_Handler
      */
     private $_apiHandler;
     
+    private $_systemTimezone;
+    
+    private $_config = array();
+    
     /**
      * Constructor: parses plugins and sets status dir
      *
@@ -68,22 +75,17 @@ class Xinc_Gui_Handler
     public function __construct($configFile,$statusDir)
     {
         $statusDir = realpath($statusDir);
-        /**
-         * See Issue 57.
-         * Will be substituted by configuration option
-         */
-        $defaultTimeZone = ini_get('date.timezone');
-        if (empty($defaultTimeZone)) {
-            /**
-             * Go for the safer version. date_default_timezone_* needs php >=5.1.0
-             */
-            ini_set('date.timezone', 'UTC');
-        }
+        $this->_systemTimezone = Xinc_Timezone::get();
         $this->_statusDir = $statusDir;
         $this->setSystemConfigFile($configFile);
         self::$_instance = &$this;
         
         $this->_apiHandler = Xinc_Api_Handler::getInstance();
+    }
+    
+    public function getSystemTimezone()
+    {
+        return $this->_systemTimezone;
     }
     /**
      * Return an instance of Xinc_Gui_Handler
@@ -114,7 +116,35 @@ class Xinc_Gui_Handler
     {
         $fileName = realpath($fileName);
         try {
-            Xinc_Config::parse($fileName);
+            //Xinc_Config::parse($fileName);
+        $configFile = Xinc_Config_File::load($fileName);
+        
+        $this->_configParser = new Xinc_Config_Parser($configFile);
+        
+        $plugins = $this->_configParser->getPlugins();
+        
+        $this->_pluginParser = new Xinc_Plugin_Parser();
+        
+        $this->_pluginParser->parse($plugins);
+        
+        $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
+        
+        foreach ($widgets as $path => $widget) {
+            //echo "Init on: " . get_class($widget) . "\n<br>";
+            $widget->init();
+        }
+        
+        $configSettings = $this->_configParser->getConfigSettings();
+        while ($configSettings->hasNext()) {
+            $setting = $configSettings->next();
+            $attributes = $setting->attributes();
+            $name = (string)$attributes->name;
+            $value = (string)$attributes->value;
+            if ($name == 'loglevel' && Xinc_Logger::getInstance()->logLevelSet()) {
+                $value = Xinc_Logger::getInstance()->getLogLevel();
+            }
+            $this->_setConfigDirective($name, $value);
+        }
             
         } catch(Exception $e) {
             //var_dump($e);
@@ -122,6 +152,23 @@ class Xinc_Gui_Handler
                                              . $e->getMessage());
                 
         }
+    }
+    private function _setConfigDirective($name, $value)
+    {
+        $this->_config[$name] = $value;
+        switch ($name) {
+            case 'loglevel':
+                Xinc_Logger::getInstance()->setLogLevel($value);
+                break;
+            case 'timezone':
+                Xinc_Timezone::set($value);
+                break;
+            default:
+        }
+    }
+    public function getConfigDirective($name)
+    {
+        return isset($this->_config[$name])?$this->_config[$name]:null;
     }
     /**
      * Called from the index.php to generate outpout

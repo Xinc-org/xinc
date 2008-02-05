@@ -24,6 +24,7 @@
 */
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 require_once 'Xinc/Build/Iterator.php';
+require_once 'Xinc/Build/Repository.php';
 
 class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gui_Menu_Extension_Item
 {
@@ -53,8 +54,10 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gu
                 $statusfile = $fullfile . DIRECTORY_SEPARATOR . 'build.ser';
                 
                 if (file_exists($statusfile)) {
-
-                    $object = unserialize(file_get_contents($statusfile));
+                    $project = new Xinc_Project();
+                    $project->setName($file);
+                    $object = Xinc_Build_Repository::getLastBuild($project);
+                    //$object = unserialize(file_get_contents($statusfile));
                     $builds->add($object);
                 }
                 

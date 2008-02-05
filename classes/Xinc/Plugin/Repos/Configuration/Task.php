@@ -31,7 +31,7 @@ class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Base
         /**
          * see Xinc/Plugin/Slot.php for available slots
          */
-        return Xinc_Plugin_Slot::GLOBAL_INIT;
+        return Xinc_Plugin_Slot::PROJECT_INIT;
     }
 
     public function validate()
@@ -50,7 +50,7 @@ class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Base
     
     public function process(Xinc_Build_Interface &$build){
         foreach ($this->_subtasks as $task) {
-            $task->configure(Xinc::getInstance());
+            $task->configure($build);
         }
     }
     

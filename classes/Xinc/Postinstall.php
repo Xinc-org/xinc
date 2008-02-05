@@ -60,7 +60,7 @@ class Xinc_Postinstall_postinstall
             
             $res = mkdir($dirName, $permission, true);
             if (!$res) {
-            	
+                
                 $this->_ui->outputData('Could not create ' . $dirName);
                 return $this->_failedInstall();
             }
@@ -161,7 +161,8 @@ class Xinc_Postinstall_postinstall
                 $this->_createDir($wwwDir, 0755);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '.htaccess', $wwwDir);
-                copy($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall', $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall');
+                copy($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall',
+                     $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall');
                 chmod($binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall', 0755);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '*', $wwwDir, '-Rf');

@@ -51,6 +51,7 @@ logxml = function(){
             fields: [
                  {name: 'id', type: 'int', dataIndex:'id'},
            		{name: 'date', type: 'date', dateFormat: 'timestamp', dataIndex:'date'},
+           		{name: 'stringdate', dataIndex:'stringdate'},
            {name:'priority', dataIndex:'priority'},
            {name:'message',dataIndex:'message'}
                
@@ -64,7 +65,8 @@ logxml = function(){
         store: store,
         columns: [
             {id:'id',header: "ID", width: 40, sortable: true, dataIndex: 'id'},
-            {header: "Date", width: 140, sortable: false, dataIndex: 'date',renderer:formatDate},
+            /**{header: "Date", width: 140, sortable: false, dataIndex: 'date',renderer:formatDate},*/
+            {header: "Date", width: 140, sortable: false, dataIndex: 'stringdate'},
             {header: "Prio", width: 40, sortable: true, dataIndex: 'priority'},
             {header: "Message", dataIndex: 'message', id:'message', autoScroll:true }
         ],

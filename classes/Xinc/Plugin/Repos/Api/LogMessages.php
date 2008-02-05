@@ -114,37 +114,87 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
         $project = new Xinc_Project();
         $project->setName($projectName);
         $build = Xinc_Build::unserialize($project, $buildTime, $statusDir);
-        
-        $detailDir = $statusDir.DIRECTORY_SEPARATOR .$build->getProject()->getName();
-        $year = date('Y', $build->getBuildTime());
-        $month = date('m', $build->getBuildTime());
-        $day = date('d', $build->getBuildTime());
-        $detailDir .= DIRECTORY_SEPARATOR .
-                      $year . $month . $day . 
-                      DIRECTORY_SEPARATOR . 
-                      $build->getBuildTime();
-      
+        $timezone = $build->getConfigDirective('timezone');
+        if ($timezone !== null) {
+            Xinc_Timezone::set($timezone);
+        }
+        $detailDir = Xinc_Build_History::getBuildDir($project, $buildTime);
+
         $logXmlFile = $detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
                         
         if (file_exists($logXmlFile)) {
-            $logXml = new SimpleXMLElement(file_get_contents($logXmlFile));
+            /**
+             * Add fopen() to the function to just get the loglines
+             * that we need.
+             * the bigger the logfiles get, the more this gets a 
+             * performance problem
+             */
+            $xmlStr = '';
+            $pos = 0;
+            $fh = fopen($logXmlFile, 'r');
+            $xmlStr = fgets($fh);
+            $xmlStr .= fgets($fh);
+            while ($pos < $start) {
+                fgets($fh);
+                $pos++;
+            }
+            if ($limit!=null) {
+                $addClosingTag = true;
+                for ($i = $pos; $i < $start+$limit; $i++) {
+                    $xmlStr.= fgets($fh);
+                    //echo $pos . ' - ' . $start .' - '. $limit . "<br>";
+                    $pos++;
+                    //if ($pos>=10)die;
+                    if (feof($fh)) {
+                       $addClosingTag = false;
+                       break;
+                    }
+                }
+                if ($addClosingTag) {
+                   $xmlStr .='</build>';
+                }
+            } else {
+                while (!feof($fh)) {
+                    $xmlStr.= fgets($fh);
+                    $pos++;
+                }
+            }
+
+            while (!feof($fh)) {
+                fgets($fh);
+                $pos++;
+            }
+            fclose($fh);
+            $logXml = new SimpleXMLElement($xmlStr);
             
         } else {
             $logXml = new SimpleXmlElement('<log/>');
         }
-        $totalCount = count($logXml->children());
+        $totalCount = $pos - 1; //count($logXml->children());
         $i = $totalCount;
         $logmessages = array();
+        $id = $totalCount-$start;
         foreach ($logXml->children() as $logEntry) { 
            
             
             $attributes = $logEntry->attributes();
-            $logmessages[] = array( 'id'=>$i--, 
+            $logmessages[] = array( 'id'=>$id--, 
                      'date'=> (string)$attributes->timestamp,
+                     'stringdate'=> date('Y-m-d H:i:s', (int)$attributes->timestamp),
+                     'timezone' => Xinc_Timezone::get(),
                      'priority'=>(string)$attributes->priority,
                      'message'=>str_replace("\n", '\\n', addcslashes($logEntry, '"\'')));
         }
-        $logmessages = array_slice($logmessages, $start, $limit, false);
+        /**
+         * restore to system timezone
+         */
+        $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+        if ($xincTimezone !== null) {
+            Xinc_Timezone::set($xincTimezone);
+        } else {
+            Xinc_Timezone::reset();
+        }
+        //$logmessages = array_slice($logmessages, $start, $limit, false);
 
         $object = new stdClass();
         $object->totalmessages = $totalCount;

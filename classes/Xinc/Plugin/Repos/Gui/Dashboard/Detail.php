@@ -32,6 +32,7 @@ require_once 'Xinc/Data/Repository.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Summary.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Log.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Builds.php';
+require_once 'Xinc/Build/History.php';
 
 class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interface
 {
@@ -95,55 +96,35 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         if (isset($_GET['timestamp'])) {
             $this->buildTimeStamp = $_GET['timestamp'];
         }
+        $this->project = new Xinc_Project();
+        $this->project->setName($this->projectName);
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
                     
                     $handler = Xinc_Gui_Handler::getInstance();
                     $statusDir = $handler->getStatusDir();
-                    $fullStatusDir = $statusDir.DIRECTORY_SEPARATOR .$this->projectName;
-                    if ($this->buildTimeStamp != null) {
-                        $year = date('Y', $this->buildTimeStamp);
-                        $month = date('m', $this->buildTimeStamp);
-                        $day = date('d', $this->buildTimeStamp);
-                        $fullStatusDir .= DIRECTORY_SEPARATOR .
-                                          $year . $month . $day . 
-                                          DIRECTORY_SEPARATOR . 
-                                          $this->buildTimeStamp;
-                    }
-                    $statusFile = $fullStatusDir . DIRECTORY_SEPARATOR . 'build.ser';
                     
-                    if (!file_exists($fullStatusDir)) {
-                        include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
-                                                                        . 'dashboard' . DIRECTORY_SEPARATOR
-                                                                        . 'detail' . DIRECTORY_SEPARATOR
-                                                                        . 'detailerror.phtml');
-                    } else if (!file_exists($statusFile)) {
-                        include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
-                                                                        . 'dashboard' . DIRECTORY_SEPARATOR
-                                                                        . 'detail' . DIRECTORY_SEPARATOR
-                                                                        . 'detailerror.phtml');
+                    if ($this->buildTimeStamp != null) {
+                        $fullStatusDir = Xinc_Build_History::getBuildDir($this->project, $this->buildTimeStamp);
+                        
                     } else {
-                        $this->project = new Xinc_Project();
-                        $this->project->setName($this->projectName);
+                        $fullStatusDir = Xinc_Build_History::getLastBuildDir($this->project);
+                        $this->buildTimeStamp = Xinc_Build_History::getLastBuildTime($this->project);
+                        
+                    }
+                    //$statusFile = $fullStatusDir . DIRECTORY_SEPARATOR . 'build.ser';
+                    
+                        
                         $this->build = Xinc_Build::unserialize($this->project, 
                                                                $this->buildTimeStamp,
                                                                Xinc_Gui_Handler::getInstance()->getStatusDir());
-                        $buildTime = $this->build->getBuildTime();
-                        $year = date('Y', $buildTime);
-                        $month = date('m', $buildTime);
-                        $day = date('d', $buildTime);
-                        if ($this->buildTimeStamp == null) {
-                            $detailDir = $statusDir.DIRECTORY_SEPARATOR .$this->projectName;
-                            $year = date('Y', $this->build->getBuildTime());
-                            $month = date('m', $this->build->getBuildTime());
-                            $day = date('d', $this->build->getBuildTime());
-                            $detailDir .= DIRECTORY_SEPARATOR .
-                                          $year . $month . $day . 
-                                          DIRECTORY_SEPARATOR . 
-                                          $this->build->getBuildTime();
-                        } else {
-                            $detailDir = $fullStatusDir;
+                        $timezone = $this->build->getConfigDirective('timezone');
+                        if ($timezone !== null) {
+                            Xinc_Timezone::set($timezone);
                         }
+
+                        $detailDir = $fullStatusDir;
+
                         $logXmlFile = $detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
                         
                         if (file_exists($logXmlFile)) {
@@ -157,7 +138,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                         /**
                          * get History Builds
                          */
-                        $this->historyBuilds = $this->getHistoryBuilds($statusDir);
+                        //$this->historyBuilds = $this->getHistoryBuilds($statusDir);
                         
                         /**
                          * Generate the build selector on the right
@@ -181,11 +162,20 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
                                                                         . 'dashboard' . DIRECTORY_SEPARATOR
                                                                         . 'detail' . DIRECTORY_SEPARATOR
                                                                         . 'projectDetail.phtml');
-                    }
+                    /**}*/
                     
                 break;
             default:
                 break;
+        }
+        /**
+         * restore to system timezone
+         */
+        $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+        if ($xincTimezone !== null) {
+            Xinc_Timezone::set($xincTimezone);
+        } else {
+            Xinc_Timezone::reset();
         }
     }
     

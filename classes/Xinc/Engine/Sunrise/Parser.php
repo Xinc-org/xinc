@@ -108,6 +108,10 @@ class Xinc_Engine_Sunrise_Parser
             
             $build->setTaskRegistry($taskRegistry);
             
+            
+            $build->process(Xinc_Plugin_Slot::PROJECT_INIT);
+            
+            
             $scheduler = $build->getScheduler();
             
             if ($scheduler == null) {

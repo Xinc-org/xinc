@@ -56,7 +56,7 @@ class Xinc_PostinstallWin_postinstall
 
     private function _createDir($dirName, $permission = 0777)
     {
-	  $this->_ui->outputData('Creating Directory '.$dirName);
+      $this->_ui->outputData('Creating Directory '.$dirName);
         if (file_exists($dirName) || is_dir($dirName)) {
             if (!is_writeable($dirName)) {
                 $this->_ui->outputData($dirName . ' is not writable');

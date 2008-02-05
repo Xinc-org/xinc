@@ -30,6 +30,7 @@ require_once 'Xinc/Build.php';
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Projects/Menu.php';
 require_once 'Xinc/Data/Repository.php';
+require_once 'Xinc/Build/Repository.php';
 
 class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interface
 {
@@ -70,7 +71,10 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
                             
                             if (file_exists($statusfile)) {
                                 //$ini = parse_ini_file($statusfile, true);
-                                $object = unserialize(file_get_contents($statusfile));
+                                $project = new Xinc_Project();
+                                $project->setName($file);
+                                $object = Xinc_Build_Repository::getLastBuild($project);
+                                //$object = unserialize(file_get_contents($statusfile));
                                 //var_dump($object);
                                 
                                 //$project['build.status'] = $ini['build.status'];
@@ -107,6 +111,16 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
             default:
                 break;
         }
+        /**
+         * restore to system timezone
+         */
+        $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+        if ($xincTimezone !== null) {
+            Xinc_Timezone::set($xincTimezone);
+        } else {
+            Xinc_Timezone::reset();
+        }
+        
     }
 
 

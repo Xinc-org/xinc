@@ -236,4 +236,18 @@ interface Xinc_Build_Interface
      *
      */
     public function dequeue();
+    
+    /**
+     * Sets custom config value for the current build
+     *
+     * @param string $name
+     * @param string $value
+     */
+    public function setConfigDirective($name, $value);
+    
+    /**
+     *
+     * @param string $name
+     */
+    public function getConfigDirective($name);
 }

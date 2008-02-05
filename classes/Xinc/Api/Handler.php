@@ -28,6 +28,8 @@ require_once 'Xinc/Gui/Widget/Repository.php';
 require_once 'Xinc/Api/Module/Repository.php';
 require_once 'Xinc/Config.php';
 require_once 'Xinc/Logger.php';
+require_once 'Xinc/Timezone.php';
+
 
 class Xinc_Api_Handler
 {

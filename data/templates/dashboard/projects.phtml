@@ -84,6 +84,17 @@ return false;
 
 while ($this->builds->hasNext()) {
     $build = $this->builds->next();
+    $timezone = $build->getConfigDirective('timezone');
+    if ($timezone !== null) {
+        Xinc_Timezone::set($timezone);
+    } else {
+        $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+        if ($xincTimezone !== null) {
+            Xinc_Timezone::set($xincTimezone);
+        } else {
+            Xinc_Timezone::set(Xinc_Gui_Handler::getInstance()->getSystemTimezone());
+        }
+    }
     $icon=$build->getStatus() == 1?'/images/passed.png':
                                            ($build->getStatus() == -1 ?'/images/stopped.png':'images/failed.png');
     $text=$build->getStatus() == 1   ?'success':
@@ -100,7 +111,7 @@ EOJ;
                         <div class="short"></div>
           
         </td>
-        <td class="msource" nowrap="nowrap"><b><?php echo $build->getBuildTime()>0 ? date('Y-m-d H:i:s', $build->getBuildTime()) : ''; ?></b></td>
+        <td class="msource" nowrap="nowrap"><b><?php echo $build->getBuildTime()>0 ? date('Y-m-d H:i:s', $build->getBuildTime()) . '-' . Xinc_Timezone::get() : ''; ?></b></td>
         <td class="msource" nowrap="nowrap"><b><?php echo $build->getLabel(); ?></b></td>
         <td class="msource"><img src="<?php echo $icon;?>"/></td>
     </tr>
@@ -112,6 +123,13 @@ EOJ;
 </tr>-->
 <?php 
 }
+
+$xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+        if ($xincTimezone !== null) {
+            Xinc_Timezone::set($xincTimezone);
+        } else {
+            Xinc_Timezone::reset();
+        }
 ?>
 </table>
 </div>

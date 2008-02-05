@@ -50,7 +50,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
     
     public function getArtifactsDir(Xinc_Build_Interface &$build)
     {
-        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        $statusDir = Xinc::getInstance()->getStatusDir();
         $subDir = $build->getStatusSubDir();
         $fullDir = $statusDir . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . self::ARTIFACTS_DIR;
         
@@ -73,7 +73,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
         
         
         $subDir = $build->getStatusSubDir();
-        $fullDir = $statusDir . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . self::ARTIFACTS_DIR;
+        $fullDir = self::getArtifactsDir($build);
         $targetFile = $fullDir . DIRECTORY_SEPARATOR . basename($sourceFile);
         
         /**

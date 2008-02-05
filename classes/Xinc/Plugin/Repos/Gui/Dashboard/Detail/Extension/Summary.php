@@ -68,7 +68,8 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary extends Xinc_Plug
         
         $content = call_user_func_array('sprintf', array($overviewTemplate,
                                                          $image,
-                                                         date('Y-m-d H:i:s', $build->getBuildTime()),
+                                                         date('Y-m-d H:i:s', $build->getBuildTime())
+                                                         . '-' . Xinc_Timezone::get(),
                                                          $build->getLabel()));
         
         return $content;

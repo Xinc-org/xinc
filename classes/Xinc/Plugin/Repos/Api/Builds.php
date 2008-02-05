@@ -106,7 +106,7 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
      * @param integer $limit
      * @return stdClass
      */
-    private function _getHistoryBuilds($projectName, $start, $limit=null)
+    private function _getHistoryBuildsOld($projectName, $start, $limit=null)
     {
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
@@ -130,10 +130,86 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
                 $buildObject = Xinc_Build::unserialize($project,
                                                        $buildTimestamp,
                                                        Xinc_Gui_Handler::getInstance()->getStatusDir());
-                $builds[] = array('buildtime'=>$buildObject->getBuildTime(),
-                'buildtimeRaw'=>$buildObject->getBuildTime(),
+                $timezone = $buildObject->getConfigDirective('timezone');
+                if ($timezone !== null) {
+                    Xinc_Timezone::set($timezone);
+                }
+                $builds[] = array('buildtime'=>date('Y-m-d H:i:s', $buildObject->getBuildTime()),
+                                  'timezone' => Xinc_Timezone::get(),
+                                  'buildtimeRaw'=>$buildObject->getBuildTime(),
                                   'label'=>$buildObject->getLabel(),
                                   'status' => $buildObject->getStatus());
+                /**
+                * restore to system timezone
+                */
+                $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+                if ($xincTimezone !== null) {
+                    Xinc_Timezone::set($xincTimezone);
+                } else {
+                    Xinc_Timezone::reset();
+                }
+            } catch (Exception $e) {
+                // TODO: Handle
+                
+            }
+            
+        }
+        
+        //$builds = array_reverse($builds);
+        
+        $object = new stdClass();
+        $object->totalcount = $totalCount;
+        $object->builds = $builds;
+        //return new Xinc_Build_Iterator($builds);
+        return $object;
+    }
+    
+    private function _getHistoryBuilds($projectName, $start, $limit=null)
+    {
+        $project = new Xinc_Project();
+        $project->setName($projectName);
+        $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit);
+        $totalCount = Xinc_Build_History::getCount($project);
+        /**$statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
+        $project = new Xinc_Project();
+        $project->setName($projectName);
+        $buildHistoryArr = unserialize(file_get_contents($historyFile));
+        $totalCount = count($buildHistoryArr);
+        if ($limit==null) {
+            $limit = $totalCount;
+        }*/
+        /**
+         * turn it upside down so the latest builds appear first
+         */
+        /**$buildHistoryArr = array_reverse($buildHistoryArr, true);
+        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);*/
+        
+        $builds = array();
+        
+        foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
+            try {
+                $buildObject = Xinc_Build::unserialize($project,
+                                                       $buildTimestamp,
+                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                $timezone = $buildObject->getConfigDirective('timezone');
+                if ($timezone !== null) {
+                    Xinc_Timezone::set($timezone);
+                }
+                $builds[] = array('buildtime'=>date('Y-m-d H:i:s', $buildObject->getBuildTime()),
+                                  'timezone' => Xinc_Timezone::get(),
+                                  'buildtimeRaw'=>$buildObject->getBuildTime(),
+                                  'label'=>$buildObject->getLabel(),
+                                  'status' => $buildObject->getStatus());
+                /**
+                * restore to system timezone
+                */
+                $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+                if ($xincTimezone !== null) {
+                    Xinc_Timezone::set($xincTimezone);
+                } else {
+                    Xinc_Timezone::reset();
+                }
             } catch (Exception $e) {
                 // TODO: Handle
                 

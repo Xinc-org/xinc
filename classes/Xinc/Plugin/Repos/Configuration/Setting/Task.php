@@ -24,20 +24,26 @@
 */
 require_once 'Xinc/Plugin/Repos/Configuration/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Configuration_Task_LogLevel extends Xinc_Plugin_Repos_Configuration_AbstractTask
+class Xinc_Plugin_Repos_Configuration_Setting_Task extends Xinc_Plugin_Repos_Configuration_AbstractTask
 {
-    private $_priority;
-    public function setPriority($value)
+    private $_name;
+    private $_value;
+    public function setName($value)
     {
-        $this->_priority = $value;
+        $this->_name = $value;
+        
+    }
+    public function setValue($value)
+    {
+        $this->_value = $value;
         
     }
     public function getName()
     {
-        return 'loglevel';
+        return 'setting';
     }
-    public function configure(Xinc &$xinc)
+    public function configure(Xinc_Build &$build)
     {
-        Xinc_Logger::getInstance()->setLogLevel($this->_priority);
+        $build->setConfigDirective($this->_name, $this->_value);
     }
 }

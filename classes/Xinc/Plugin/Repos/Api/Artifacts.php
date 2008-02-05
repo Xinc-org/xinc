@@ -120,33 +120,34 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         
         $query = $_SERVER['REQUEST_URI'];
        
-       preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
+        preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
        
-       if (count($matches)!=8) {
-           echo "Could not find artifact";
-           die();
-       }
-       $projectName = $matches[5];
-       $buildTime = $matches[6]; // if buildtime==latest, get latest build
-       // latest
-       // Xinc_Build_History::get()
-       $file = $matches[7];
-       $file = str_replace('/',DIRECTORY_SEPARATOR,$file);
+        if (count($matches)!=8) {
+            echo "Could not find artifact";
+            die();
+        }
+        $projectName = $matches[5];
+        $buildTime = $matches[6]; // if buildtime==latest, get latest build
+        // latest
+        // Xinc_Build_History::get()
+        $file = $matches[7];
+        $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
         $project = new Xinc_Project();
         $project->setName($projectName);
         try {
             /**$build = Xinc_Build::unserialize($project,
-                                             $buildTime,
-                                             Xinc_Gui_Handler::getInstance()->getStatusDir());*/
+                                                 $buildTime,
+                                                 Xinc_Gui_Handler::getInstance()->getStatusDir());*/
             if ($buildTime == 'latest') {
                 $build = Xinc_Build_Repository::getLastBuild($project);
+                $statusDir = Xinc_Build_History::getLastBuildDir($project);
             } else {
                 $build = Xinc_Build_Repository::getBuild($project, $buildTime);
+                $statusDir = Xinc_Build_History::getBuildDir($project, $buildTime);
             }
            
-            $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
-            $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
-                          DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
+            
+            $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                           DIRECTORY_SEPARATOR;
 
             /**
@@ -219,9 +220,8 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         $projectName = $build->getProject()->getName();
         $buildTime = $build->getBuildTime();
         
-        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
-        $statusDir .= DIRECTORY_SEPARATOR . $build->getStatusSubDir() . 
-                      DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
+        $statusDir = Xinc_Build_History::getBuildDir($build->getProject(), $buildTime);
+        $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                       DIRECTORY_SEPARATOR;
         $directory = $statusDir . $dirname;
         if (!is_dir($directory)) return;
@@ -237,7 +237,8 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
                     $leaf = true;
                 }
                 $items[] = array('text'=> $file,
-                                 'id'=> addslashes(str_replace(DIRECTORY_SEPARATOR, '/', $dirname . DIRECTORY_SEPARATOR . $file)),
+                                 'id'=> addslashes(str_replace(DIRECTORY_SEPARATOR,
+                                                   '/', $dirname . DIRECTORY_SEPARATOR . $file)),
                                  'cls'=> $class, 
                                  'leaf'=> $leaf);
             }

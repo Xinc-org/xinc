@@ -25,14 +25,14 @@
 
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Configuration/Task.php';
-require_once 'Xinc/Plugin/Repos/Configuration/Task/LogLevel.php';
+require_once 'Xinc/Plugin/Repos/Configuration/Setting/Task.php';
 
 class Xinc_Plugin_Repos_Configuration extends Xinc_Plugin_Base
 {
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_Configuration_Task($this),
-                     new Xinc_Plugin_Repos_Configuration_Task_LogLevel($this));
+                     new Xinc_Plugin_Repos_Configuration_Setting_Task($this));
     }
 
     public function validate()
