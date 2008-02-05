@@ -179,6 +179,7 @@ class XincPEARPackageTask extends MatchingTask {
 			//$package->addInstallAs('bin/instsrv.exe', 'instsrv.exe');
 			//$package->addInstallAs('bin/srvany.exe', 'srvany.exe');
 			$package->addReplacement('bin/xinc.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
+			$package->addReplacement('Xinc.php', 'package-info', '@VERSION@', 'version');
 			$package->addReplacement('bin/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
 			$package->addReplacement('scripts/xinc-uninstall', 'pear-config', '@PHP_BIN@', 'php_bin');
 			$package->addReplacement('etc/init.d/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
