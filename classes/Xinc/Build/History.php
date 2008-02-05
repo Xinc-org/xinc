@@ -25,6 +25,7 @@
 
 require_once 'Xinc/Project.php';
 require_once 'Xinc.php';
+require_once 'Xinc/Build/Exception/HistoryStorage.php';
 
 class Xinc_Build_History
 {
@@ -229,16 +230,29 @@ class Xinc_Build_History
     private static function _getStatusDir()
     {
         $statusDir = null;
+        $isGuiMode = false;
+        $isXincMode = false;
         if (class_exists('Xinc_Gui_Handler')) {
+            $handler = Xinc_Gui_Handler::getInstance();
+            $isGuiMode = $handler instanceof Xinc_Gui_Handler;
+        }
+        if (class_exists('Xinc')) {
+            $xinc = Xinc::getInstance();
+            $isXincMode = $xinc instanceof Xinc;
+        }
+        if ($isGuiMode) {
             // we are in gui mode
             $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
-        } else {
+        } else if ($isXincMode) {
             $statusDir = Xinc::getInstance()->getStatusDir();
+        } else {
+            $statusDir = getcwd();
         }
         return $statusDir;
     }
     public static function addBuild(Xinc_Build_Interface &$build, $serialFileName)
     {
+        
         $project = $build->getProject();
         $metaFileArr = self::_loadMetaData($project->getName());
         
