@@ -328,6 +328,11 @@ class Xinc
         /**
          * write pid file
          */
+        if (file_exists($this->_pidFile)) {
+            Xinc_Logger::getInstance()->error('Pid File: ' . $this->_pidFile . ' exists.');
+            Xinc_Logger::getInstance()->error('Xinc instance running already or you need to clean up after a crash');
+            exit(-1);
+        }
         file_put_contents($this->_pidFile, getmypid());
         while (true) {
             declare(ticks=2);
@@ -458,6 +463,7 @@ class Xinc
             $logger->setXincLogFile($arguments['logFile']);
             
             $logger->info('Starting up Xinc');
+            $logger->info('- Version: ' . self::getVersion());
             $logger->info('- Workingdir:         ' . $arguments['workingDir']);
             $logger->info('- Projectdir:         ' . $arguments['projectDir']);
             $logger->info('- Statusdir:          ' . $arguments['statusDir']);

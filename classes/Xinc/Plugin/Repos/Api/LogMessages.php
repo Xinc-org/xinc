@@ -134,22 +134,36 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
             $fh = fopen($logXmlFile, 'r');
             $xmlStr = fgets($fh);
             $xmlStr .= fgets($fh);
+            $tagOpen = false;
             while ($pos < $start) {
                 $line = fgets($fh);
                 $line = trim($line);
                 if (empty($line)) continue;
+                if (strstr($line,'<message')) $tagOpen = true;
+                if (!strstr($line,'</message>') && $tagOpen) {
+                    continue;
+                } else if (strstr($line,'</message>') && $tagOpen) {
+                    $tagOpen = false;
+                    $tagClosed = false;
+                }
                 $pos++;
             }
+            $tagOpen = false;
             if ($limit!=null) {
                 $addClosingTag = true;
-                for ($i = $pos; $i < $start+$limit; $i++) {
+                while ($pos<$start+$limit) {
                     $line = fgets($fh);
                     $line = trim($line);
-                    if (empty($line)) continue;
+                    //if (empty($line)) continue;
                     $xmlStr.= $line;
-                    //echo $pos . ' - ' . $start .' - '. $limit . "<br>";
+                    if (strstr($line,'<message')) $tagOpen = true;
+                    if (!strstr($line,'</message>') && $tagOpen) {
+                        continue;
+                    } else if (strstr($line,'</message>') && $tagOpen) {
+                        $tagOpen = false;
+                        $tagClosed = false;
+                    }
                     $pos++;
-                    //if ($pos>=10)die;
                     if (feof($fh)) {
                        $addClosingTag = false;
                        break;
@@ -164,14 +178,29 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                     $line = trim($line);
                     if (empty($line)) continue;
                     $xmlStr.= $line;
+                    if (strstr($line,'<message')) $tagOpen = true;
+                if (!strstr($line,'</message>') && $tagOpen) {
+                    continue;
+                } else if (strstr($line,'</message>') && $tagOpen) {
+                    $tagOpen = false;
+                    $tagClosed = false;
+                }
                     $pos++;
                 }
             }
-
+            $tagOpen = false;
+            $tagClosed = false;
             while (!feof($fh)) {
                 $line = fgets($fh);
                 $line = trim($line);
                 if (empty($line)) continue;
+                if (strstr($line,'<message')) $tagOpen = true;
+            if (!strstr($line,'</message>') && $tagOpen) {
+                    continue;
+                } else if (strstr($line,'</message>') && $tagOpen) {
+                    $tagOpen = false;
+                    $tagClosed = false;
+                }
                 //$xmlStr.= $line;
                 $pos++;
             }
@@ -185,9 +214,8 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
         $i = $totalCount;
         $logmessages = array();
         $id = $totalCount-$start;
-        foreach ($logXml->children() as $logEntry) { 
-           
-            
+        
+        foreach ($logXml->children() as $logEntry) {
             $attributes = $logEntry->attributes();
             $logmessages[] = array( 'id'=>$id--, 
                      'date'=> (string)$attributes->timestamp,
