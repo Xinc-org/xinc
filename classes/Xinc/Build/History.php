@@ -173,7 +173,7 @@ class Xinc_Build_History
         $metaFileArr = self::_loadMetaData($project->getName());
         if (!isset($metaFileArr['meta'])) {
             self::_migrate($project->getName(), $metaFileArr);
-            return self::getBuildFile($build, $timestamp);
+            return self::getBuildFile($project, $timestamp);
         } else {
             foreach ($metaFileArr['parts'] as $part) {
                 if ($timestamp >= $part['from'] && $timestamp <= $part['to']) {
@@ -341,16 +341,21 @@ class Xinc_Build_History
         $counter = 0;
         $fileNo = 0;
         $part = array();
+        $i = 0;
+        $totalCount = count($arr);
         $metaArr = array('meta'=>true, 'parts'=>array());
         foreach ($arr as $timestamp => $fileName) {
             $part[$timestamp] = $fileName;
-            if (++$counter>=self::PART_MAX) {
+            $i++;
+            if (++$counter>=self::PART_MAX || $i>= $totalCount) {
+                $no = $fileNo;
                 $statusFile = self::_writePartFile($projectName, $fileNo++, $part);
                 $keys = array_keys($part);
                 $metaArr['parts'][] = array('filename'=>$statusFile,
                                             'from'=> $keys[0],
                                             'to'=>$keys[count($keys)-1],
-                                            'count' => count($keys));
+                                            'count' => count($keys),
+                                            'no' => $no );
                 $part = array();
                 $counter = 0;
             }
