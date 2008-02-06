@@ -27,7 +27,8 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
-
+require_once 'Xinc/Build/History.php';
+require_once 'Xinc/Build/Repository.php';
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph.php';
 
@@ -65,7 +66,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
     }
     private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
     {
-        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        /**$statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $project->getName() . '.history';
         
         $buildHistoryArr = unserialize(file_get_contents($historyFile));
@@ -76,16 +77,21 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
         /**
          * turn it upside down so the latest builds appear first
          */
+    	/**
         $buildHistoryArr = array_reverse($buildHistoryArr, true);
-        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);
+        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);*/
+        
+        $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit);
+        $totalCount = Xinc_Build_History::getCount($project);
         
         $builds = array();
         
         foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
             try {
-                $buildObject = Xinc_Build::unserialize($project,
-                                                       $buildTimestamp,
-                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                //$buildObject = Xinc_Build::unserialize($project,
+                //                                       $buildTimestamp,
+                //                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                $buildObject = Xinc_Build_Repository::getBuild($project, $buildTimestamp);
                 $builds[] = array('number'=>$buildObject->getNumber(),
                                   'y'=>$buildObject->getStatistics()->get('build.duration'),
                                   'xlabel'=>$buildObject->getNumber());
