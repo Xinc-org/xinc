@@ -135,13 +135,18 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
             $xmlStr = fgets($fh);
             $xmlStr .= fgets($fh);
             while ($pos < $start) {
-                fgets($fh);
+                $line = fgets($fh);
+                $line = trim($line);
+                if (empty($line)) continue;
                 $pos++;
             }
             if ($limit!=null) {
                 $addClosingTag = true;
                 for ($i = $pos; $i < $start+$limit; $i++) {
-                    $xmlStr.= fgets($fh);
+                    $line = fgets($fh);
+                    $line = trim($line);
+                    if (empty($line)) continue;
+                    $xmlStr.= $line;
                     //echo $pos . ' - ' . $start .' - '. $limit . "<br>";
                     $pos++;
                     //if ($pos>=10)die;
@@ -155,13 +160,19 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                 }
             } else {
                 while (!feof($fh)) {
-                    $xmlStr.= fgets($fh);
+                    $line = fgets($fh);
+                    $line = trim($line);
+                    if (empty($line)) continue;
+                    $xmlStr.= $line;
                     $pos++;
                 }
             }
 
             while (!feof($fh)) {
-                fgets($fh);
+                $line = fgets($fh);
+                $line = trim($line);
+                if (empty($line)) continue;
+                $xmlStr.= $line;
                 $pos++;
             }
             fclose($fh);
