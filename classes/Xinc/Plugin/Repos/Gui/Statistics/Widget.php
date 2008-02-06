@@ -30,6 +30,8 @@ require_once 'Xinc/Build.php';
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 require_once 'Xinc/Plugin/Repos/Gui/Statistics/Menu/Item.php';
 require_once 'Xinc/Data/Repository.php';
+require_once 'Xinc/Build/History.php';
+require_once 'Xinc/Build/Repository.php';
 
 
 class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interface
@@ -100,19 +102,21 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     }
     private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
     {
-        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        /**$statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $project->getName() . '.history';
         
         $buildHistoryArr = unserialize(file_get_contents($historyFile));
         $totalCount = count($buildHistoryArr);
         if ($limit==null) {
             $limit = $totalCount;
-        }
+        }*/
         /**
          * turn it upside down so the latest builds appear first
          */
-        $buildHistoryArr = array_reverse($buildHistoryArr, true);
-        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);
+        /**$buildHistoryArr = array_reverse($buildHistoryArr, true);
+        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);*/
+        $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit);
+        $totalCount = Xinc_Build_History::getCount($project);
         
         $builds = array();
         
