@@ -209,11 +209,16 @@ class Xinc_Build_History
                 /**
                  * new format, we need to load from multiple places
                  */
-                $lastPart = $buildHistoryArr['parts'][count($buildHistoryArr['parts'])-1];
-                $fileName = $lastPart['filename'];
-                $buildHistoryArr = @unserialize(file_get_contents($fileName));
-                $keys = array_keys($buildHistoryArr);
-                $lastTimestamp = $keys[count($keys)-1];
+                $count = count($buildHistoryArr['parts'])-1;
+                if ($count>=0) {
+                    $lastPart = $buildHistoryArr['parts'][];
+                    $fileName = $lastPart['filename'];
+                    $buildHistoryArr = @unserialize(file_get_contents($fileName));
+                    $keys = array_keys($buildHistoryArr);
+                    $lastTimestamp = $keys[count($keys)-1];
+                } else {
+                    return null;
+                }
                 
             } else {
                 self::_migrate($projectName, $buildHistoryArr);

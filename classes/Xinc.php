@@ -165,9 +165,9 @@ class Xinc
      */
     public static function getInstance()
     {
-        if (!isset(self::$_instance)) {
-            self::main();
-        }
+        //if (!isset(self::$_instance)) {
+        //    self::main();
+        //}
         
         return self::$_instance;
     }
