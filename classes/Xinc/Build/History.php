@@ -67,14 +67,7 @@ class Xinc_Build_History
                 $totalStart += $part['count'];
                 $startNo = $part['no'];
             }
-            /**foreach ($metaData['parts'] as $part) {
-                if ($part['count'] > $start) {
-                    // we found our start box
-                    break;
-                }
-                $totalStart += $part['count'];
-                $startNo = $part['no'];
-            }*/
+
             $endNo = 0;
             $totalEnd = 0;
             for ($i = $startNo; $i>=0; $i--) {
@@ -85,30 +78,18 @@ class Xinc_Build_History
                 }
                 $totalEnd += $part['count'];
             }
-            /**foreach ($metaData['parts'] as $part) {
-                if ($part['count'] > $start + $limit) {
-                    // we found our end box
-                    $endNo = $part['no'];
-                    break;
-                }
-                
-            }*/
+
             $arr = null;
-            /**for ($i=$startNo; $i>=$endNo; $i--) {
-                $partArr = self::_readPartFile($project->getName(), $i);
-                if ($arr == null) {
-                    $arr = $partArr;
-                } else {
-                    $arr = array_merge($partArr, $arr);
-                }
-            }*/
+
             for ($i=$endNo; $i<=$startNo; $i++) {
                 $partArr = self::_readPartFile($project->getName(), $i);
                 $partArr = array_reverse($partArr, true);
                 if ($arr == null) {
                     $arr = $partArr;
                 } else {
-                    $arr = array_merge($arr, $partArr);
+                    foreach ($partArr as $key => $val) {
+                        $arr[$key] = $val;
+                    }
                 }
             }
 

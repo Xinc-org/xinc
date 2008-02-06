@@ -170,28 +170,16 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
         $project->setName($projectName);
         $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit);
         $totalCount = Xinc_Build_History::getCount($project);
-        /**$statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
-        $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
-        $project = new Xinc_Project();
-        $project->setName($projectName);
-        $buildHistoryArr = unserialize(file_get_contents($historyFile));
-        $totalCount = count($buildHistoryArr);
-        if ($limit==null) {
-            $limit = $totalCount;
-        }*/
-        /**
-         * turn it upside down so the latest builds appear first
-         */
-        /**$buildHistoryArr = array_reverse($buildHistoryArr, true);
-        $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);*/
-        
         $builds = array();
         
         foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
             try {
-                $buildObject = Xinc_Build::unserialize($project,
-                                                       $buildTimestamp,
-                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                //echo $buildTimestamp . ' - '. $buildFileName . "<br>";
+                //Xinc_Build_Repository::getBuild($project, $buildTimestamp);
+                //$buildObject = Xinc_Build::unserialize($project,
+                //                                       $buildTimestamp,
+                //                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                $buildObject = Xinc_Build_Repository::getBuild($project, $buildTimestamp);
                 $timezone = $buildObject->getConfigDirective('timezone');
                 if ($timezone !== null) {
                     Xinc_Timezone::set($timezone);
