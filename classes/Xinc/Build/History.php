@@ -24,7 +24,6 @@
 */
 
 require_once 'Xinc/Project.php';
-require_once 'Xinc.php';
 require_once 'Xinc/Build/Exception/HistoryStorage.php';
 
 class Xinc_Build_History
@@ -211,7 +210,7 @@ class Xinc_Build_History
                  */
                 $count = count($buildHistoryArr['parts'])-1;
                 if ($count>=0) {
-                    $lastPart = $buildHistoryArr['parts'][];
+                    $lastPart = $buildHistoryArr['parts'][$count];
                     $fileName = $lastPart['filename'];
                     $buildHistoryArr = @unserialize(file_get_contents($fileName));
                     $keys = array_keys($buildHistoryArr);
