@@ -172,7 +172,7 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                 $line = fgets($fh);
                 $line = trim($line);
                 if (empty($line)) continue;
-                $xmlStr.= $line;
+                //$xmlStr.= $line;
                 $pos++;
             }
             fclose($fh);
