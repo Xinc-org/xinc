@@ -56,10 +56,9 @@ class Xinc_Engine_TestParser extends Xinc_BaseTest
         
         try {
             $engineParser->parse($engines);
-            
+            $engine = Xinc_Engine_Repository::getInstance()->getEngine('Xinc_Engine_Sunrise');
             $this->assertFalse(true, 'Should throw an exception');
-        } catch (Xinc_Engine_Exception_FileNotFound $e) {
-            
+        } catch (Xinc_Engine_Exception_NotFound $e) {
             $this->assertTrue(true, 'Right exception caught');
         } catch (Exception $e) {
             $this->assertTrue(false, 'Should catch a FileNotFOund exception but caught: ' . get_class($e));
@@ -90,8 +89,9 @@ class Xinc_Engine_TestParser extends Xinc_BaseTest
         
         try {
             $engineParser->parse($engines);
+            $engine = Xinc_Engine_Repository::getInstance()->getEngine('Xinc_Engine_Sunrise');
             $this->assertFalse(true, 'Should throw an exception');
-        } catch (Xinc_Engine_Exception_ClassNotFound $e) {
+        } catch (Xinc_Engine_Exception_NotFound $e) {
             
             $this->assertTrue(true, 'Right exception caught');
         } catch (Exception $e) {
@@ -130,6 +130,7 @@ class Xinc_Engine_TestParser extends Xinc_BaseTest
         
         try {
             $engineParser->parse($engines);
+            $engine = Xinc_Engine_Repository::getInstance()->getEngine('Xinc_Engine_Sunrise');
             $this->assertFalse(true, 'Should throw an exception');
         } catch (Xinc_Engine_Exception_Invalid $e) {
             $this->assertTrue(true, 'Right exception caught');
