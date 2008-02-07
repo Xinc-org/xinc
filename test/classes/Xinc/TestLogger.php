@@ -66,7 +66,7 @@ class Xinc_TestLogger extends Xinc_BaseTest
        $this->sharedFixture->flush();
        
        $lastMessage = Xinc_StreamLogger::getLastLogMessage();
-       $this->assertTrue(strpos($lastMessage, 'priority="warn"')!==false, 'Message should contain the last Test');
+       $this->assertTrue(strpos($lastMessage, 'priority="warn"')!==false, 'Message should contain the last Test, but is:' . $lastMessage);
        
     }
     
