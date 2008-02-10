@@ -45,6 +45,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                                    $fromRevision, $toRevision, $username, $password)
     {
         
+        if ($fromRevision < $toRevision) {
+            $fromRevision += 1;
+        }
         $credentials = '';
         if ($username != null) { 
             $credentials .= ' --username ' . $username; 
