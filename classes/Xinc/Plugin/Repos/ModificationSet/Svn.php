@@ -46,7 +46,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
     {
         
         if ($fromRevision < $toRevision) {
-            $fromRevision += 1;
+            $fromRevision++;
         }
         $credentials = '';
         if ($username != null) { 
@@ -275,7 +275,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $modResult->setRemoteRevision($remoteRevision);
             
             if ($update && $modResult->isChanged()) {
-                if ($build->getLastBuild()->getStatus() == Xinc_Build_Interface::FAILED) {
+                if ($build->getLastBuild()->getStatus() === Xinc_Build_Interface::FAILED) {
                     try {
                         $lastSuccessfulBuild = Xinc_Build_Repository::getLastSuccessfulBuild($build->getProject());
                         //$modResult->mergeResultSet($lastSuccessfulBuild->getProperties()->get('changeset'));
@@ -296,7 +296,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 //$build->setStatus(Xinc_Build_Interface::PASSED);
                 $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
             } else if ($modResult->isChanged()) {
-                if ($build->getLastBuild()->getStatus() == Xinc_Build_Interface::FAILED) {
+                if ($build->getLastBuild()->getStatus() === Xinc_Build_Interface::FAILED) {
                     try {
                         $lastSuccessfulBuild = Xinc_Build_Repository::getLastSuccessfulBuild($build->getProject());
                         //$modResult->mergeResultSet($lastSuccessfulBuild->getProperties()->get('changeset'));
