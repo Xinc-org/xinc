@@ -220,28 +220,33 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         $projectName = $build->getProject()->getName();
         $buildTime = $build->getBuildTime();
         
-        $statusDir = Xinc_Build_History::getBuildDir($build->getProject(), $buildTime);
-        $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
-                      DIRECTORY_SEPARATOR;
-        $directory = $statusDir . $dirname;
-        if (!is_dir($directory)) return;
-        $dh = opendir($directory);
-        $items = array();
-        while ($file = readdir($dh)) {
-            if (!in_array($file, array('.', '..'))) {
-                if (is_dir($directory . DIRECTORY_SEPARATOR . $file)) {
-                    $class = 'folder';
-                    $leaf = false;
-                } else {
-                    $class = 'file';
-                    $leaf = true;
+        try {
+            $statusDir = Xinc_Build_History::getBuildDir($build->getProject(), $buildTime);
+            
+            $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
+                          DIRECTORY_SEPARATOR;
+            $directory = $statusDir . $dirname;
+            if (!is_dir($directory)) return;
+            $dh = opendir($directory);
+            $items = array();
+            while ($file = readdir($dh)) {
+                if (!in_array($file, array('.', '..'))) {
+                    if (is_dir($directory . DIRECTORY_SEPARATOR . $file)) {
+                        $class = 'folder';
+                        $leaf = false;
+                    } else {
+                        $class = 'file';
+                        $leaf = true;
+                    }
+                    $items[] = array('text'=> $file,
+                                     'id'=> addslashes(str_replace(DIRECTORY_SEPARATOR,
+                                                       '/', $dirname . DIRECTORY_SEPARATOR . $file)),
+                                     'cls'=> $class, 
+                                     'leaf'=> $leaf);
                 }
-                $items[] = array('text'=> $file,
-                                 'id'=> addslashes(str_replace(DIRECTORY_SEPARATOR,
-                                                   '/', $dirname . DIRECTORY_SEPARATOR . $file)),
-                                 'cls'=> $class, 
-                                 'leaf'=> $leaf);
             }
+        } catch (Exception $e1) {
+            return array();
         }
         return $items;
     }

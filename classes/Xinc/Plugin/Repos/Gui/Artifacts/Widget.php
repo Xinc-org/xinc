@@ -150,4 +150,13 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     {
         return array();
     }
+    
+    public function hasExceptionHandler()
+    {
+        return false;
+    }
+    public function handleException(Exception $e)
+    {
+        
+    }
 }

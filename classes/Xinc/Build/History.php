@@ -24,16 +24,27 @@
 */
 
 require_once 'Xinc/Project.php';
-require_once 'Xinc/Build/Exception/HistoryStorage.php';
+require_once 'Xinc/Build/History/Exception/Storage.php';
+require_once 'Xinc/Build/History/Exception/Migration.php';
+require_once 'Xinc/Build/History/Exception/General.php';
+require_once 'Xinc/Build/History/Exception/MetaFile.php';
 
 class Xinc_Build_History
 {
     const PART_MAX = 1000;
     const HISTORY_DIR = '.history';
     
+    /**
+     * Get the number of historical builds for a project
+     *
+     * @param Xinc_Project $project
+     * @return integer
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function getCount(Xinc_Project &$project)
     {
         $metaData = self::_loadMetaData($project->getName());
+        
         if (!isset($metaData['meta'])) {
             self::_migrate($project->getName(), $metaData);
             return self::getCount($project);
@@ -46,6 +57,15 @@ class Xinc_Build_History
         }
     }
     
+    /**
+     * Returns an array of historical builds
+     *
+     * @param Xinc_Project $project
+     * @param integer $start
+     * @param integer $limit
+     * @return array
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function getFromTo(Xinc_Project &$project, $start, $limit)
     {
         /**
@@ -108,6 +128,7 @@ class Xinc_Build_History
      *
      * @param Xinc_Project $project
      * @return array
+     * @throws Xinc_Build_Exception_Unserialization
      */
     public static function get(Xinc_Project &$project)
     {
@@ -118,7 +139,9 @@ class Xinc_Build_History
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
         if (file_exists($historyFile)) {
             $buildHistoryArr = @unserialize(file_get_contents($historyFile));
-            if (isset($buildHistoryArr['meta'])) {
+            if ($buildHistoryArr === false) {
+                throw new Xinc_Build_Exception_Unserialization($project, null);
+            } else if (isset($buildHistoryArr['meta'])) {
                 $buildHistoryArr = array();
                 /**
                  * new format, we need to load from multiple places
@@ -138,21 +161,59 @@ class Xinc_Build_History
         
         return $buildHistoryArr;
     }
+    /**
+     * Gets the last build filename, of the serialized build
+     *
+     * @param Xinc_Project $project
+     * @return string
+     * @throws Xinc_Build_Exception_NotFound
+     * @throws Xinc_Build_Exception_Unserialization
+     * @throws Xinc_Build_Exception_NotFound
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function getLastBuildFile(Xinc_Project &$project)
     {
         $lastBuildTimestamp = self::getLastBuildTime($project);
         return self::getBuildFile($project, $lastBuildTimestamp);
     }
+    
+    public static function getLastSuccessfulBuildFile(Xinc_Project &$project)
+    {
+        $lastBuildTimestamp = self::getLastSuccessfulBuildTime($project);
+        return self::getBuildFile($project, $lastBuildTimestamp);
+    }
+    /**
+     * Returns the directory of the serialized build
+     *
+     * @param Xinc_Project $project
+     * @param integer $timestamp
+     * @return string
+     * @throws Xinc_Build_Exception_NotFound
+     * @throws Xinc_Build_Exception_NotFound
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function getBuildDir(Xinc_Project &$project, $timestamp)
     {
         $buildFile = self::getBuildFile($project, $timestamp);
         return dirname($buildFile);
     }
     
+    /**
+     * Gets the filename of a historical build
+     *
+     * @param Xinc_Project $project
+     * @param integer $timestamp
+     * @return string
+     * @throws Xinc_Build_Exception_NotFound
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function getBuildFile(Xinc_Project &$project, $timestamp)
     {
         $metaFileArr = self::_loadMetaData($project->getName());
-        if (!isset($metaFileArr['meta'])) {
+        if ($metaFileArr === false) {
+            throw new Xinc_Build_Exception_NotFound($project, $timestamp);
+            //return null;
+        } else if (!isset($metaFileArr['meta'])) {
             self::_migrate($project->getName(), $metaFileArr);
             return self::getBuildFile($project, $timestamp);
         } else {
@@ -162,18 +223,34 @@ class Xinc_Build_History
                     if (isset($partFile[$timestamp])) {
                         return $partFile[$timestamp];
                     } else {
-                        return null;
+                        throw new Xinc_Build_Exception_NotFound($project, $timestamp);
+                        //return null;
                     }
                 }
             }
         }
         
     }
+    
+    /**
+     *
+     * @param Xinc_Project $project
+     * @return unknown
+     * @throws Xinc_Build_Exception_NotFound
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function getLastBuildDir(Xinc_Project &$project)
     {
         $buildFile = self::getLastBuildFile($project);
         return dirname($buildFile);
     }
+    /**
+     * Finds the last build time of a project
+     *
+     * @param Xinc_Project $project
+     * @return integer
+     * @throws Xinc_Build_Exception_Unserialization
+     */
     public static function getLastBuildTime(Xinc_Project &$project)
     {
         $projectName = $project->getName();
@@ -183,8 +260,9 @@ class Xinc_Build_History
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
         if (file_exists($historyFile)) {
             $buildHistoryArr = @unserialize(file_get_contents($historyFile));
-            
-            if (isset($buildHistoryArr['meta'])) {
+            if ($buildHistoryArr === false) {
+                throw new Xinc_Build_Exception_Unserialization($project, null);
+            } else if (isset($buildHistoryArr['meta'])) {
                 //$buildHistoryArr = array();
                 /**
                  * new format, we need to load from multiple places
@@ -194,6 +272,9 @@ class Xinc_Build_History
                     $lastPart = $buildHistoryArr['parts'][$count];
                     $fileName = $lastPart['filename'];
                     $buildHistoryArr = @unserialize(file_get_contents($fileName));
+                    if ($buildHistoryArr === false) {
+                        throw new Xinc_Build_Exception_Unserialization($project, null);
+                    }
                     $keys = array_keys($buildHistoryArr);
                     $lastTimestamp = $keys[count($keys)-1];
                 } else {
@@ -212,6 +293,44 @@ class Xinc_Build_History
         
         return $lastTimestamp;
     }
+    
+    public static function getLastSuccessfulBuildTime(Xinc_Project &$project)
+    {
+        $projectName = $project->getName();
+        
+        $statusDir = self::_getStatusDir();
+        
+        $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
+        if (file_exists($historyFile)) {
+            $buildHistoryArr = @unserialize(file_get_contents($historyFile));
+            if ($buildHistoryArr === false) {
+                throw new Xinc_Build_Exception_Unserialization($project, null);
+            } else if (isset($buildHistoryArr['meta'])) {
+                //$metaFileArr['lastSuccessfulBuild']
+                if (isset($buildHistoryArr['lastSuccessfulBuild'])) {
+                    return $buildHistoryArr['lastSuccessfulBuild']['buildtime'];
+                } else {
+                    $project->error('Cannot get last successful build. Using last build instead');
+                    return self::getLastBuildTime($project);
+                }
+                
+            } else {
+                self::_migrate($projectName, $buildHistoryArr);
+                return self::getLastBuildTime($project);
+                /**$keys = array_keys($buildHistoryArr);
+                $lastTimestamp = $buildHistoryArr[$keys[count($keys)-1]];*/
+            }
+        } else {
+            $lastTimestamp = null;
+        }
+        
+        return $lastTimestamp;
+    }
+    /**
+     * returns the status dir
+     *
+     * @return string
+     */
     private static function _getStatusDir()
     {
         $statusDir = null;
@@ -235,18 +354,24 @@ class Xinc_Build_History
         }
         return $statusDir;
     }
+    
+    /**
+     * Adds a build to the history file
+     *
+     * @param Xinc_Build_Interface $build
+     * @param string $serialFileName
+     * @throws Xinc_Build_History_Exception_General
+     */
     public static function addBuild(Xinc_Build_Interface &$build, $serialFileName)
     {
-        
+        $buildSuccess = $build->getStatus() == Xinc_Build_Interface::PASSED;
         $project = $build->getProject();
         $metaFileArr = self::_loadMetaData($project->getName());
         
         if (!isset($metaFileArr['meta'])) {
+            
             self::_migrate($project->getName(), $metaFileArr);
             $metaFileArr = self::_loadMetaData($project->getName());
-            if (!isset($metaFileArr['meta'])) {
-                throw new Xinc_Build_Exception_HistoryStorage();
-            }
         }
         if (count($metaFileArr['parts'])>0) {
             $lastNo = count($metaFileArr['parts'])-1;
@@ -255,13 +380,10 @@ class Xinc_Build_History
             if ($count >= self::PART_MAX) {
                 $arr = array();
                 $arr[$build->getBuildTime()] = $serialFileName;
-                $partFile = self::_writePartFile($project->getName(), $lastNo+1, $arr);
-                if ($partFile == false) {
-                    // try to write it again:
+                try {
                     $partFile = self::_writePartFile($project->getName(), $lastNo+1, $arr);
-                    if ($partFile == false) {
-                        Xinc_Logger::getInstance()->error('Cannot write build history file for '. $project->getName());
-                    }
+                } catch (Xinc_Build_History_Exception_Storage $e1) {
+                    Xinc_Logger::getInstance()->error('Cannot write build history file for '. $project->getName());
                 }
                 $metaFileArr['parts'][] = array('no' => $lastNo+1,
                                                 'count'=>1,
@@ -274,26 +396,47 @@ class Xinc_Build_History
                 $arr[$build->getBuildTime()] = $serialFileName;
                 $metaFileArr['parts'][$lastNo]['count']++;
                 $metaFileArr['parts'][$lastNo]['to'] = $build->getBuildTime();
-                self::_writePartFile($project->getName(), $lastNo, $arr);
+                try {
+                    self::_writePartFile($project->getName(), $lastNo, $arr);
+                } catch (Xinc_Build_History_Exception_Storage $e1) {
+                    Xinc_Logger::getInstance()->error('Cannot write build history file for '. $project->getName());
+                }
             }
         } else {
             $arr = array();
             $arr[$build->getBuildTime()] = $serialFileName;
-            $partFile = self::_writePartFile($project->getName(), 0, $arr);
+            try {
+                $partFile = self::_writePartFile($project->getName(), 0, $arr);
+            } catch (Xinc_Build_History_Exception_Storage $e1) {
+                Xinc_Logger::getInstance()->error('Cannot write build history file for '. $project->getName());
+                $partFile = null;
+            }
             $metaFileArr['parts'][] = array('no' => 0,
                                             'count'=>1,
                                             'filename'=>$partFile,
                                             'from'=>$build->getBuildTime(),
                                             'to'=>$build->getBuildTime());
         }
-        $ok = self::_writeMetaData($project->getName(), $metaFileArr);
-        if (!$ok) {
-            Xinc_Logger::getInstance()->error('Could not write meta data for build history of: '. $project->getName());
+        try {
+            $metaFileArr['lastSuccessfulBuild'] = array('filename' => $serialFileName,
+                                                        'buildtime' => $build->getBuildTime());
+            self::_writeMetaData($project->getName(), $metaFileArr);
+        } catch (Exception $e) {
+            Xinc_Logger::getInstance()->error($e->getMessage() . '; Project: ' . $project->getName());
         }
     }
     
+    /**
+     * @param string $projectName
+     * @return array
+     * @throws Xinc_Build_History_Exception_General
+     */
     private static function _loadMetaData($projectName)
     {
+        $projectName = trim($projectName);
+        if (empty($projectName)) {
+            throw new Xinc_Build_History_Exception_General('Must provide a project name');
+        }
         $metaFileName = self::_getMetaFileName($projectName);
         if (file_exists($metaFileName)) {
             $metaFileArr = @unserialize(file_get_contents($metaFileName));
@@ -306,6 +449,11 @@ class Xinc_Build_History
         return $metaFileArr;
     }
     
+    /**
+     *
+     * @param string $projectName
+     * @return string
+     */
     private static function _getMetaFileName($projectName)
     {
         $statusDir = self::_getStatusDir();
@@ -314,10 +462,27 @@ class Xinc_Build_History
         $metaFileName .= $projectName . '.history';
         return $metaFileName;
     }
-    private static function _migrate($projectName, $arr)
+    
+    /**
+     * Migrates old history files ( which had all data in one file)
+     * to new history files (which use one meta file, and several
+     * smaller data files)
+     *
+     * @param string $projectName
+     * @param array $arr
+     * @throws Xinc_Build_History_Exception_MetaFile
+     * @throws Xinc_Build_History_Exception_Migration
+     */
+    private static function _migrate($projectName, array $arr)
     {
+        if (empty($projectName)) {
+            throw new Xinc_Build_History_Exception_Migration();
+        }
         $metaFileName = self::_getMetaFileName($projectName);
-        
+        if (!is_readable($metaFileName)) {
+            throw new Xinc_Build_History_Exception_MetaFile('MetaFile "' . $metaFileName
+                                                           . '" is not readable');
+        }
         copy($metaFileName, $metaFileName . '.backup');
         $counter = 0;
         $fileNo = 0;
@@ -330,7 +495,12 @@ class Xinc_Build_History
             $i++;
             if (++$counter>=self::PART_MAX || $i>= $totalCount) {
                 $no = $fileNo;
-                $statusFile = self::_writePartFile($projectName, $fileNo++, $part);
+                try {
+                    $statusFile = self::_writePartFile($projectName, $fileNo++, $part);
+                } catch (Xinc_Build_History_Exception_Storage $e1) {
+                    Xinc_Logger::getInstance()->error('Cannot write build history file for '. $project->getName());
+                    $statusFile = null;
+                }
                 $keys = array_keys($part);
                 $metaArr['parts'][] = array('filename'=>$statusFile,
                                             'from'=> $keys[0],
@@ -342,21 +512,46 @@ class Xinc_Build_History
             }
             
         }
-        self::_writeMetaData($projectName, $metaArr);
+        try {
+            self::_writeMetaData($projectName, $metaArr);
+        } catch (Exception $e) {
+            Xinc_Logger::getInstance()->error($e->getMessage());
+        }
         
     }
-    private static function _writeMetaData($projectName, $arr)
+    
+    /**
+     *
+     * @param string $projectName
+     * @param array $arr
+     * @return boolean
+     * @throws Xinc_Build_History_Exception_MetaFile
+     */
+    private static function _writeMetaData($projectName, array $arr)
     {
         $metaFileName = self::_getMetaFileName($projectName);
+        if (!is_writable($metaFileName) && !is_writable(dirname($metaFileName))) {
+            throw new Xinc_Build_History_Exception_MetaFile('MetaFile "' 
+                                                           . $metaFileName . '" is not writable');
+        }
         $metaData = serialize($arr);
         $written = file_put_contents($metaFileName, $metaData);
         if ($written != strlen($metaData)) {
-            return false;
+            throw new Xinc_Build_History_Exception_MetaFile('Failed writing into MetaFile "' 
+                                                           . $metaFileName . '"');
         } else {
             return true;
         }
     }
-    private static function _writePartFile($projectName, $no, $arr)
+    
+    /**
+     * @param string $projectName
+     * @param integer $no
+     * @param array $arr
+     * @return string
+     * @throws Xinc_Build_History_Exception_Storage
+     */
+    private static function _writePartFile($projectName, $no, array $arr)
     {
         $statusFile = self::_getStatusDir();
         $statusFile .= DIRECTORY_SEPARATOR;
@@ -366,17 +561,29 @@ class Xinc_Build_History
         $statusFile .= DIRECTORY_SEPARATOR;
         $statusFile .= $no . '.history';
         if (!file_exists($statusFile)) {
-            mkdir(dirname($statusFile), 0755, true);
+            $dirCreated = mkdir(dirname($statusFile), 0755, true);
+            if (!$dirCreated) {
+                throw new Xinc_Build_History_Exception_Storage();
+            }
+        } else if (!is_writable($statusFile)) {
+            throw new Xinc_Build_History_Exception_Storage();
         }
         $partFileData = serialize($arr);
         $written = file_put_contents($statusFile, $partFileData);
         if ($written == strlen($partFileData)) {
             return $statusFile;
         } else {
-            return false;
+            throw new Xinc_Build_History_Exception_Storage();
         }
     }
     
+    /**
+     *
+     * @param string $projectName
+     * @param integer $no
+     * @return array
+     * @throws Xinc_Build_History_Exception_General
+     */
     private static function _readPartFile($projectName, $no)
     {
         $statusFile = self::_getStatusDir();
@@ -388,15 +595,13 @@ class Xinc_Build_History
         $statusFile .= $no . '.history';
         if (file_exists($statusFile)) {
             $contents = file_get_contents($statusFile);
-            $arr = unserialize($contents);
+            $arr = @unserialize($contents);
+            if ($arr === false) {
+                throw new Xinc_Build_History_Exception_General('Could not read part-file: ' . $statusFile);
+            }
         } else {
-            $arr = array();
+            throw new Xinc_Build_History_Exception_General('Could not read part-file: ' . $statusFile);
         }
         return $arr;
-    }
-    
-    private function _findHistoryFile($projectName, $buildTimestamp)
-    {
-        
     }
 }

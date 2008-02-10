@@ -24,7 +24,7 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+require_once 'Xinc/Gui/Widget/Exception/NotFound.php';
 /**
  * The Widget-Repository allows the Web-Frontend of Xinc to choose the right
  * plugin for execution based on the Http-Request
@@ -102,13 +102,14 @@ class Xinc_Gui_Widget_Repository
      *
      * @param string $name
      * @return Xinc_Gui_Widget_Interface or null
+     * @throws Xinc_Gui_Widget_Exception_NotFound
      */
     public function &getWidgetByClassName($name)
     {
         if (isset($this->_widgetClasses[$name])) {
             return $this->_widgetClasses[$name];
         }
-        return null;
+        throw new Xinc_Gui_Widget_Exception_NotFound($name);
     }
     /**
      * Determines the Widget that should be used
@@ -120,6 +121,7 @@ class Xinc_Gui_Widget_Repository
      */    
     public function &getWidgetForPath($path)
     {
+        Xinc_Logger::getInstance()->info('Getting widget for path: ' . $path);
         $widget = null;
         if (!isset($this->_definedWidgets[$path])) {
             // find the largest match

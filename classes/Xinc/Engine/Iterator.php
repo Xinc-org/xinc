@@ -33,8 +33,9 @@ class Xinc_Engine_Iterator extends Xinc_Iterator
     /**
      *
      * @param Xinc_Engine_Interface[] $array
+     * @throws Xinc_Engine_Exception_Invalid
      */
-    public function __construct($array)
+    public function __construct(array $array)
     {
         foreach ($array as $element) {
             if (!$element instanceof Xinc_Engine_Interface ) {

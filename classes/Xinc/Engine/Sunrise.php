@@ -24,6 +24,7 @@
 */
 require_once 'Xinc/Engine/Interface.php';
 require_once 'Xinc/Engine/Sunrise/Parser.php';
+require_once 'Xinc/Timezone.php';
 
 class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
 {
@@ -58,12 +59,14 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
     
     /**
      * serializes the build before shutting down
-     *
+     *@throws Xinc_Build_Exception_NotRun
+     * @throws Xinc_Build_Exception_Serialization
+     * @throws Xinc_Build_History_Exception_Storage
      */
     public function shutdown()
     {
         if ($this->build != null) {
-            $this->build->serialize();
+            $this->_serializeBuild($this->build);
         }
     }
     private function _handleBuildConfig(Xinc_Build &$build)
@@ -82,6 +85,26 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
         $this->build = null;
         Xinc::getInstance()->restoreConfigDirectives();
     }
+    
+    /**
+     * Serializes a build an catches the exceptions
+     *
+     * @param Xinc_Build_Interface $build
+     */
+    protected function _serializeBuild(Xinc_Build_Interface &$build)
+    {
+        try {
+           $build->serialize();
+        } catch (Xinc_Build_Exception_NotRun $e1) {
+            $build->error('Build cannot be serialized, it did not run.');
+        } catch (Xinc_Build_Exception_Serialization $e2) {
+            $build->error('Build could not be serialized properly.');
+        } catch (Xinc_Build_History_Exception_Storage $e3) {
+            $build->error('Build history could not be stored.');
+        } catch (Exception $e4) {
+            $build->error('Unknown error occured while serializing the build.');
+        }
+    }
     /**
      * Process a build
      *
@@ -93,7 +116,6 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
          * handles the configuration of this build and sets all the options
          */
         $this->_handleBuildConfig($build);
-        
         $this->build=$build;
         $buildTime = time();
         $startTime = time() + microtime(true);
@@ -116,20 +138,16 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
         $build->updateTasks();
         $build->process(Xinc_Plugin_Slot::INIT_PROCESS);
         
-        
         if ( Xinc_Build_Interface::STOPPED === $build->getStatus() ) {
             Xinc_Logger::getInstance()->info('Build of Project stopped'
                                              . ' in INIT phase');
             $build->setLastBuild();
             return $this->_endBuild();
-        }                                
-
-        
+        }
         
         Xinc_Logger::getInstance()->info("CHECKING PROJECT " 
                                         . $build->getProject()->getName());
         $build->process(Xinc_Plugin_Slot::PRE_PROCESS);
-        
         if ( Xinc_Build_Interface::STOPPED === $build->getStatus() ) {
             $build->info("Build of Project stopped, "
                                              . "no build necessary");
@@ -154,7 +172,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             $endTime = time() + microtime(true);
             $build->getStatistics()->set('build.duration', $endTime - $startTime);
             
-            $build->serialize();
+            $this->_serializeBuild($build);
             return $this->_endBuild();
             
         } else if ( Xinc_Build_Interface::PASSED === $build->getStatus() ) {
@@ -199,7 +217,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
             $build->getStatistics()->set('build.duration', $endTime - $startTime);
             
             
-            $build->serialize();
+            $this->_serializeBuild($build);
             
             return $this->_endBuild();
             
@@ -209,7 +227,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
                 $build->setNumber($build->getNumber()-1);
             }
             $build->setStatus(Xinc_Build_Interface::STOPPED);
-            $build->serialize();
+            $this->_serializeBuild($build);
             return $this->_endBuild();
         } else {
             $build->setStatus(Xinc_Build_Interface::STOPPED);

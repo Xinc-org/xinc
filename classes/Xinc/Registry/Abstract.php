@@ -37,7 +37,12 @@ abstract class Xinc_Registry_Abstract implements Xinc_Registry_Interface
     private $_objects = array();
     
     
-    
+    /**
+     *
+     * @param string $name
+     * @param object $object
+     * @throws Xinc_Registry_Exception
+     */
     public function register($name, &$object)
     {
         if (isset($this->_objects[$name])) {
@@ -51,6 +56,12 @@ abstract class Xinc_Registry_Abstract implements Xinc_Registry_Interface
         $this->_objects[$name] = $object;
     }
     
+    /**
+     *
+     * @param string $name
+     * @return object
+     * @throws Xinc_Registry_Exception
+     */
     public function unregister($name)
     {
         if (!isset($this->_objects[$name])) {
@@ -65,6 +76,12 @@ abstract class Xinc_Registry_Abstract implements Xinc_Registry_Interface
         return $object;
     }
     
+    /**
+     *
+     * @param string $name
+     * @return object
+     * @throws Xinc_Registry_Exception
+     */
     public function &get($name)
     {
         if (!isset($this->_objects[$name])) {

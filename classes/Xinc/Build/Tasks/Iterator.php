@@ -32,6 +32,7 @@ class Xinc_Build_Tasks_Iterator extends Xinc_Iterator
      * adds a task to the iterator
      *
      * @param object $item
+     * @throws Xinc_Build_Exception_Invalid
      */
     public function add($item)
     {

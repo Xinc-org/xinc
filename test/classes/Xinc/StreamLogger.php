@@ -51,5 +51,10 @@ class Xinc_StreamLogger
     {
         return self::$_logItems[count(self::$_logItems)-1];
     }
+    
+    public static function getLogMessageFromEnd($no)
+    {
+        return self::$_logItems[count(self::$_logItems)-($no+1)];
+    }
 }
 

@@ -24,22 +24,19 @@
 */
 
 require_once 'Xinc/Gui/Widget/Interface.php';
-require_once 'Xinc/Build/Iterator.php';
-require_once 'Xinc/Project.php';
-require_once 'Xinc/Build.php';
-
-require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Menu.php';
+require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Extension/Summary.php';
+require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Extension/ChangeLog.php';
 
 
-class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_ModificationSet_Widget implements Xinc_Gui_Widget_Interface
 {
     protected $_plugin;
     
-    const TEMPLATE = 'MenuItems={"id":"xinc","text":"Menu","singleClickExpand":true, "children":[%s]};';
-
-    private $_menu = array();
-    
     private $_extensions = array();
+    
+    public $scripts = '';
+    
+    private $_projectName;
     
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
@@ -54,56 +51,48 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
 
     public function getPaths()
     {
-        return array('MENU');
+        return array();
     }
-
+    
     
     public function init()
     {
+        try {
         $indexWidget = Xinc_Gui_Widget_Repository::getInstance()->
-                                                   getWidgetByClassName('Xinc_Plugin_Repos_Gui_Index_Widget');
-        
-        $extension = new Xinc_Plugin_Repos_Gui_Menu_Extension_Menu($this);
-        $indexWidget->registerExtension('MAIN_MENU', $extension);
+                                                   getWidgetByClassName('Xinc_Plugin_Repos_Gui_Dashboard_Detail');
+       
+            $extension = new Xinc_Plugin_Repos_Gui_ModificationSet_Extension_Summary();
+            
+            $indexWidget->registerExtension('BUILD_DETAILS', $extension);
+            
+            $extension2 = new Xinc_Plugin_Repos_Gui_ModificationSet_Extension_ChangeLog();
+            
+            $indexWidget->registerExtension('BUILD_DETAILS', $extension2);
+        } catch (Exception $e) {
+            echo "Could not init on " . __FILE__ . "<br>";
+        }
         
     }
     
-    public function generateMenu()
-    {
-        $menuItems = array();
-        if (isset($this->_extensions['MAIN_MENU_ITEMS'])) {
-            foreach ($this->_extensions['MAIN_MENU_ITEMS'] as $extension) {
-                
-                //$item = call_user_func_array($extension, array());
-                
-                if (!$extension instanceof Xinc_Plugin_Repos_Gui_Menu_Extension_Item) {
-                    continue;
-                }
-                $menuItems[] = $extension->generate();
-            } 
-        }
-        
-        $menuStr = call_user_func_array('sprintf',
-                                        array(self::TEMPLATE,implode(",", $menuItems)));
-        return $menuStr;
-    }
+    
     
     public function registerExtension($extensionPoint, &$extension)
     {
-        
         if (!isset($this->_extensions[$extensionPoint])) {
             $this->_extensions[$extensionPoint] = array();
         }
         $this->_extensions[$extensionPoint][] = $extension;
+        
     }
     
     public function getExtensions()
     {
         return $this->_extensions;
     }
+    
     public function getExtensionPoints()
     {
-        return array('MAIN_MENU_ITEMS');
+        return array();
     }
     public function hasExceptionHandler()
     {

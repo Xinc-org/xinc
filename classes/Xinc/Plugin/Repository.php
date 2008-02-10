@@ -147,9 +147,16 @@ class Xinc_Plugin_Repository
         $this->_plugins[] = $plugin;
     }
     
+    /**
+     *
+     * @param Xinc_Plugin_Interface $plugin
+     * @param Xinc_Plugin_Task_Interface $task
+     * @param array $parentTasks
+     * @throws Xinc_Plugin_Task_Exception
+     */
     private function _registerTaskDependencies(Xinc_Plugin_Interface $plugin,
                                                Xinc_Plugin_Task_Interface $task,
-                                               $parentTasks)
+                                               array $parentTasks)
     {    
         $taskClass = get_class($task);
         $pluginClass = get_class($plugin);

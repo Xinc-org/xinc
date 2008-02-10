@@ -77,7 +77,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
         /**
          * turn it upside down so the latest builds appear first
          */
-    	/**
+        /**
         $buildHistoryArr = array_reverse($buildHistoryArr, true);
         $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);*/
         
@@ -125,5 +125,13 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
     public function getExtensionPoints()
     {
         return array();
+    }
+    public function hasExceptionHandler()
+    {
+        return false;
+    }
+    public function handleException(Exception $e)
+    {
+        
     }
 }

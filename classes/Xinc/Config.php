@@ -55,7 +55,7 @@ class Xinc_Config
         $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
         
         foreach ($widgets as $path => $widget) {
-            //echo "Init on: " . get_class($widget) . "\n<br>";
+            echo "Init1 on: " . get_class($widget) . "\n<br>";
             $widget->init();
         }
         

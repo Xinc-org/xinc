@@ -56,9 +56,12 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gu
                 if (file_exists($statusfile)) {
                     $project = new Xinc_Project();
                     $project->setName($file);
-                    $object = Xinc_Build_Repository::getLastBuild($project);
-                    //$object = unserialize(file_get_contents($statusfile));
-                    $builds->add($object);
+                    try {
+                        $object = Xinc_Build_Repository::getLastBuild($project);
+                        $builds->add($object);
+                    } catch (Exception $e) {
+                        
+                    }
                 }
                 
             }

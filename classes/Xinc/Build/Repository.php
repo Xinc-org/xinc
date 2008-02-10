@@ -63,4 +63,11 @@ class Xinc_Build_Repository implements Xinc_Build_Repository_Interface
         //$lastBuildTime = $buildHistoryArr[count($buildHistoryArr) - 1];
         return self::getBuild($project, $lastBuildTime);
     }
+    
+    public static function getLastSuccessfulBuild(Xinc_Project &$project)
+    {
+        $lastBuildTime = Xinc_Build_History::getLastSuccessfulBuildTime($project);
+        //$lastBuildTime = $buildHistoryArr[count($buildHistoryArr) - 1];
+        return self::getBuild($project, $lastBuildTime);
+    }
 }

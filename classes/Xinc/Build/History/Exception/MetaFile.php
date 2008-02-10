@@ -1,8 +1,8 @@
 <?php
 /**
- * Iterator over an array of Xinc_Plugin_Interface objects
+ * Exception, build history could not be migrated
  * 
- * @package Xinc.Plugin
+ * @package Xinc.Build
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 Arno Schneider, Barcelona
@@ -22,29 +22,13 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-require_once 'Xinc/Iterator.php';
-require_once 'Xinc/Plugin/Exception.php';
-
-
-class Xinc_Plugin_Iterator extends Xinc_Iterator
+class Xinc_Build_History_Exception_MetaFile extends Exception
 {
-  
     /**
-     *
-     * @param array $array
-     * @throws Xinc_Plugin_Exception
+     * @param string $message
      */
-    public function __construct(array $array)
+    public function __construct($message)
     {
-        foreach ($array as $xmlElement) {
-            if (!$xmlElement instanceof Xinc_Plugin_Interface ) {
-                throw new Xinc_Plugin_Exception();
-            }
-            
-        }
-        
-        parent::__construct($array);
+        parent::__construct($message);
     }
-  
 }

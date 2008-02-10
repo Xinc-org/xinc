@@ -89,4 +89,12 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
     {
         return array('MAIN_MENU');
     }
+    public function hasExceptionHandler()
+    {
+        return false;
+    }
+    public function handleException(Exception $e)
+    {
+        
+    }
 }

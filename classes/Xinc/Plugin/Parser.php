@@ -68,7 +68,8 @@ class Xinc_Plugin_Parser
         $attributes = $pluginXml->attributes();
         
         
-        
+        Xinc_Logger::getInstance()->info('Registering plugin: ' . $attributes->classname
+                                        . ' from file ' . $attributes->filename);
         
         $res = @include_once((string)$attributes->filename);
        

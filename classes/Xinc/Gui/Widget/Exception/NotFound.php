@@ -1,11 +1,12 @@
 <?php
 /**
- * Exception, build could not be added to the build history
+ * This exception is thrown when there is a problem found with the ModificationSet
  * 
- * @package Xinc.Build
- * @author Arno Schneider
- * @version 2.0
- * @copyright 2007 Arno Schneider, Barcelona
+ * @package Xinc.Exception
+ * @author David Ellis
+ * @author Gavin Foster
+ * @version 1.0
+ * @copyright 2007 David Ellis, One Degree Square
  * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
@@ -21,15 +22,11 @@
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-class Xinc_Build_Exception_HistoryStorage extends Exception
+ */
+class Xinc_Gui_Widget_Exception_NotFound extends Exception
 {
-    /**
-     * constructor, generates an Exception Message
-     *
-     */
-    public function __construct()
+    public function __construct($name)
     {
-        parent::__construct('Build could not be stored in build history');
+        parent::__construct('Could not find widget: ' . $name);
     }
 }

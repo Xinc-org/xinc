@@ -248,9 +248,11 @@ class Xinc_Logger
             $message = $this->_logQueue[$i];
             $messageString  = '<message priority="' . $message->priority . '" ';
             $messageString .= 'timestamp="' . $message->timestamp . '" ';
-            $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp) . '-' . Xinc_Timezone::get() . '">';
-            $messageString .= htmlentities(utf8_encode($message->message));
-            $messageString .= '</message>';
+            $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp)
+                           . '-' . Xinc_Timezone::get() . '"><![CDATA[';
+            //$messageString .= htmlentities(utf8_encode($message->message));
+            $messageString .= $message->message;
+            $messageString .= ']]></message>';
             
             $messageElements[] = $messageString;
         }
@@ -317,6 +319,10 @@ class Xinc_Logger
         $this->_buildLogFile = $logFile;
     }
     
+    /**
+     * @param string $logFile
+     * @throws Xinc_Logger_Exception_NonWriteable
+     */
     public function setXincLogFile($logFile)
     {
         

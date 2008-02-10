@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xinc>
+<configuration>
+<setting name="loglevel" value="2"/>
+<setting name="timezone" value="Europe/Berlin"/>
+</configuration>
 <plugins>
 	<plugin filename="Xinc/Plugin/Repos/ModificationSet.php" classname="Xinc_Plugin_Repos_ModificationSet"/>
 	<plugin filename="Xinc/Plugin/Repos/Configuration.php" classname="Xinc_Plugin_Repos_Configuration"/>

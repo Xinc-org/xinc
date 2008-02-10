@@ -29,7 +29,8 @@ require_once 'Xinc/Config/Exception/Getopt.php';
 
 /**
  * Command-line options parsing class.
- *
+ * 
+ * @package Xinc.Config
  * @author Andrei Zmievski <andrei@php.net>
  * @author Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @author Jamie Talbot

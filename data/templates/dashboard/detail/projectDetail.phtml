@@ -91,7 +91,8 @@ foreach ($this->getTabs('BUILD_SELECTOR') as $tab) {
     
     <?php
    foreach ($this->getTabs('BUILD_DETAILS') as $tab) {
-    echo $tab->generate($this->build, dirname(__FILE__) . '/leftBlock.phtml');
+    $content = $tab->generate($this->build, dirname(__FILE__) . '/leftBlock.phtml');
+    if ($content !== false) echo $content;
 }
 ?>
  </div>

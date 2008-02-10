@@ -219,6 +219,10 @@ interface Xinc_Build_Interface
      */
     public function info($message);
     
+    public function error($message);
+    public function warn($message);
+    public function debug($message);
+    
     /**
      * Put build into queue mode
      *

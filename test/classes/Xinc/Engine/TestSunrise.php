@@ -50,24 +50,25 @@ class Xinc_Engine_TestSunrise extends Xinc_BaseTest
         Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_ModificationSet());
         Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_Builder());
         Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_ModificationSet_BuildAlways());
-        
         Xinc_Plugin_Repository::getInstance()->registerPlugin(new Xinc_Plugin_Repos_Phing());
-        
+
         $workingdir = getcwd();
         $engine = new Xinc_Engine_Sunrise();
         $config = new Xinc_Project_Config($workingdir .'/test/resources/testSunriseExampleProject.xml');
        
         $buildIterator = $engine->parseProjects($config->getProjects());
-    
         
         $this->assertTrue($buildIterator instanceof Xinc_Build_Iterator, 'Should be of type Xinc_Build_Iterator');
-        
 
         $build = $buildIterator->next();
+        try {
+
         
         $build->build();
+        } catch (Exception $e) {
+            var_dump($e);
+        }
         $this->assertTrue($build->getLastBuild()->getStatus() == Xinc_Build_Interface::PASSED, 'Build should pass');
-        
         
        
     }

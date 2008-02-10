@@ -35,6 +35,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
      * @var string
      */
     private $_directory = '.';
+    private $_update = false;
+    private $_username = null;
+    private $_password = null;
+    
     public function getName()
     {
         return 'svn';
@@ -53,10 +57,40 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
      */
     public function setDirectory($directory)
     {
-        $this->_directory = $directory;
+        $this->_directory = (string)$directory;
     }
 
-
+    /**
+     * Sets the username for the svn commands
+     *
+     * @param string
+     */
+    public function setUsername($username)
+    {
+        $this->_username = (string)$username;
+    }
+    
+    /**
+     * Sets the password for the svn commands
+     *
+     * @param string
+     */
+    public function setPassword($password)
+    {
+        $this->_password = (string)$password;
+    }
+    
+    /**
+     * Tells whether to update the working copy directly here or not
+     *
+     * @param string $update
+     */
+    public function setUpdate($update)
+    {
+        $update = (string) $update;
+        $this->_update = in_array($update, array('true', '1')) ? true:false;
+    }
+    
     public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PRE_PROCESS;
@@ -67,7 +101,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
 
     public function checkModified(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->checkModified($build, $this->_directory);
+        return $this->_plugin->checkModified($build, $this->_directory,
+                                             $this->_update, $this->_username,
+                                             $this->_password);
     }
 
     public function validateTask()

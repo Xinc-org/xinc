@@ -43,9 +43,12 @@ abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension implements Xinc_
     {
         $templateContent = file_get_contents($templateFile);
         $id = strtolower(str_replace(' ', '-', $this->getTitle()));
-        
+        $content = $this->getContent($build);
+        if ($content === false) {
+            return false;
+        }
         $result = str_replace(array('{id}', '{content}', '{title}'), 
-                              array($id, $this->getContent($build), $this->getTitle()),
+                              array($id, $content, $this->getTitle()),
                               $templateContent);
         return $result;
     }

@@ -30,8 +30,12 @@ require_once 'Xinc/Project/Exception.php';
 class Xinc_Project_Iterator extends Xinc_Iterator
 {
   
-    
-    public function __construct($array)
+    /**
+     *
+     * @param array $array
+     * @throws Xinc_Project_Exception
+     */
+    public function __construct(array $array)
     {
         foreach ($array as $element) {
             if (!$element instanceof Xinc_Project ) {

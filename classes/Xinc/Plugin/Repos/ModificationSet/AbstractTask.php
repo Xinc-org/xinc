@@ -29,7 +29,8 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugi
 {
     const STOPPED = -1;
     const FAILED = -2;
-    
+    const CHANGED = 1;
+    const ERROR = 0;
     /**
      * abstract process of a modification set
      *
@@ -37,23 +38,26 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugi
      */
     public final function process(Xinc_Build_Interface &$build)
     {
-        
-        if ( ($status = $this->checkModified($build)) === true ) {
-            
+        $result = $this->checkModified($build);
+        $build->info($result);
+        if ( $result->getStatus() == Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED ) {
+            $build->getProperties()->set('changeset', $result);
             $build->setStatus(Xinc_Build_Interface::PASSED);
-        } else if ( $status === Xinc_Plugin_Repos_ModificationSet_AbstractTask::STOPPED ) {
+        } else if ( $result->getStatus() === Xinc_Plugin_Repos_ModificationSet_AbstractTask::STOPPED ) {
             $build->setStatus(Xinc_Build_Interface::STOPPED);
-        } else if ( $status === Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED ) {
+        } else if ( $result->getStatus() === Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED ) {
             $build->setStatus(Xinc_Build_Interface::FAILED);
-        } else if ( $status === false ) {
+        } else if ( $result->getStatus() === Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR ) {
+            $build->setStatus(Xinc_Build_Interface::STOPPED);
+        } else {
             $build->setStatus(Xinc_Build_Interface::STOPPED);
         }
         
     }
     
-        /**
+    /**
      * Check if this modification set has been modified
-     *
+     * @return Xinc_Plugin_Repos_ModificationSet_Result
      */
     public abstract function checkModified(Xinc_Build_Interface &$build);
     

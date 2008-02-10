@@ -36,11 +36,12 @@ class Xinc_BaseTest extends PHPUnit_Framework_TestCase
             stream_wrapper_register("xinclogger", "Xinc_StreamLogger")
                                     or die("Failed to register protocol");
             $cwd = dirname(dirname(dirname(__FILE__)));
-            $testDir = $cwd;
-            $configFile = $testDir . '/resources/testSystem.xml';
-            $statusDir = $cwd . '/status';
+            $testDir = '"' .$cwd . '"';
+            $configFile = '"' . $cwd . '/resources/testSystem.xml"';
+            $statusDir = '"'.$cwd . '"';
             $debug = Xinc_Logger::LOG_LEVEL_DEBUG;
             $commandLine = "-s $statusDir -w $testDir -p $testDir -f $configFile -l xinclogger://test -o -v $debug";
+            //echo $commandLine;
             Xinc::main($commandLine);
             
             //Xinc::getInstance()->setStatusDir($testDir);

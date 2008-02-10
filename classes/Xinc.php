@@ -256,6 +256,7 @@ class Xinc
      * Set the directory in which to save project status files
      *
      * @param string $statusDir
+     * @throws Xinc_Build_Status_Exception_NonWriteable
      */
     function setStatusDir($statusDir)
     {
@@ -263,7 +264,9 @@ class Xinc
          * we need to check if the statusdir is writeable otherwise
          * exit
          */
+        //echo "Incoming: $statusDir\n";
         $statusDir = realpath($statusDir);
+        //echo "Realpath: $statusDir\n";
         Xinc_Logger::getInstance()->verbose('Setting statusdir: ' . $statusDir);
         if (!is_dir($statusDir)) {
             Xinc_Logger::getInstance()->verbose('statusdir "' . $statusDir .'" does not exist. Trying to create');
@@ -549,7 +552,50 @@ class Xinc
     {
         if ($commandLine != null) {
             if (!is_array($commandLine) && is_string($commandLine)) {
-                $commandLine = explode(' ', $commandLine);
+                $waitForDelimiter = null;
+                $validDelimiters = array('"', '"');
+                $argument = '';
+                $newArgument = false;
+                $args = array();
+                $commandLine = trim($commandLine);
+                for ($i = 0; $i < strlen($commandLine); $i++) {
+                    if ($waitForDelimiter != null) {
+                        if ($commandLine{$i} == $waitForDelimiter && $commandLine{$i-1} != '\\') {
+                            $newArgument = true;
+                            $waitForDelimiter = false;
+                            continue;
+                        }
+                    } else if ($commandLine{$i} == ' ' && $commandLine{$i+1} == ' ') {
+                        // skip multiple spaces
+                        continue;
+                    } else if ($commandLine{$i} == ' ' &&
+                               $commandLine{$i-1} != '\\' &&
+                               !in_array($commandLine{$i+1}, $validDelimiters)) {
+                        // Allow \ for escaping of spaces in path names
+                        $newArgument = true;
+                        
+                    } else if ($commandLine{$i} == ' ' &&
+                               $commandLine{$i-1} != '\\' &&
+                               in_array($commandLine{$i+1}, $validDelimiters)) {
+                        $newArgument = true;
+                        $waitForDelimiter = $commandLine{$i+1};
+                        // move ahead, since we dont want the delimiter to be part of the param
+                        $i++;
+                        
+                    } else if ($i + 1 >= strlen($commandLine)) {
+                        $argument .= $commandLine{$i};
+                        $newArgument = true;
+                    }
+                    if ($newArgument) {
+                        $args[] = $argument;
+                        $newArgument = false;
+                        $argument = '';
+                    } else {
+                        $argument .= $commandLine{$i};
+                    }
+                    
+                }
+                $commandLine = $args;
             }
         } else {
             $commandLine = $_SERVER['argv']; 

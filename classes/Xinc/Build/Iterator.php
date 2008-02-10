@@ -35,7 +35,7 @@ class Xinc_Build_Iterator extends Xinc_Iterator
      *
      * @param Xinc_Build_Interface[] $array
      */
-    public function __construct($array = array())
+    public function __construct(array $array = array())
     {
         foreach ($array as $element) {
             if (!$element instanceof Xinc_Build_Interface ) {

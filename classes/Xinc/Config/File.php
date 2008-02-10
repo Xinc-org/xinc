@@ -45,6 +45,7 @@ class Xinc_Config_File extends SimpleXMLElement
      *
      * @param string $fileName
      * @throws Xinc_Config_Exception_FileNotFound
+     * @throws Xinc_Config_Exception_InvalidEntry
      */
     public static function load($fileName)
     {
@@ -89,7 +90,7 @@ class Xinc_Config_File extends SimpleXMLElement
      * @param string $parent
      * @param array $array
      */
-    private function _walkXml($element, $parent, &$array)
+    private function _walkXml($element, $parent,array &$array)
     {
         foreach ($element->children() as $elementName => $element) {
             $newParent = $parent . '/' . $elementName;

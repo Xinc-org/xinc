@@ -27,6 +27,7 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/BuildAlways/Task.php';
 
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/ModificationSet.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 
 class Xinc_Plugin_Repos_ModificationSet_BuildAlways extends Xinc_Plugin_Base
 {
@@ -46,7 +47,10 @@ class Xinc_Plugin_Repos_ModificationSet_BuildAlways extends Xinc_Plugin_Base
      */
     public function checkModified()
     {
-        return true;
+        $result = new Xinc_Plugin_Repos_ModificationSet_Result();
+        $result->setChanged(true);
+        $result->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
+        return $result;
     }
 
    

@@ -36,7 +36,7 @@ class Xinc_Engine_Repository
     /**
      * Get an instance of the Plugin Repository
      *
-     * @return Xinc_Plugin_Repository
+     * @return Xinc_Engine_Repository
      */
     public static function getInstance()
     {

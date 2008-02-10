@@ -74,6 +74,9 @@ class Xinc_Engine_Parser
      * Loads an engine
      *
      * @param SimpleXMLElement $pluginXml
+     * @throws Xinc_Engine_Exception_FileNotFound
+     * @throws Xinc_Engine_Exception_ClassNotFound
+     * @throws Xinc_Engine_Exception_Invalid
      */
     private static function _loadEngine(SimpleXMLElement $pluginXml)
     {

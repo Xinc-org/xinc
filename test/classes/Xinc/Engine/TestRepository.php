@@ -34,6 +34,7 @@ class Xinc_Engine_TestRepository extends Xinc_BaseTest
     
     public function testEngineRegistered()
     {
+        
         /**
          * reset the engines
          */
@@ -42,16 +43,14 @@ class Xinc_Engine_TestRepository extends Xinc_BaseTest
         $workingdir = getcwd();
        
         $configFile = Xinc_Config_File::load($workingdir .'/test/resources/testSystem.xml');
-       
         
         $parser = new Xinc_Config_Parser($configFile);
-        
+
         $engines = $parser->getEngines();
-        
+
         $this->assertTrue( count($engines) == 1, 'We should have one engine');
-        
+
         $engineParser = new Xinc_Engine_Parser();
-        
         try {
             $engineParser->parse($engines);
             $this->assertTrue(true, 'Should not throw an exception');
@@ -97,7 +96,6 @@ class Xinc_Engine_TestRepository extends Xinc_BaseTest
         } catch (Exception $e) {
             $this->assertTrue(false, 'Should not catch an exception but caught: ' . get_class($e));
         }
-       
         
     }
     public function testEngineNotFound()
@@ -137,7 +135,6 @@ class Xinc_Engine_TestRepository extends Xinc_BaseTest
         } catch (Exception $pe) {
             $this->assertTrue(false, 'Should catch a NotFound exception but caught: ' . get_class($e));
         }
-        
         
     }
     
@@ -181,7 +178,6 @@ class Xinc_Engine_TestRepository extends Xinc_BaseTest
         } catch (Exception $pe) {
             $this->assertTrue(false, 'Should catch a NotFound exception but caught: ' . get_class($e));
         }
-        
         
     }
     

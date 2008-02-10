@@ -30,6 +30,7 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/ModificationSet.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 
 class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 {
@@ -39,7 +40,139 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
     }
     
 
-   
+    private function _getChangeLog(Xinc_Build_Interface &$build,
+                                   $dir, Xinc_Plugin_Repos_ModificationSet_Result &$set,
+                                   $fromRevision, $toRevision, $username, $password)
+    {
+        
+        $fromRevision += 1;
+        $credentials = '';
+        if ($username != null) { 
+            $credentials .= ' --username ' . $username; 
+        }
+        if ($password != null) { 
+            $credentials .= ' --password ' . $password; 
+        }
+        exec('svn log -r ' . $fromRevision . ':' . $toRevision . ' --xml '
+            . $credentials . ' ' . $dir,
+            $output, $result);
+        if ($result == 0) {
+            array_shift($output);
+            $xml = new SimpleXMLElement(join('', $output));
+            $entries = $xml->xpath("//logentry");
+            foreach ($entries as $entry) {
+                $attributes = $entry->attributes();
+                $revision = (int) $attributes->revision;
+                $author = (string) $entry->author;
+                $dateStr = (string) $entry->date;
+                $dateArr = preg_match("/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).*?([Z+-])(.*)/",
+                                      $dateStr, $matches);
+                $zIndicator = $dateArr[7];
+                $year = $dateArr[1];
+                $month = $dateArr[2];
+                $day = $dateArr[3];
+                $hours = $dateArr[4];
+                $minutes = $dateArr[5];
+                $seconds = $dateArr[6];
+                $timestamp = mktime($hours, $minutes, $seconds, $month, $day, $year);
+                if ($zIndicator != 'Z') {
+                    list($addHours, $addMinutes) = split(':', $dateArr[8]);
+                    if ($zIndicator == '+') {
+                        $timestamp += $addHours * 60 * 60;
+                    } else if ($zIndicator == '-') {
+                        $timestamp -= $addHours * 60 * 60;
+                    }
+                }
+                
+                $message = (string) $entry->msg;
+                
+                $set->addLogMessage($revision, $timestamp, $author, $message);
+            }
+        } else {
+            $build->error('Could not retrieve log messages from svn: ' . join('', $output));
+        }
+    }
+    
+    private function _getModifiedFiles(Xinc_Build_Interface &$build,
+                                      $dir, Xinc_Plugin_Repos_ModificationSet_Result &$set,
+                                      $username, $password)
+    {
+        $credentials = '';
+        if ($username != null) { 
+            $credentials .= ' --username ' . $username; 
+        }
+        if ($password != null) {
+            $credentials .= ' --password ' . $password; 
+        }
+        exec('svn status -u --xml ' . $credentials . ' ' . $dir, $output, $result);
+        if ($result == 0) {
+            try {
+                array_shift($output);
+                $xml = new SimpleXMLElement(join('', $output));
+                $basePaths = $xml->xpath("/status/target");
+                $basePath = $basePaths[0];
+                $baseAttributes = $basePath->attributes();
+                $basePathName = (string) $baseAttributes->path;
+                
+                $set->setBasePath($basePathName);
+                
+                $entries = $xml->xpath("//entry");
+                //$build->info(var_export($entries,true));
+                //var_dump($entries);
+                foreach ($entries as $entry) {
+                    $attributes = $entry->attributes();
+                    $fileName = (string) $attributes->path;
+                    $author = null;
+                    $reposStatus = $entry->{'repos-status'};
+                    if ($reposStatus) {
+                        $reposAttributes = $reposStatus->attributes();
+                        $reposStatus = (string)$reposAttributes->item;
+                    } else {
+                        $reposStatus = '';
+                    }
+                    switch ($reposStatus) {
+                        case 'modified':
+                            $set->addUpdatedResource($fileName, $author);
+                            break;
+                        case 'deleted':
+                            $set->addDeletedResource($fileName, $author);
+                            break;
+                        case 'added':
+                            $set->addNewResource($fileName, $author);
+                            break;
+                        case 'conflict':
+                            $set->addConflictResource($fileName, $author);
+                            break;
+                    }
+                }
+            } catch (Exception $e) {
+                $build->error('Could not parse modification set xml.');
+            }
+        } else {
+            $build->error('SVN status query failed: ' . var_export($output, true));
+        }
+    }
+    
+    private function _update(Xinc_Build_Interface &$build,
+                             $dir, Xinc_Plugin_Repos_ModificationSet_Result &$set,
+                             $username, $password)
+    {
+        $credentials = '';
+        if ($username != null) { 
+            $credentials .= ' --username ' . $username; 
+        }
+        if ($password != null) { 
+            $credentials .= ' --password ' . $password; 
+        }
+        exec('svn update ' . $credentials . ' ' . $dir, $output, $result);
+        if ($result == 0) {
+            $build->getProperties()->set('svn.revision', $set->getRemoteRevision());
+            $build->info('Update of SVN working copy succeeded.');
+        } else {
+            $build->error('Update of SVN working copy failed: ' . join('', $output));
+            $set->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
+        }
+    }
 
 
     /**
@@ -47,14 +180,18 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      *
      * @return boolean
      */
-    public function checkModified(Xinc_Build_Interface &$build, $dir)
+    public function checkModified(Xinc_Build_Interface &$build,
+                                 $dir, $update = false,
+                                 $username = null, $password = null)
     {
+        $modResult = new Xinc_Plugin_Repos_ModificationSet_Result();
         if (!file_exists($dir)) {
             //throw new Xinc_Exception_ModificationSet('Subversion checkout '
             //                                        . 'directory not present');
             $build->error('Subversion checkout directory'
                                              . ' not present');
-            return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
+            $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
+            return $modResult;
         }
 
         $cwd = getcwd();
@@ -63,7 +200,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         $output = '';
         $result = 9;
         exec('svn info --xml', $output, $result);
-
+        //$build->debug('result of "svn info --xml":' . var_export($output,true));
         if ($result == 0) {
             $localSet = implode("\n", $output);
             
@@ -73,7 +210,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $build->error('Problem with remote '
                              . 'Subversion repository, cannot get URL of working copy ' . $localSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
-                return false;
+                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
+                return $modResult;
             }
             $output = '';
             $result = 9;
@@ -103,7 +241,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                  */
                 //return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
                 // dont make build fail if there are timeouts
-                return false;
+                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
+                return $modResult;
             }
             try {
                 $localRevision = $this->getRevision($localSet);
@@ -111,7 +250,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $build->error('Problem with remote '
                              . 'Subversion repository, cannot get revision of working copy ' . $localSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
-                return false;
+                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
+                return $modResult;
             }
             try {
                 $remoteRevision = $this->getRevision($remoteSet);
@@ -119,7 +259,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $build->error('Problem with remote '
                              . 'Subversion repository, cannot get revision of remote repos ' . $remoteSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
-                return false;
+                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
+                return $modResult;
             }
             
                 
@@ -127,7 +268,53 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                            .'local revision @ '.$localRevision.' '
                            .'Remote Revision @ '.$remoteRevision);
             chdir($cwd);
-            return $localRevision < $remoteRevision;
+            //$changed = $localRevision < $remoteRevision;
+            $modResult->setLocalRevision($localRevision);
+            $modResult->setRemoteRevision($remoteRevision);
+            
+            if ($update && $modResult->isChanged()) {
+                if ($build->getLastBuild()->getStatus() == Xinc_Build_Interface::FAILED) {
+                    try {
+                        $lastSuccessfulBuild = Xinc_Build_Repository::getLastSuccessfulBuild($build->getProject());
+                        //$modResult->mergeResultSet($lastSuccessfulBuild->getProperties()->get('changeset'));
+                        $changeSet = $lastSuccessfulBuild->getProperties()->get('changeset');
+                        if ($changeSet instanceof Xinc_Plugin_Repos_ModificationSet_Result) {
+                            $lasSuccessRev = $changeSet->getRemoteRevision();
+                            $this->_getChangeLog($build, $dir, $modResult,
+                                                 $lasSuccessRev, $localRevision,
+                                                 $username, $password);
+                        }
+                    } catch (Exception $e) {
+                       
+                    }
+                }
+                $this->_getModifiedFiles($build, $dir, $modResult, $username, $password);
+                $this->_getChangeLog($build, $dir, $modResult, $localRevision, $remoteRevision, $username, $password);
+                $this->_update($build, $dir, $modResult, $username, $password);
+                //$build->setStatus(Xinc_Build_Interface::PASSED);
+                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
+            } else if ($modResult->isChanged()) {
+                if ($build->getLastBuild()->getStatus() == Xinc_Build_Interface::FAILED) {
+                    try {
+                        $lastSuccessfulBuild = Xinc_Build_Repository::getLastSuccessfulBuild($build->getProject());
+                        //$modResult->mergeResultSet($lastSuccessfulBuild->getProperties()->get('changeset'));
+                        $changeSet = $lastSuccessfulBuild->getProperties()->get('changeset');
+                        if ($changeSet instanceof Xinc_Plugin_Repos_ModificationSet_Result) {
+                            $lasSuccessRev = $changeSet->getRemoteRevision();
+                            $this->_getChangeLog($build, $dir,
+                                                 $modResult, $lasSuccessRev,
+                                                 $localRevision, $username, $password);
+                        }
+                    } catch (Exception $e) {
+                       
+                    }
+                }
+                $this->_getModifiedFiles($build, $dir, $modResult, $username, $password);
+                $this->_getChangeLog($build, $dir, $modResult, $localRevision, $remoteRevision, $username, $password);
+                //$build->setStatus(Xinc_Build_Interface::PASSED);
+                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
+            }
+            return $modResult;
         } else {
             chdir($cwd);
             $build->error('Subversion checkout directory '
@@ -135,7 +322,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $build->setStatus(Xinc_Build_Interface::FAILED);
             //throw new Xinc_Exception_ModificationSet('Subversion checkout directory '
             //                                        . 'is not a working copy.');
-            return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
+            $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
+            return $modResult;
         }
     }
 

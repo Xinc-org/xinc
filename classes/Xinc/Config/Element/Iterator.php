@@ -33,7 +33,7 @@ class Xinc_Config_Element_Iterator extends Xinc_Iterator
      *
      * @param SimpleXMLElement[] $array
      */
-    public function __construct($array)
+    public function __construct(array $array = array())
     {
         foreach ($array as $xmlElement) {
             if (!$xmlElement instanceof SimpleXMLElement ) {

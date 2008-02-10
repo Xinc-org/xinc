@@ -85,6 +85,11 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         $project = new Xinc_Project();
         $project->setName($this->_projectName);
         $contents = array();
+        try {
+            $historyBuilds = $this->_getHistoryBuilds($project, 0, 15);
+        } catch (Exception $e1) {
+            $historyBuilds = array();
+        }
         if (isset($this->_extensions['STATISTIC_GRAPH'])) {
             foreach ($this->_extensions['STATISTIC_GRAPH'] as $extension) {
                 
@@ -93,7 +98,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
                 
                 //if ($obj instanceof Xinc_Plugin_Repos_Gui_Statistics_Graph) {
                 $contents[] = $extension->generate(array('Build duration in seconds' =>
-                                                         $this->_getHistoryBuilds($project, 0, 15)
+                                                         $historyBuilds
                                                         ), array('#1c4a7e','#bb5b3d'));
                 //}
             }
@@ -180,5 +185,13 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     public function getExtensionPoints()
     {
         return array('STATISTIC_GRAPH');
+    }
+    public function hasExceptionHandler()
+    {
+        return false;
+    }
+    public function handleException(Exception $e)
+    {
+        
     }
 }

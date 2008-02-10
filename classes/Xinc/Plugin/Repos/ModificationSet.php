@@ -25,7 +25,7 @@
 require_once 'Xinc/Plugin/Base.php';
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/Task.php';
-
+require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Widget.php';
 
 class Xinc_Plugin_Repos_ModificationSet extends Xinc_Plugin_Base
 {
@@ -39,4 +39,9 @@ class Xinc_Plugin_Repos_ModificationSet extends Xinc_Plugin_Base
         return array(new Xinc_Plugin_Repos_ModificationSet_Task($this));
     }
 
+    public function getGuiWidgets()
+    {
+        
+        return array(new Xinc_Plugin_Repos_Gui_ModificationSet_Widget($this));
+    }
 }

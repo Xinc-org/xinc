@@ -105,7 +105,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extensio
         }
         return implode(',', $dataSet);
     }
-    public function getDataSet($data)
+    public function getDataSet(array $data)
     {
         $dataSet = array();
         $x = 0;
@@ -130,16 +130,6 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extensio
         
        $contents = ob_get_clean();
        return $contents;
-       /** $contents = str_replace(array('{ID}', '{TITLE}' ,
-                                      '{DATASET}' , '{TYPE}',
-                                      '{XAXIS}', '{BGCOLOR}',
-                                      '{COLORSCHEME}', '{LABELCOLOR}'),
-                                array($this->getId(), $this->getTitle(),
-                                      $this->getDataSet($data), $this->getType(),
-                                      $this->getXAxis($data), $this->getBgColor(),
-                                      $this->getColorScheme(), $this->getLabelColor()),
-                                $contents);
-        return $contents;*/
     }
     
     public function getBgColor()

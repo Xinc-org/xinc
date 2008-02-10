@@ -130,7 +130,6 @@ class Xinc_Gui_Handler
         $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
         
         foreach ($widgets as $path => $widget) {
-            //echo "Init on: " . get_class($widget) . "\n<br>";
             $widget->init();
         }
         
@@ -214,9 +213,24 @@ class Xinc_Gui_Handler
         /**
          * trigger the page-load event
          */
-        $widget->handleEvent(Xinc_Gui_Event::PAGE_LOAD);
+        try {
+            $widget->handleEvent(Xinc_Gui_Event::PAGE_LOAD);
+        } catch (Exception $e) {
+            if ($widget->hasExceptionHandler()) {
+                $widget->handleException($e);
+            } else {
+                $this->_handleException($e);
+            }
+        }
         
     }
    
+    /**
+     * @param Exception $e
+     */
+    private function _handleException(Exception $e)
+    {
+        echo "An unknown error occurred. Please contact the server administrator.";
+    }
     
 }

@@ -37,6 +37,13 @@ class Xinc_Project_Registry extends Xinc_Registry_Abstract
         return self::$_instance;
     }
     
+    /**
+     * Enter description here...
+     *
+     * @param string $name
+     * @param object $object
+     * @throws Xinc_Registry_Exception
+     */
     public function register($name, &$object)
     {
         if (!$object instanceof Xinc_Project) {

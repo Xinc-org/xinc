@@ -125,14 +125,14 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
 
                         $detailDir = $fullStatusDir;
 
-                        $logXmlFile = $detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
+                        /**$logXmlFile = $detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
                         
                         if (file_exists($logXmlFile)) {
                             $this->logXml = new SimpleXMLElement(file_get_contents($logXmlFile));
                             
                         } else {
                             $this->logXml = new SimpleXmlElement('<log/>');
-                        }
+                        }*/
                         
                         
                         /**
@@ -179,29 +179,6 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         }
     }
     
-    private function getHistoryBuilds($statusDir)
-    {
-        $historyFile = $statusDir . DIRECTORY_SEPARATOR . $this->projectName . '.history';
-        
-        $buildHistoryArr = unserialize(file_get_contents($historyFile));
-        $builds = array();
-        
-        foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
-            try {
-                $buildObject = Xinc_Build::unserialize($this->project,
-                                                       $buildTimestamp,
-                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
-                $builds[] = $buildObject;
-            } catch (Exception $e) {
-                // TODO: Handle
-            }
-            
-        }
-        $builds = array_reverse($builds);
-        return new Xinc_Build_Iterator($builds);
-    }
-    
-
     public function getPaths()
     {
         return array('/dashboard/detail', '/dashboard/detail/');
@@ -230,5 +207,13 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     public function getExtensionPoints()
     {
         return array('BUILD_DETAILS');
+    }
+    public function hasExceptionHandler()
+    {
+        return false;
+    }
+    public function handleException(Exception $e)
+    {
+        
     }
 }

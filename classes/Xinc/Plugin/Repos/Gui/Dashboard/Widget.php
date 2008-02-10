@@ -73,14 +73,12 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
                                 //$ini = parse_ini_file($statusfile, true);
                                 $project = new Xinc_Project();
                                 $project->setName($file);
-                                $object = Xinc_Build_Repository::getLastBuild($project);
-                                //$object = unserialize(file_get_contents($statusfile));
-                                //var_dump($object);
-                                
-                                //$project['build.status'] = $ini['build.status'];
-                                //$project['build.label'] = isset($ini['build.label'])?$ini['build.label']:'';
-                                //$project['build.time'] = $ini['build.time'];
-                                $this->builds->add($object);
+                                try {
+                                    $object = Xinc_Build_Repository::getLastBuild($project);
+                                    $this->builds->add($object);
+                                } catch (Exception $e) {
+                                    
+                                }
                             } else if (file_exists($xincProject)) {
                                 $project['build.status'] = -10;
                                 $project['build.time'] = 0;
@@ -194,5 +192,13 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     public function getExtensionPoints()
     {
         return array('PROJECT_MENU_ITEM');
+    }
+    public function hasExceptionHandler()
+    {
+        return false;
+    }
+    public function handleException(Exception $e)
+    {
+        
     }
 }

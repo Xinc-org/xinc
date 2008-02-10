@@ -33,6 +33,7 @@ require_once 'Xinc/Build/Scheduler/Default.php';
 require_once 'Xinc/Project/Status.php';
 require_once 'Xinc/Build/Statistics.php';
 require_once 'Xinc/Build/History.php';
+require_once 'Xinc/Timezone.php';
 
 class Xinc_Build implements Xinc_Build_Interface
 {
@@ -251,6 +252,7 @@ class Xinc_Build implements Xinc_Build_Interface
      *
      * @throws Xinc_Build_Exception_NotRun
      * @throws Xinc_Build_Exception_Serialization
+     * @throws Xinc_Build_History_Exception_Storage
      * @return boolean
      */
     public function serialize()
@@ -298,26 +300,6 @@ class Xinc_Build implements Xinc_Build_Interface
                     unlink($lastLogFileName);
                 }
                 Xinc_Build_History::addBuild($this, $fileName);
-                /**
-                 * we now add the build to the history file
-                 */
-                 /**if (file_exists($buildHistoryFile)) {
-                     $buildHistoryArr = unserialize(file_get_contents($buildHistoryFile));
-                 } else {
-                     $buildHistoryArr = array();
-                 }*/
-                 
-                 /**$buildHistoryArr[$this->getBuildTime()] = $fileName;*/
-                 
-                 /**
-                  * serialize and store the history again
-                  */
-                 /**$buildHistoryArrSerialized = serialize($buildHistoryArr);
-                 $historyWritten = file_put_contents($buildHistoryFile, $buildHistoryArrSerialized);
-                 if ($historyWritten != strlen($buildHistoryArrSerialized)) {
-                    // throw new Xinc_Build_Exception_Serialization($this->getProject(),
-                    //                                              $this->getBuildTime());
-                 }*/
             }
             return true;
         } else {
@@ -350,9 +332,9 @@ class Xinc_Build implements Xinc_Build_Interface
             //$subDirectory = self::generateStatusSubDir($project->getName(), $buildTimestamp);
         
         
-            /**$fileName = $statusDir . DIRECTORY_SEPARATOR
-                      . $subDirectory
-                      . DIRECTORY_SEPARATOR . 'build.ser';*/
+            /**
+             * @throws Xinc_Build_Exception_NotFound
+             */
             $fileName = Xinc_Build_History::getBuildFile($project, $buildTimestamp);
         }
         
@@ -513,12 +495,15 @@ class Xinc_Build implements Xinc_Build_Interface
     public function process($slot)
     {
         $tasks = $this->getTaskRegistry()->getTasksForSlot($slot);
-
         while ($tasks->hasNext()) {
             
             $task = $tasks->next();
             Xinc_Logger::getInstance()->info('Processing task: ' . $task->getName());
-            $task->process($this);
+            try {
+                $task->process($this);
+            } catch (Exception $e) {
+                var_dump($e);
+            }
 
             /**
              * The Post-Process continues on failure

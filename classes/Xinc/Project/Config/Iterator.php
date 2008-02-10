@@ -31,8 +31,12 @@ require_once 'Xinc/Project/Config/Exception/InvalidEntry.php';
 class Xinc_Project_Config_Iterator extends Xinc_Iterator
 {
   
-    
-    public function __construct($array)
+    /**
+     *
+     * @param array $array
+     * @throws Xinc_Project_Config_Exception_InvalidElement
+     */
+    public function __construct(array $array)
     {
         foreach ($array as $xmlElement) {
             if (!$xmlElement instanceof Xinc_Project_Config_File ) {

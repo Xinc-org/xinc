@@ -168,45 +168,49 @@ class Xinc_Plugin_Repos_Api_Builds implements Xinc_Api_Module_Interface
     {
         $project = new Xinc_Project();
         $project->setName($projectName);
-        $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit);
-        $totalCount = Xinc_Build_History::getCount($project);
-        $builds = array();
-        
-        foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
-            try {
-                //echo $buildTimestamp . ' - '. $buildFileName . "<br>";
-                //Xinc_Build_Repository::getBuild($project, $buildTimestamp);
-                //$buildObject = Xinc_Build::unserialize($project,
-                //                                       $buildTimestamp,
-                //                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
-                $buildObject = Xinc_Build_Repository::getBuild($project, $buildTimestamp);
-                $timezone = $buildObject->getConfigDirective('timezone');
-                if ($timezone !== null) {
-                    Xinc_Timezone::set($timezone);
+        try {
+            $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit);
+            $totalCount = Xinc_Build_History::getCount($project);
+            $builds = array();
+            
+            foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
+                try {
+                    //echo $buildTimestamp . ' - '. $buildFileName . "<br>";
+                    //Xinc_Build_Repository::getBuild($project, $buildTimestamp);
+                    //$buildObject = Xinc_Build::unserialize($project,
+                    //                                       $buildTimestamp,
+                    //                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                    $buildObject = Xinc_Build_Repository::getBuild($project, $buildTimestamp);
+                    $timezone = $buildObject->getConfigDirective('timezone');
+                    if ($timezone !== null) {
+                        Xinc_Timezone::set($timezone);
+                    }
+                    $builds[] = array('buildtime'=>date('Y-m-d H:i:s', $buildObject->getBuildTime()),
+                                      'timezone' => Xinc_Timezone::get(),
+                                      'buildtimeRaw'=>$buildObject->getBuildTime(),
+                                      'label'=>$buildObject->getLabel(),
+                                      'status' => $buildObject->getStatus());
+                    /**
+                    * restore to system timezone
+                    */
+                    $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
+                    if ($xincTimezone !== null) {
+                        Xinc_Timezone::set($xincTimezone);
+                    } else {
+                        Xinc_Timezone::reset();
+                    }
+                } catch (Exception $e) {
+                    // TODO: Handle
+                    
                 }
-                $builds[] = array('buildtime'=>date('Y-m-d H:i:s', $buildObject->getBuildTime()),
-                                  'timezone' => Xinc_Timezone::get(),
-                                  'buildtimeRaw'=>$buildObject->getBuildTime(),
-                                  'label'=>$buildObject->getLabel(),
-                                  'status' => $buildObject->getStatus());
-                /**
-                * restore to system timezone
-                */
-                $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
-                if ($xincTimezone !== null) {
-                    Xinc_Timezone::set($xincTimezone);
-                } else {
-                    Xinc_Timezone::reset();
-                }
-            } catch (Exception $e) {
-                // TODO: Handle
                 
             }
-            
-        }
         
         //$builds = array_reverse($builds);
-        
+        } catch (Exception $e) {
+            $builds = array();
+            $totalCount = 0;
+        }
         $object = new stdClass();
         $object->totalcount = $totalCount;
         $object->builds = $builds;

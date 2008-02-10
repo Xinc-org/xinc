@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <project name="Xinc Build File For Unit Tests" basedir="." default="test">	
 	<property file="xinc.properties"/>
+	<fileset dir="classes" id="xinc-all-classes">
+		<include name="*/**/*.php"/>
+		</fileset>
 	<fileset dir="test/classes" id="xinc-test-setup">
 			<include name="Xinc/Setup/*.php"/>
 			<include name="Xinc/Engine/SunriseCannotValidate.php"/>
@@ -79,7 +82,11 @@
 	<target name="test-all" depends="prepare,coverage-setup">
 	    	<includepath classpath="classes" /> 
 	        <includepath classpath="test/classes" /> 
-	    	<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+		<phplint haltonfailure="true">
+			                    <fileset refid="xinc-all-classes"/>
+			                    
+		</phplint>
+	    	<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="true" errorproperty="test-failed">
 	      		<batchtest>
 	      			<fileset refid="xinc-test-setup"/>
 	        		<fileset refid="xinc-core-tests"/>

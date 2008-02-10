@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <xinc>
+
     <project name="SimpleProject">
+        <configuration>
+    <setting name="loglevel" value="1"/>
+    <setting name="timezone" value="US/Eastern"/>
+    </configuration>
     <property name="dir" value="@EXAMPLE_DIR@/SimpleProject/"/>
     	<schedule interval="30"/>
         <modificationset>
@@ -10,7 +15,7 @@
         	<phingBuilder buildfile="${dir}/build.xml" target="build"/>
         </builders>
         <publishers>
-        	<!-- <phpUnitTestResults file="${dir}/report/logfile.xml"/>-->
+            <phpUnitTestResults file="${dir}/report/logfile.xml"/>
             <onfailure>
 	            <email to="root" 
 	                   subject="${project.name} build ${build.number} failed"

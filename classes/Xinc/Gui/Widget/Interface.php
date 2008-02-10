@@ -90,5 +90,13 @@ interface Xinc_Gui_Widget_Interface
      */
     public function registerExtension($extensionPoint, &$extension);
     
+    /**
+     * @return boolean
+     */
+    public function hasExceptionHandler();
     
+    /**
+     * @param Exception $e
+     */
+    public function handleException(Exception $e);
 }

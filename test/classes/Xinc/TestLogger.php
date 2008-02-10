@@ -65,8 +65,9 @@ class Xinc_TestLogger extends Xinc_BaseTest
        
        $this->sharedFixture->flush();
        
-       $lastMessage = Xinc_StreamLogger::getLastLogMessage();
-       $this->assertTrue(strpos($lastMessage, 'priority="warn"')!==false, 'Message should contain the last Test, but is:' . $lastMessage);
+       //Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage = Xinc_StreamLogger::getLogMessageFromEnd(1);
+       $this->assertTrue(strpos($lastMessage, 'priority="warn"')!==false, 'Message should contain the last Test, but is:' . $prevMessage . ' - ' . $lastMessage);
        
     }
     
@@ -81,7 +82,7 @@ class Xinc_TestLogger extends Xinc_BaseTest
        
        $this->sharedFixture->flush();
        
-       $lastMessage = Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage = Xinc_StreamLogger::getLogMessageFromEnd(1);
        $this->assertTrue(strpos($lastMessage, 'priority="error"')!==false, 'Message should contain the last Test');
        
     }
@@ -96,7 +97,7 @@ class Xinc_TestLogger extends Xinc_BaseTest
        
        $this->sharedFixture->flush();
        
-       $lastMessage = Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage = Xinc_StreamLogger::getLogMessageFromEnd(1);
        $this->assertTrue(strpos($lastMessage, 'priority="debug"')!==false, 'Message should contain the last Test');
        
     }
@@ -112,7 +113,7 @@ class Xinc_TestLogger extends Xinc_BaseTest
        
        $this->sharedFixture->flush();
        
-       $lastMessage = Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage = Xinc_StreamLogger::getLogMessageFromEnd(1);
        $this->assertTrue(strpos($lastMessage, 'priority="info"')!==false, 'Message should contain the last Test');
        
     }
@@ -127,7 +128,7 @@ class Xinc_TestLogger extends Xinc_BaseTest
        $this->sharedFixture->verbose($message);
 
        
-       $lastMessage = Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage = Xinc_StreamLogger::getLogMessageFromEnd(0);
        $this->sharedFixture->setLogLevel(Xinc_Logger::LOG_LEVEL_DEBUG);
        
        
@@ -139,12 +140,12 @@ class Xinc_TestLogger extends Xinc_BaseTest
        
        $this->sharedFixture->flush();
        
-       $lastMessage = Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage = Xinc_StreamLogger::getLogMessageFromEnd(1);
        $this->assertTrue(strpos($lastMessage, 'priority="verbose"')!==false, 'Message should contain the last Test');
        
        $message = 'Test Debug Verbose: '.rand(100,99999999);
        $this->sharedFixture->verbose($message);
-       $lastMessage2 = Xinc_StreamLogger::getLastLogMessage();
+       $lastMessage2 = Xinc_StreamLogger::getLogMessageFromEnd(1);
        $this->assertTrue(strpos($lastMessage2, $message)===false, 'Message should not contain the last Test');
        
        $this->assertEquals($lastMessage, $lastMessage2, 'Since we are not verbose anymore the last message '

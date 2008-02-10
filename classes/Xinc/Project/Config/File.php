@@ -57,6 +57,9 @@ class Xinc_Project_Config_File extends SimpleXMLElement
         return $file;
     }
     
+    /**
+     * @throws Xinc_Project_Config_Exception_InvalidEntry
+     */
     protected function _validate()
     {
         $array = array('xinc');
