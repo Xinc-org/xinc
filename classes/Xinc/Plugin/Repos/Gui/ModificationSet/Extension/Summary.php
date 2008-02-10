@@ -66,7 +66,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Extension_Summary extends Xinc_Plugi
                                            $templateContent);
             return $templateContent;
         } else {
-            return "No modifications registered";
+            return false;
         }
     }
     

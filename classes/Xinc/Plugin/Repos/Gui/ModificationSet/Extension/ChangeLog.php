@@ -94,7 +94,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Extension_ChangeLog extends Xinc_Plu
                                            $templateContent);
             return $templateContent;
         } else {
-            return "No changelog found.";
+            return false;
         }
     }
     
