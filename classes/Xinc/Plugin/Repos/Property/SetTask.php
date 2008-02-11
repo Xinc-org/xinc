@@ -33,6 +33,9 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
      */
     private $_name;
     
+    private $_if;
+    private $_file;
+    
     /**
      *  Holding all the property value pairs
      *
@@ -69,8 +72,20 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
             $build->getProperties()->set($this->_name, $this->_value);
         }
     }
+    
+    public function setIf($if)
+    {
+        $this->_if = $if;
+    }
+    
+    public function setFile($fileName)
+    {
+        $this->_file = $fileName;
+    }
+    
     public function validate()
     {
+        
         foreach ( $this->_subtasks as $task ) {
             /**
              * cannot have subtasks
@@ -78,7 +93,11 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
             return false;
                 
         }
-        if (!isset($this->_name) && !isset($this->_value)) {
+        if (!isset($this->_name) && !isset($this->_value) && !isset($this->_file)) {
+            return false;
+        } else if (isset($this->_file) && (isset($this->_name) || isset($this->_value))) {
+            return false;
+        } else if ((isset($this->_name) && !isset($this->_value)) || (!isset($this->_name) && isset($this->_value))) {
             return false;
         } else {
             return true;
@@ -105,12 +124,32 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
     }
     public function process(Xinc_Build_Interface &$build)
     {
-        $build->debug('Setting property "${' . $this->_name . '}" to "' . $this->_value . '"');
-        
-
-        $build->getProperties()->set($this->_name, $this->_value);
-
-        $build->setStatus(Xinc_Build_Interface::PASSED);
+        if ($this->_if !== null) {
+            /**
+             * If we have a condition, we need to check
+             */
+            $property = $build->getProperties()->get($this->_if);
+            if ($property !== true) {
+                $build->info('Property: ' . $this->_name . ' does not apply, ' . $this->_if . ' == false');
+                $build->setStatus(Xinc_Build_Interface::PASSED);
+                return;
+            }
+        }
+        if (isset($this->_file)) {
+            if (file_exists($this->_file)) {
+                $build->info('Reading property file: ' . $this->_file);
+                $this->_plugin->parsePropertyFile($build, $this->_file);
+            } else if (strstr($this->_file, '${')) {
+                // not substituted yet, will not use it
+            } else {
+                $build->error('Cannot read property file: ' . $this->_file);
+            }
+        } else {
+            $build->debug('Setting property "${' . $this->_name . '}" to "' . $this->_value . '"');
+            
+            $build->getProperties()->set($this->_name, $this->_value);
+            $build->setStatus(Xinc_Build_Interface::PASSED);
+        }
 
     }
 

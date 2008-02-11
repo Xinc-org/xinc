@@ -28,6 +28,7 @@ require_once 'Xinc/Build/History/Exception/Storage.php';
 require_once 'Xinc/Build/History/Exception/Migration.php';
 require_once 'Xinc/Build/History/Exception/General.php';
 require_once 'Xinc/Build/History/Exception/MetaFile.php';
+require_once 'Xinc/Build/Exception/Unserialization.php';
 
 class Xinc_Build_History
 {

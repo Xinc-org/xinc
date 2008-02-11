@@ -26,8 +26,68 @@
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Property/SetTask.php';
 require_once 'Xinc/Plugin/Repos/Property/SubstituteTask.php';
-class Xinc_Plugin_Repos_Property  extends Xinc_Plugin_Base
+require_once 'Xinc/Build/Interface.php';
+
+class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Base
 {
+    /**
+     * loads properties from a property file
+     * 
+     * @param Xinc_Build_Interface $build
+     * @param string $fileName
+     */
+    public function parsePropertyFile(Xinc_Build_Interface &$build, $fileName)
+    {
+        $activeProperty = false;
+        $trimNextLine = false;
+        $arr = array();
+        $fh = fopen($fileName, 'r');
+        if (is_resource($fh)) {
+            while ($line = fgets($fh)) {
+                if (preg_match('/^[!#].*/', $line)) {
+                    // comment
+                } else if (preg_match("/^.*?(\w+?)\s*[=:]+\s*(.*)$/", $line, $matches)) {
+                    // we have a key definition
+                    $activeProperty = true;
+                    $key = $matches[1];
+                    $valuePart = $matches[2];
+                    $arr[$key] = trim($valuePart);
+                    if ($arr[$key]{strlen($arr[$key])-1} == '\\') {
+                        $arr[$key] = substr($arr[$key], 0, -1);
+                        $trimNextLine = true;
+                    } else {
+                        $trimNextLine = false;
+                    }
+                } else if ($activeProperty) {
+                    $trimmed = trim($line);
+                    if (empty($trimmed)) {
+                        $activeProperty = false;
+                        continue;
+                    } else if ($trimNextLine) {
+                        $line = $trimmed;
+                    } else {
+                        $line = rtrim($line);
+                    }
+                    $arr[$key] .= "\n" . $line;
+                    if ($arr[$key]{strlen($arr[$key])-1} == '\\') {
+                        $arr[$key] = substr($arr[$key], 0, -1);
+                        $trimNextLine = true;
+                    } else {
+                        $trimNextLine = false;
+                    }
+                    
+                }
+            }
+            foreach ($arr as $key => $value) {
+                $build->debug('Setting property "${' . $key . '}" to "' . $value . '"');
+                $build->getProperties()->set($key, stripcslashes($value));
+            }
+        } else {
+            $build->error('Cannot read from property file: ' . $fileName);
+        }
+    }
+    
+    
     public function validate()
     {
         return true;
