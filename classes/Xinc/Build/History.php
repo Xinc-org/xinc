@@ -561,7 +561,7 @@ class Xinc_Build_History
         $statusFile .= self::HISTORY_DIR;
         $statusFile .= DIRECTORY_SEPARATOR;
         $statusFile .= $no . '.history';
-        if (!file_exists($statusFile)) {
+        if (!file_exists(dirname($statusFile))) {
             $dirCreated = mkdir(dirname($statusFile), 0755, true);
             if (!$dirCreated) {
                 throw new Xinc_Build_History_Exception_Storage();
