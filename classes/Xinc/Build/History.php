@@ -77,50 +77,39 @@ class Xinc_Build_History
             self::_migrate($project->getName(), $metaData);
             return self::getFromTo($project, $start, $limit);
         } else {
-            $startNo = 0;
-            $totalStart = 0;
-            for ($i = count($metaData['parts']) - 1; $i>=0; $i--) {
-                $part = $metaData['parts'][$i];
-                if ($totalStart > $start) {
-                    // we found our start box
-                    break;
-                }
-                $totalStart += $part['count'];
-                $startNo = $part['no'];
-            }
-
-            $endNo = 0;
-            $totalEnd = 0;
-            for ($i = $startNo; $i>=0; $i--) {
-                $part = $metaData['parts'][$i];
-                if ($totalEnd > $limit) {
-                    $endNo = $part['no'];
-                    break;
-                }
-                $totalEnd += $part['count'];
-            }
-
-            $arr = null;
-
-            for ($i=$endNo; $i<=$startNo; $i++) {
-                $partArr = self::_readPartFile($project->getName(), $i);
-                $partArr = array_reverse($partArr, true);
-                if ($arr == null) {
-                    $arr = $partArr;
-                } else {
-                    foreach ($partArr as $key => $val) {
-                        $arr[$key] = $val;
+            
+            $totalEntries = 0;
+            $null = 0;
+            $stack = array();
+            for ($i=count($metaData['parts'])-1; $i>=0; $i--) {
+                $totalEntries += $metaData['parts'][$i]['count'];
+                if ($totalEntries > $start) {
+                    
+                    $null = $totalEntries;
+                    $start = $start - $null;
+                    
+                    try {
+                        $part = self::_readPartFile($project->getName(), $i);
+                    } catch (Exception $e) {
+                        $part = array();
                     }
+                    foreach($part as $timestamp => $data) {
+                        $stack[$timestamp] = $data;
+                    }
+                } else {
+                    $null = $totalEntries;
                 }
+                if ($totalEntries > $start + $limit) {
+                    break;
+                }
+            
             }
 
-            $startSlice = $start - $totalStart;
-            if ($limit == null) {
-                $limit = count($arr) - $startSlice;
-            }
-            $needed = array_slice($arr, $start - $totalStart, $limit, true);
-            krsort($needed);
-            return $needed;
+            krsort($stack);
+
+            $stack = array_slice($stack, $start, $limit, true);
+            return $stack;
+        
         }
     }
     
@@ -566,7 +555,9 @@ class Xinc_Build_History
             if (!$dirCreated) {
                 throw new Xinc_Build_History_Exception_Storage();
             }
-        } else if (!is_writable($statusFile)) {
+        } else if (!is_writable(dirname($statusFile))) {
+            throw new Xinc_Build_History_Exception_Storage();
+        } else if (file_exists($statusFile) && !is_writable(dirname($statusFile))) {
             throw new Xinc_Build_History_Exception_Storage();
         }
         $partFileData = serialize($arr);
