@@ -174,12 +174,28 @@ class Xinc_Gui_Handler
      * based on the Request / Widget which is triggered
      *
      */
+    
+    /**
+     * @return string pathname of the query
+     */
+    protected function _getRequestPath()
+    {
+        $path = null;
+        if (isset($_SERVER['REDIRECT_URL'])) {
+           $path = $_SERVER['REDIRECT_URL'];
+        } else if (isset($_SERVER['REQUEST_URI']) && isset($_SERVER['QUERY_STRING'])) {
+            $path = $_SERVER['REQUEST_URI'];
+            $path = str_replace('?' . $_SERVER['QUERY_STRING'], $_SERVER['REQUEST_URI']);
+        }
+        return $path;
+    }
+    
     public function view()
     {
         /**
          * Determine called Pathname
          */
-        $path  = $_SERVER['REDIRECT_URL'];
+        $path  = $this->_getRequestPath();
         
         if (strpos($path, $this->_apiHandler->getBasePath())===0) {
             $this->_apiHandler->processCall($path);
