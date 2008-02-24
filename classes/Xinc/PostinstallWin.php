@@ -114,6 +114,14 @@ class Xinc_PostinstallWin_postinstall
         $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
         $pearPhpDir = realpath($pearPhpDir);
         
+        include_once $pearPhpDir . '/Xinc/Ini.php';
+        if (class_exists('Xinc_Ini')) {
+            $xincIni = Xinc_Ini::getInstance();
+        } else {
+            $this->_ui->outputData('Cannot initialize Xinc_Ini class');
+            return false;
+        }
+        
         switch($phase) {
             
             case 'daemoninstall':
@@ -122,7 +130,7 @@ class Xinc_PostinstallWin_postinstall
                 $etcDir = $xincDir . DIRECTORY_SEPARATOR . 'etc';
                 
                 $etcConfDir = $etcDir . DIRECTORY_SEPARATOR . 'conf.d' ;
-                
+                $xincIni->set('etc_conf_d', $etcConfDir, 'xinc');
                 $dataDir = $xincDir . DIRECTORY_SEPARATOR . 'projects';
                 
                 $statusDir = $xincDir . DIRECTORY_SEPARATOR . 'status';
@@ -137,6 +145,10 @@ class Xinc_PostinstallWin_postinstall
                 $etcDir = realpath($etcDir);
                 $this->_createDir($etcConfDir);
                 $etcConfDir = realpath($etcConfDir);
+                
+                $xincIni->set('dir', $xincDir, 'xinc');
+                $xincIni->set('status_dir', $statusDir, 'xinc');
+                $xincIni->set('project_dir', $dataDir, 'xinc');
                 
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'etc'
                                  . DIRECTORY_SEPARATOR . 'xinc' . DIRECTORY_SEPARATOR
@@ -179,8 +191,11 @@ class Xinc_PostinstallWin_postinstall
                 }
                 //exec($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'pear-install.sh');
                 $wwwDir = $xincDir . DIRECTORY_SEPARATOR . 'www';
+                $xincIni->set('www_dir', $wwwDir, 'xinc');
                 $wwwPort = $answers['www_port'];
+                $xincIni->set('www_port', $wwwPort, 'xinc');
                 $wwwIp =  $answers['www_ip'];
+                $xincIni->set('www_ip', $wwwIp, 'xinc');
                 $this->_createDir($wwwDir, 0755);
                 $wwwDir = realpath($wwwDir);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . '.htaccess',
@@ -188,16 +203,16 @@ class Xinc_PostinstallWin_postinstall
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . '*',
                                   $wwwDir . DIRECTORY_SEPARATOR, '-Rf');
                 unlink($wwwDir.DIRECTORY_SEPARATOR.'www.tpl.conf');
-                unlink($wwwDir.DIRECTORY_SEPARATOR.'handler.php.tpl');
+                //unlink($wwwDir.DIRECTORY_SEPARATOR.'handler.php.tpl');
                 
                 $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'web'. DIRECTORY_SEPARATOR . 'www.tpl.conf',
                                 $etcDir.'/www.conf',
                                 array('@INCLUDE@'=>$pearPhpDir, '@WEB_DIR@'=>$wwwDir,
                                 '@PORT@'=>$wwwPort, '@IP@'=>$wwwIp));
                 
-                $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR
-                               .'handler.php.tpl', $wwwDir. DIRECTORY_SEPARATOR .'handler.php',
-                               array('@STATUSDIR@' => $statusDir, '@ETC@'=>$etcDir));
+                //$this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR
+                //               .'handler.php.tpl', $wwwDir. DIRECTORY_SEPARATOR .'handler.php',
+                //               array('@STATUSDIR@' => $statusDir, '@ETC@'=>$etcDir));
                 $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
                                . 'init.d' . DIRECTORY_SEPARATOR . 'xinc.bat',
                                 $initDir . DIRECTORY_SEPARATOR . 'xinc.bat',
@@ -214,6 +229,9 @@ class Xinc_PostinstallWin_postinstall
                 $this->_ui->outputData("- To add projects to Xinc, copy the project xml to $etcConfDir");
                 $this->_ui->outputData("- To start xinc execute: $initDir\xinc.bat");
                 $this->_ui->outputData("- To install as a service google for srvany.exe and instsrv.exe");
+                
+                $xincIni->save();
+                
                 break;
                 case '_undoOnError' :
                        
