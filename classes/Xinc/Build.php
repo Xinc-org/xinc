@@ -749,4 +749,9 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return isset($this->_config[$name])?$this->_config[$name]:null;
     }
+    
+    public function resetConfigDirective()
+    {
+        $this->_config = array();
+    }
 }

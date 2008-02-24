@@ -261,6 +261,7 @@ interface Xinc_Build_Interface
      */
     public function setConfigDirective($name, $value);
     
+    public function resetConfigDirective();
     /**
      *
      * @param string $name
