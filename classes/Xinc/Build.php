@@ -373,6 +373,12 @@ class Xinc_Build implements Xinc_Build_Interface
                 if ($unserialized->getConfigDirective('timezone.reporting') == true) {
                     $unserialized->setConfigDirective('timezone', null);
                 }
+                if (!isset($unserialized->_internalProperties)) {
+                    if (method_exists($unserialized,'init')) {
+                        $unserialized->init();
+                    }
+                    
+                }
                 return $unserialized;
             }
         }
