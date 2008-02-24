@@ -49,6 +49,7 @@
 
 	<target name="generate-report">
   		<phpunit2report infile="${report.dir}/logfile.xml" styledir="resources/xsl" todir="report" format="noframes"/>
+		
   	</target>
 
 	<target name="test" depends="test-all,generate-report,coverage-teardown">
@@ -89,7 +90,7 @@
 	        <includepath classpath="test/classes" /> 
 		
 	    	
-		<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="true" errorproperty="test-failed">
+		<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
 	      		<batchtest>
 	      			<fileset refid="xinc-test-setup"/>
 	        		<fileset refid="xinc-core-tests"/>
