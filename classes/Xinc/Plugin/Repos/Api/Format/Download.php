@@ -1,8 +1,8 @@
 <?php
 /**
- * Extension to the Dashboard Widget
+ * Download Response Format
  * 
- * @package Xinc.Plugin
+ * @package Xinc.Api
  * @author Arno Schneider
  * @version 2.0
  * @copyright 2007 Arno Schneider, Barcelona
@@ -22,14 +22,36 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension.php';
-
-abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension extends Xinc_Plugin_Repos_Gui_Dashboard_Extension
+require_once 'Xinc/Plugin/Repos/Api/Format/File.php';
+class Xinc_Plugin_Repos_Api_Format_Download extends Xinc_Plugin_Repos_Api_Format_File
 {
+    const MNAME = 'download';
 
-    public function getExtensionPoint()
+    
+    /**
+     * Returns a file to the browser
+     *
+     * @param string $fileName
+     * @return string
+     */
+    protected function _handleFileResponse($fileName)
     {
-        return 'BUILD_DETAILS';
+        $contentType = $this->mime_content_type2($fileName);
+        if (!empty($contentType)) {
+            header("Content-Type: " . $contentType);
+        }
+        header('Content-Length: ' . filesize($fileName));
+        header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
+        readfile($fileName);
+        die();
     }
-
+    
+    /**
+     * returns the name of the format
+     * @return string
+     */
+    public function getName()
+    {
+        return self::MNAME;
+    }
 }

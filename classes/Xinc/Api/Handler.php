@@ -83,11 +83,10 @@ class Xinc_Api_Handler
          * Matching pattern /$this->_basePath/$modulename/$methodname/$format/
          */
         preg_match('/\\' . $this->_basePath . '\/(.*?)\/(.*?)\/(.*?)\/.*/', $path, $matches);
-        
         if (count($matches)<4) {
             die('404');
         }
-        
+
         $moduleName = $matches[1];
         $methodName = $matches[2];
         $formatName = $matches[3];
@@ -97,9 +96,7 @@ class Xinc_Api_Handler
         } else {
             $format = $this->_responseFormats[$formatName];
         }
-        
         $module = Xinc_Api_Module_Repository::getInstance()->getModuleByNameAndMethod($moduleName, $methodName);
-        
         if ($module != null) {
             $res = $module->processCall($methodName, $_REQUEST);
             echo $format->generate($res);

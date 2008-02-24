@@ -153,7 +153,13 @@ class Xinc_Logger
             $prioritystr .= ' ';
         }
         $message = ' ' . $prioritystr . '  ' . $timestr . ' ' . $msg."\n";
-        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) fputs(STDERR, $message);
+        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) {
+            if (defined('STDERR')) {
+                fputs(STDERR, $message);
+            } else {
+                echo '<!-- LogMessage: ' . $message . " -->\n";
+            }
+        }
         if ($this->_logFile != null) {
             if ($fileHandle !== null) {
                 fputs($fileHandle, $message);

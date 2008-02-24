@@ -64,6 +64,18 @@ interface Xinc_Build_Interface
     public function &getProperties();
     
     /**
+     * returns the internal build properties
+     *
+     * @return Xinc_Build_Properties
+     */
+    public function &getInternalProperties();
+    
+    /**
+     * called before a new build is executed
+     *
+     */
+    public function init();
+    /**
      * returns the build statistics
      *
      * @return Xinc_Build_Statistics

@@ -62,6 +62,41 @@ tab.on('close',function(p) {
 });
 }
 
+
+
+var c=Ext.getCmp('doc-body').add(tab);
+//tab.load({url: '/dashboard/detail?project='+name, scripts: true});
+c.show();
+return false;
+
+}
+
+function openTab(name, build, label){
+var tab=Ext.getCmp('project-'+name +'-'+build);
+var title= name + ' - ' + label;
+if(tab) {
+tab.show();
+return;
+}
+var tab=new Ext.Panel({
+id: 'project-'+name+'-'+build,
+autoScroll: true,
+tbar: [
+                title
+                ],
+title: label + ' - ' +name,
+autoDestroy: true,
+plugins: new Ext.ux.TabCloseMenu(),
+autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
+nocache: true,
+    text: "Loading...",
+    timeout: 30},
+closable:true
+});
+tab.on('close',function(p) {
+ p.destroy();
+ alert(p);
+});
 var c=Ext.getCmp('doc-body').add(tab);
 //tab.load({url: '/dashboard/detail?project='+name, scripts: true});
 c.show();
@@ -253,7 +288,9 @@ Ext.extend(MainPanel, Ext.TabPanel, {
                 var member = Ext.fly(target).getAttributeNS('ext', 'member');
                 this.loadClass(target.href, cls, member);
             }else if(target.className == 'inner-link'){
-                this.getActiveTab().scrollToSection(target.href.split('#')[1]);
+                //this.getActiveTab().scrollToSection(target.href.split('#')[1]);
+                loadProject = target.href.split('#')[1];
+                openTab(loadProject, projects[loadProject][0], projects[loadProject][1])
             }else if(target.className=='external'){
             
                 if (target.href.lastIndexOf('.html') > 0) {
@@ -717,3 +754,5 @@ Ext.Ajax.on('requestcomplete', function(ajax, xhr, o){
         
     }
 });
+
+

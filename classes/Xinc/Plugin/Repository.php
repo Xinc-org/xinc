@@ -25,6 +25,7 @@
 require_once 'Xinc/Plugin/Task/Exception.php';
 require_once 'Xinc/Plugin/Iterator.php';
 require_once 'Xinc/Gui/Widget/Repository.php';
+require_once 'Xinc/Api/Module/Repository.php';
 
 class Xinc_Plugin_Repository
 {

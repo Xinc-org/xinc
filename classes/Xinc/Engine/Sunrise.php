@@ -120,6 +120,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
         $buildTime = time();
         $startTime = time() + microtime(true);
         $build->setBuildTime($buildTime);
+        $build->init();
         if ( Xinc_Build_Interface::STOPPED === $build->getStatus() ) {
             
             //$this->build = null;

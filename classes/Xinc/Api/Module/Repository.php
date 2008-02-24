@@ -118,7 +118,6 @@ class Xinc_Api_Module_Repository
      */
     public function &getModuleByNameAndMethod($moduleName, $methodName)
     {
-        
         $module = null;
         if (isset($this->_definedModules[$moduleName])) {
             $methods = $this->_definedModules[$moduleName];

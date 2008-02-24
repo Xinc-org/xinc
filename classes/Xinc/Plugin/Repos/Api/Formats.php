@@ -24,6 +24,8 @@
 */
 require_once 'Xinc/Api/Module/Interface.php';
 require_once 'Xinc/Plugin/Repos/Api/Format/Json.php';
+require_once 'Xinc/Plugin/Repos/Api/Format/File.php';
+require_once 'Xinc/Plugin/Repos/Api/Format/Download.php';
 require_once 'Xinc/Api/Handler.php';
 
 class Xinc_Plugin_Repos_Api_Formats implements Xinc_Api_Module_Interface
@@ -43,6 +45,8 @@ class Xinc_Plugin_Repos_Api_Formats implements Xinc_Api_Module_Interface
         $this->_plugin = $plugin;
         
         Xinc_Api_Handler::getInstance()->registerResponseFormat(new Xinc_Plugin_Repos_Api_Format_Json());
+        Xinc_Api_Handler::getInstance()->registerResponseFormat(new Xinc_Plugin_Repos_Api_Format_File());
+        Xinc_Api_Handler::getInstance()->registerResponseFormat(new Xinc_Plugin_Repos_Api_Format_Download());
         
     }
     

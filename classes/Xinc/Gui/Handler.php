@@ -78,6 +78,7 @@ class Xinc_Gui_Handler
         $this->_systemTimezone = Xinc_Timezone::get();
         $this->_statusDir = $statusDir;
         $this->setSystemConfigFile($configFile);
+        
         self::$_instance = &$this;
         
         $this->_apiHandler = Xinc_Api_Handler::getInstance();
@@ -117,36 +118,37 @@ class Xinc_Gui_Handler
         $fileName = realpath($fileName);
         try {
             //Xinc_Config::parse($fileName);
-        $configFile = Xinc_Config_File::load($fileName);
-        
-        $this->_configParser = new Xinc_Config_Parser($configFile);
-        
-        $plugins = $this->_configParser->getPlugins();
-        
-        $this->_pluginParser = new Xinc_Plugin_Parser();
-        
-        $this->_pluginParser->parse($plugins);
-        
-        $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
-        
-        foreach ($widgets as $path => $widget) {
-            $widget->init();
-        }
-        
-        $configSettings = $this->_configParser->getConfigSettings();
-        while ($configSettings->hasNext()) {
-            $setting = $configSettings->next();
-            $attributes = $setting->attributes();
-            $name = (string)$attributes->name;
-            $value = (string)$attributes->value;
-            if ($name == 'loglevel' && Xinc_Logger::getInstance()->logLevelSet()) {
-                $value = Xinc_Logger::getInstance()->getLogLevel();
+            $configFile = Xinc_Config_File::load($fileName);
+            
+            $this->_configParser = new Xinc_Config_Parser($configFile);
+            
+            $plugins = $this->_configParser->getPlugins();
+            
+            $this->_pluginParser = new Xinc_Plugin_Parser();
+            
+            $this->_pluginParser->parse($plugins);
+            
+            $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
+            
+            foreach ($widgets as $path => $widget) {
+                Xinc_Logger::getInstance()->debug('Calling init on: ' . get_class($widget));
+                $widget->init();
             }
-            $this->_setConfigDirective($name, $value);
-        }
+            Xinc_Logger::getInstance()->debug('INIT calls done.');
+            $configSettings = $this->_configParser->getConfigSettings();
+            while ($configSettings->hasNext()) {
+                $setting = $configSettings->next();
+                $attributes = $setting->attributes();
+                $name = (string)$attributes->name;
+                $value = (string)$attributes->value;
+                if ($name == 'loglevel' && Xinc_Logger::getInstance()->logLevelSet()) {
+                    $value = Xinc_Logger::getInstance()->getLogLevel();
+                }
+                $this->_setConfigDirective($name, $value);
+            }
             
         } catch(Exception $e) {
-            //var_dump($e);
+            
             Xinc_Logger::getInstance()->error('error parsing system:'
                                              . $e->getMessage());
                 

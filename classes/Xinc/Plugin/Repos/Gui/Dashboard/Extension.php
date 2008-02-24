@@ -22,14 +22,25 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension.php';
-
-abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension extends Xinc_Plugin_Repos_Gui_Dashboard_Extension
+abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension implements Xinc_Gui_Widget_Extension_Interface
 {
-
-    public function getExtensionPoint()
+    public abstract function getTitle();
+    
+    public abstract function getContent(Xinc_Build_Interface &$build);
+    
+    public final function generate(Xinc_Build_Interface &$build, $templateFile)
     {
-        return 'BUILD_DETAILS';
+        $templateContent = file_get_contents($templateFile);
+        $id = strtolower(str_replace(' ', '-', $this->getTitle()));
+        $content = $this->getContent($build);
+        if ($content === false) {
+            return false;
+        }
+        $result = str_replace(array('{id}', '{content}', '{title}'), 
+                              array($id, $content, $this->getTitle()),
+                              $templateContent);
+        return $result;
     }
-
+    
+   
 }

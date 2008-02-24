@@ -53,8 +53,4 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Builds extends Xinc_Plugi
         return $content;
     }
     
-    public function getExtensionPoint()
-    {
-        return 'BUILD_DETAILS';
-    }
 }

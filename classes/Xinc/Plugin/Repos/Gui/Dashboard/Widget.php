@@ -39,6 +39,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     public $projects = array();
     public $menu;
     public $builds;
+    public $features;
     
     public $projectMenuItem;
     
@@ -54,7 +55,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
             case Xinc_Gui_Event::PAGE_LOAD: 
                 
                     $query = $_SERVER['REQUEST_URI'];
-
+                    $this->features = $this->_extensions['PROJECT_FEATURE'];
                     
                     
                     $handler = Xinc_Gui_Handler::getInstance();
@@ -191,7 +192,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function getExtensionPoints()
     {
-        return array('PROJECT_MENU_ITEM');
+        return array('PROJECT_MENU_ITEM', 'PROJECT_LAST_BUILD_ENTRY');
     }
     public function hasExceptionHandler()
     {

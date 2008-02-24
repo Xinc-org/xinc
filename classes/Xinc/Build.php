@@ -61,6 +61,11 @@ class Xinc_Build implements Xinc_Build_Interface
     private $_properties;
     
     /**
+     * @var Xinc_Build_Properties
+     */
+    private $_internalProperties;
+    
+    /**
      *
      * @var Xinc_Build_Statistics
      */
@@ -154,6 +159,7 @@ class Xinc_Build implements Xinc_Build_Interface
         
         $this->_buildTimestamp = $buildTimestamp;
         $this->_properties = new Xinc_Build_Properties();
+        $this->_internalProperties = new Xinc_Build_Properties();
         $this->_statistics = new Xinc_Build_Statistics();
         $this->setLabeler(new Xinc_Build_Labeler_Default());
         $this->setScheduler(new Xinc_Build_Scheduler_Default());
@@ -182,6 +188,15 @@ class Xinc_Build implements Xinc_Build_Interface
     public function &getProperties()
     {
         return $this->_properties;
+    }
+    
+    /**
+     *
+     * @return Xinc_Build_Properties
+     */
+    public function &getInternalProperties()
+    {
+        return $this->_internalProperties;
     }
     
     /**
@@ -405,9 +420,14 @@ class Xinc_Build implements Xinc_Build_Interface
         
         return array('_no','_project', '_buildTimestamp',
                      '_properties', '_status', '_lastBuild',
-                     '_labeler', '_engine', '_statistics', '_config');
+                     '_labeler', '_engine', '_statistics', '_config',
+                     '_internalProperties');
     }
     
+    public function init()
+    {
+        $this->_internalProperties = new Xinc_Build_Properties();
+    }
         /**
      * Sets the sequence number for this build
      *

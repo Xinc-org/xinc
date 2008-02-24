@@ -31,6 +31,8 @@ require_once 'Xinc/Data/Repository.php';
 class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary extends Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension
 {
 
+    private $_extensions = array();
+    
     public function getTitle()
     {
         return 'Summary';
@@ -70,13 +72,39 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary extends Xinc_Plug
                                                          $image,
                                                          date('Y-m-d H:i:s', $build->getBuildTime())
                                                          . '-' . Xinc_Timezone::get(),
-                                                         $build->getLabel()));
+                                                         $build->getLabel(),
+                                                         $this->_generateAllExtensions($build)));
         
         return $content;
     }
     
-    public function getExtensionPoint()
+    public function registerDetailExtension(Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo &$extension)
     {
-        return 'BUILD_DETAILS';
+        $this->_extensions[] = $extension;
+    }
+    
+    protected function _generateAllExtensions(Xinc_Build_Interface &$build)
+    {
+        $overviewTemplateFile = Xinc_Data_Repository::getInstance()->get('templates'
+                                                                         . DIRECTORY_SEPARATOR
+                                                                         . 'dashboard'
+                                                                         . DIRECTORY_SEPARATOR
+                                                                         . 'detail'
+                                                                         . DIRECTORY_SEPARATOR
+                                                                         . 'extension'
+                                                                         . DIRECTORY_SEPARATOR
+                                                                         . 'overview-extension.phtml');
+        $overviewTemplate = file_get_contents($overviewTemplateFile);
+        $contentParts = array();
+        foreach ($this->_extensions as $ext) {
+            $extContent = $ext->getContent($build);
+            if ($extContent === false) continue;
+            $content = call_user_func_array('sprintf', array($overviewTemplate,
+                                                         $ext->getTitle(), $extContent));
+            $contentParts[] = $content;
+            
+        }
+        
+        return implode("\n",$contentParts);
     }
 }

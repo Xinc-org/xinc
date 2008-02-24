@@ -22,14 +22,22 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension.php';
 
-abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension extends Xinc_Plugin_Repos_Gui_Dashboard_Extension
+abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo extends Xinc_Plugin_Repos_Gui_Dashboard_Extension
 {
+
+    protected $_widget;
+    
+    public function setWidget(Xinc_Gui_Widget_Extension_Interface &$widget)
+    {
+        $this->_widget = $widget;
+    }
 
     public function getExtensionPoint()
     {
-        return 'BUILD_DETAILS';
+        return 'BUILD_SUMMARY';
     }
-
+   
 }

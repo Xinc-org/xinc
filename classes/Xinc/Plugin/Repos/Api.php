@@ -46,6 +46,7 @@ class Xinc_Plugin_Repos_Api extends Xinc_Plugin_Base
     {
         return array(new Xinc_Plugin_Repos_Api_Builds($this),
                      new Xinc_Plugin_Repos_Api_Artifacts($this),
+                     new Xinc_Plugin_Repos_Api_Deliverable($this),
                      new Xinc_Plugin_Repos_Api_Formats($this),
                      new Xinc_Plugin_Repos_Api_Projects($this),
                      new Xinc_Plugin_Repos_Api_LogMessages($this));

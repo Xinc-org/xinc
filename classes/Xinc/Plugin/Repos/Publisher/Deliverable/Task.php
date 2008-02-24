@@ -1,6 +1,6 @@
 <?php
 /**
- * Extension to the Dashboard Widget
+ * This interface represents a publishing mechanism to publish build results
  * 
  * @package Xinc.Plugin
  * @author Arno Schneider
@@ -22,14 +22,42 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension.php';
+require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension extends Xinc_Plugin_Repos_Gui_Dashboard_Extension
+class Xinc_Plugin_Repos_Publisher_Deliverable_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-
-    public function getExtensionPoint()
+    private $_file;
+    
+    private $_alias;
+    
+    
+    public function getName()
     {
-        return 'BUILD_DETAILS';
+        return 'deliverable';
+    }
+    public function setFile($file)
+    {
+        $this->_file = $file;
+    }
+    
+    public function setAlias($alias)
+    {
+        $this->_alias = $alias;
+    }
+    
+    public function validateTask()
+    {
+        
+        if (!isset($this->_file)) {
+            
+            Xinc_Logger::getInstance()->error('File must be specified for deliverable publisher.');
+            return false;
+        }
+        return true;
     }
 
+    public function publish(Xinc_Build_Interface &$build)
+    {
+        return $this->_plugin->registerDeliverable($build, $this->_file, $this->_alias);
+    }
 }

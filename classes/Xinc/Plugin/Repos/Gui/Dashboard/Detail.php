@@ -77,6 +77,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     private function _generateSummaryView()
     {
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary();
+        foreach ($this->_extensions['BUILD_SUMMARY'] as $ext) {
+            $extension->registerDetailExtension($ext);
+        }
         $this->_registerExtension('BUILD_DETAILS', $extension);
     }
     private function _generateBuildsView()
@@ -206,7 +209,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     }
     public function getExtensionPoints()
     {
-        return array('BUILD_DETAILS');
+        return array('BUILD_DETAILS', 'BUILD_SUMMARY');
     }
     public function hasExceptionHandler()
     {

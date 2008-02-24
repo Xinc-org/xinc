@@ -24,7 +24,8 @@
             <onsuccess>
             	<phingPublisher buildfile="${dir}/publish.xml" target="build"/>
             	<artifactspublisher file="${dir}/publish.xml"/>
-            	<artifactspublisher file="${dir}/report"/>
+            	<artifactspublisher file="${dir}/publish.xml"/>
+            	<deliverable file="${dir}/builds/release-${build.label}.tar.gz" alias="release.tar.gz"/>
             </onsuccess>
             <onrecovery>
             	<email to="root" 
