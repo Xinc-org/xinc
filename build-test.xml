@@ -82,11 +82,12 @@
 	<target name="test-all" depends="prepare,coverage-setup">
 	    	<includepath classpath="classes" /> 
 	        <includepath classpath="test/classes" /> 
-		<phplint haltonfailure="true">
+		<!--<phplint haltonfailure="true">
 			                    <fileset refid="xinc-all-classes"/>
 			                    
-		</phplint>
-	    	<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+		</phplint>-->
+	    	
+		<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="true" errorproperty="test-failed">
 	      		<batchtest>
 	      			<fileset refid="xinc-test-setup"/>
 	        		<fileset refid="xinc-core-tests"/>
