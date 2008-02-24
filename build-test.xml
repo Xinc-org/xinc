@@ -82,7 +82,7 @@
 	<target name="test-all" depends="prepare,coverage-setup">
 	    	<includepath classpath="classes" /> 
 	        <includepath classpath="test/classes" /> 
-		<phplint haltonfailure="true">
+		<phplint haltonfailure="false">
 			                    <fileset refid="xinc-all-classes"/>
 			                    
 		</phplint>
