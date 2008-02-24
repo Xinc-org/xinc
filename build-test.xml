@@ -90,7 +90,7 @@
 	        <includepath classpath="test/classes" /> 
 		
 	    	
-		<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+		<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed" failureproperty="test-failed">
 	      		<batchtest>
 	      			<fileset refid="xinc-test-setup"/>
 	        		<fileset refid="xinc-core-tests"/>
@@ -111,7 +111,7 @@
   	<target name="test-core" depends="prepare">
     	<includepath classpath="classes" /> 
         <includepath classpath="test/classes" /> 
-    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed" failureproperty="test-failed">
       		<batchtest>
         		<fileset refid="xinc-core-tests"/>
     	    </batchtest>
@@ -122,7 +122,7 @@
   	<target name="test-publishers" depends="prepare">
     	<includepath classpath="classes" /> 
         <includepath classpath="test/classes" /> 
-    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed" failureproperty="test-failed">
       		<batchtest>
         		<fileset refid="xinc-publisher-tests"/>
     	    </batchtest>
@@ -133,7 +133,7 @@
 	<target name="test-modificationsets" depends="prepare">
 	    	<includepath classpath="classes" /> 
 	        <includepath classpath="test/classes" /> 
-	    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+	    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed" failureproperty="test-failed">
 	      		<batchtest>
 	        		<fileset refid="xinc-modificationset-tests"/>
 	    	    </batchtest>
@@ -144,7 +144,7 @@
 	<target name="test-builders" depends="prepare">
     	<includepath classpath="classes" /> 
         <includepath classpath="test/classes" /> 
-    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed">
+    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed" failureproperty="test-failed">
       		<batchtest>
         		<fileset refid="xinc-builder-tests"/>
     	    </batchtest>
