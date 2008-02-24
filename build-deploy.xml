@@ -6,10 +6,15 @@
 	<!-- Calls the install script and then restarts xinc -->
   	</target>
 	<target name="install">
-		<exec command="./install.sh --non-interactive" dir="${project.basedir}" checkreturn="true"/>
+		<!--
+		<exec command="./install.sh - -non-interactive" dir="${project.basedir}" checkreturn="true"/>
+		-->
+		
+		<exec command="pear upgrade ${project.basedir}/pear/build/${pkg.prefix}-${pkg.version}b${xinc.build.number}.tgz" dir="${project.basedir}" checkreturn="true"/>
 	</target>
 	
-	<target name="restart">
+	<target name="restart"> 
+		
 		<!-- Sleeping 15seconds before restarting, will give us enough time to publish the artifacts-->
 		<exec command="/etc/init.d/xinc restart" spawn="true" dir="${project.basedir}"/>
 	</target>
