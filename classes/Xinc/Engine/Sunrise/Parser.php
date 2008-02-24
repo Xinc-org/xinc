@@ -77,6 +77,7 @@ class Xinc_Engine_Sunrise_Parser
                 
                 $build = Xinc_Build::unserialize($project);
                 $build->setBuildTime(null);
+                $build->setConfigDirective('loglevel',null);
                 
                 
                 
