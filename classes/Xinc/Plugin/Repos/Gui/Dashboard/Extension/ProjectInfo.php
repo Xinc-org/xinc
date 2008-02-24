@@ -23,6 +23,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension.php';
 
 abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo extends Xinc_Plugin_Repos_Gui_Dashboard_Extension

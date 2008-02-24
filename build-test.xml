@@ -78,14 +78,16 @@
 		  		</coverage-report>
 		
 	</target>
-
-	<target name="test-all" depends="prepare,coverage-setup">
+<target name="lintcheck">
+	<phplint haltonfailure="true">
+	                                <fileset refid="xinc-all-classes"/>
+	                                
+	        </phplint>
+	</target>
+	<target name="test-all" depends="lintcheck,prepare,coverage-setup">
 	    	<includepath classpath="classes" /> 
 	        <includepath classpath="test/classes" /> 
-		<!--<phplint haltonfailure="true">
-			                    <fileset refid="xinc-all-classes"/>
-			                    
-		</phplint>-->
+		
 	    	
 		<phpunit3 codecoverage="true" printsummary="true" haltonerror="false" haltonfailure="true" errorproperty="test-failed">
 	      		<batchtest>

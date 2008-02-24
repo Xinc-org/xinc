@@ -28,32 +28,61 @@ require_once 'Xinc/Plugin/Repos/Publisher/Email/Task.php';
 class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
 {
     
-   
+    private function _sendPearMail($from, $to, $subject, $message)
+    {
+        require_once 'Xinc/Ini.php';
+        $smtpSettings = Xinc_Ini::getInstance()->get('email_smtp');
+        if ($smtpSettings != null) {
+            $mailer = Mail::factory('smtp', $smtpSettings);
+        } else {
+            $mailer = Mail::factory('mail');
+        }
+        $recipients = split(',', $to);
+        $headers = array();
+        $headers['From'] = $from;
+        $headers['Subject'] = $subject;
+        $res = $mailer->send($recipients, $headers, $message);
+        if ($res === true) {
+            return $res;
+        } else {
+            return false;
+        }
+    }
+    
     public function validate()
     {
-       
+        
         return true;
     }
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_Publisher_Email_Task($this));
     }
-    public function email(Xinc_Project &$project,$to,$subject,$message)
+    public function email(Xinc_Project &$project,$to,$subject,$message, $from = 'Xinc')
     {
         $project->info('Executing email publisher with content ' 
                       ."\nTo: " . $to
                       ."\nSubject: " . $subject
-                      ."\nMessage: " . $message);
+                      ."\nMessage: " . $message
+                      ."\nFrom: " . $from);
 
         /** send the email */
-        $res = mail($to, $subject, $message);
-        if ($res) {
-            $project->info('Email sent successfully');
-            return true;
+        
+        include_once 'Mail.php';
+        
+        if (class_exists('Mail')) {
+            return $this->_sendPearMail($from, $to, $subject, $message);
         } else {
-            $project->error('Email could not be sent');
-            return false;
-            //$project->setStatus(Xinc_Build_Interface::FAILED);
+            
+            $res = mail($to, $subject, $message, array('From'=>$from));
+            if ($res) {
+                $project->info('Email sent successfully');
+                return true;
+            } else {
+                $project->error('Email could not be sent');
+                return false;
+                //$project->setStatus(Xinc_Build_Interface::FAILED);
+            }
         }
     }
 }

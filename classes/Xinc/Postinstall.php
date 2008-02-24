@@ -109,13 +109,24 @@ class Xinc_Postinstall_postinstall
         $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
         $binDir = PEAR_Config::singleton()->get('bin_dir');
         
+        include_once $pearPhpDir . '/Xinc/Ini.php';
+        if (class_exists('Xinc_Ini')) {
+            $xincIni = Xinc_Ini::getInstance();
+        } else {
+            $this->_ui->outputData('Cannot initialize Xinc_Ini class');
+            return false;
+        }
+        
         switch($phase) {
             
             case 'daemoninstall':
                 $etcDir = $answers['etc_dir'];
+                $xincIni->set('etc', $etcDir, 'xinc');
                 $etcConfDir = $etcDir . DIRECTORY_SEPARATOR . 'conf.d';
+                
                 $this->_createDir($etcDir, 0655);
                 $this->_createDir($etcConfDir, 0655);
+                $xincIni->set('etc_conf_d', $etcConfDir, 'xinc');
                 
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
                                  . 'xinc' . DIRECTORY_SEPARATOR . '*', $etcDir);
@@ -123,7 +134,10 @@ class Xinc_Postinstall_postinstall
                 $xincDir = $answers['xinc_dir'];
                 $dataDir = $xincDir . DIRECTORY_SEPARATOR . 'projects';
                 $statusDir = $xincDir . DIRECTORY_SEPARATOR . 'status';
-                
+                $this->_createDir($etcConfDir, 0655);
+                $xincIni->set('dir', $xincDir, 'xinc');
+                $xincIni->set('status_dir', $statusDir, 'xinc');
+                $xincIni->set('project_dir', $dataDir, 'xinc');
                 $this->_createDir($xincDir, 0655);
                 $this->_createDir($dataDir, 0655);
                 $this->_createDir($statusDir, 0655);
@@ -139,6 +153,8 @@ class Xinc_Postinstall_postinstall
                 $logDir = $answers['log_dir'];
                 $xinclogDir = $logDir . DIRECTORY_SEPARATOR . 'xinc';
                 $this->_createDir($logDir, 0655);
+                
+                $xincIni->set('log_dir', $logDir, 'xinc');
                 
                 if ($installExamples) {
                     $res = $this->_execCmd('cat '.$dataDir . '/SimpleProject/build.tpl.xml | sed -e "s#@EXAMPLE_DIR@#' 
@@ -156,8 +172,11 @@ class Xinc_Postinstall_postinstall
                 }
                 //exec($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'pear-install.sh');
                 $wwwDir = $answers['www_dir'];
+                $xincIni->set('www_dir', $wwwDir, 'xinc');
                 $wwwPort = $answers['www_port'];
+                $xincIni->set('www_port', $wwwPort, 'xinc');
                 $wwwIp =  $answers['www_ip'];
+                $xincIni->set('www_ip', $wwwIp, 'xinc');
                 $this->_createDir($wwwDir, 0755);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '.htaccess', $wwwDir);
@@ -175,12 +194,12 @@ class Xinc_Postinstall_postinstall
                 $this->_uninstallFiles[] = $etcDir . '/www.conf';
                 $this->_undoTasks[] = 'rm -Rf ' . $etcDir . '/www.conf';
                 
-                $this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR
-                               . 'web/handler.php.tpl | sed -e "s#@STATUSDIR@#'
-                               . $statusDir . '#" | sed -e "s#@ETC@#'.$etcDir.'#" > '.$wwwDir.'/handler.php');
+                //$this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR
+                //               . 'web/handler.php.tpl | sed -e "s#@STATUSDIR@#'
+                //               . $statusDir . '#" | sed -e "s#@ETC@#'.$etcDir.'#" > '.$wwwDir.'/handler.php');
                 
-                $this->_undoTasks[] = 'rm -Rf ' . $wwwDir . '/handler.php';
-                $this->_uninstallFiles[] = $wwwDir . '/handler.php';
+                //$this->_undoTasks[] = 'rm -Rf ' . $wwwDir . '/handler.php';
+                //$this->_uninstallFiles[] = $wwwDir . '/handler.php';
                 
                 $this->_execCmd('cat ' . $pearDataDir . '/etc/init.d/xinc | sed -e "s#@ETC@#' . $etcDir
                                . '#" | sed -e "s#@LOG@#'.$logDir.'#" | sed -e "s#@STATUSDIR@#'. $statusDir
@@ -202,6 +221,7 @@ class Xinc_Postinstall_postinstall
                  * Handle uninstall info, write uninstall.ini into data dir
                  */
                 $this->_createUninstallInfo();
+                $xincIni->save();
                 
                 break;
             case '_undoOnError' :
