@@ -4,15 +4,14 @@
 	using PEAR and creates the TAR and TGZ files.
 -->	
 <project name="phing" basedir="." default="main">
-	
 	<property name="phingpkg.home" value=".."/>
 	<property name="build.base.dir" value="build"/>
 	<property name="pkgname" value="Xinc-${version}"/>		
 	<property name="build.src.dir" value="${build.base.dir}/${pkgname}"/>
 	
 	<!-- some default properties -->
-	<property name="notes">This is the latest release of Xinc.</property>
-	<property name="state" value="beta"/>
+	<property name="notes"  override="true">This is the latest release of Xinc.</property>
+	<property name="state" value="beta" override="true"/>
 	
 	<taskdef
     name="pear-package"
