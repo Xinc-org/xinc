@@ -33,7 +33,7 @@
 		  
 			<phing phingfile="build.xml" dir="pear">
 				<property name="version" value="${xinc.branch.name}dev${xinc.build.number}"/>
-				<property name="state" location="${xinc.pkg.stability}"/>
+				<property name="state" value="${xinc.pkg.stability}"/>
 			</phing>
 
 		</target>
