@@ -33,7 +33,7 @@
 		  
 			<phing phingfile="build.xml" dir="pear">
 				<property name="version" value="${pkg.version}${xinc.build.number}"/>
-				<property name="state" value="beta"/>
+				<property name="state" value="${xinc.package.state}"/>
 			</phing>
 
 		</target>
