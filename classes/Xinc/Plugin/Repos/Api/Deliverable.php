@@ -134,7 +134,10 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
             /**$build = Xinc_Build::unserialize($project,
                                                  $buildTime,
                                                  Xinc_Gui_Handler::getInstance()->getStatusDir());*/
-            if ($buildTime == 'latest') {
+            if ($buildTime == 'latest-successful') {
+                $build = Xinc_Build_Repository::getLastSuccessfulBuild($project);
+                $statusDir = Xinc_Build_History::getLastSuccessfulBuildDir($project);
+            } else if ($buildTime == 'latest') {
                 $build = Xinc_Build_Repository::getLastBuild($project);
                 $statusDir = Xinc_Build_History::getLastBuildDir($project);
             } else {

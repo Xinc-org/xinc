@@ -234,6 +234,17 @@ class Xinc_Build_History
         $buildFile = self::getLastBuildFile($project);
         return dirname($buildFile);
     }
+    
+    /**
+     *
+     * @param Xinc_Project $project
+     * @return string
+     */
+    public static function getLastSuccessfulBuildDir(Xinc_Project &$project)
+    {
+        $buildFile = self::getLastSuccessfulBuildFile($project);
+        return dirname($buildFile);
+    }
     /**
      * Finds the last build time of a project
      *

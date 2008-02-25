@@ -52,6 +52,9 @@ stop_daemon="killall xinc;"
 stop_daemon_end="rm $PIDFILE"
 stop_daemon_options=""
 
+restart_daemon="touch $SHUTDOWN_FILE";
+restart_daemon_wait="sleep 1s"
+
 logend2=""
 if [ ! -r "$STATUS" ]; then
     mkdir $STATUS
@@ -87,8 +90,24 @@ if [ -r /etc/init.d/functions ]; then
     
 fi;
 
-restart_daemon="touch $SHUTDOWN_FILE";
-restart_daemon_wait="sleep 1s"
+if [ -r /etc/rc.d/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+    logline="echo"
+    logbegin="echo -n"
+    logend="echo"
+    PIDFILE=/var/run/xinc.pid
+    start_daemon="daemon"
+    start_daemon_options=""
+    start_daemon_end="&"
+    
+    stop_daemon="killproc $DAEMON"
+    stop_daemon_options=""
+    stop_daemon_end=""
+    
+    OPTIONS="--pid-file=/var/run/xinc.pid $OPTIONS"
+fi;
+
+
 
 if [ -x /sbin/start-stop-daemon ]; then
   start_daemon="start-stop-daemon"

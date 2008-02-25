@@ -7,7 +7,7 @@
     <setting name="timezone" value="US/Eastern"/>
     </configuration>
     <property name="dir" value="@EXAMPLE_DIR@/SimpleProject/"/>
-    	<schedule interval="30"/>
+    	<cron timer="*/4 * * * *"/>
         <modificationset>
             <buildalways/>
         </modificationset>

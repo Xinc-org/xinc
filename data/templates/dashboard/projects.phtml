@@ -97,17 +97,22 @@ $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
 </div>
 </div>
 <script>
+var loaded=false;
 function refreshMainPanel()
 {
 Ext.getCmp('widget-dashboard').load({url: '/dashboard/projects', scripts: true, nocache:true, timeout:30});
+loaded=true;
 }
-var urlParts = window.location.href.split('#');
+if (!loaded) {
+var urlParts = window.location.href.split('#project:');
 var loadProject = null;
 if (urlParts.length>1) {
     loadProject = urlParts[1];
     if (projects[loadProject] != null) {
         openTab(loadProject, projects[loadProject][0], projects[loadProject][1]);
     }
+}
+
 }
 setTimeout('refreshMainPanel()',60000);
 </script>
