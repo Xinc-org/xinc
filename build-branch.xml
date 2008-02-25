@@ -2,7 +2,7 @@
 <project name="Xinc Build File" basedir="." default="build">
 	<property file="xinc.properties" />
 
-	<target name="build" depends="doc, pear, deploy">
+	<target name="build" depends="doc, pear">
 
 		<echo message="starting build process... passing.." />
 	</target>
