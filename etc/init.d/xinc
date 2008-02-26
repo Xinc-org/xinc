@@ -60,17 +60,17 @@ if [ ! -r "$STATUS" ]; then
     mkdir $STATUS
 fi
 #. /etc/rc.d/init.d/functions
-if [ -r /lib/lsb/init-functions ]; then
- . /lib/lsb/init-functions
- #logbegin="log_begin_msg"
- #logend="log_end_msg"
+#if [ -r /lib/lsb/init-functions ]; then
+# . /lib/lsb/init-functions
+# #logbegin="log_begin_msg"
+# #logend="log_end_msg"
+# logbegin="echo -n"
+# logend=`printf "echo .\n"`
+#
+#else
  logbegin="echo -n"
  logend=`printf "echo .\n"`
-
-else
- logbegin="echo -n"
- logend=`printf "echo .\n"`
-fi
+#fi
 
 if [ -r /etc/init.d/functions ]; then
     . /etc/init.d/functions
@@ -154,7 +154,7 @@ start_xinc() {
      
     else
      #$logbegin "$start_daemon $start_daemon_options $DAEMON -- $OPTIONS $daemon_end"
-     $start_daemon $start_daemon_options $DAEMON -- $OPTIONS $start_daemon_end
+     $start_daemon $start_daemon_options $DAEMON $OPTIONS $start_daemon_end
      $logend
      
     fi

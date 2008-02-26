@@ -71,10 +71,6 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
         $this->_timer = $timer;
     }
 
-    public function getInterval()
-    {
-        return $this->_interval;
-    }
 
     public function registerTask(Xinc_Plugin_Task_Interface &$task)
     {
@@ -99,18 +95,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
         //var_dump($build);
         $lastBuild = $build->getLastBuild()->getBuildTime();
 
-        if ($lastBuild != null ) {
-            $nextBuild = $this->getInterval() + $lastBuild;
-            /**
-             * Make sure that we dont rerun every build if the daemon was paused
-             */
-            //echo time(). ' - ' . $lastBuild .'='.(time()-$lastBuild)."\n";
-            if ($nextBuild + $this->getInterval() < time()) {
-
-                $nextBuild = time();
-            }
-        } else {
-            // never ran, schedule for now
+        if ($lastBuild == null ) {
             $lastBuild = 0;
         }
         //$nextBuild = $this->getLastScheduledRunTime($this->_timer . ' test',$lastBuild);
@@ -204,8 +189,12 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
                 } elseif ($matches[4]=="") {
                     $matches[4] = $matches[2];
                 }
-                if ($matches[5][0]!="/") {
-                    $matches[6] = 1;        // step
+                if (isset($matches[5])) {
+                    if ($matches[5][0]!="/") {
+                        $matches[6] = 1;        // step
+                    }
+                } else {
+                    $matches[6] = 1;
                 }
                 for ($j=$this->lTrimZeros($matches[2]);$j<=$this->lTrimZeros($matches[4]);$j+=$this->lTrimZeros($matches[6])) {
                     $targetArray[$j] = TRUE;
