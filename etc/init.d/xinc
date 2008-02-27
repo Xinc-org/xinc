@@ -111,6 +111,7 @@ fi;
 
 if [ -x /sbin/start-stop-daemon ]; then
   start_daemon="start-stop-daemon"
+  DAEMON="$DAEMON --"
   start_daemon_options=" --pidfile $PIDFILE --start --background --exec" 
   start_daemon_end=""
   
