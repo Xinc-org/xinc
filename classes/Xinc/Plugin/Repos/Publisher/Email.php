@@ -68,13 +68,13 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
 
         /** send the email */
         
-        include_once 'Mail.php';
+        @include_once 'Mail.php';
         
         if (class_exists('Mail')) {
             return $this->_sendPearMail($from, $to, $subject, $message);
         } else {
             
-            $res = mail($to, $subject, $message, array('From'=>$from));
+            $res = mail($to, $subject, $message, "From: $from\r\n");
             if ($res) {
                 $project->info('Email sent successfully');
                 return true;
