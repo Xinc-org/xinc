@@ -68,7 +68,7 @@ class Xinc_TestBuild extends Xinc_BaseTest
         $actual = $build->getNextBuildTime();
         $now = time();
         
-        $this->assertTrue($now, $actual,
+        $this->assertEquals($now, $actual,
                             'Next Buildtimestamps should be equal to the current time');
         
         $buildTimestamp = $now;
