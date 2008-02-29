@@ -94,30 +94,51 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
             chdir($workingDir);
         }
         
-        //$arguments[] = '-quiet';
-        //$arguments[] = '-listener';
-        //$arguments[] = 'Xinc.Plugin.Repos.Phing.Listener';
+        $logFile = getcwd() . DIRECTORY_SEPARATOR . md5($build->getProject()->getName() . time()) . '.log';
+        if (file_exists($logFile)) {
+            unlink($logFile);
+        }
         $arguments[] = '-logger';
-        $arguments[] = 'phing.listener.DefaultLogger';
+        //$arguments[] = 'phing.listener.DefaultLogger';
+        $arguments[] = 'phing.listener.NoBannerLogger';
+        $arguments[] = '-logfile';
+        $arguments[] = $logFile;
         $arguments[] = '-buildfile';
         $arguments[] = $buildfile;
         $arguments[] = $target;
         $arguments[] = '-Dxinc.buildlabel=' . $this->_encodeParam($build->getLabel());
         $arguments[] = '-Dprojectname=' . $this->_encodeParam($build->getProject()->getName());
         $arguments[] = '-Dcctimestamp=' . $this->_encodeParam($build->getBuildTime());
+        
         foreach ($build->getProperties()->getAllProperties() as $name => $value) {
             $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
+        
+        
         exec('phing ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . '2>&1', $output, $returnValue);
+
         chdir($oldPwd);
-        foreach ($output as $line) {
-            Xinc_Logger::getInstance()->info($line);
+        
+        $buildSuccess = false;
+        
+        if (file_exists($logFile)) {
+            $fh = fopen($logFile, 'r');
+            if (is_resource($fh)) {
+                while ($line = fgets($fh)) {
+                    Xinc_Logger::getInstance()->info($line);
+                    if (strstr($line, "BUILD FINISHED")) {
+                        $buildSuccess = true;
+                    }
+                }
+                fclose($fh);
+            }
+            unlink($logFile);
         }
         
         switch ($returnValue) {
             case 0:
             case 1:
-                if (strstr(implode('', $output), "BUILD FINISHED")) {
+                if ($buildSuccess) {
                     return true;
                 } else {
                     $build->setStatus(Xinc_Build_Interface::FAILED);

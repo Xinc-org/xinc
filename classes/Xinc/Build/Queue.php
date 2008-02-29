@@ -156,32 +156,6 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
             }
         }
         return null;
-        
-        
-        $now = time();
-        $nextBuildTime = $now;
-        $nextBuild = null;
-        /**
-         * Xinc_Build_Interface
-         */
-        $build = null;
-        while ($this->_builds->hasNext()) {
-            $build = $this->_builds->next();
-        
-            if ($build->getNextBuildTime() <= $now && 
-                $build->getNextBuildTime() <= $nextBuildTime &&
-                $build->getNextBuildTime() != null &&
-                $build->getStatus() != Xinc_Build_Interface::STOPPED &&
-                ($this->_builds->count()>1 && $build != $this->_lastBuild)) {
-                    
-                $nextBuildTime = $build->getNextBuildTime();
-                $nextBuild = $build;
-                $this->_lastBuild = $build;
-            }
-        }
-        
-        $this->_builds->rewind();
-        return $nextBuild;
     }
    
 }

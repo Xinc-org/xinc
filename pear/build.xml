@@ -30,6 +30,7 @@
 	<fileset dir="${build.src.dir}/" id="data2">
 					<include name="scripts/**"/>
 		<include name="templates/**"/>
+		<include name="xinc.ini"/>
 			</fileset>
 	<fileset dir="${build.src.dir}/" id="web2">
 				<include name="web/**"/>
