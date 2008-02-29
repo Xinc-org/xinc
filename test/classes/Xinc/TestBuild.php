@@ -65,13 +65,13 @@ class Xinc_TestBuild extends Xinc_BaseTest
         $this->assertEquals($engine, $build->getEngine(), 'Engine should be the same');
         
         
-
+        $actual = $build->getNextBuildTime();
+        $now = time();
         
-        
-        $this->assertEquals(time(), $build->getNextBuildTime(),
+        $this->assertTrue($now, $actual,
                             'Next Buildtimestamps should be equal to the current time');
         
-        $buildTimestamp = time();
+        $buildTimestamp = $now;
         $build->setBuildTime($buildTimestamp);
         
         $build->setStatus(Xinc_Build_Interface::PASSED);
