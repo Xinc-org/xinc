@@ -143,12 +143,20 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
                 $dateArr["wday"]-=7;
             }
 
-            $months28 = Array(2);
+            
             $months30 = Array(4,6,9,11);
             $months31 = Array(1,3,5,7,8,10,12);
-
+            
+            if (date('L') == 1) {
+                $months28 = array();
+                $months29 = array(2);
+            } else {
+                $months28 = array(2);
+                $months29 = array();
+            }
             if (
             (in_array($dateArr["mon"], $months28) && $dateArr["mday"]==28) ||
+            (in_array($dateArr["mon"], $months29) && $dateArr["mday"]==29) ||
             (in_array($dateArr["mon"], $months30) && $dateArr["mday"]==30) ||
             (in_array($dateArr["mon"], $months31) && $dateArr["mday"]==31)
             ) {
@@ -205,6 +213,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
     public function getTimeFromCron($last)
     {
         if (preg_match("~^([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-7,/*]+|(-|/|Sun|Mon|Tue|Wed|Thu|Fri|Sat)+)\\s+([^#]*)\\s*(#.*)?$~i",$this->_timer . ' test',$job)) {
+            
             return $this->getLastScheduledRunTime($job, $last+60);
         } else {
             return false;
