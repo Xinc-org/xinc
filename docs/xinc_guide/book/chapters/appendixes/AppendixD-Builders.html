@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Xinc Guide - Builders</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="Stylesheet" rev="Stylesheet" href="../../css/Documentation.css" type="text/css" media="All" charset="iso-8859-1" />
+</head>
+<body>
+<h1><a name="AppendixB"></a>Appendix D: Builders</h1>
+
+<p>
+This appendix contains a reference of all builder tasks, i.e. all
+tasks that can run build scripts. At the moment Xinc uses only a Phing implementation.
+</p>
+<h2><a name="PhingbuilderTask"></a>&lt;phingbuilder/&gt;</h2>
+<p></p>
+<h3>Parent Tags</h3>
+<ul>
+  <li>&lt;<a href="AppendixB-CoreTasks.html#BuildersTask">builders</a>/&gt;</li>
+</ul>
+<pre title="Example of how to use PhingbuilderTask">
+&lt;project name=&quot;ProjectName&quot;&gt;
+...
+    &lt;<a href="AppendixB-CoreTasks.html#BuildersTask">builders</a>&gt;
+        &lt;phingbuilder buildfile=&quot;build.xml&quot; target=&quot;main&quot;/&gt;
+    &lt;/builders&gt;
+...
+&lt;/project&gt;
+</pre>
+<p>
+The above example will execute the Phing buildscript "build.xml" and call the target "main".
+</p>
+<h3>Parameters</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>buildfile</td>
+      <td>String</td>
+      <td>Filename of the Phing buildfile</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+     <tr>
+      <td>target</td>
+      <td>String</td>
+      <td>Target inside the Phing buildscript which shall be called</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>params</td>
+      <td>String</td>
+      <td>Extra parameters which will be passed to phing when executing it from the command line</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>workingdir</td>
+      <td>String</td>
+      <td>Setting the working directory before executing Phing</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<p>
+<strong>
+All Properties that are available in Xinc will be passed to the Phing buildscript with the prefix "xinc.".
+<br/>
+<p><strong>Example:</strong><br/>
+build.number => xinc.build.number
+</p>
+
+</strong>
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

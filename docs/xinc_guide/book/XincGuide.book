@@ -1,0 +1,11 @@
+#HTMLDOC
+--titleimage book/frame/TitlePage.html --logoimage book/images/logo-pdfsm.png --header "l.." --tocheader "l.." --footer "1 D" --linkcolor 003366 --linkstyle plain --jpeg=90
+chapters/AboutThisBook.html
+chapters/Introduction.html
+chapters/Setup.html
+chapters/GettingStarted.html
+chapters/appendixes/AppendixA-FactSheet.html
+chapters/appendixes/AppendixB-CoreTasks.html
+chapters/appendixes/AppendixC-ModificationSet.html
+chapters/appendixes/AppendixD-Builders.html
+chapters/appendixes/AppendixE-Publishers.html

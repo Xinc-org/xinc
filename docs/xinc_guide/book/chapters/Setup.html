@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Xinc Guide - Setup</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css" type="text/css" media="All" charset="iso-8859-1" />
+  </head>
+  <body>
+
+<h1><a name="SettingUpXinc"></a>Setting-Up Xinc</h1>
+
+<p>The goal of this chapter is to help you obtain and correctly setup and execute
+  Xinc on your operating system. Once you setup Xinc properly you shouldn't
+  need to revisit this chapter, unless you're re-installing or moving your installation
+  to another platform.</p>
+
+<h2><a name="SystemRequirements"></a>System Requirements</h2>
+
+<p> Xinc requires PHP 5.0.3+ to be installed as well as PEAR 1.4.0+</p>
+
+
+<h3><a name="OperatingSystems"></a>Operating Systems</h3>
+
+<p>Xinc is supposed to work with *nix as well as Windows systems.</p>
+<p>However the Windows support is not the main focus of the current development.
+If you detect windows specific bugs, please <a href="http://code.google.com/p/xinc/issues/entry"> report them.</a>
+</p>
+<p>Xinc is developed on Ubuntu 7.10 and being tested on Fedora 7.</p>
+
+<h3><a name="SoftwareDependencies"></a>Software Dependencies</h3>
+
+<p>For a detailed list of required sofware and libraries, refer to
+the following table of Software dependencies</p>
+
+<table>
+  <caption>
+  Software Dependencies
+  </caption>
+  <thead>
+    <tr>
+      <th>Software</th>
+      <th>Required for</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PHP 5.0.3+</td>
+      <td>Execution</td>
+      <td><a href="http://www.php.net">http://www.php.net</a></td>
+    </tr>
+    <tr>
+      <td>VersionControl_SVN 0.3.0alpha1+</td>
+      <td>Execution</td>
+      <td><a href="http://pear.php.net/package/VersionControl_SVN">http://pear.php.net/package/VersionControl_SVN</a></td>
+    </tr>
+    <tr>
+      <td>Phing 2.3.0</td>
+      <td>Execution</td>
+      <td><a href="http://www.phing.info">http://www.phing.info</a></td>
+    </tr>
+    <tr>
+      <td>PhpUnit2 3.2.0+</td>
+      <td>Additional functionality</td>
+      <td><a href="http://www.phpunit.de">http://www.phpunit.de</a></td>
+    </tr>
+    <tr>
+      <td>PhpDocumentor 1.3.0RC3+</td>
+      <td>Additional functionality</td>
+      <td><a href="http://www.phpdoc.org">http://www.phpdoc.org</a></td>
+    </tr>
+    <tr>
+      <td>Xdebug 2.0.0+</td>
+      <td>Additional functionality</td>
+      <td><a href="http://www.xdebug.org">http://www.xdebug.org</a></td>
+    </tr>
+    <tr>
+      <td>PhpDocumentor 1.3.0RC3+</td>
+      <td>Additional functionality</td>
+      <td><a href="http://www.phpdoc.org">http://www.phpdoc.org</a></td>
+    </tr>
+    <!-- Zend Optimizer etc. could be added here... -->
+  </tbody>
+</table>
+
+<h2><a name="ObtainingXinc"></a>Obtaining Xinc</h2>
+
+<p> Xinc is free software distributed under the terms of the LGPL.</p>
+
+<h3><a name="DistributionFiles"></a>Distribution Files</h3>
+
+<p>Xinc is obtainable through a pear channel or directly from <a href="http://xinc.eu/#project:xinc-dev">xinc.eu</a></p>
+
+<h2><a name="Setup.PearInstall"></a>PEAR Install</h2>
+<p>You can install Xinc through a pear package in two ways:
+<pre>
+pear channel-discover pear.xinc.eu
+pear install xinc/Xinc
+</pre>
+<p><strong>-OR-</strong></p>
+<pre>
+pear channel-discover pear.xinc.eu
+pear install http://xinc.eu/api/deliverable/get/download/xinc-dev/latest-successful/Xinc-Latest-Dev-2.0.1.tgz
+</pre>
+
+
+<h2><a name="Setup.Configure"></a>Post Installation Configuration</h2>
+
+<p>To get xinc ready for execution you need to run a configuration script:</p>
+<pre>
+pear run-scripts xinc/Xinc
+</pre>
+<p>
+This script will configure special directories as needed by Xinc as well as set up your 
+Xinc Web Interface.
+</p>
+
+<h2><a name="RunningXinc"></a>Running Xinc</h2>
+
+<p>After configuration you are ready to execute the Xinc daemon</p>
+
+<h3><a name="Nix"></a>Execution on *nix systems</h3>
+
+<p>Xinc comes with an init-script, which is known to work with Ubuntu / Debian / Fedora.</p>
+
+<pre>
+$ /etc/init.d/xinc start
+</pre>
+<p><strong>-OR-</strong></p>
+<pre>
+$ service xinc start
+</pre>
+<p>
+<strong>
+If you detect that the daemon script is not working properly on your system and you
+would like to contribute a working init script, submit a <a href="http://code.google.com/p/xinc/issues/entry">ticket.</a>
+</strong>
+</p>
+<p>You can execute Xinc in run-once mode as well as start it in the foreground.
+For Command Line Arguments see
+<a href="appendixes/AppendixA-FactSheet.html#CommandLineArguments">Appendix A</a>.
+</p>
+
+  </body>
+</html>
+
