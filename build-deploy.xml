@@ -11,7 +11,7 @@
 		-->
 		
 		<exec command="pear upgrade ${project.basedir}/pear/build/${pkg.prefix}-${pkg.version}${xinc.build.number}.tgz" dir="${project.basedir}" checkreturn="true"/>
-		
+		<exec command="xinc-settings set googleanalytics trackerCode UA-1346205-4"/>
 	</target>
 	
 	<target name="restart"> 
