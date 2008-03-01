@@ -92,6 +92,8 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
             preg_match('/^.*?.tar$/', $fileName) ||  
             preg_match('/^.*?.tgz$/', $fileName)) {
             return 'application/x-gzip';
+        } else if (preg_match('/.*?\.css/', $fileName)) {
+            return "text/css";
         }
         /**if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
