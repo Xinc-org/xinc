@@ -27,7 +27,7 @@ require_once 'Xinc/Plugin/Repos/Builder/AbstractTask.php';
 class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_AbstractTask
 {
     private $_buildFile = 'build.xml';
-    private $_target = 'build';
+    private $_target;
     private $_workingDir = null;
     
     private $_params = null;

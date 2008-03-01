@@ -105,7 +105,9 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         $arguments[] = $logFile;
         $arguments[] = '-buildfile';
         $arguments[] = $buildfile;
-        $arguments[] = $target;
+        if ($target != null) {
+            $arguments[] = $target;
+        }
         $arguments[] = '-Dxinc.buildlabel=' . $this->_encodeParam($build->getLabel());
         $arguments[] = '-Dprojectname=' . $this->_encodeParam($build->getProject()->getName());
         $arguments[] = '-Dcctimestamp=' . $this->_encodeParam($build->getBuildTime());
