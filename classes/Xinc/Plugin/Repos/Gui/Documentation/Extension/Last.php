@@ -25,13 +25,13 @@
 
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension/ProjectInfo.php';
 
-class Xinc_Plugin_Repos_Gui_Deliverable_Extension_Last
+class Xinc_Plugin_Repos_Gui_Documentation_Extension_Last
 extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
 {
 
     public function getTitle()
     {
-        return 'Deliverables';
+        return 'Documentation';
     }
     public function getContent(Xinc_Build_Interface &$build)
     {
@@ -43,26 +43,23 @@ extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
                                                                            . DIRECTORY_SEPARATOR
                                                                            . 'extension'
                                                                            . DIRECTORY_SEPARATOR
-                                                                           . 'deliverable-link.phtml');
+                                                                           . 'documentation-link.phtml');
         $deliverableLinkTemplate = file_get_contents($deliverableLinkTemplateFile);
-        $getDeliverableUrl = '/api/deliverable/get/download/' 
+        $getDeliverableUrl = '/api/documentation/get/file/' 
                            . $build->getProject()->getName()
                            . '/' . $build->getBuildTime() . '/';
         $deliverableLinks = array();
-        $deliverables = $build->getInternalProperties()->get('deliverables');
-        if (!isset($deliverables['deliverables'])) {
+        $docs = $build->getInternalProperties()->get('documentation');
+        if (!is_array($docs)) {
             return false;
         }
         
-        foreach ($deliverables['deliverables'] as $fileName => $fileLocation) {
-            $publicName = $fileName;
-            foreach ($deliverables['aliases'] as $alias => $realName) {
-                if ($realName == $publicName) {
-                    $publicName = $alias;
-                    break;
-                }
-            }
-            $link = $getDeliverableUrl . $publicName;
+        foreach ($docs as $alias => $array) {
+            $publicName = $alias;
+            $dirName = dirname($array['file']);
+            $indexFile = str_replace($dirName, '', $array['index']);
+            $link = $getDeliverableUrl . $publicName . '/' . $indexFile;
+            $link = preg_replace('/\/+/','/', $link);
             $deliverableLinks[] = call_user_func_array('sprintf', array($deliverableLinkTemplate,
                                                                             $link, $publicName));
         }

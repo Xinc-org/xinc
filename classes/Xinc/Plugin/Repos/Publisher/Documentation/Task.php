@@ -22,42 +22,40 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
+require_once 'Xinc/Plugin/Repos/Publisher/Deliverable/Task.php';
 
-class Xinc_Plugin_Repos_Publisher_Deliverable_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
+class Xinc_Plugin_Repos_Publisher_Documentation_Task extends Xinc_Plugin_Repos_Publisher_Deliverable_Task
 {
-    protected $_file;
+
     
-    protected $_alias;
-    
+    private $_index;
     
     public function getName()
     {
-        return 'deliverable';
+        return 'documentation';
     }
-    public function setFile($file)
+   
+    public function setIndex($index)
     {
-        $this->_file = $file;
+        $this->_index = $index;
     }
-    
-    public function setAlias($alias)
-    {
-        $this->_alias = $alias;
-    }
+
     
     public function validateTask()
     {
         
-        if (!isset($this->_file)) {
+        if (!isset($this->_file) || !isset($this->_index) || !isset($this->_alias)) {
             
-            Xinc_Logger::getInstance()->error('File must be specified for deliverable publisher.');
+            Xinc_Logger::getInstance()->error('File  and Index must be specified for documentation publisher.');
             return false;
         }
         return true;
     }
+    
+
 
     public function publish(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->registerDeliverable($build, $this->_file, $this->_alias);
+        return $this->_plugin->registerDocumentation($build, $this->_file, $this->_alias, $this->_index);
     }
 }

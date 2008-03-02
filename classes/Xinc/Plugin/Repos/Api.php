@@ -28,6 +28,8 @@ require_once 'Xinc/Plugin/Repos/Api/Artifacts.php';
 require_once 'Xinc/Plugin/Repos/Api/Formats.php';
 require_once 'Xinc/Plugin/Repos/Api/Projects.php';
 require_once 'Xinc/Plugin/Repos/Api/LogMessages.php';
+require_once 'Xinc/Plugin/Repos/Api/Deliverable.php';
+require_once 'Xinc/Plugin/Repos/Api/Documentation.php';
 
 
 class Xinc_Plugin_Repos_Api extends Xinc_Plugin_Base
@@ -47,6 +49,7 @@ class Xinc_Plugin_Repos_Api extends Xinc_Plugin_Base
         return array(new Xinc_Plugin_Repos_Api_Builds($this),
                      new Xinc_Plugin_Repos_Api_Artifacts($this),
                      new Xinc_Plugin_Repos_Api_Deliverable($this),
+                     new Xinc_Plugin_Repos_Api_Documentation($this),
                      new Xinc_Plugin_Repos_Api_Formats($this),
                      new Xinc_Plugin_Repos_Api_Projects($this),
                      new Xinc_Plugin_Repos_Api_LogMessages($this));
