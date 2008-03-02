@@ -77,16 +77,18 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         
         $projectDir = Xinc::getInstance()->getProjectDir();
         
+        $sourceFile = preg_replace('/\/+/', '/', $sourceFile);
+        $index = preg_replace('/\/+/', '/', $index);
         
         $subDir = $build->getStatusSubDir();
         $fullDir = self::getDocumentationDir($build);
-        $targetFile = $fullDir . DIRECTORY_SEPARATOR . basename($alias) . DIRECTORY_SEPARATOR . basename($sourceFile);
-        
+        $targetDir = $fullDir . DIRECTORY_SEPARATOR . basename($alias);
+        $targetFile = $targetDir . basename($sourceFile);
         if (!is_dir(dirname($targetFile))) {
             mkdir(dirname($targetFile), 0755, true);
         }
         
-        $targetIndexFile = dirname($targetFile) . DIRECTORY_SEPARATOR . str_replace(dirname(dirname($sourceFile)), '', $index);
+        
         /**
          * Verify that the source is in the projectdir
          */
@@ -108,9 +110,9 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         }
         if (is_dir($sourceFile)) {
             if (DIRECTORY_SEPARATOR == '\\') {
-                exec('xcopy /E /Y /I ' . $sourceFile . ' ' . $targetFile, $out, $res1);
+                exec('xcopy /E /Y /I "' . $sourceFile . '\*" ' . $targetDir, $out, $res1);
             } else {
-                exec('cp  -Rf "' . $sourceFile . '" "' . $targetFile . '"', $out, $res1);
+                exec('cp  -Rf "' . $sourceFile . '/*" "' . $targetDir . '"', $out, $res1);
             }
             $res = false;
             if ($res1==0) {
@@ -120,12 +122,16 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
                 $status = 'FAILURE';
                 $res = false;
             }
+            $targetIndexFile = $targetDir . DIRECTORY_SEPARATOR . str_replace($sourceFile, '', $index);
+            $registerFile = $targetDir;
         } else {
             $res = copy($sourceFile, $targetFile);
+            $targetIndexFile = $targetDir . DIRECTORY_SEPARATOR . str_replace(dirname($sourceFile), '', $index);
+            $registerFile = $targetFile;
         }
             if ($res) {
                 
-                chmod($targetFile, 0755);
+                chmod($targetDir, 0755);
                 $status = 'OK';
                 $docs = $build->getInternalProperties()->get('documentation');
                 if (!is_array($docs)) {
@@ -134,7 +140,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
                 $docsDir = dirname($targetFile);
                 
                 
-                $docs[$alias] = array('file'=>$targetFile, 'index'=>$targetIndexFile);
+                $docs[$alias] = array('file'=>$registerFile, 'index'=>$targetIndexFile);
                 $build->getInternalProperties()->set('documentation', $docs);
             } else {
                 $status = 'FAILURE';
