@@ -24,6 +24,7 @@
 */
 
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension/ProjectInfo.php';
+require_once 'Xinc/Plugin/Repos/Documentation.php';
 
 class Xinc_Plugin_Repos_Gui_Documentation_Extension_Last
 extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
@@ -48,6 +49,10 @@ extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
         $getDeliverableUrl = '/api/documentation/get/file/' 
                            . $build->getProject()->getName()
                            . '/' . $build->getBuildTime() . '/';
+        $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
+        $subDir = $build->getStatusSubDir();
+        $docDir = $statusDir . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Documentation::DOCUMENTATION_DIR;
+        
         $deliverableLinks = array();
         $docs = $build->getInternalProperties()->get('documentation');
         if (!is_array($docs)) {
@@ -57,7 +62,10 @@ extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
         foreach ($docs as $alias => $array) {
             $publicName = $alias;
             $dirName = dirname($array['file']);
-            $indexFile = str_replace($dirName, '', $array['index']);
+            $indexFile = preg_replace('/\/+/','/', $array['index']);
+            $myDocDir = $docDir . '/'. $publicName;
+            $myDocDir = preg_replace('/\/+/','/', $myDocDir);
+            $indexFile = str_replace($myDocDir, '', $indexFile);
             $link = $getDeliverableUrl . $publicName . '/' . $indexFile;
             $link = preg_replace('/\/+/','/', $link);
             $deliverableLinks[] = call_user_func_array('sprintf', array($deliverableLinkTemplate,

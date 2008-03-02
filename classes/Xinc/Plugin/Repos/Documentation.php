@@ -86,7 +86,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
             mkdir(dirname($targetFile), 0755, true);
         }
         
-        $targetIndexFile = dirname($targetFile) . DIRECTORY_SEPARATOR . str_replace(dirname($sourceFile), '', $index);
+        $targetIndexFile = dirname($targetFile) . DIRECTORY_SEPARATOR . str_replace(dirname(dirname($sourceFile)), '', $index);
         /**
          * Verify that the source is in the projectdir
          */
