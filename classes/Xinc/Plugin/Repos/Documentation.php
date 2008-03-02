@@ -80,12 +80,15 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         $sourceFile = preg_replace('/\/+/', '/', $sourceFile);
         $index = preg_replace('/\/+/', '/', $index);
         
+        
+        $relativeIndex = str_replace($sourceFile, '', $index);
+        
         $subDir = $build->getStatusSubDir();
         $fullDir = self::getDocumentationDir($build);
         $targetDir = $fullDir . DIRECTORY_SEPARATOR . basename($alias);
-        $targetFile = $targetDir . basename($sourceFile);
-        if (!is_dir(dirname($targetFile))) {
-            mkdir(dirname($targetFile), 0755, true);
+        $targetFile = $targetDir . DIRECTORY_SEPARATOR . basename($sourceFile);
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
         }
         
         
@@ -110,9 +113,9 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         }
         if (is_dir($sourceFile)) {
             if (DIRECTORY_SEPARATOR == '\\') {
-                exec('xcopy /E /Y /I "' . $sourceFile . '\*" ' . $targetDir, $out, $res1);
+                exec('xcopy /E /Y /I ' . str_replace(' ','\ ',$sourceFile) . '\*" "' . $targetDir . '"', $out, $res1);
             } else {
-                exec('cp  -Rf "' . $sourceFile . '/*" "' . $targetDir . '"', $out, $res1);
+                exec('cp  -Rf ' . str_replace(' ','\ ',$sourceFile) . '/* "' . $targetDir . '"', $out, $res1);
             }
             $res = false;
             if ($res1==0) {
@@ -122,11 +125,11 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
                 $status = 'FAILURE';
                 $res = false;
             }
-            $targetIndexFile = $targetDir . DIRECTORY_SEPARATOR . str_replace($sourceFile, '', $index);
+            $targetIndexFile = $targetDir . DIRECTORY_SEPARATOR . $relativeIndex;
             $registerFile = $targetDir;
         } else {
             $res = copy($sourceFile, $targetFile);
-            $targetIndexFile = $targetDir . DIRECTORY_SEPARATOR . str_replace(dirname($sourceFile), '', $index);
+            $targetIndexFile = $targetFile;
             $registerFile = $targetFile;
         }
             if ($res) {

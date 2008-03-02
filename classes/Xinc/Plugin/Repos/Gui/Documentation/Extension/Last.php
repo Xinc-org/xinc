@@ -63,7 +63,7 @@ extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
             $publicName = $alias;
             $dirName = dirname($array['file']);
             $indexFile = preg_replace('/\/+/','/', $array['index']);
-            $myDocDir = $docDir . '/'. $publicName;
+            $myDocDir = $docDir . DIRECTORY_SEPARATOR . $publicName;
             $myDocDir = preg_replace('/\/+/','/', $myDocDir);
             $indexFile = str_replace($myDocDir, '', $indexFile);
             $link = $getDeliverableUrl . $publicName . '/' . $indexFile;
