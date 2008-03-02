@@ -100,8 +100,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
                 exec('xcopy /E /Y /I ' . $sourceFile . ' ' . $targetFile, $out, $res);
                 //chmod($targetFile, 0755);
             } else {
-                exec('cp ' . $sourceFile . ' ' . $targetFile . ' -Rf', $out, $res);
-                //exec('chmod 755 ' . $targetFile . ' -Rf', $out, $res2);
+                exec('cp -Rf ' . $sourceFile . ' ' . $targetFile, $out, $res);
             }
             if ($res==0) {
                 $status = 'OK';
