@@ -114,7 +114,114 @@ pear run-scripts xinc/Xinc
 This script will configure special directories as needed by Xinc as well as set up your 
 Xinc Web Interface.
 </p>
+<pre title="Postinstall screen">
+ 1. Directory to keep the Xinc config files                    : /etc/xinc
+ 2. Directory to keep the Xinc Projects and Status information : /var/xinc
+ 3. Directory to keep the Xinc log files                       : /var/log
+ 4. Directory to install the Xinc start/stop daemon            : /etc/init.d
+ 5. Do you want to install the SimpleProject example           : yes
+ 6. Directory to install the Xinc web-application              : /var/www/xinc
+ 7. IP of Xinc web-application                                 : 127.0.0.1
+ 8. Port of Xinc web-application                               : 8080
 
+1-8, 'all', 'abort', or Enter to continue: 
+</pre>
+<table>
+  <caption>
+  Postinstall Configuration Options
+  </caption>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>
+  1.
+  </td>
+  <td>
+  Here Xinc will keep all configuration files:<br/><br/>
+  <strong>DIR/system.xml - System Configuration</strong><br/>
+  <strong>DIR/conf.d/*.xml - Project Configurations</strong><br/>
+  
+  </td>
+  </tr>
+  <tr>
+  <td>
+  2.
+  </td>
+  <td>
+  Here Xinc will keep project data, the working copies of svn repositories and status information about the builds:<br/><br/>
+  <strong>DIR/projects - Project / Working copies</strong><br/>
+  <strong>DIR/status - Build status information</strong><br/>
+  
+  </td>
+  </tr>
+   <tr>
+  <td>
+  3.
+  </td>
+  <td>
+  Xinc will create a logfile in this directory:<br/><br/>
+  <strong>DIR/xinc.log</strong>
+  
+  </td>
+  </tr>
+     <tr>
+  <td>
+  4.
+  </td>
+  <td>
+  Xinc will install a daemon script in:<br/><br/>
+  <strong>DIR/xinc</strong><br/><br/>
+  This daemon script currently &quot;should&quot; support:
+  <ul>
+  <li>Ubuntu</li>
+  <li>Debian</li>
+  <li>Fedora</li>
+  </ul>
+  
+  </td>
+  </tr>
+  </tbody>
+</table>
+
+<pre title="Installation success">
+Xinc installation complete.
+- Please include /etc/xinc/www.conf in your apache virtual hosts.
+- Please enable mod-rewrite.
+- To add projects to Xinc, copy the project xml to /etc/xinc/conf.d
+- To start xinc execute: sudo /etc/init.d/xinc start
+UNINSTALL instructions:
+- pear uninstall xinc/Xinc
+- run: /usr/bin/xinc-uninstall to cleanup installed files
+Install scripts complete
+
+</pre>
+<h4>Including Xinc www.conf in Apache2</h4>
+<pre>
+$ sudo ln -s /etc/xinc/www.conf /etc/apache2/sites-enabled/
+$ sudo apache2ctl restart
+</pre> 
+<h4>Including Xinc www.conf in Apache main config</h4>
+<p>
+To add the Xinc apache config file to apache, add the following line in your httpd.conf:
+</p>
+<pre>
+Include /etc/xinc/www.conf
+</pre> 
+<h4>Enabling Mod Rewrite in Apache2</h4>
+<pre>
+$ ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
+</pre>
+<h4>Enabling Mod Rewrite in Apache main config</h4>
+<p>To add the mod-rewrite module, add the following line in your httpd.conf:</p>
+<pre>
+LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so
+</pre>
+<p>&nbsp;</p>
 <h2><a name="RunningXinc"></a>Running Xinc</h2>
 
 <p>After configuration you are ready to execute the Xinc daemon</p>

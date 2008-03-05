@@ -12,7 +12,7 @@
 This appendix contains a reference of all publisher tasks, i.e. all
 tasks that can run publish scripts after a Xinc build.
 </p>
-<h2><a name="PhingbuilderTask"></a>&lt;phingpublisher/&gt;</h2>
+<h2><a name="PhingpublisherTask"></a>&lt;phingpublisher/&gt;</h2>
 <p></p>
 <h3>Parent Tags</h3>
 <ul>
@@ -244,6 +244,67 @@ Since ${build.number} is variable it also sets an alias "build.latest.tar" under
       <td>Alias for the deliverable</td>
       <td>n/a</td>
       <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<h2><a name="DocumentationTask"></a>&lt;documentation/&gt;</h2>
+<p></p>
+<h3>Parent Tags</h3>
+<ul>
+  <li>&lt;<a href="AppendixB-CoreTasks.html#PublishersTask">publishers</a>/&gt;</li>
+  <li>&lt;<a href="#OnsuccessTask">onsuccess</a>/&gt;</li>
+  <li>&lt;<a href="#OnfailureTask">onfailure</a>/&gt;</li>
+  <li>&lt;<a href="#OnrecoveryTask">onrecovery</a>/&gt;</li>
+</ul>
+<pre title="Example of how to use DocumentationTask">
+&lt;project name=&quot;ProjectName&quot;&gt;
+...
+    &lt;<a href="AppendixB-CoreTasks.html#PublishersTask">publishers</a>&gt;
+        &lt;documentation file=&quot;${dir}/phpdoc&quot;
+             alias=&quot;PHPDoc Documentation&quot; 
+             index=&quot;${dir}/phpdoc/index.html&quot;/&gt;
+    &lt;/publishers&gt;
+...
+&lt;/project&gt;
+</pre>
+<p>
+The above example will register the directory "${dir}/phpdoc" with the build as a documentation package and make it available on the web interface for viewing.<br/>
+It will appear as "PHPDoc Documentation".<br/>
+The first page loaded will be "index.html".
+</p>
+<h3>Parameters</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+      <td>file</td>
+      <td>String</td>
+      <td>Filename/Folder name of the documentation</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>alias</td>
+      <td>String</td>
+      <td>Alias for the documentation package</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>index</td>
+      <td>String</td>
+      <td>Index File to load as first page of the documentation</td>
+      <td>n/a</td>
+      <td>Yes</td>
     </tr>
   </tbody>
 </table>
