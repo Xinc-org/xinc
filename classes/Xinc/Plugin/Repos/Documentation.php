@@ -108,10 +108,24 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
             return false;
         }
         
+        
+        
         if (!file_exists($fullDir)) {
             mkdir($fullDir, 0755, true);
         }
         if (is_dir($sourceFile)) {
+            $relativePath = str_replace($sourceFile, '', $index);
+            if ($relativePath == $index) {
+                /**
+                 * the index file was not within the doc path,
+                 * we need to prevent this file from being copied.
+                 * 
+                 * Future: run Xinc in a chroot environment per project
+                 */
+                $build->error('Registering doc: ' . $sourceFile . '->' . $targetFile . ' failed.');
+                $build->error('-- ' . $index . ' is not within ' . $sourceFile . ' dir. Security Problem.');
+                return false;
+            }
             if (DIRECTORY_SEPARATOR == '\\') {
                 exec('xcopy /E /Y /I ' . str_replace(' ','\ ',$sourceFile) . '\*" "' . $targetDir . '"', $out, $res1);
             } else {
