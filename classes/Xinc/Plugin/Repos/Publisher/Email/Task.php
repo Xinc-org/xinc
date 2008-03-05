@@ -87,11 +87,5 @@ class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher
     {
         $statusBefore = $build->getStatus();
         $res = $this->_plugin->email($build->getProject(), $this->_to, $this->_subject, $this->_message);
-        if (!$res && $statusBefore == Xinc_Build_Interface::PASSED ) {
-            /**
-             * Status was PASSED, but now the publish process made it fail
-             */
-            $build->setStatus(Xinc_Build_Interface::FAILED);
-        }
     }
 }
