@@ -79,7 +79,7 @@ class Xinc_Ini
         }
         if ($section == null) {
             $this->_ini[$name] = $value;
-        } else if (is_array($this->_ini[$section])){
+        } else if (isset($this->_ini[$section]) && is_array($this->_ini[$section])){
             if ($value == null) {
                 unset($this->_ini[$section][$name]);
             } else {
