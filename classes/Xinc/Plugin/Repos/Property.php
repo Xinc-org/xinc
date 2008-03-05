@@ -46,7 +46,7 @@ class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Base
             while ($line = fgets($fh)) {
                 if (preg_match('/^[!#].*/', $line)) {
                     // comment
-                } else if (preg_match("/^.*?(\w+?)\s*[=:]+\s*(.*)$/", $line, $matches)) {
+                } else if (preg_match("/^.*?([\._-\w]+?)\s*[=:]+\s*(.*)$/", $line, $matches)) {
                     // we have a key definition
                     $activeProperty = true;
                     $key = $matches[1];
