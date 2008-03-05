@@ -136,6 +136,12 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
             }
             unlink($logFile);
         }
+        if (count($output)>0) {
+            Xinc_Logger::getInstance()->error('Errors on command line:');
+            foreach ($output as $line) {
+                Xinc_Logger::getInstance()->error($line);
+            }
+        }
         
         switch ($returnValue) {
             case 0:
