@@ -78,11 +78,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $seconds = $dateArr[6];
                 $timestamp = mktime($hours, $minutes, $seconds, $month, $day, $year);
                 if ($zIndicator != 'Z') {
-                    list($addHours, $addMinutes) = split(':', $dateArr[8]);
-                    if ($zIndicator == '+') {
-                        $timestamp += $addHours * 60 * 60;
-                    } else if ($zIndicator == '-') {
-                        $timestamp -= $addHours * 60 * 60;
+                    $addArr = split(':', $dateArr[8]);
+                    if (count($addArr)>1) {
+                        $addHours = $addArr[0];
+                        $addMinutes = $addArr[1];
+                        if ($zIndicator == '+') {
+                            $timestamp += $addHours * 60 * 60;
+                        } else if ($zIndicator == '-') {
+                            $timestamp -= $addHours * 60 * 60;
+                        }
                     }
                 }
                 
