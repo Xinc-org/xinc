@@ -203,16 +203,12 @@ class Xinc_PostinstallWin_postinstall
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . '*',
                                   $wwwDir . DIRECTORY_SEPARATOR, '-Rf');
                 unlink($wwwDir.DIRECTORY_SEPARATOR.'www.tpl.conf');
-                //unlink($wwwDir.DIRECTORY_SEPARATOR.'handler.php.tpl');
                 
                 $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'web'. DIRECTORY_SEPARATOR . 'www.tpl.conf',
                                 $etcDir.'/www.conf',
                                 array('@INCLUDE@'=>$pearPhpDir, '@WEB_DIR@'=>$wwwDir,
                                 '@PORT@'=>$wwwPort, '@IP@'=>$wwwIp));
                 
-                //$this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR
-                //               .'handler.php.tpl', $wwwDir. DIRECTORY_SEPARATOR .'handler.php',
-                //               array('@STATUSDIR@' => $statusDir, '@ETC@'=>$etcDir));
                 $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
                                . 'init.d' . DIRECTORY_SEPARATOR . 'xinc.bat',
                                 $initDir . DIRECTORY_SEPARATOR . 'xinc.bat',

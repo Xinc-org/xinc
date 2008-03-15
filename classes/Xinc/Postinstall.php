@@ -194,12 +194,6 @@ class Xinc_Postinstall_postinstall
                 $this->_uninstallFiles[] = $etcDir . '/www.conf';
                 $this->_undoTasks[] = 'rm -Rf ' . $etcDir . '/www.conf';
                 
-                //$this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR
-                //               . 'web/handler.php.tpl | sed -e "s#@STATUSDIR@#'
-                //               . $statusDir . '#" | sed -e "s#@ETC@#'.$etcDir.'#" > '.$wwwDir.'/handler.php');
-                
-                //$this->_undoTasks[] = 'rm -Rf ' . $wwwDir . '/handler.php';
-                //$this->_uninstallFiles[] = $wwwDir . '/handler.php';
                 
                 $this->_execCmd('cat ' . $pearDataDir . '/etc/init.d/xinc | sed -e "s#@ETC@#' . $etcDir
                                . '#" | sed -e "s#@LOG@#'.$logDir.'#" | sed -e "s#@STATUSDIR@#'. $statusDir
