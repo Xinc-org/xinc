@@ -42,8 +42,11 @@ MenuItems={text:'Menu',children:[],leaf:true};
 </script>
 
   <div id="header">
+  
   <div style="float:right;margin-left:5px;margin-right:10px;margin-top:5px;color:white">#ver<?php echo Xinc_Ini::getInstance()->get('version', 'xinc'); ?></div>
+    <?php if ( Xinc_Ini::getInstance()->get('ohloh', 'web') == 1) { ?>
     <a href="http://www.ohloh.net/projects/9498?p=Xinc" class="external" target="_new" style="float:right;margin-right:10px;"><img class="external" src="http://www.ohloh.net/projects/9498/widgets/project_thin_badge.gif" style="margin-top:5px;"/></a>
+    <?php } ?>
     <?php if (($logo = Xinc_Ini::getInstance()->get('logo', 'web')) !== null) {?>
     <img src="<?php echo $logo; ?>" style="float:left;margin-left:5px;margin-right:10px;"/>
     <?php } else { ?>
