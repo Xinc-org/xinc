@@ -175,7 +175,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $build->getProperties()->set('svn.revision', $set->getRemoteRevision());
             $build->info('Update of SVN working copy succeeded.');
         } else {
-            $build->error('Update of SVN working copy failed: ' . join('', $output));
+            $strOutput = join('', $output);
+            if ($password != null || $username != null) {
+                $strOutput = str_replace(array($username, $password), array('****','****'), $strOutput);
+            }
+            $build->error('Update of SVN working copy failed: ' . $strOutput);
             $set->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
         }
     }
