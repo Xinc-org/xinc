@@ -186,8 +186,11 @@ class Xinc_Gui_Handler
         if (isset($_SERVER['REDIRECT_URL'])) {
            $path = $_SERVER['REDIRECT_URL'];
         } else if (isset($_SERVER['REQUEST_URI']) && isset($_SERVER['QUERY_STRING'])) {
+            /**
+             * Get rid of query string, to just have the path
+             */
             $path = $_SERVER['REQUEST_URI'];
-            $path = str_replace('?' . $_SERVER['QUERY_STRING'], $_SERVER['REQUEST_URI']);
+            $path = str_replace('?' . $_SERVER['QUERY_STRING'], '', $path);
         }
         return $path;
     }
