@@ -221,6 +221,101 @@ $ ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
 <pre>
 LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so
 </pre>
+
+<p>&nbsp;</p>
+<h2><a name="IniOptions"></a>Xinc Ini Configuration</h2>
+<p>
+Xinc lets you configure some settings, which determine GUI behaviour and/or Plugin behaviour.
+The following is a sample configuration:
+</p>
+<pre title="Sample xinc.ini">
+[xinc]
+version = 2.0.0b150
+etc = /etc/xinc
+etc_conf_d = /etc/xinc/conf.d
+dir = /var/xinc
+status_dir = /var/xinc/status
+project_dir = /var/xinc/projects
+www_dir = /var/www/xinc
+www_port = 8080
+www_ip = 127.0.0.1
+log_dir = /var/log
+
+[web]
+title = "My Xinc Server"
+logo = "/images/myServerLogo.png"
+ohloh = 1
+
+[googleanalytics]
+trackerCode = UA-1346205-4
+</pre>
+<p>
+A simple administration script lets you read and modify these settings:<br/>
+Usage:<br/>
+<strong>xinc-settings [options]</strong>
+</p>
+<table>
+  <caption>
+  xinc-settings options
+  </caption>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>
+  list-all
+  </td>
+  <td>
+  Lists all the configuration options per section
+  
+  </td>
+  </tr>
+  <tr>
+  <td>
+  list [section]
+  </td>
+  <td>
+  Lists configuration options for [section]
+  
+  </td>
+  </tr>
+  <tr>
+  <td>
+  get [section] [name]
+  </td>
+  <td>
+  Gets the configuration option [name] of [section]
+  
+  </td>
+  </tr>
+  <tr>
+  <td>
+  set [section] [name] [value]
+  </td>
+  <td>
+  Sets the configuration option [name] with [value] in [section]
+  
+  </td>
+  </tr>
+  </tbody>
+</table>
+<h3>Sample Usage</h3>
+<h4>Disabling the ohloh badge</h4>
+<pre>
+$ xinc-settings set web ohloh 0
+</pre>
+<h4>Setting your own google analytics code</h4>
+<pre>
+$ xinc-settings set googleanalytics trackerCode MYGOOGLECODE
+</pre>
+<h4>Setting your own title for the web interface</h4>
+<pre>
+$ xinc-settings set web title "My Xinc Server"
+</pre>
 <p>&nbsp;</p>
 <h2><a name="RunningXinc"></a>Running Xinc</h2>
 
