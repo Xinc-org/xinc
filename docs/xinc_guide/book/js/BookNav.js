@@ -9,7 +9,7 @@
  */
 function GetCurrentChapter() {
 
-    var ContentLocation = top.ContentAndToC.Content.location.href;
+    var ContentLocation = parent.ContentAndToC.Content.location.href;
     var CurrentChapter = null;
 
     for (i=0; i < Chapters.length; i++) {
@@ -35,9 +35,9 @@ function GoBack() {
     var CurrentChapter = GetCurrentChapter();
 
     if (CurrentChapter == 0) {
-        top.ContentAndToC.Content.location = "../toc/ToC.html";
+        parent.ContentAndToC.Content.location = "../toc/ToC.html";
     } else {
-        top.ContentAndToC.Content.location = "../"+Chapters[CurrentChapter-1][0];
+        parent.ContentAndToC.Content.location = "../"+Chapters[CurrentChapter-1][0];
     }
 
 }
@@ -59,10 +59,10 @@ function GoNext() {
     var CurrentChapter = GetCurrentChapter();
 
     if (CurrentChapter == Chapters.length-1) {
-        top.ContentAndToC.Content.location = "../toc/ToC.html";
+        parent.ContentAndToC.Content.location = "../toc/ToC.html";
     } else if (CurrentChapter == null) {
-        top.ContentAndToC.Content.location = "../"+Chapters[0][0];
+        parent.ContentAndToC.Content.location = "../"+Chapters[0][0];
     } else {
-        top.ContentAndToC.Content.location = "../"+Chapters[CurrentChapter+1][0];
+        parent.ContentAndToC.Content.location = "../"+Chapters[CurrentChapter+1][0];
     }
 }
