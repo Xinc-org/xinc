@@ -99,7 +99,7 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
                 /**
                  * register statistics
                  */
-                $build->getProperties()->set('phpunit.file', $targetFile);
+                $build->getInternalProperties()->set('phpunit.file', $targetFile);
                 $this->_parseXml($build, $targetFile);
             } else {
                 $status = 'FAILURE';
