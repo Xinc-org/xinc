@@ -95,7 +95,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $set->addLogMessage($revision, $timestamp, $author, $message);
             }
         } else {
-            $build->error('Could not retrieve log messages from svn: ' . join('', $output));
+            $strOutput = join('', $output);
+            if ($username != null || $password != null) {
+                $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+            }
+            $build->error('Could not retrieve log messages from svn: ' . $strOutput);
         }
     }
     
@@ -155,7 +159,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $build->error('Could not parse modification set xml.');
             }
         } else {
-            $build->error('SVN status query failed: ' . var_export($output, true));
+            $strOutput = join('', $output);
+            if ($username != null || $password != null) {
+                $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+            }
+            $build->error('SVN status query failed: ' . $strOutput);
         }
     }
     
@@ -176,14 +184,26 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $build->info('Update of SVN working copy succeeded.');
         } else {
             $strOutput = join('', $output);
-            if ($password != null || $username != null) {
-                $strOutput = str_replace(array($username, $password), array('****','****'), $strOutput);
+            if ($username != null || $password != null) {
+                $strOutput = $this->_maskOutput($strOutput, array($username, $password));
             }
             $build->error('Update of SVN working copy failed: ' . $strOutput);
             $set->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
         }
     }
 
+    /**
+     * Masks certain string elements with **** and returns the string
+     *
+     * @param string $inputStr
+     * @param array $maskElements
+     * @return string
+     */
+    private function _maskOutput($inputStr, array $maskElements)
+    {
+        $outputStr = str_replace($maskElements, '****', $inputStr);
+        return $outputStr;
+    }
 
     /**
      * Checks whether the Subversion project has been modified.
@@ -209,7 +229,14 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
         $output = '';
         $result = 9;
-        exec('svn info --xml', $output, $result);
+        $credentials = '';
+        if ($username != null) { 
+            $credentials .= ' --username ' . $username; 
+        }
+        if ($password != null) { 
+            $credentials .= ' --password ' . $password; 
+        }
+        exec('svn info ' . $credentials . ' --xml', $output, $result);
         //$build->debug('result of "svn info --xml":' . var_export($output,true));
         if ($result == 0) {
             $localSet = implode("\n", $output);
@@ -217,8 +244,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             try {
                 $url = $this->getURL($localSet);
             } catch (Exception $e) {
+                $strOutput = $localSet;
+                if ($username != null || $password != null) {
+                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+                }
                 $build->error('Problem with remote '
-                             . 'Subversion repository, cannot get URL of working copy ' . $localSet);
+                             . 'Subversion repository, cannot get URL of working copy ' . $strOutput);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
                 return $modResult;
@@ -233,7 +264,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $redirectErrors = ' ';
             }
             
-            exec('svn info ' . $url . ' --xml' . $redirectErrors, $output, $result);
+            exec('svn info ' . $credentials . ' ' . $url . ' --xml' . $redirectErrors, $output, $result);
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
@@ -243,8 +274,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 /**
                  * Dont throw exception, but log error and make build fail
                  */
+                $strOutput = $remoteSet;
+                if ($username != null || $password != null) {
+                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+                }
                 $build->error('Problem with remote '
-                             . 'Subversion repository, output: ' . $remoteSet);
+                             . 'Subversion repository, output: ' . $strOutput);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 /**
                  * return -2 instead of true, see Issue 79
@@ -257,6 +292,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             try {
                 $localRevision = $this->getRevision($localSet);
             } catch (Exception $e) {
+                $strOutput = $localSet;
+                if ($username != null || $password != null) {
+                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+                }
                 $build->error('Problem with remote '
                              . 'Subversion repository, cannot get revision of working copy ' . $localSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
@@ -266,6 +305,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             try {
                 $remoteRevision = $this->getRevision($remoteSet);
             } catch (Exception $e) {
+                $strOutput = $remoteSet;
+                if ($username != null || $password != null) {
+                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+                }
                 $build->error('Problem with remote '
                              . 'Subversion repository, cannot get revision of remote repos ' . $remoteSet);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
