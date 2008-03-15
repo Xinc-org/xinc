@@ -1,6 +1,6 @@
 <?php
 /**
- * PUT DESCRIPTION HERE
+ * Phing plugin to execute the phing command for a certain build file
  * 
  * @package Xinc.Plugin
  * @author Arno Schneider
@@ -24,9 +24,7 @@
 */
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Builder/Phing/Task.php';
-
 require_once 'Xinc/Plugin/Repos/Publisher/Phing/Task.php';
-require_once 'Xinc/Plugin/Repos/Phing/Listener.php';
 
 class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
 {
