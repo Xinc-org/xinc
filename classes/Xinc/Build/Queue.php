@@ -53,9 +53,6 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
     /**
      * adds a build to the queue
      * 
-     * Calls the getNextBuildTime() method to put
-     * the builds into the right order in the queue
-     *
      * @param Xinc_Build_Interface $build
      */
     public function addBuild(Xinc_Build_Interface &$build)
@@ -76,6 +73,16 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         }
     }
     
+    private function _handleBuildConfig(Xinc_Build_Interface &$build)
+    {
+        $timezone = $build->getConfigDirective('timezone');
+        if ($timezone !== null) {
+            Xinc_Timezone::set($timezone);
+        } else {
+            Xinc_Timezone::reset();
+        }
+    }
+    
     /**
      * Returns the next build time of all the builds scheduled
      * in this queue
@@ -91,6 +98,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         $build = null;
         while ($this->_builds->hasNext()) {
             $build = $this->_builds->next();
+            $this->_handleBuildConfig($build);
             if ($build->getNextBuildTime() <= $nextBuildTime || $nextBuildTime === null) {
                 if ($build->getStatus() != Xinc_Build_Interface::STOPPED) {
                     $buildTime = $build->getNextBuildTime();
@@ -130,9 +138,14 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
      */
     public function sortQueue($a, $b)
     {
-        if ($a->getNextBuildTime() == $b->getNextBuildTime()) return 0;
+        $this->_handleBuildConfig($a);
+        $buildTimeA = $a->getNextBuildTime();
         
-        return $a->getNextBuildTime()<$b->getNextBuildTime() ? -1:1;
+        $this->_handleBuildConfig($b);
+        $buildTimeB = $b->getNextBuildTime();
+        
+        if ($buildTimeA == $buildTimeB) return 0;
+        return $buildTimeA<$buildTimeB ? -1:1;
     }
     
     /**
@@ -148,6 +161,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         //}
         usort($this->_queue, array(&$this, 'sortQueue'));
         if (isset($this->_queue[0])) {
+            $this->_handleBuildConfig($this->_queue[0]);
             if ($this->_queue[0]->getNextBuildTime() <= time()) {
                 
                 $build = array_shift($this->_queue);
