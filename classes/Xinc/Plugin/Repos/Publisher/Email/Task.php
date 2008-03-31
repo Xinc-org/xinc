@@ -28,6 +28,7 @@ class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher
 {
    
     private $_to;
+    private $_from;
     private $_subject;
     private $_message;
     public function getName()
@@ -44,7 +45,15 @@ class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher
     {
         $this->_to = (string)$to;
     }
-    
+    /**
+     * Set the email address to send to
+     *
+     * @param string $subject
+     */
+    public function setFrom($from)
+    {
+        $this->_from = (string)$from;
+    }
     /**
      * Set the subject of the email
      *
@@ -86,6 +95,6 @@ class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher
     public function publish(Xinc_Build_Interface &$build)
     {
         $statusBefore = $build->getStatus();
-        $res = $this->_plugin->email($build->getProject(), $this->_to, $this->_subject, $this->_message);
+        $res = $this->_plugin->email($build->getProject(), $this->_to, $this->_subject, $this->_message, $this->_from);
     }
 }
