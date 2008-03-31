@@ -34,6 +34,17 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 
 class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 {
+    private $_svnPath;
+    
+    public function __construct()
+    {
+        $svnPath = Xinc_Ini::get('path', 'svn');
+        if (empty($svnPath)) {
+            $svnPath = 'svn';
+        }
+        $this->_svnPath = $svnPath;
+    }
+    
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_ModificationSet_Svn_Task($this));
@@ -55,7 +66,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         if ($password != null) { 
             $credentials .= ' --password ' . $password; 
         }
-        exec('svn log -r ' . $fromRevision . ':' . $toRevision . ' --xml '
+        exec($this->_svnPath . '  log -r ' . $fromRevision . ':' . $toRevision . ' --xml '
             . $credentials . ' ' . $dir,
             $output, $result);
         if ($result == 0) {
@@ -114,7 +125,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         if ($password != null) {
             $credentials .= ' --password ' . $password; 
         }
-        exec('svn status -u --xml ' . $credentials . ' ' . $dir, $output, $result);
+        exec($this->_svnPath . ' status -u --xml ' . $credentials . ' ' . $dir, $output, $result);
         if ($result == 0) {
             try {
                 array_shift($output);
@@ -178,7 +189,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         if ($password != null) { 
             $credentials .= ' --password ' . $password; 
         }
-        exec('svn update ' . $credentials . ' ' . $dir, $output, $result);
+        exec($this->_svnPath . ' update ' . $credentials . ' ' . $dir, $output, $result);
         if ($result == 0) {
             $build->getProperties()->set('svn.revision', $set->getRemoteRevision());
             $build->info('Update of SVN working copy succeeded.');
@@ -236,7 +247,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         if ($password != null) { 
             $credentials .= ' --password ' . $password; 
         }
-        exec('svn info ' . $credentials . ' --xml', $output, $result);
+        exec($this->_svnPath . ' info ' . $credentials . ' --xml', $output, $result);
         //$build->debug('result of "svn info --xml":' . var_export($output,true));
         if ($result == 0) {
             $localSet = implode("\n", $output);
@@ -264,7 +275,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $redirectErrors = ' ';
             }
             
-            exec('svn info ' . $credentials . ' ' . $url . ' --xml' . $redirectErrors, $output, $result);
+            exec($this->_svnPath . ' info ' . $credentials . ' ' . $url . ' --xml' . $redirectErrors, $output, $result);
             $remoteSet = implode("\n", $output);
 
             if ($result != 0) {
@@ -506,7 +517,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         } else {
             $redirectErrors = ' ';
         }
-        exec('svn help' . $redirectErrors, $dummy, $result);
+        exec($this->_svnPath . ' help' . $redirectErrors, $dummy, $result);
         /**
          * See Issue 56, check r
          */
@@ -525,7 +536,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             /**
              * check if we have the svn info --xml option
              */
-            exec('svn info --xml' . $redirectErrors, $output, $result);
+            exec($this->_svnPath . ' info --xml' . $redirectErrors, $output, $result);
             /**
              * We need to check 1 and 2 for <info> since it depends 
              * if the place where its called is a working copy or not

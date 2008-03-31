@@ -114,8 +114,11 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
             $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
         
-        
-        exec('phing ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . '2>&1', $output, $returnValue);
+        $phingPath = Xinc_Ini::get('path', 'phing');
+        if (empty($phingPath)) {
+            $phingPath = 'phing';
+        }
+        exec($phingPath . ' ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . '2>&1', $output, $returnValue);
 
         chdir($oldPwd);
         
