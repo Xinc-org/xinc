@@ -321,6 +321,11 @@ class Xinc
         
     }
 
+    private function _isProcessRunning($pid)
+    {
+        
+    }
+    
     /**
     * Processes the projects that have been configured 
     * in the config-file and executes each project
@@ -332,6 +337,7 @@ class Xinc
          * write pid file
          */
         if (file_exists($this->_pidFile)) {
+            
             Xinc_Logger::getInstance()->error('Pid File: ' . $this->_pidFile . ' exists.');
             Xinc_Logger::getInstance()->error('Xinc instance running already or you need to clean up after a crash');
             exit(-1);
@@ -341,7 +347,7 @@ class Xinc
             declare(ticks=2);
             $now = time();
             $nextBuildTime = Xinc::$_buildQueue->getNextBuildTime();
-            
+            Xinc_Timezone::reset();
             Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
             
             if ($nextBuildTime != null) {
