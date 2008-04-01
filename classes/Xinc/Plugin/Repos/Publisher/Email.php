@@ -27,6 +27,7 @@ require_once 'Xinc/Plugin/Repos/Publisher/Email/Task.php';
 
 class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
 {
+    private $_defaultFrom = 'xinc@localhost';
     
     private function _sendPearMail($from, $to, $subject, $message)
     {
@@ -60,6 +61,9 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
     }
     public function email(Xinc_Project &$project,$to,$subject,$message, $from = 'Xinc')
     {
+        if (empty($from)) {
+            $from = $this->_defaultFrom;
+        }
         $project->info('Executing email publisher with content ' 
                       ."\nTo: " . $to
                       ."\nSubject: " . $subject
