@@ -26,7 +26,7 @@
 */
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
-
+require_once 'Xinc/Ini.php';
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/ModificationSet.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';

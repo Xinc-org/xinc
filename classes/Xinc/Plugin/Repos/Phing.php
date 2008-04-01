@@ -23,6 +23,7 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Ini.php';
 require_once 'Xinc/Plugin/Repos/Builder/Phing/Task.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Phing/Task.php';
 
