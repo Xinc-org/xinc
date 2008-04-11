@@ -1,60 +1,11 @@
 <?php
-class Xinc_PostinstallWin_postinstall
+require_once 'Xinc/PostinstallBase.php';
+
+class Xinc_PostinstallWin_postinstall extends Xinc_PostinstallBase
 {
-    private $_pkg;
-    private $_ui;
-    private $_config;
-    private $_registry;
-    public $db;
-    public $user;
-    public $password;
-    public $lastversion;
-    public $channel;
-    public $alias;
-    public $handle;
-    public $docroot;
-    public $port;
-    public $ssl;
-    public $xmlrpcphp;
-    public $pearconfigloc;
-    public $dbhost;
-    public $databaseExists;
-    public $fixHandles = false;
-    private $_undoTasks = array();
     
-    function init(&$config, &$pkg, $lastversion)
-    {
-        $this->_config = &$config;
-        $this->_registry = &$config->getRegistry();
-        $this->_ui = &PEAR_Frontend::singleton();
-        $this->_pkg = &$pkg;
-        $this->lastversion = $lastversion;
-        return true;
-    }
-
-    function postProcessPrompts($prompts, $section)
-    {
-       
-        foreach ($prompts as $item) {
-            
-        }
-        /**switch ($section) {
-            case 'channelCreate' :
-                $prompts[0]['default'] = array_shift($a = explode('.', $this->channel));
-            break;
-            case 'files' :
-                $conffile = $this->_config->getConfFile('user');
-                if (!file_exists($conffile)) {
-                    $conffile = $this->_config->getConfFile('system');
-                }
-                $prompts[0]['default'] = $conffile;
-                $prompts[1]['prompt'] = sprintf($prompts[1]['prompt'], $this->channel);
-            break;
-        }*/
-        return $prompts;
-    }
-
-    private function _createDir($dirName, $permission = 0777)
+    
+    protected function _createDir($dirName, $permission = 0777)
     {
       $this->_ui->outputData('Creating Directory '.$dirName);
         if (file_exists($dirName) || is_dir($dirName)) {
@@ -75,166 +26,40 @@ class Xinc_PostinstallWin_postinstall
                 $this->_ui->outputData('Could not create ' . $dirName);
                 return $this->_failedInstall();
             }
-            $this->_undoTasks[] = 'rmdir "' . $dirName . '" /s /q';
+            $this->_undoDirs[] = $dirName; //;'rmdir "' . $dirName . '" /s /q';
         }
         return true;
     }
-    
-    private function _copyFiles($src, $target, $extra = '')
+    protected function _deleteDir($dirname, $extra='')
     {
         $out = null;
         $res = null;
+        exec('rmdir "' . $dirname . '" /s /q', $out, $res);
+        return $res==0;
+    }
+    protected function _copyFiles($src, $target, $extra = '')
+    {
+        $out = null;
+        $res = null;
+        $files = glob($src);
         $this->_ui->outputData('copy /y "' . $src . '" "' . $target .'"', $out, $res);
         exec('xcopy /E /Y "' . $src . '" "' . $target .'"', $out, $res);
         if ($res != 0) {
             $this->_ui->outputData('Could not copy "' . $src . '" to: ' . $target);
             return $this->_failedInstall();
         } else {
-            $this->_undoTasks[] = 'rmdir "' . $target . '" /s /q';
+            foreach ($files as $file) {
+                $baseFileName = basename($file);
+                $this->_undoFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
+                $this->_uninstallFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
+            }
             $this->_ui->outputData('Successfully copied ' . $src . '  to: ' . $target);
         }
         return true;
     }
     
-    private function _execCmd($cmd)
-    {
-        $out = null;
-        $res = null;
-        exec($cmd, $out, $res);
-        return $res;
-    }
     
-    function run($answers, $phase)
-    {
-        
-        $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
-        $pearDataDir = realpath($pearDataDir);
-        $xincPhpDir = PEAR_Config::singleton()->get('php_dir') . DIRECTORY_SEPARATOR . 'Xinc';
-        $xincPhpDir = realpath($xincPhpDir);
-        $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
-        $pearPhpDir = realpath($pearPhpDir);
-        
-        include_once $pearPhpDir . '/Xinc/Ini.php';
-        if (class_exists('Xinc_Ini')) {
-            $xincIni = Xinc_Ini::getInstance();
-        } else {
-            $this->_ui->outputData('Cannot initialize Xinc_Ini class');
-            return false;
-        }
-        
-        switch($phase) {
-            
-            case 'daemoninstall':
-                $xincDir = $answers['xinc_dir'];
-                
-                $etcDir = $xincDir . DIRECTORY_SEPARATOR . 'etc';
-                
-                $etcConfDir = $etcDir . DIRECTORY_SEPARATOR . 'conf.d' ;
-                $xincIni->set('etc_conf_d', $etcConfDir, 'xinc');
-                $dataDir = $xincDir . DIRECTORY_SEPARATOR . 'projects';
-                
-                $statusDir = $xincDir . DIRECTORY_SEPARATOR . 'status';
-                
-                $this->_createDir($xincDir);
-                $xincDir = realpath($xincDir);
-                $this->_createDir($dataDir);
-                $dataDir = realpath($dataDir);
-                $this->_createDir($statusDir);
-                $statusDir = realpath($statusDir);
-                $this->_createDir($etcDir);
-                $etcDir = realpath($etcDir);
-                $this->_createDir($etcConfDir);
-                $etcConfDir = realpath($etcConfDir);
-                
-                $xincIni->set('dir', $xincDir, 'xinc');
-                $xincIni->set('status_dir', $statusDir, 'xinc');
-                $xincIni->set('project_dir', $dataDir, 'xinc');
-                
-                $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'etc'
-                                 . DIRECTORY_SEPARATOR . 'xinc' . DIRECTORY_SEPARATOR
-                                 . '*', $etcDir  . DIRECTORY_SEPARATOR);
-                
-               
-                
-                
-                $initDir = $etcDir . DIRECTORY_SEPARATOR . 'init.d';
-                $this->_createDir($initDir);
-                $initDir = realpath($initDir);
-                $installExamples = $answers['install_examples'] == 'yes' ? true: false;
-                
-                if ($installExamples) {
-                    mkdir($dataDir . DIRECTORY_SEPARATOR . 'SimpleProject');
-                    $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'examples'
-                                     . DIRECTORY_SEPARATOR . 'SimpleProject' . DIRECTORY_SEPARATOR . '*',
-                                     $dataDir . DIRECTORY_SEPARATOR . 'SimpleProject'
-                                     . DIRECTORY_SEPARATOR, '-Rf');
-                }
-                $logDir = $xincDir . DIRECTORY_SEPARATOR . 'log';
-                $xinclogDir = $logDir . DIRECTORY_SEPARATOR . 'xinc';
-                $this->_createDir($logDir);
-                
-                if ($installExamples) {
-                    $res = $this->_execCat($dataDir . DIRECTORY_SEPARATOR .'SimpleProject'
-                                          . DIRECTORY_SEPARATOR . 'build.tpl.xml',
-                                          $dataDir.DIRECTORY_SEPARATOR  . 'SimpleProject'
-                                          . DIRECTORY_SEPARATOR . 'build.xml', array('@EXAMPLE_DIR@'=>$dataDir));
-                    unlink($dataDir. DIRECTORY_SEPARATOR . 'SimpleProject'.DIRECTORY_SEPARATOR.'build.tpl.xml');
-                    $res = $this->_execCat($dataDir . DIRECTORY_SEPARATOR . 'SimpleProject'
-                                          . DIRECTORY_SEPARATOR . 'publish.tpl.xml',
-                                          $dataDir . DIRECTORY_SEPARATOR . 'SimpleProject'
-                                          . DIRECTORY_SEPARATOR . 'publish.xml', array('@EXAMPLE_DIR@'=>$dataDir));
-                    unlink($dataDir.DIRECTORY_SEPARATOR.'SimpleProject'.DIRECTORY_SEPARATOR.'publish.tpl.xml');
-                    $res = $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'examples'
-                                          . DIRECTORY_SEPARATOR . 'simpleproject.tpl.xml',
-                                          $etcConfDir . DIRECTORY_SEPARATOR.'simpleproject.xml',
-                                          array('@EXAMPLE_DIR@'=>$dataDir));
-                }
-                //exec($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'pear-install.sh');
-                $wwwDir = $xincDir . DIRECTORY_SEPARATOR . 'www';
-                $xincIni->set('www_dir', $wwwDir, 'xinc');
-                $wwwPort = $answers['www_port'];
-                $xincIni->set('www_port', $wwwPort, 'xinc');
-                $wwwIp =  $answers['www_ip'];
-                $xincIni->set('www_ip', $wwwIp, 'xinc');
-                $this->_createDir($wwwDir, 0755);
-                $wwwDir = realpath($wwwDir);
-                $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . '.htaccess',
-                                  $wwwDir . DIRECTORY_SEPARATOR);
-                $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . '*',
-                                  $wwwDir . DIRECTORY_SEPARATOR, '-Rf');
-                unlink($wwwDir.DIRECTORY_SEPARATOR.'www.tpl.conf');
-                
-                $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'web'. DIRECTORY_SEPARATOR . 'www.tpl.conf',
-                                $etcDir.'/www.conf',
-                                array('@INCLUDE@'=>$pearPhpDir, '@WEB_DIR@'=>$wwwDir,
-                                '@PORT@'=>$wwwPort, '@IP@'=>$wwwIp));
-                
-                $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
-                               . 'init.d' . DIRECTORY_SEPARATOR . 'xinc.bat',
-                                $initDir . DIRECTORY_SEPARATOR . 'xinc.bat',
-                                array('@ETC@' => $etcDir, '@LOG@' => $logDir, '@STATUSDIR@' => $statusDir,
-                                      '@DATADIR@' => $dataDir));
-        
-                //$this->_createWindowsService();
-                
-                
-                $this->_ui->outputData('Xinc installation complete.');
-                $this->_ui->outputData("- Please include $etcDir" . DIRECTORY_SEPARATOR
-                                      . "www.conf in your apache virtual hosts.");
-                $this->_ui->outputData("- Please enable mod-rewrite.");
-                $this->_ui->outputData("- To add projects to Xinc, copy the project xml to $etcConfDir");
-                $this->_ui->outputData("- To start xinc execute: $initDir\xinc.bat");
-                $this->_ui->outputData("- To install as a service google for srvany.exe and instsrv.exe");
-                
-                $xincIni->save();
-                
-                break;
-                case '_undoOnError' :
-                       
-                    break;
-        }
-        
-    }
+    
 
     private function _createWindowsService()
     {
@@ -272,26 +97,21 @@ class Xinc_PostinstallWin_postinstall
         
     }
     
-    private function _execCat($src, $dest,  $replacements)
+    
+    protected function _platformSpecificInstall($etcDir, $logDir, $statusDir, $dataDir, $initDir)
     {
-        $contents = file_get_contents($src);
-        $contents = str_replace(array_keys($replacements), array_values($replacements), $contents);
-        file_put_contents($dest, $contents);
+        $pearDataDir = $this->pearDataDir;
+        $this->_execCat($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
+                       . 'init.d' . DIRECTORY_SEPARATOR . 'xinc.bat',
+                        $initDir . DIRECTORY_SEPARATOR . 'xinc.bat',
+                        array('@ETC@' => $etcDir, '@LOG@' => $logDir, '@STATUSDIR@' => $statusDir,
+                              '@DATADIR@' => $dataDir));
+        $this->_undoFiles[] = $initDir . DIRECTORY_SEPARATOR . 'xinc.bat';
+        $this->_uninstallFiles[] = $initDir . DIRECTORY_SEPARATOR . 'xinc.bat';
     }
-    private function _failedInstall()
+    
+    protected function _deleteFile($file, $extra='')
     {
-        
-        foreach ($this->_undoTasks as $command) {
-            $message=" -> $command:";
-            exec($command, $out, $res);
-            if ($res==0) {
-                $message.="OK";
-            } else {
-                $message.="NOK";
-            }
-            $this->_ui->outputData($message);
-        }
-        PEAR::raiseError('[FAILED] Post installation. Rolling back');
-        die();
+        return unlink($file);
     }
 }
