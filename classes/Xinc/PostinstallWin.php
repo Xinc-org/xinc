@@ -5,8 +5,9 @@ class Xinc_PostinstallWin_postinstall extends Xinc_PostinstallBase
 {
     
     
-    protected function _createDir($dirName, $permission = 0777)
+    protected function _createDir($dirName, $permission)
     {
+      if($permission==null) $permission=777;
       $this->_ui->outputData('Creating Directory '.$dirName);
         if (file_exists($dirName) || is_dir($dirName)) {
             if (!is_writeable($dirName)) {
