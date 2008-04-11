@@ -4,6 +4,15 @@ require_once 'Xinc/PostinstallBase.php';
 class Xinc_Postinstall_postinstall extends Xinc_PostinstallBase
 {
 
+    public function init(&$config, &$pkg, $lastversion)
+    {
+        return parent::init($config,$pkg,$lastversion);
+    }
+    public function run($answers, $phase)
+    {
+        return parent::run($answers, $phase);
+    }
+    
     protected function _createDir($dirName, $permission)
     {
         if (file_exists($dirName)) {
