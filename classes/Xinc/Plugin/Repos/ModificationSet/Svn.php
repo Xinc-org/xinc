@@ -126,6 +126,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $credentials .= ' --password ' . $password; 
         }
         exec($this->_svnPath . ' status -u --xml ' . $credentials . ' ' . $dir, $output, $result);
+        
         if ($result == 0) {
             try {
                 array_shift($output);
