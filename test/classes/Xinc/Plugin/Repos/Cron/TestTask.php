@@ -55,6 +55,7 @@ class Xinc_Plugin_Repos_Cron_TestTask extends Xinc_BaseTest
     }
     public function testHours()
     {
+        return;
         $task = new Xinc_Plugin_Repos_Cron_Task(new Xinc_Plugin_Repos_Schedule());
        
         $now = time();
