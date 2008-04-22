@@ -22,6 +22,8 @@ abstract class Xinc_PostinstallBase
         $this->_registry = &$config->getRegistry();
         $this->_ui = &PEAR_Frontend::singleton();
         $this->_pkg = &$pkg;
+        
+        var_dump($pkg->getVersion());
         $this->pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         if (file_exists($this->pearDataDir . DIRECTORY_SEPARATOR . 'xinc.ini')) {
             
@@ -37,14 +39,16 @@ abstract class Xinc_PostinstallBase
             @include_once('Xinc/Ini.php');
             if (class_exists('Xinc_Ini')) {
                 $xincIni = Xinc_Ini::getInstance();
-                
+                $xincIni->set('version', $this->_pkg->getVersion(),'xinc');
                 foreach ($prompts as $k=>$item) {
                     switch($item['name']) {
                         case 'etc_dir':
-                            $prompts[$k]['default']=$xincIni->get('etc','xinc');
+                            $val=$xincIni->get('etc','xinc');
+                            $prompts[$k]['default']=!empty($val)?$val:$prompts[$k]['default'];
                             break;
                         case 'xinc_dir':
-                            $prompts[$k]['default']=$xincIni->get('dir','xinc');
+                            $val=$xincIni->get('dir','xinc');
+                            $prompts[$k]['default']=!empty($val)?$val:$prompts[$k]['default'];
                             break;
                         default:
                             $val = $xincIni->get($item['name'],'xinc');
@@ -112,7 +116,6 @@ abstract class Xinc_PostinstallBase
     
     public function run($answers, $phase)
     {
-        
         $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         $xincPhpDir = PEAR_Config::singleton()->get('php_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
@@ -132,42 +135,45 @@ abstract class Xinc_PostinstallBase
             
             case 'daemoninstall':
                 $etcDir = $answers['etc_dir'];
+                $this->_createDir($etcDir, 0655);
                 $etcDir = realpath($etcDir);
                 $xincIni->set('etc', $etcDir, 'xinc');
+                
                 $etcConfDir = $etcDir . DIRECTORY_SEPARATOR . 'conf.d';
-                $etcConfDir = realpath($etcConfDir);
-                $this->_createDir($etcDir, 0655);
                 $this->_createDir($etcConfDir, 0655);
+                $etcConfDir = realpath($etcConfDir);
                 $xincIni->set('etc_conf_d', $etcConfDir, 'xinc');
                 
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
                                  . 'xinc' . DIRECTORY_SEPARATOR . '*', $etcDir);
                 
                 $xincDir = $answers['xinc_dir'];
-                $xincDir = realpath($xincDir);
-                $dataDir = $xincDir . DIRECTORY_SEPARATOR . 'projects';
-                $dataDir = realpath($dataDir);
-                $statusDir = $xincDir . DIRECTORY_SEPARATOR . 'status';
-                $statusDir = realpath($statusDir);
-                
-                $xincIni->set('dir', $xincDir, 'xinc');
-                $xincIni->set('status_dir', $statusDir, 'xinc');
-                $xincIni->set('project_dir', $dataDir, 'xinc');
                 $this->_createDir($xincDir, 0655);
+                $xincDir = realpath($xincDir);
+                $xincIni->set('dir', $xincDir, 'xinc');
+                
+                $dataDir = $xincDir . DIRECTORY_SEPARATOR . 'projects';
                 $this->_createDir($dataDir, 0655);
+                $dataDir = realpath($dataDir);
+                $xincIni->set('project_dir', $dataDir, 'xinc');
+                
+                $statusDir = $xincDir . DIRECTORY_SEPARATOR . 'status';
                 $this->_createDir($statusDir, 0655);
+                $statusDir = realpath($statusDir);
+                $xincIni->set('status_dir', $statusDir, 'xinc');
                 
                 $initDir = $answers['initd_dir'];
-                $initDir = realpath($initDir);
                 $this->_createDir($initDir, 0655);
+                $initDir = realpath($initDir);
+                
                 
                 
                 $logDir = $answers['log_dir'];
-                $logDir = realpath($logDir);
-                $xinclogDir = $logDir . DIRECTORY_SEPARATOR . 'xinc';
                 $this->_createDir($logDir, 0655);
-                
+                $logDir = realpath($logDir);
                 $xincIni->set('log_dir', $logDir, 'xinc');
+                
+                $xinclogDir = $logDir . DIRECTORY_SEPARATOR . 'xinc';
                 
                 $installExamples = $answers['install_examples'] == 'yes' ? true: false;
                 
@@ -197,16 +203,19 @@ abstract class Xinc_PostinstallBase
                                 $etcConfDir. DIRECTORY_SEPARATOR . 'simpleproject.xml',
                                 array('@EXAMPLE_DIR@'=>$dataDir));
                     $this->_uninstallFiles[] = $etcConfDir. DIRECTORY_SEPARATOR . 'simpleproject.xml';
-                    $res = $this->_deleteFile($etcConfDir. DIRECTORY_SEPARATOR . 'simpleproject.tpl.xml');
+                    //$res = $this->_deleteFile($etcConfDir. DIRECTORY_SEPARATOR . 'simpleproject.tpl.xml');
                 }
                 //exec($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'pear-install.sh');
                 $wwwDir = $answers['www_dir'];
+                $this->_createDir($wwwDir, 0755);
+                $wwwDir = realpath($wwwDir);
                 $xincIni->set('www_dir', $wwwDir, 'xinc');
+                
                 $wwwPort = $answers['www_port'];
                 $xincIni->set('www_port', $wwwPort, 'xinc');
                 $wwwIp =  $answers['www_ip'];
                 $xincIni->set('www_ip', $wwwIp, 'xinc');
-                $this->_createDir($wwwDir, 0755);
+                
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '.htaccess', $wwwDir);
                 
@@ -222,11 +231,7 @@ abstract class Xinc_PostinstallBase
                                 $etcDir.'/www.conf',
                                 array('@INCLUDE@'=>$pearPhpDir, '@WEB_DIR@'=>$wwwDir,
                                 '@PORT@'=>$wwwPort, '@IP@'=>$wwwIp));
-                
-                /**$this->_execCmd('cat ' . $pearDataDir . DIRECTORY_SEPARATOR . 'web/www.tpl.conf | sed -e "s#@INCLUDE@#'
-                               . $pearPhpDir . '#" | sed -e "s#@WEB_DIR@#'.$wwwDir.'#" | sed -e "s#@PORT@#'
-                               . $wwwPort . '#" | sed -e "s#@IP@#'.$wwwIp.'#" > '.$etcDir . '/www.conf');*/
-                                
+
                 $this->_uninstallFiles[] = $etcDir . '/www.conf';
                 $this->_undoFiles[] = $etcDir . '/www.conf';
                 
