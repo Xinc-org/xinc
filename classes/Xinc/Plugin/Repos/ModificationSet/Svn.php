@@ -38,7 +38,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
     
     public function __construct()
     {
-        $svnPath = Xinc_Ini::get('path', 'svn');
+        $svnPath = Xinc_Ini::getInstance()->get('path', 'svn');
         if (empty($svnPath)) {
             $svnPath = 'svn';
         }

@@ -115,12 +115,11 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
             $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
         
-        $phingPath = Xinc_Ini::get('path', 'phing');
+        $phingPath = Xinc_Ini::getInstance()->get('path', 'phing');
         if (empty($phingPath)) {
             $phingPath = 'phing';
         }
         exec($phingPath . ' ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . '2>&1', $output, $returnValue);
-
         chdir($oldPwd);
         
         $buildSuccess = false;
@@ -151,6 +150,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 if ($buildSuccess) {
                     return true;
                 } else {
+                    $build->error('Phing build script: ' . $buildfile . ' exited with status: ' . $returnValue);
                     $build->setStatus(Xinc_Build_Interface::FAILED);
                     return false;
                 }
@@ -158,6 +158,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 
             case -1:
             case -2:
+                $build->error('Phing build script: ' . $buildfile . ' exited with status: ' . $returnValue);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 return false;
                 break;
