@@ -26,6 +26,7 @@
 class Xinc_Ini
 {
     private static $_instance;
+    private static $_tabPos = 15;
     private $_fileName;
     private $_ini;
     
@@ -213,12 +214,12 @@ class Xinc_Ini
         $ini = self::getInstance()->_ini;
         echo "\n";
         if (isset($ini[$sectionName])) {
-            echo "Section:" . str_pad(" ", $tabPos - 8). "$sectionName\n";
+            echo "Section:" . str_pad(" ", self::$_tabPos - 8). "$sectionName\n";
             echo "\n";
             $array = $ini[$sectionName];
             if (is_array($array) && count($array)>0) {
                 foreach ($array as $key => $value) {
-                    echo $key . str_pad(" ", $tabPos - strlen($key)) . "= $value\n";
+                    echo $key . str_pad(" ", self::$_tabPos - strlen($key)) . "= $value\n";
                 }
             } else {
                 echo "-No values-";
@@ -232,7 +233,7 @@ class Xinc_Ini
     }
     private static function _showAllSettings()
     {
-        $tabPos = 15;
+        
         $ini = self::getInstance()->_ini;
         
         foreach ($ini as $section => $array) {
