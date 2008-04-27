@@ -157,9 +157,12 @@ class XincPEARPackageTask extends MatchingTask {
 
         // Linux release
         $package->addRelease();
-        //$package->setOSInstallCondition('(*ix|*ux|darwin*|*BSD|SunOS*)');
-        $package->setOSInstallCondition('unix');
-        $package->addIgnoreToRelease('Xinc/PostinstallWin.php');
+        /**
+         * for everything but windows, we will use the following release files
+         */
+        $package->setOSInstallCondition('windows', true);
+        //$package->setArchInstallCondition('(linux|unix)');
+        $package->addIgnoreToRelease('Xinc/Postinstall/Win.php');
         //$package->addIgnoreToRelease('bin/srvany.exe');
         //$package->addIgnoreToRelease('bin/instsrv.exe');
         $package->addIgnoreToRelease('bin/xinc.bat');
@@ -171,7 +174,7 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addRelease();
         $package->setOSInstallCondition('windows');
         //$package->addInstallAs('Xinc/bin/xinc', 'xinc.php');
-        $package->addIgnoreToRelease('Xinc/Postinstall.php');
+        $package->addIgnoreToRelease('Xinc/Postinstall/Nix.php');
         $package->addIgnoreToRelease('bin/xinc');
         $package->addIgnoreToRelease('bin/xinc-settings');
         $package->addInstallAs('bin/xinc.bat', 'xinc.bat');
@@ -222,7 +225,7 @@ class XincPEARPackageTask extends MatchingTask {
         $config = PEAR_Config::singleton();
         $log = PEAR_Frontend::singleton();
         $task = new PEAR_Task_Postinstallscript_rw($package, $config, $log,
-        array('name' => 'Xinc/Postinstall.php', 'role' => 'php'));
+        array('name' => 'Xinc/Postinstall/Nix.php', 'role' => 'php'));
         $task->addParamGroup('daemoninstall', array(
         $task->getParam('etc_dir', 'Directory to keep the Xinc config files', 'string', '/etc/xinc'),
         $task->getParam('xinc_dir', 'Directory to keep the Xinc Projects and Status information', 'string', '/var/xinc'),
@@ -234,11 +237,11 @@ class XincPEARPackageTask extends MatchingTask {
         $task->getParam('www_port', 'Port of Xinc web-application', 'string', '8080'),
         )
         );
-        $package->addPostinstallTask($task, 'Xinc/Postinstall.php');
+        $package->addPostinstallTask($task, 'Xinc/Postinstall/Nix.php');
 
 
         $taskWin = new PEAR_Task_Postinstallscript_rw($package, $config, $log,
-        array('name' => 'Xinc/PostinstallWin.php', 'role' => 'php'));
+        array('name' => 'Xinc/Postinstall/Win.php', 'role' => 'php'));
         $taskWin->addParamGroup('daemoninstall', array(
         $taskWin->getParam('xinc_dir', 'Directory to keep the Xinc Projects and Status information', 'string', 'C:\\xinc'),
         $taskWin->getParam('install_examples', 'Do you want to install the SimpleProject example', 'string', 'yes'),
@@ -246,7 +249,7 @@ class XincPEARPackageTask extends MatchingTask {
         $taskWin->getParam('www_port', 'Port of Xinc web-application', 'string', '8080'),
         )
         );
-        $package->addPostinstallTask($taskWin, 'Xinc/PostinstallWin.php');
+        $package->addPostinstallTask($taskWin, 'Xinc/Postinstall/Win.php');
 
 
 
