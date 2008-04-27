@@ -40,6 +40,11 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
         }
         $recipients = split(',', $to);
         $headers = array();
+        
+        if (isset($smtpSettings['localhost'])) {
+            $from = str_replace('@localhost', '@' . $smtpSettings['localhost'], $from);
+        }
+        
         $headers['From'] = $from;
         $headers['Subject'] = $subject;
         $res = $mailer->send($recipients, $headers, $message);
