@@ -170,6 +170,7 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addIgnoreToRelease('etc/init.d/xinc.bat');
         $package->addInstallAs('bin/xinc', 'xinc');
         $package->addInstallAs('bin/xinc-settings', 'xinc-settings');
+        $package->addInstallAs('bin/xinc-builds', 'xinc-builds');
         // windows release
         $package->addRelease();
         $package->setOSInstallCondition('windows');
@@ -177,6 +178,7 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addIgnoreToRelease('Xinc/Postinstall/Nix.php');
         $package->addIgnoreToRelease('bin/xinc');
         $package->addIgnoreToRelease('bin/xinc-settings');
+        $package->addIgnoreToRelease('bin/xinc-builds');
         $package->addInstallAs('bin/xinc.bat', 'xinc.bat');
         $package->addInstallAs('bin/xinc.php', 'xinc.php');
         $package->addInstallAs('bin/xinc-settings.bat', 'xinc-settings.bat');
@@ -221,6 +223,7 @@ class XincPEARPackageTask extends MatchingTask {
 
         $package->addReplacement('bin/xinc', 'pear-config', '@PHP_BIN@', 'php_bin');
         $package->addReplacement('bin/xinc-settings', 'pear-config', '@PHP_BIN@', 'php_bin');
+        $package->addReplacement('bin/xinc-builds', 'pear-config', '@PHP_BIN@', 'php_bin');
         $package->addReplacement('Xinc/scripts/pear-install.sh', 'pear-config', '@data-dir@','data_dir');
         $config = PEAR_Config::singleton();
         $log = PEAR_Frontend::singleton();

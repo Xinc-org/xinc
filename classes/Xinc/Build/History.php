@@ -23,7 +23,9 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+require_once 'Xinc/Logger.php';
 require_once 'Xinc/Project.php';
+require_once 'Xinc/Build.php';
 require_once 'Xinc/Build/History/Exception/Storage.php';
 require_once 'Xinc/Build/History/Exception/Migration.php';
 require_once 'Xinc/Build/History/Exception/General.php';
@@ -351,11 +353,237 @@ class Xinc_Build_History
         } else if ($isXincMode) {
             $statusDir = Xinc::getInstance()->getStatusDir();
         } else {
-            $statusDir = getcwd();
+            $statusDir = Xinc_Ini::getInstance()->get('status_dir','xinc');
         }
         return $statusDir;
     }
     
+    
+     /**
+     * deletes a number of build from the history
+     *
+     * @param string $projectName
+     * @param mixed $fromTimestamp Either the integer unix timestamp 
+     *             or timeformat: "YYYY-MM-DD HH:MI:SS-TZ"
+     * @param mixed $toTimestamp Either the integer unix timestamp 
+     *             or timeformat: "YYYY-MM-DD HH:MI:SS-TZ"
+     */
+    public static function deleteBuilds($projectName, $fromTimestamp, $toTimestamp)
+    {
+        $testFromTimestamp = (int) $fromTimestamp;
+        if ($testFromTimestamp."" !== $fromTimestamp) {
+            /**
+             * try and see if we have a string
+             * in format: YYYY-MM-DD HH:MI:SS-TIMEZONE
+             */
+            $timeParts = split('-', $fromTimestamp);
+            $timeYear = $timeParts[0];
+            $timeMonth = $timeParts[1];
+            list($timeDay, $timeTime) = split(' ', $timeParts[2]);
+            $timeZone = $timeParts[3];
+            
+            
+            $fromTimestamp = strtotime("$timeYear-$timeMonth-$timeDay $timeTime $timeZone");
+            
+        }
+        $testToTimestamp = (int) $toTimestamp;
+        if ($testToTimestamp."" !== $toTimestamp) {
+            /**
+             * try and see if we have a string
+             * in format: YYYY-MM-DD HH:MI:SS-TIMEZONE
+             */
+            $timeParts = split('-', $toTimestamp);
+            $timeYear = $timeParts[0];
+            $timeMonth = $timeParts[1];
+            list($timeDay, $timeTime) = split(' ', $timeParts[2]);
+            $timeZone = $timeParts[3];
+            
+            
+            $toTimestamp = strtotime("$timeYear-$timeMonth-$timeDay $timeTime $timeZone");
+            
+        }
+        Xinc_Logger::getInstance()->setLogLevel(0);
+        $project = new Xinc_Project();
+        $project->setName($projectName);
+        $metaFileArr = self::_loadMetaData($project->getName());
+        
+        if (!isset($metaFileArr['meta'])) {
+            
+            self::_migrate($project->getName(), $metaFileArr);
+            $metaFileArr = self::_loadMetaData($project->getName());
+        }
+        $deleteBuildTimestamps = array();
+        foreach ($metaFileArr['parts'] as $idx=>$part) {
+            $partNo = $part['no'];
+            $partArr = self::_readPartFile($project->getName(), $partNo);
+            foreach ($partArr as $compareTimestamp=>$serialFileName) {
+                if ($compareTimestamp>=$fromTimestamp && $compareTimestamp<=$toTimestamp) {
+                    $deleteBuildTimestamps[] = $compareTimestamp;
+                }
+            }
+        }
+        foreach ($deleteBuildTimestamps as $deleteTimestamp) {
+            self::deleteBuild($projectName, $deleteTimestamp);
+        }
+    }
+    
+    /**
+     * deletes a build from the history
+     *
+     * @param string $projectName
+     * @param mixed $timestamp Either the integer unix timestamp 
+     *             or timeformat: "YYYY-MM-DD HH:MI:SS-TZ"
+     */
+    public static function deleteBuild($projectName, $timestamp)
+    {
+        Xinc_Logger::getInstance()->setLogLevel(0);
+        $project = new Xinc_Project();
+        $project->setName($projectName);
+        $metaFileArr = self::_loadMetaData($project->getName());
+        
+        if ((int)$timestamp+0 != $timestamp) {
+            /**
+             * try and see if we have a string
+             * in format: YYYY-MM-DD HH:MI:SS-TIMEZONE
+             */
+            $timeParts = split('-', $timestamp);
+            $timeYear = $timeParts[0];
+            $timeMonth = $timeParts[1];
+            list($timeDay, $timeTime) = split(' ', $timeParts[2]);
+            $timeZone = $timeParts[3];
+            
+            $timestamp = strtotime("$timeYear-$timeMonth-$timeDay $timeTime $timeZone");
+            
+        }
+        
+        if (!isset($metaFileArr['meta'])) {
+            
+            self::_migrate($project->getName(), $metaFileArr);
+            $metaFileArr = self::_loadMetaData($project->getName());
+        }
+        $writeMetaFile = false;
+        foreach ($metaFileArr['parts'] as $idx=>$part) {
+            if ($part['from']<=$timestamp && $part['to']>=$timestamp) {
+                /**
+                 * this is the meta file we need
+                 */
+                $partNo = $part['no'];
+                $partArr = self::_readPartFile($project->getName(), $partNo);
+                $newArr = array();
+                $found = false;
+                $deleteDir = null;
+                $beforeTimestamp = null;
+                $afterTimestamp = null;
+                $lastTimeStamp = null;
+                foreach ($partArr as $compareTimestamp=>$serialFileName) {
+                    if ($compareTimestamp == $timestamp) {
+                        /**
+                         * we delete by not adding it again
+                         */
+                         $found = true;
+                         $deleteDir = dirname($serialFileName);
+                         $beforeTimestamp = $lastTimeStamp;
+                         $metaFileArr['parts'][$idx]['count']=$metaFileArr['parts'][$idx]['count']-1;
+                         $writeMetaFile = true;
+                    } else {
+                        if ($found && $afterTimestamp == null) {
+                            $afterTimestamp = $compareTimestamp;
+                        }
+                        $newArr[$compareTimestamp] = $serialFileName;
+                    }
+                    $lastTimeStamp = $compareTimestamp;
+                }
+                //var_dump($deleteDir);
+                //die;
+                
+                if ($found) {
+                    try {
+                        /**
+                         * if this is the only build, we need to delete the part from meta
+                         */
+                        if ($timestamp == $part['from'] && $timestamp == $part['to']) {
+                            unset($metaFileArr['lastSuccessfulBuild']);
+                            unset($metaFileArr['parts'][$idx]);
+                            $writeMetaFile = true;
+                        } else if ($timestamp == $part['from']) {
+                            if (isset($afterTimestamp)) {
+                                $metaFileArr['parts'][$idx]['from'] = $afterTimestamp;
+                                $writeMetaFile = true;
+                            }
+                        } else if ($timestamp == $part['to']) {
+                            if (isset($beforeTimestamp)) {
+                                $metaFileArr['parts'][$idx]['to'] = $beforeTimestamp;
+                                $writeMetaFile = true;
+                            }
+                        }
+                        if ($timestamp == $metaFileArr['lastSuccessfulBuild']['buildtime']) {
+                            /**
+                             * we need to find the last successful build, before this build
+                             */
+                            $reverseMetaArr = array_reverse($metaFileArr['parts'], true);
+                            foreach ($metaFileArr['parts'] as $idx=>$part) {
+                                if ($part['no'] == $partNo) {
+                                    $testPartArr = $newArr;
+                                } else {
+                                    $testPartArr = self::_readPartFile($project->getName(), $partNo);
+                                }
+                                $testPartArr = array_reverse($testPartArr,true);
+                                foreach ($testPartArr as $testCompareTimestamp=>$testSerialFileName) {
+                                    if (file_exists($testSerialFileName)) {
+                                        try {
+                                            $testPart = Xinc_Build::unserialize($project, $testCompareTimestamp, self::_getStatusDir());
+                                        } catch (Exception $e) {
+                                            //var_dump($e);
+                                        }
+                                        if ($testPart->getStatus() == Xinc_Build_Interface::PASSED) {
+                                            $metaFileArr['lastSuccessfulBuild']['buildtime'] = $testCompareTimestamp;
+                                            $metaFileArr['lastSuccessfulBuild']['filename'] = $testSerialFileName;
+                                            $writeMetaFile = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            //die;
+                        }
+                        self::_writePartFile($project->getName(), $partNo, $newArr);
+                        Xinc_Logger::getInstance()->info('Successfully written modified metadata');
+                        if ($writeMetaFile) {
+                            self::_writeMetaData($projectName, $metaFileArr);
+                            Xinc_Logger::getInstance()->info('Successfully written modified meta superdata');
+                        }
+                        $deleteDir = realpath($deleteDir);
+                        $statusDir = self::_getStatusDir();
+                        $statusDir = realpath($statusDir);
+                        /**
+                         * make sure we are only deleting inside the status dir
+                         */
+                        if (substr($deleteDir,0,strlen($statusDir)) == $statusDir && strlen($deleteDir)>strlen($statusDir)) {
+                            exec('rm -Rf ' . $deleteDir, $output, $res);
+                        } else {
+                            $res = -1;
+                        }
+                        
+                        //$res = 1;
+                        
+                        if ($res!=0) {
+                            Xinc_Logger::getInstance()->error('Could not delete build directory: ' . $deleteDir);
+                            return false;
+                        } else {
+                            Xinc_Logger::getInstance()->info('Successfully deleted build directory: ' . $deleteDir);
+                            return true;
+                        }
+                    } catch (Exception $e) {
+                        Xinc_Logger::getInstance()->error('Could not write modified metadata');
+                    }
+                    break;
+                }
+                return false;
+                
+            }
+        }
+        
+    }
     /**
      * Adds a build to the history file
      *
