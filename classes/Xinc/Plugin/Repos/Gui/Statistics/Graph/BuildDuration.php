@@ -37,23 +37,31 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildDuration extends Xinc_Plugin_R
         } else {
             $data = array('Successful Builds'=>array(),'Failed Builds'=>array());
         }
+        $builds = array();
         foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
             try {
                 $buildObject = Xinc_Build::unserialize($project,
                                                        $buildTimestamp,
                                                        Xinc_Gui_Handler::getInstance()->getStatusDir());
                 $duration = $buildObject->getStatistics()->get('build.duration');
+                $buildNo = $buildObject->getNumber();
                 if (!is_numeric($duration)) {
                     $duration = 0;
                 }
-                if ($buildObject->getStatus() == Xinc_Build_Interface::PASSED) {
-                    $data['Successful Builds'][$buildObject->getNumber()] = $duration;
-                    $data['Failed Builds'][$buildObject->getNumber()] = 0;
+                if (isset($builds[$buildNo])) {
+                    $builds[$buildNo]++;
+                    $buildNo .= '.f' . $builds[$buildNo];
                 } else {
-                    $data['Failed Builds'][$buildObject->getNumber()] = $duration;
-                    $data['Successful Builds'][$buildObject->getNumber()] = 0;
+                    $builds[$buildNo] = 0;
                 }
-                
+                if ($buildObject->getStatus() == Xinc_Build_Interface::PASSED) {
+                    $data['Successful Builds'][$buildNo] = $duration;
+                    $data['Failed Builds'][$buildNo] = 0;
+                } else {
+                    $data['Failed Builds'][$buildNo] = $duration;
+                    $data['Successful Builds'][$buildNo] = 0;
+                }
+                $prevBuildNo = $buildNo;
                 unset($buildObject);
             } catch (Exception $e) {
                 // TODO: Handle

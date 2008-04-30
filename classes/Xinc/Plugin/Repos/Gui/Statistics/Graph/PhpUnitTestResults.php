@@ -37,21 +37,28 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph_PhpUnitTestResults extends Xinc_Plu
         } else {
             $data = array('Number of Tests'=>array(),'Passed tests'=>array(),'Failed tests'=>array());
         }
-        
+        $builds = array();
         foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
             try {
                 $buildObject = Xinc_Build::unserialize($project,
                                                        $buildTimestamp,
                                                        Xinc_Gui_Handler::getInstance()->getStatusDir());
-                                                 
-                if ($buildObject->getStatistics()->get('phpunit.numberOfTests')>0) {
-                    $data['Number of Tests'][$buildObject->getNumber()] = $buildObject->getStatistics()->get('phpunit.numberOfTests');
-                    $data['Failed tests'][$buildObject->getNumber()] = $buildObject->getStatistics()->get('phpunit.numberOfFailures');
-                    $data['Passed tests'][$buildObject->getNumber()] = $buildObject->getStatistics()->get('phpunit.numberOfTests') - $buildObject->getStatistics()->get('phpunit.numberOfFailures');
+                $buildNo = $buildObject->getNumber();
+                if (isset($builds[$buildNo])) {
+                    $builds[$buildNo]++;
+                    $buildNo .= '.f' . $builds[$buildNo];
                 } else {
-                    $data['Number of Tests'][$buildObject->getNumber()] = 0;
-                    $data['Failed tests'][$buildObject->getNumber()] = 0;
-                    $data['Passed tests'][$buildObject->getNumber()] = 0;
+                    $builds[$buildNo] = 0;
+                }
+                
+                if ($buildObject->getStatistics()->get('phpunit.numberOfTests')>0) {
+                    $data['Number of Tests'][$buildNo] = $buildObject->getStatistics()->get('phpunit.numberOfTests');
+                    $data['Failed tests'][$buildNo] = $buildObject->getStatistics()->get('phpunit.numberOfFailures');
+                    $data['Passed tests'][$buildNo] = $buildObject->getStatistics()->get('phpunit.numberOfTests') - $buildObject->getStatistics()->get('phpunit.numberOfFailures');
+                } else {
+                    $data['Number of Tests'][$buildNo] = 0;
+                    $data['Failed tests'][$buildNo] = 0;
+                    $data['Passed tests'][$buildNo] = 0;
                 }
                 unset($buildObject);
             } catch (Exception $e) {
