@@ -48,7 +48,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Menu_Item extends Xinc_Plugin_Repos_Gui_D
                                                               true,
                                                               '/statistics/?project=' . $project->getName(), null,
                                                               'Statistics - ' . $project->getName(),
-                                                              true, true, true, $numberOfGraphs*$graphHeight);
+                                                              true, true, true, '100%');
         return $statisticsMenu;
     }
 }
