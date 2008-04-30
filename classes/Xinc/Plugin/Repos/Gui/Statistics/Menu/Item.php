@@ -40,9 +40,9 @@ class Xinc_Plugin_Repos_Gui_Statistics_Menu_Item extends Xinc_Plugin_Repos_Gui_D
     
     public function getItem(Xinc_Project &$project)
     {
-        $this->_extensions = $this->_widget->getExtensions();
-        $numberOfGraphs = count($this->_extensions['STATISTIC_GRAPH']);
-        $graphHeight = 350;
+        //$this->_extensions = $this->_widget->getExtensions();
+        $numberOfGraphs = 3;
+        $graphHeight = 250;
         $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('statistics-' . $project->getName(),
                                                               'Statistics',
                                                               true,

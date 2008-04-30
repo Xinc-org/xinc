@@ -22,8 +22,6 @@ abstract class Xinc_Postinstall
         $this->_registry = &$config->getRegistry();
         $this->_ui = &PEAR_Frontend::singleton();
         $this->_pkg = &$pkg;
-        
-        var_dump($pkg->getVersion());
         $this->pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         if (file_exists($this->pearDataDir . DIRECTORY_SEPARATOR . 'xinc.ini')) {
             
@@ -40,7 +38,9 @@ abstract class Xinc_Postinstall
             if (class_exists('Xinc_Ini')) {
                 $xincIni = Xinc_Ini::getInstance();
                 $xincIni->set('version', $this->_pkg->getVersion(),'xinc');
+                
                 foreach ($prompts as $k=>$item) {
+                    
                     switch($item['name']) {
                         case 'etc_dir':
                             $val=$xincIni->get('etc','xinc');
@@ -138,6 +138,11 @@ abstract class Xinc_Postinstall
                 $this->_createDir($etcDir, 0655);
                 $etcDir = realpath($etcDir);
                 $xincIni->set('etc', $etcDir, 'xinc');
+                
+                $tmpDir = $answers['tmp_dir'];
+                $this->_createDir($tmpDir, 0655);
+                $tmpDir = realpath($tmpDir);
+                $xincIni->set('tmp_dir', $tmpDir, 'xinc');
                 
                 $etcConfDir = $etcDir . DIRECTORY_SEPARATOR . 'conf.d';
                 $this->_createDir($etcConfDir, 0655);

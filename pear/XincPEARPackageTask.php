@@ -212,9 +212,12 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addExtensionDep('required', 'xml');
         $package->addPackageDepWithChannel( 'required', 'phing', 'pear.phing.info', '2.2.0');
         $package->addPackageDepWithChannel( 'required', 'VersionControl_SVN', 'pear.php.net', '0.3.0alpha1');
+        $package->addPackageDepWithChannel( 'required', 'Base', 'components.ez.no', '1.4.1');
+        $package->addPackageDepWithChannel( 'required', 'Graph', 'components.ez.no', '1.2.1');
         $package->addPackageDepWithChannel( 'optional', 'Mail', 'pear.php.net', '1.1.3');
         $package->addPackageDepWithChannel( 'optional', 'PHPUnit', 'pear.phpunit.de', '2.3.0');
         $package->addPackageDepWithChannel( 'optional', 'PhpDocumentor', 'pear.php.net', '1.3.0RC3');
+        $package->addPackageDepWithChannel( 'optional', 'PHP_CodeSniffer', 'pear.php.net', '1.0.0RC3');
         $package->addPackageDepWithChannel( 'optional', 'Xdebug', 'pear.php.net', '2.0.0');
         $package->addPackageDepWithChannel( 'optional', 'Archive_Tar', 'pear.php.net', '1.3.0');
         $package->addPackageDepWithChannel( 'optional', 'PEAR_PackageFileManager', 'pear.php.net', '1.5.2');
@@ -234,6 +237,7 @@ class XincPEARPackageTask extends MatchingTask {
         $task->getParam('xinc_dir', 'Directory to keep the Xinc Projects and Status information', 'string', '/var/xinc'),
         $task->getParam('log_dir', 'Directory to keep the Xinc log files', 'string', '/var/log'),
         $task->getParam('initd_dir', 'Directory to install the Xinc start/stop daemon', 'string', '/etc/init.d'),
+        $task->getParam('tmp_dir', 'Directory for xinc`s temporary files', 'string', '/tmp/xinc'),
         $task->getParam('install_examples', 'Do you want to install the SimpleProject example', 'string', 'yes'),
         $task->getParam('www_dir', 'Directory to install the Xinc web-application', 'string', '/var/www/xinc'),
         $task->getParam('www_ip', 'IP of Xinc web-application', 'string', '127.0.0.1'),
@@ -247,6 +251,7 @@ class XincPEARPackageTask extends MatchingTask {
         array('name' => 'Xinc/Postinstall/Win.php', 'role' => 'php'));
         $taskWin->addParamGroup('daemoninstall', array(
         $taskWin->getParam('xinc_dir', 'Directory to keep the Xinc Projects and Status information', 'string', 'C:\\xinc'),
+        $taskWin->getParam('tmp_dir', 'Directory for xinc`s temporary files', 'string', 'C:\\temp\\xinc'),
         $taskWin->getParam('install_examples', 'Do you want to install the SimpleProject example', 'string', 'yes'),
         $taskWin->getParam('www_ip', 'IP of Xinc web-application', 'string', '127.0.0.1'),
         $taskWin->getParam('www_port', 'Port of Xinc web-application', 'string', '8080'),

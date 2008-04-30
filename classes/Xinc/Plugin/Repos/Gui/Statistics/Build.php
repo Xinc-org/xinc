@@ -30,7 +30,10 @@ require_once 'Xinc/Build.php';
 require_once 'Xinc/Build/History.php';
 require_once 'Xinc/Build/Repository.php';
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
-require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph.php';
+require_once 'Xinc/Plugin/Repos/Gui/Statistics/Extension/Prominent.php';
+require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/BuildDuration.php';
+require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/BuildStatus.php';
+require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/PhpUnitTestResults.php';
 
 
 class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interface
@@ -57,11 +60,23 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
     {
         return array();
     }
+    public function getPhpUnitGraph()
+    {
+        
+        $graph = new Xinc_Plugin_Repos_Gui_Statistics_Graph_PhpUnitTestResults('PHPUnit Tests', 'line', '#f2f2f2', 'blue');
+        return $graph;
+    }
     
+    public function getBuildStatusGraph()
+    {
+        
+        $graph = new Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildStatus('Build Status', 'pie', '#f2f2f2', 'blue');
+        return $graph;
+    }
     public function getBuildDurationGraph()
     {
         
-        $graph = new Xinc_Plugin_Repos_Gui_Statistics_Graph('Build Duration in seconds', 'line', '#f2f2f2', 'blue');
+        $graph = new Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildDuration('Build Duration in seconds', 'line', '#f2f2f2', 'blue');
         return $graph;
     }
     private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
@@ -112,7 +127,23 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
         $statisticWidget = Xinc_Gui_Widget_Repository::getInstance()->
                                                        getWidgetByClassName('Xinc_Plugin_Repos_Gui_Statistics_Widget');
         
+        $statisticWidget->registerExtension('STATISTIC_GRAPH', $this->getBuildStatusGraph());
         $statisticWidget->registerExtension('STATISTIC_GRAPH', $this->getBuildDurationGraph());
+        $statisticWidget->registerExtension('STATISTIC_GRAPH', $this->getPhpUnitGraph());
+        
+        $detailWidget = Xinc_Gui_Widget_Repository::getInstance()->
+                                                    getWidgetByClassName('Xinc_Plugin_Repos_Gui_Dashboard_Detail');
+        
+        $extension = new Xinc_Plugin_Repos_Gui_Statistics_Extension_Prominent();
+        $extension->setWidget($this);
+        
+        $detailWidget->registerExtension('BUILD_SUMMARY', $extension);
+        
+        $dashboardWidget = Xinc_Gui_Widget_Repository::getInstance()->
+                                                    getWidgetByClassName('Xinc_Plugin_Repos_Gui_Dashboard_Widget');
+        
+        
+        $dashboardWidget->registerExtension('PROJECT_FEATURE', $extension);
         
     }
     

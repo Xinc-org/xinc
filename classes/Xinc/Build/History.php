@@ -60,6 +60,54 @@ class Xinc_Build_History
         }
     }
     
+    
+    public static function getFromToTimestamp(Xinc_Project &$project, $fromTimestamp, $limit = null, $descending = true)
+    {
+        /**
+         * reverse, go from back to front! start by last part not FIRST
+         */
+        $metaData = self::_loadMetaData($project->getName());
+        if (!isset($metaData['meta'])) {
+            self::_migrate($project->getName(), $metaData);
+            return self::getFromTo($project, $start, $limit);
+        } else {
+            
+            $totalEntries = 0;
+            $null = 0;
+            $stack = array();
+            $inside = false;
+            $withinLimit = true;
+            for ($i=count($metaData['parts'])-1; $i>=0; $i--) {
+                $from = $metaData['parts'][$i]['from'];
+                if ($from < $fromTimestamp || ($inside && $withinLimit)) {
+
+                    
+                    try {
+                        $part = self::_readPartFile($project->getName(), $i);
+                    } catch (Exception $e) {
+                        $part = array();
+                    }
+                    foreach($part as $timestamp => $data) {
+                        if ($timestamp>=$fromTimestamp) {
+                            $stack[$timestamp] = $data;
+                            $totalEntries++;
+                        }
+                    }
+                }
+                
+                if ($totalEntries > $limit && $limit != null) {
+                    break;
+                }
+            
+            }
+            if ($descending) {
+                krsort($stack);
+            }
+            
+            return $stack;
+        
+        }
+    }
     /**
      * Returns an array of historical builds
      *
@@ -69,7 +117,7 @@ class Xinc_Build_History
      * @return array
      * @throws Xinc_Build_History_Exception_General
      */
-    public static function getFromTo(Xinc_Project &$project, $start, $limit)
+    public static function getFromTo(Xinc_Project &$project, $start, $limit = null, $descending = true)
     {
         /**
          * reverse, go from back to front! start by last part not FIRST
@@ -101,15 +149,18 @@ class Xinc_Build_History
                 } else {
                     $null = $totalEntries;
                 }
-                if ($totalEntries > $start + $limit) {
+                if ($totalEntries > $start + $limit && $limit != null) {
                     break;
                 }
             
             }
-
-            krsort($stack);
-
-            $stack = array_slice($stack, $start, $limit, true);
+            if ($descending) {
+                krsort($stack);
+            }
+            if ($limit != null) {
+                $stack = array_slice($stack, $start, $limit, true);
+            }
+            
             return $stack;
         
         }

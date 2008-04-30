@@ -30,7 +30,9 @@ require_once 'Xinc/Build.php';
 require_once 'Xinc/Gui/Widget/Extension/Interface.php';
 require_once 'Xinc/Data/Repository.php';
 
-class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extension_Interface
+//
+
+abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extension_Interface
 {
     private $_id;
     
@@ -48,6 +50,8 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extensio
     
     private $_customColor = array();
     
+    protected $_widget;
+    
     /**
      *
      * @param string $title
@@ -60,12 +64,76 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extensio
                                 $bgColor = '#f2f2f2', $colorScheme = 'blue',
                                 $labelColor = '#000000')
     {
-        $this->_id = md5($title . $type . $bgColor . $colorScheme . $labelColor . time() . rand(0, 100000));
+        $this->_id = md5($title . $type . $bgColor . $colorScheme . $labelColor);
         $this->_title = $title;
         $this->_type = $type;
         $this->_bgColor = $bgColor;
         $this->_colorScheme = $colorScheme;
         $this->_labelColor = $labelColor;
+    }
+    
+    private function _initEzcGraph()
+    {
+        require_once 'ezc/Graph/graph.php';
+        require_once 'ezc/Graph/interfaces/chart.php';
+        require_once 'ezc/Base/base.php';
+        require_once 'ezc/Base/options.php';
+        require_once 'ezc/Graph/options/driver.php';
+        require_once 'ezc/Graph/options/svg_driver.php';
+        require_once 'ezc/Graph/colors/color.php';
+        require_once 'ezc/Graph/data_container/base.php';
+        require_once 'ezc/Graph/data_container/single.php';
+        require_once 'ezc/Graph/math/boundings.php';
+        require_once 'ezc/Graph/interfaces/element.php';
+        require_once 'ezc/Graph/element/background.php';
+        require_once 'ezc/Graph/element/text.php';
+        require_once 'ezc/Graph/element/legend.php';
+        require_once 'ezc/Graph/interfaces/driver.php';
+        require_once 'ezc/Graph/driver/svg.php';
+        require_once 'ezc/Graph/interfaces/palette.php';
+        require_once 'ezc/Graph/palette/tango.php';
+        require_once 'ezc/Graph/axis/container.php';
+        require_once 'ezc/Graph/options/font.php';
+        require_once 'ezc/Graph/options/chart.php';
+        require_once 'ezc/Graph/options/line_chart.php';
+        require_once 'ezc/Graph/charts/line.php';
+        require_once 'ezc/Graph/options/pie_chart.php';
+        require_once 'ezc/Graph/charts/pie.php';
+        require_once 'ezc/Base/struct.php';
+        require_once 'ezc/Graph/structs/coordinate.php';
+        require_once 'ezc/Graph/options/renderer.php';
+        require_once 'ezc/Graph/options/renderer_2d.php';
+        require_once 'ezc/Graph/interfaces/renderer.php';
+        require_once 'ezc/Graph/interfaces/radar_renderer.php';
+        require_once 'ezc/Graph/interfaces/stacked_bar_renderer.php';
+        require_once 'ezc/Graph/interfaces/odometer_renderer.php';
+        require_once 'ezc/Graph/renderer/2d.php';
+        require_once 'ezc/Graph/element/axis.php';
+        require_once 'ezc/Graph/axis/labeled.php';
+        require_once 'ezc/Graph/interfaces/axis_label_renderer.php';
+        require_once 'ezc/Graph/renderer/axis_label_centered.php';
+        require_once 'ezc/Graph/renderer/axis_label_exact.php';
+        require_once 'ezc/Graph/axis/numeric.php';
+        require_once 'ezc/Graph/datasets/base.php';
+        require_once 'ezc/Graph/datasets/array.php';
+        require_once 'ezc/Graph/interfaces/dataset_property.php';
+        require_once 'ezc/Graph/datasets/property/string.php';
+        require_once 'ezc/Graph/datasets/property/integer.php';
+        require_once 'ezc/Graph/datasets/property/boolean.php';
+        require_once 'ezc/Graph/datasets/property/color.php';
+        require_once 'ezc/Graph/datasets/property/axis.php';
+        require_once 'ezc/Graph/structs/step.php';
+        require_once 'ezc/Graph/math/vector.php';
+        require_once 'ezc/Graph/structs/context.php';
+        require_once 'ezc/Base/exceptions/exception.php';
+        require_once 'ezc/Graph/exceptions/exception.php';
+        require_once 'ezc/Graph/exceptions/no_such_data.php';
+        
+    }
+    
+    public function setWidget(Xinc_Gui_Widget_Interface &$widget)
+    {
+        $this->_widget = $widget;
     }
     
     private function _getTemplateFileName($type = 'line')
@@ -118,18 +186,39 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extensio
     {
         return $this->_data;
     }
+    
+    public abstract function buildDataSet(Xinc_Project &$project, array $buildHistory = array(), $previousData = array());
     public function generate($data = array(), $colorScheme = array())
     {
         $this->_data = $data;
         $this->_customColors = $colorScheme;
-        $base = dirname(__FILE__);
-        $filename = $this->_getTemplateFileName($this->_type);
-        
-        ob_start();
-        include_once($filename);
-        
-       $contents = ob_get_clean();
-       return $contents;
+        $this->_initEzcGraph();
+        try {
+            switch ($this->_type) {
+                case 'pie':
+                    $graph = new ezcGraphPieChart();
+                    break;
+                case 'line':
+                default:
+                    $graph = new ezcGraphLineChart();
+            }
+            
+            $graph->title = "";//$this->getTitle(); 
+            foreach ( $data as $key => $value )
+             {
+             $graph->data[$key] = new ezcGraphArrayDataSet( $value );
+             } 
+             //echo "Writing id: " . $this->getId();
+             $fileName = $this->_widget->getGraphFileName($this->getId());
+             //echo " filename: $fileName";
+             $width = 500;
+             $height = 200;
+             $graph->render( $width, $height, $fileName); 
+             $includeString = '<p><h3>'.$this->getTitle().'</h3><iframe src="/statistics/graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe><br/><br/></p>';
+             return $includeString;
+        } catch (Exception $e) {
+            //var_dump($e);
+        }
     }
     
     public function getBgColor()
