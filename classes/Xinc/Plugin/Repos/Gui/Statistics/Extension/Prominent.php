@@ -32,7 +32,7 @@ extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
 
     public function getTitle()
     {
-        return 'Statistics';
+        return 'Statistics<sup><span style="color:red">NEW</span></sup>';
     }
     public function getContent(Xinc_Build_Interface &$build)
     {
