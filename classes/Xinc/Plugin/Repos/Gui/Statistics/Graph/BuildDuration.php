@@ -42,18 +42,22 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildDuration extends Xinc_Plugin_R
                 $buildObject = Xinc_Build::unserialize($project,
                                                        $buildTimestamp,
                                                        Xinc_Gui_Handler::getInstance()->getStatusDir());
+                $duration = $buildObject->getStatistics()->get('build.duration');
+                if ($duration < 1) {
+                    $duration = 0;
+                }
                 if ($buildObject->getStatus() == Xinc_Build_Interface::PASSED) {
-                    $data['Successful Builds'][$buildObject->getNumber()] = $buildObject->getStatistics()->get('build.duration');
+                    $data['Successful Builds'][$buildObject->getNumber()] = $duration;
                     $data['Failed Builds'][$buildObject->getNumber()] = 0;
                 } else {
-                    $data['Failed Builds'][$buildObject->getNumber()] = $buildObject->getStatistics()->get('build.duration');
+                    $data['Failed Builds'][$buildObject->getNumber()] = $duration;
                     $data['Successful Builds'][$buildObject->getNumber()] = 0;
                 }
                 
                 unset($buildObject);
             } catch (Exception $e) {
                 // TODO: Handle
-               var_dump($e);
+               //var_dump($e);
                 
             }
             

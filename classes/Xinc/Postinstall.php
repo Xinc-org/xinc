@@ -50,6 +50,9 @@ abstract class Xinc_Postinstall
                             $val=$xincIni->get('dir','xinc');
                             $prompts[$k]['default']=!empty($val)?$val:$prompts[$k]['default'];
                             break;
+                        case 'tmp_dir':
+                            $prompts[$k]['default'] = $this->_config->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'tmp';
+                            break;
                         default:
                             $val = $xincIni->get($item['name'],'xinc');
                             $prompts[$k]['default']=!empty($val)?$val:$prompts[$k]['default'];
@@ -140,7 +143,7 @@ abstract class Xinc_Postinstall
                 $xincIni->set('etc', $etcDir, 'xinc');
                 
                 $tmpDir = $answers['tmp_dir'];
-                $this->_createDir($tmpDir, 0655);
+                $this->_createDir($tmpDir, 0777);
                 $tmpDir = realpath($tmpDir);
                 $xincIni->set('tmp_dir', $tmpDir, 'xinc');
                 
