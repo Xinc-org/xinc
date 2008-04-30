@@ -50,6 +50,7 @@
         <xsl:variable name="failureCount" select="sum(testsuite/@failures)"/>
         <xsl:variable name="timeCount" select="sum(testsuite/@time)"/>
         <xsl:variable name="successRate" select="($testCount - $failureCount - $errorCount) div $testCount"/>
+        <hr style="height:1px;color:lightgray"/>
         <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
         <tr valign="top">
             <td><b>Tests</b></td>
@@ -84,6 +85,7 @@
     </xsl:template>
 <xsl:template name="packagelist">   
         <h4>Packages</h4>
+        <hr style="height:1px;color:lightgray"/>
         <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
             <xsl:call-template name="testsuite.test.header"/>
             <!-- list all packages recursively -->
@@ -104,7 +106,7 @@
                             <xsl:when test="$errorCount &gt; 0">Error</xsl:when>
                         </xsl:choose>
                     </xsl:attribute>
-                    <td><a href="#{@package}"><xsl:value-of select="@package"/></a></td>
+                    <td><xsl:value-of select="@package"/></td>
                     <td><xsl:value-of select="$testCount"/></td>
                     <td><xsl:value-of select="$errorCount"/></td>
                     <td><xsl:value-of select="$failureCount"/></td>
