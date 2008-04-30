@@ -43,7 +43,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildDuration extends Xinc_Plugin_R
                                                        $buildTimestamp,
                                                        Xinc_Gui_Handler::getInstance()->getStatusDir());
                 $duration = $buildObject->getStatistics()->get('build.duration');
-                if ($duration < 0.1) {
+                if (!is_numeric($duration)) {
                     $duration = 0;
                 }
                 if ($buildObject->getStatus() == Xinc_Build_Interface::PASSED) {
