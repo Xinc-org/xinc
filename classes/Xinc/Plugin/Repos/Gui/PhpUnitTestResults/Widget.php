@@ -88,13 +88,6 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
                 Xinc_Timezone::set(Xinc_Gui_Handler::getInstance()->getSystemTimezone());
             }
         }
-            $templateFile = Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
-                                                                    . 'dashboard' . DIRECTORY_SEPARATOR
-                                                                    . 'detail' . DIRECTORY_SEPARATOR
-                                                                    . 'extension' . DIRECTORY_SEPARATOR
-                                                                    .'phpunit-details.phtml');
-            
-            $template = file_get_contents($templateFile);
             
             $sourceFile = $build->getInternalProperties()->get('phpunit.file');
             
@@ -110,7 +103,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
                 $title='PHPUnit Test Results';
                 $buildTimeString = date('Y-m-d H:i:s', $build->getBuildTime()) . '-' . Xinc_Timezone::get();
                 $content = str_replace(array('{title}','{details}','{projectName}','{buildLabel}','{buildTime}'),
-                                        array($title,$details, $projectName, $buildLabel, $buildTimeString), $template);
+                                        array($title,$details, $projectName, $buildLabel, $buildTimeString), $details);
             } else {
                 $content = false;
             }
