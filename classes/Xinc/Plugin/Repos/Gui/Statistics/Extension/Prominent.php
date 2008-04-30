@@ -39,7 +39,7 @@ extends Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo
          
         $projectName = $build->getProject()->getName();
         $url = '/statistics/?project=' . $projectName;
-        $click = 'openMenuTab(\'statistics-'.$projectName.'\',\'Statistics - '.$projectName.'\',\''.$url.'\',null,false,true,750);';
+        $click = 'openMenuTab(\'statistics-'.$projectName.'\',\'Statistics - '.$projectName.'\',\''.$url.'\',null,false,true,\'100%\');';
         return '<a href="#" onclick="'.$click.'">Graphs</a>';
     }
     public function getExtensionPoint()

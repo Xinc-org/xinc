@@ -143,6 +143,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
             if (file_exists($outputFileName)) {
                 $summary = file_get_contents($outputFileName);
             } else {
+                
                 $summary = $this->_transformResults($sourceFile, $xslFile, $outputFileName);
             }
             //$click = 'openMenuTab(\'phpunit-'.$projectName.'-'.$buildTimestamp.'\',\'PHPUnit - '.$projectName.'\',\''.$url.'\',null,false,false,\'auto\');';
@@ -155,11 +156,25 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
         return $content;
     }
     
+    private function _fixPackages(DOMDocument &$document)
+    {
+        $testsuites = $document->getElementsByTagName('testsuite');
+
+        foreach ($testsuites as $testsuite)
+        {
+                if (!$testsuite->hasAttribute('package'))
+                {
+                        $testsuite->setAttribute('package', 'default');
+                }
+        }
+        
+    }
+    
     private function _transformResults($xmlFile, $xslFile, $outputFileName)
     {
         $xml = new DOMDocument;
         $xml->load($xmlFile);
-        
+        $this->_fixPackages($xml);
         $xsl = new DOMDocument;
 
         $xsl->load($xslFile);

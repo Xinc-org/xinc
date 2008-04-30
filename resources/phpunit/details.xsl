@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
     xmlns:exsl="http://exslt.org/common"
     xmlns:str="http://exslt.org/strings"
@@ -289,7 +290,6 @@
 {buildLabel}
 </td>
 </tr>
-
 </table>
     <table width="100%">
     <tr>

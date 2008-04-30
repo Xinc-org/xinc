@@ -115,8 +115,8 @@ class Xinc_Plugin_Repos_Api_Documentation implements Xinc_Api_Module_Interface
         $buildTime = $params['buildtime'];
         $file = $params['file'];*/
         
-        $query = $_SERVER['REQUEST_URI'];
-       
+        $query = urldecode($_SERVER['REQUEST_URI']);
+        
         preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
         if (count($matches)!=8) {
             echo "Could not find documentation";
@@ -127,7 +127,7 @@ class Xinc_Plugin_Repos_Api_Documentation implements Xinc_Api_Module_Interface
         // latest
         // Xinc_Build_History::get()
         $file = $matches[7];
-        $file = urldecode($file);
+        //$file = urldecode($file);
         $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
         
         $project = new Xinc_Project();
