@@ -491,8 +491,8 @@ class Xinc_Build_History
         $project = new Xinc_Project();
         $project->setName($projectName);
         $metaFileArr = self::_loadMetaData($project->getName());
-        
-        if ((int)$timestamp+0 != $timestamp) {
+        $testTimestamp = (int) $timestamp;
+        if ($testTimestamp."" != $timestamp) {
             /**
              * try and see if we have a string
              * in format: YYYY-MM-DD HH:MI:SS-TIMEZONE
