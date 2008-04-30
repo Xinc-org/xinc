@@ -1,0 +1,116 @@
+<style>
+table.result {
+    border: 0 none;
+    border-collapse: collapse;
+    margin: 10px 1% 15px 1%;
+    width: 98%;
+}
+
+table.result thead th {
+    border-bottom: 1px solid #babdb6;
+    color: #555753;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: left;
+    text-indent: 5px;
+    white-space: nowrap;
+}
+
+table.result tfoot td {
+    border-top: 1px solid #babdb6;
+    font-weight: bold;
+}
+
+table.result thead th a {
+    color: #555753;
+    text-decoration: none;
+}
+
+table.result thead th a:hover {
+    text-decoration: underline;
+}
+
+table.result tbody td {
+    font-size: 11px;
+    line-height: 15px;
+    padding-left: 5px;
+}
+
+table.result tbody tr.oddrow td {
+    background-color: #eeeeec;
+}
+
+table.result tbody th {
+    border-bottom: 1px solid #babdb6;
+    color: #555753;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: left;
+    text-indent: 5px;
+    white-space: nowrap;
+}
+
+table.result tbody tr.error th {
+    
+}
+
+table.result tbody tr.failure th {
+    
+}
+
+table.result tbody td.info,
+table.result tbody td.error,
+table.result tbody td.failure,
+table.result tbody td.warning,
+table.result tbody td.success,
+table.result tbody td.skipped,
+table.result tbody td.unknown {
+    background: transparent none 4px 50% no-repeat;
+    line-height: 19px;
+    padding-left: 24px;
+}
+table.result tbody td.sub {
+    background-position: 20px 50%;
+    padding-left: 40px;
+}
+
+table.result tbody td.info {
+    background-image: url('/images/failed.png');
+}
+
+table.result tbody td.failure {
+    background-image: url('/images/failed.png');
+}
+
+table.result tbody td.error {
+    background-image: url('/images/failed.png');
+}
+
+table.result tbody td.warning {
+    background-image: url('/images/failed.png');
+}
+table.result tbody td.skipped {
+    background-image: url('/images/stopped.png');
+}
+table.result tbody td.success {
+    background-image: url('/images/passed.png');
+}
+table.result tbody td.unknown {
+    background-image: url('/images/stopped.png');
+}
+
+table.result tbody td input.button {
+    border: 1px solid #555753;
+    color: #2e3436;
+    font-size: 11px;
+    padding: 1px 10px;
+}
+</style>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td width="10%">{detailsLink}</td>
+</tr>
+<tr>
+<td width="100%" align="left">{summary}</td>
+</tr>
+</table>

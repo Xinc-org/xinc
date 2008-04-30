@@ -24,6 +24,7 @@
 */
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Publisher/PHPUnitTestResults/Task.php';
+require_once 'Xinc/Plugin/Repos/Gui/PhpUnitTestResults/Widget.php';
 
 class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
 {
@@ -38,7 +39,10 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
     {
         return array(new Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task($this));
     }
-    
+    public function getGuiWidgets()
+    {
+        return array(new Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget($this));
+    }
     /**
      * Copies a file into a special test results directory for the build and
      * parse the xml file to generate statistics
