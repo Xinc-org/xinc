@@ -62,7 +62,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
     }
     public function handleEvent($eventId)
     {
-       $query = $_SERVER['REQUEST_URI'];
+       $query = urldecode($_SERVER['REQUEST_URI']);
        
        preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
        

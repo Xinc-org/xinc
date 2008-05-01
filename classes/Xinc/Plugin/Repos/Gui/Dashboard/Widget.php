@@ -54,7 +54,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
                 
-                    $query = $_SERVER['REQUEST_URI'];
+                    $query = urldecode($_SERVER['REQUEST_URI']);
                     $this->features = $this->_extensions['PROJECT_FEATURE'];
                     
                     
