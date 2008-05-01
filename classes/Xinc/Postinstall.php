@@ -137,6 +137,12 @@ abstract class Xinc_Postinstall
         switch($phase) {
             
             case 'daemoninstall':
+                
+                $xincDir = $answers['xinc_dir'];
+                $this->_createDir($xincDir, 0655);
+                $xincDir = realpath($xincDir);
+                $xincIni->set('dir', $xincDir, 'xinc');
+                
                 $etcDir = $answers['etc_dir'];
                 $this->_createDir($etcDir, 0655);
                 $etcDir = realpath($etcDir);
@@ -154,11 +160,6 @@ abstract class Xinc_Postinstall
                 
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR
                                  . 'xinc' . DIRECTORY_SEPARATOR . '*', $etcDir);
-                
-                $xincDir = $answers['xinc_dir'];
-                $this->_createDir($xincDir, 0655);
-                $xincDir = realpath($xincDir);
-                $xincIni->set('dir', $xincDir, 'xinc');
                 
                 $dataDir = $xincDir . DIRECTORY_SEPARATOR . 'projects';
                 $this->_createDir($dataDir, 0655);

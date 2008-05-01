@@ -187,6 +187,7 @@ class XincPEARPackageTask extends MatchingTask {
         //$package->addInstallAs('bin/instsrv.exe', 'instsrv.exe');
         //$package->addInstallAs('bin/srvany.exe', 'srvany.exe');
         $package->addReplacement('bin/xinc.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
+        $package->addReplacement('bin/xinc-settings.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
         $package->addReplacement('Xinc.php', 'package-info', '@VERSION@', 'version');
         $package->addReplacement('xinc.ini.tpl', 'package-info', '@VERSION@', 'version');
         $package->addReplacement('bin/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
@@ -253,6 +254,7 @@ class XincPEARPackageTask extends MatchingTask {
         $taskWin->getParam('etc_dir', 'Directory to keep the Xinc config files', 'string', 'C:\\xinc\\etc'),
         $taskWin->getParam('xinc_dir', 'Directory to keep the Xinc Projects and Status information', 'string', 'C:\\xinc'),
         $taskWin->getParam('log_dir', 'Directory to keep the Xinc log files', 'string', 'C:\\xinc\\log'),
+        $taskWin->getParam('initd_dir', 'Directory to install the Xinc start/stop script', 'string', 'C:\\xinc\\init.d'),
         $taskWin->getParam('tmp_dir', 'Directory for xinc`s temporary files', 'string', 'C:\\xinc\\temp'),
         $taskWin->getParam('install_examples', 'Do you want to install the SimpleProject example', 'string', 'yes'),
         $taskWin->getParam('www_dir', 'Directory to install the Xinc web-application', 'string', 'C:\\xinc\\www'),
