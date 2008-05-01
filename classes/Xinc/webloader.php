@@ -14,3 +14,5 @@ if (isset($_SERVER['WINDIR'])){
     ini_set('include_path',join(';', $newParts));
 }
 ini_set('display_errors', 'off');
+global $_RUN;
+$_RUN = true;
