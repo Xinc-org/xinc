@@ -48,14 +48,9 @@ class Xinc_Plugin_Repos_Cron_TestTask extends Xinc_BaseTest
         }
         
     }
-    public function xtestDays()
-    {
-        $now = time();
-        $dayOfMonth = date('j', $now);
-    }
+
     public function testHours()
     {
-        return;
         $task = new Xinc_Plugin_Repos_Cron_Task(new Xinc_Plugin_Repos_Schedule());
        
         $now = time();
@@ -73,6 +68,16 @@ class Xinc_Plugin_Repos_Cron_TestTask extends Xinc_BaseTest
                                                 . date('Y-m-d H:i:s', $now));
         
     
+        
+    }
+    
+    public function testIssue154()
+    {
+        $task = new Xinc_Plugin_Repos_Cron_Task(new Xinc_Plugin_Repos_Schedule());
+        $task->setTimer('*/4 * * * *');
+        $time = strtotime('2008-03-31 23:57:28');
+        $nextTime = $task->getTimeFromCron();
+        $this->assertTrue($nextTime-time()<=240, 'Build time should be within 240 seconds');
         
     }
     
