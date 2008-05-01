@@ -261,7 +261,10 @@ abstract class Xinc_Postinstall
                  * Handle uninstall info, write uninstall.ini into data dir
                  */
                 $this->_createUninstallInfo();
-                $xincIni->save();
+                $res = $xincIni->save();
+                if (!$res) {
+                    $this->_ui->outputData("[ERROR] Could not save ini settings");
+                }
                 
                 break;
             case '_undoOnError' :
