@@ -50,16 +50,22 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
         $out = null;
         $res = null;
         $files = glob($src);
-        $this->_ui->outputData('copy /y "' . $src . '" "' . $target .'"', $out, $res);
-        exec('xcopy /E /Y "' . $src . '" "' . $target .'"', $out, $res);
+        if (!empty($extra)) {
+            $cmd = 'xcopy /E /Y "' . $src . '" "' . $target .'"';
+        } else {
+            $cmd = 'copy /Y "' . $src . '" "' . $target .'"';
+        }
+        $this->_ui->outputData($cmd, $out, $res);
+        exec($cmd, $out, $res);
         if ($res != 0) {
             $this->_ui->outputData('Could not copy "' . $src . '" to: ' . $target);
             return $this->_failedInstall();
         } else {
             foreach ($files as $file) {
                 $baseFileName = basename($file);
-                $this->_undoFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
-                $this->_uninstallFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
+                $targetDir = dirname($target);
+                $this->_undoFiles[] = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
+                $this->_uninstallFiles[] = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
             }
             $this->_ui->outputData('Successfully copied ' . $src . '  to: ' . $target);
         }

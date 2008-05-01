@@ -55,8 +55,9 @@ class Xinc_Postinstall_Nix_postinstall extends Xinc_Postinstall
         } else {
             foreach ($files as $file) {
                 $baseFileName = basename($file);
-                $this->_undoFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
-                $this->_uninstallFiles[] = $target . DIRECTORY_SEPARATOR . $baseFileName;
+                $targetDir = dirname($target);
+                $this->_undoFiles[] = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
+                $this->_uninstallFiles[] = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
             }
             $this->_ui->outputData('Successfully copied ' . $src . '  to: ' . $target);
         }

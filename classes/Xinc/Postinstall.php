@@ -170,9 +170,11 @@ abstract class Xinc_Postinstall
                 $statusDir = realpath($statusDir);
                 $xincIni->set('status_dir', $statusDir, 'xinc');
                 
-                $initDir = $answers['initd_dir'];
-                $this->_createDir($initDir, 0655);
-                $initDir = realpath($initDir);
+                if (isset($answers['initd_dir'])) {
+                    $initDir = $answers['initd_dir'];
+                    $this->_createDir($initDir, 0655);
+                    $initDir = realpath($initDir);
+                }
                 
                 
                 

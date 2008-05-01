@@ -250,9 +250,12 @@ class XincPEARPackageTask extends MatchingTask {
         $taskWin = new PEAR_Task_Postinstallscript_rw($package, $config, $log,
         array('name' => 'Xinc/Postinstall/Win.php', 'role' => 'php'));
         $taskWin->addParamGroup('daemoninstall', array(
+        $taskWin->getParam('etc_dir', 'Directory to keep the Xinc config files', 'string', 'C:\\xinc\\etc'),
         $taskWin->getParam('xinc_dir', 'Directory to keep the Xinc Projects and Status information', 'string', 'C:\\xinc'),
-        $taskWin->getParam('tmp_dir', 'Directory for xinc`s temporary files', 'string', 'C:\\temp\\xinc'),
+        $taskWin->getParam('log_dir', 'Directory to keep the Xinc log files', 'string', 'C:\\xinc\\log'),
+        $taskWin->getParam('tmp_dir', 'Directory for xinc`s temporary files', 'string', 'C:\\xinc\\temp'),
         $taskWin->getParam('install_examples', 'Do you want to install the SimpleProject example', 'string', 'yes'),
+        $taskWin->getParam('www_dir', 'Directory to install the Xinc web-application', 'string', 'C:\\xinc\\www'),
         $taskWin->getParam('www_ip', 'IP of Xinc web-application', 'string', '127.0.0.1'),
         $taskWin->getParam('www_port', 'Port of Xinc web-application', 'string', '8080'),
         )
