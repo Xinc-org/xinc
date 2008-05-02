@@ -101,7 +101,7 @@ class Xinc_Postinstall_Nix_postinstall extends Xinc_Postinstall
         $binDir = $this->_config->get('bin_dir');
         $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall',
                      $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall');
-        
+        chmod($binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall', 0755);
         $this->_undoFiles[] = $initDir . '/xinc';
         $this->_uninstallFiles[] = $initDir . '/xinc';
     }

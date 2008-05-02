@@ -244,7 +244,7 @@ abstract class Xinc_Postinstall
                                  . DIRECTORY_SEPARATOR . '.htaccess', $wwwDir);
                 
                 
-                chmod($binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall', 0755);
+                
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '*', $wwwDir, '-Rf');
                 $this->_deleteFile($wwwDir.'/www.tpl.conf');
