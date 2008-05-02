@@ -109,40 +109,17 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
     
     
 
-    private function _createWindowsService()
+    private function _createWindowsService($pearDataDir, $initDir)
     {
-        $binDir = PEAR_Config::singleton()->get('bin_dir');
-        
-        exec('"' . $binDir . DIRECTORY_SEPARATOR . 'instsrv.exe" xinc "'
-            . $binDir . DIRECTORY_SEPARATOR . 'srvany.exe"', $out, $res1);
-            $this->_ui->outputData('"' . $binDir . DIRECTORY_SEPARATOR . 'instsrv.exe" xinc "'
-            . $binDir . DIRECTORY_SEPARATOR . 'srvany.exe"');
-        if ($res1!=0) {
+        $winDir = isset($_SERVER['SystemRoot'])?$_SERVER['SystemRoot']:"C:\\Windows\\";
+        $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'winserv.exe',
+                     $winDir . DIRECTORY_SEPARATOR . 'winserv.exe');
+        exec('winserv install Xinc ' . $initDir . '\\xinc.bat', $out, $res);
+        if ($res!=0) {
             $this->_ui->outputData('Could not install windows service');
-            return;
-            //$this->_failedInstall();
+        } else {
+            $this->_ui->outputData('Successfully installed windows service');
         }
-        exec('reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Xinc\Parameters" /f', $out, $res2);
-        if ($res2!=0) {
-
-            exec('"' . $binDir . DIRECTORY_SEPARATOR . 'instsrv.exe" xinc remove');
-            echo('"' . $binDir . DIRECTORY_SEPARATOR . 'instsrv.exe" xinc remove');
-            $this->_ui->outputData('Could not install windows service');
-            //$this->_failedInstall();
-        }
-        exec('reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Xinc\Parameters'
-            .' /v Application /t REG_SZ /d "'
-            . $binDir . DIRECTORY_SEPARATOR.'xinc.bat" /f', $out, $res3);
-        if ($res3!=0) {
- 
-            exec($binDir . DIRECTORY_SEPARATOR . 'instsrv.exe xinc remove');
-            exec('reg delete HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Xinc\Parameters /f');
-            echo($binDir . DIRECTORY_SEPARATOR . 'instsrv.exe xinc remove');
-            echo('reg delete HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Xinc\Parameters /f');
-            $this->_ui->outputData('Could not install windows service');
-            //$this->_failedInstall();
-        }
-        
     }
     
     
@@ -159,6 +136,7 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
         $binDir = $this->_config->get('bin_dir');
         $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall.bat',
                      $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall.bat');
+        $this->_createWindowsService($pearDataDir, $initDir);
     }
     
     protected function _deleteFile($file, $extra='')

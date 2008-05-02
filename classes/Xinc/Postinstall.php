@@ -297,7 +297,13 @@ abstract class Xinc_Postinstall
                 $this->_ui->outputData("- Please include $etcDir/www.conf in your apache virtual hosts.");
                 $this->_ui->outputData("- Please enable mod-rewrite.");
                 $this->_ui->outputData("- To add projects to Xinc, copy the project xml to $etcConfDir");
-                $this->_ui->outputData("- To start xinc execute: sudo $initDir/xinc start");
+                
+                
+                if (DIRECTORY_SEPARATOR != '/') {
+                    $this->_ui->outputData("- To start xinc execute: net start Xinc");
+                } else {
+                    $this->_ui->outputData("- To start xinc execute: sudo $initDir/xinc start");
+                }
                 $this->_ui->outputData("UNINSTALL instructions:");
                 $this->_ui->outputData("- pear uninstall xinc/Xinc");
                 $this->_ui->outputData("- run: $binDir/xinc-uninstall to cleanup installed files");

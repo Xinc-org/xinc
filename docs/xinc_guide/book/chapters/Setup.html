@@ -75,9 +75,14 @@ the following table of Software dependencies</p>
       <td><a href="http://www.xdebug.org">http://www.xdebug.org</a></td>
     </tr>
     <tr>
-      <td>PhpDocumentor 1.3.0RC3+</td>
-      <td>Additional functionality</td>
-      <td><a href="http://www.phpdoc.org">http://www.phpdoc.org</a></td>
+      <td>Base 1.4.1+</td>
+      <td>ezComponents Graphic functionality</td>
+      <td><a href="http://components.ez.no">http://components.ez.no</a></td>
+    </tr>
+    <tr>
+      <td>Graph 1.2.1+</td>
+      <td>ezComponents Graphic functionality</td>
+      <td><a href="http://components.ez.no">http://components.ez.no</a></td>
     </tr>
     <!-- Zend Optimizer etc. could be added here... -->
   </tbody>
@@ -95,11 +100,15 @@ the following table of Software dependencies</p>
 <p>You can install Xinc through a pear package in two ways:
 <pre>
 pear channel-discover pear.xinc.eu
+pear channel-discover pear.phing.info
+pear channel-discover components.ez.no
 pear install xinc/Xinc
 </pre>
 <p><strong>-OR-</strong></p>
 <pre>
 pear channel-discover pear.xinc.eu
+pear channel-discover pear.phing.info
+pear channel-discover components.ez.no
 pear install http://xinc.eu/api/deliverable/get/download/xinc-dev/latest-successful/Xinc-Latest-Dev-2.0.1.tgz
 </pre>
 
@@ -187,8 +196,8 @@ Xinc Web Interface.
   </tr>
   </tbody>
 </table>
-
-<pre title="Installation success">
+<p><strong>Installation success Linux</strong></p>
+<pre title="Installation success Linux">
 Xinc installation complete.
 - Please include /etc/xinc/www.conf in your apache virtual hosts.
 - Please enable mod-rewrite.
@@ -200,23 +209,36 @@ UNINSTALL instructions:
 Install scripts complete
 
 </pre>
-<h4>Including Xinc www.conf in Apache2</h4>
+<p><strong>Installation success Windows</strong></p>
+<pre title="Installation success Windows">
+Xinc installation complete.
+- Please include C:\xinc\etc/www.conf in your apache virtual hosts.
+- Please enable mod-rewrite.
+- To add projects to Xinc, copy the project xml to C:\xinc\etc\conf.d
+- To start xinc execute: net start Xinc
+UNINSTALL instructions:
+- pear uninstall xinc/Xinc
+- run: C:\xampp\php/xinc-uninstall to cleanup installed files
+[OK] Saved ini settings
+Install scripts complete
+</pre>
+<h4>Preferred Way: Including Xinc www.conf in Apache2</h4>
 <pre>
 $ sudo ln -s /etc/xinc/www.conf /etc/apache2/sites-enabled/
 $ sudo apache2ctl restart
 </pre> 
-<h4>Including Xinc www.conf in Apache main config</h4>
+<h4>Alternative Way: Including Xinc www.conf in Apache main config</h4>
 <p>
 To add the Xinc apache config file to apache, add the following line in your httpd.conf:
 </p>
 <pre>
 Include /etc/xinc/www.conf
 </pre> 
-<h4>Enabling Mod Rewrite in Apache2</h4>
+<h4>Preferred Way: Enabling Mod Rewrite in Apache2</h4>
 <pre>
 $ ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
 </pre>
-<h4>Enabling Mod Rewrite in Apache main config</h4>
+<h4>Alternative Way: Enabling Mod Rewrite in Apache main config</h4>
 <p>To add the mod-rewrite module, add the following line in your httpd.conf:</p>
 <pre>
 LoadModule rewrite_module /usr/lib/apache2/modules/mod_rewrite.so
@@ -344,6 +366,13 @@ If you detect that the daemon script is not working properly on your system and 
 would like to contribute a working init script, submit a <a href="http://code.google.com/p/xinc/issues/entry">ticket.</a>
 </strong>
 </p>
+<h3><a name="Windows"></a>Execution on Windows systems</h3>
+
+<p>Xinc comes with <a href="http://sw4me.com/wiki/Winserv">winserv</a>, which installs Xinc as a windows service.</p>
+
+<pre>
+C:\net start Xinc
+</pre>
 <p>You can execute Xinc in run-once mode as well as start it in the foreground.
 For Command Line Arguments see
 <a href="appendixes/AppendixA-FactSheet.html#CommandLineArguments">Appendix A</a>.
