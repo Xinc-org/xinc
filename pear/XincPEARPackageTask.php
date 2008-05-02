@@ -168,6 +168,7 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addIgnoreToRelease('bin/xinc.bat');
         $package->addIgnoreToRelease('bin/xinc.php');
         $package->addIgnoreToRelease('etc/init.d/xinc.bat');
+        $package->addIgnoreToRelease('scripts/xinc-uninstall.bat');
         $package->addInstallAs('bin/xinc', 'xinc');
         $package->addInstallAs('bin/xinc-settings', 'xinc-settings');
         $package->addInstallAs('bin/xinc-builds', 'xinc-builds');
@@ -178,6 +179,7 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addIgnoreToRelease('Xinc/Postinstall/Nix.php');
         $package->addIgnoreToRelease('bin/xinc');
         $package->addIgnoreToRelease('bin/xinc-settings');
+        $package->addIgnoreToRelease('scripts/xinc-uninstall');
         $package->addIgnoreToRelease('bin/xinc-builds');
         $package->addInstallAs('bin/xinc.bat', 'xinc.bat');
         $package->addInstallAs('bin/xinc.php', 'xinc.php');
@@ -188,10 +190,14 @@ class XincPEARPackageTask extends MatchingTask {
         //$package->addInstallAs('bin/srvany.exe', 'srvany.exe');
         $package->addReplacement('bin/xinc.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
         $package->addReplacement('bin/xinc-settings.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
+        $package->addReplacement('bin/xinc-settings.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
         $package->addReplacement('Xinc.php', 'package-info', '@VERSION@', 'version');
         $package->addReplacement('xinc.ini.tpl', 'package-info', '@VERSION@', 'version');
         $package->addReplacement('bin/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
         $package->addReplacement('scripts/xinc-uninstall', 'pear-config', '@PHP_BIN@', 'php_bin');
+        $package->addReplacement('scripts/xinc-uninstall.bat', 'pear-config', '@PHP_BIN@', 'php_bin');
+        $package->addReplacement('scripts/xinc-uninstall', 'pear-config', '@BIN_DIR@', 'bin_dir');
+        $package->addReplacement('scripts/xinc-uninstall.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
         $package->addReplacement('etc/init.d/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
         $package->addReplacement('etc/init.d/xinc', 'pear-config', '@BIN_DIR@', 'bin_dir');
         // creating a sub-section for non-windows

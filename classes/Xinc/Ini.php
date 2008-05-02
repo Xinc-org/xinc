@@ -46,9 +46,9 @@ class Xinc_Ini
     private function __construct()
     {
         
-        include_once 'PEAR/Config.php';
-        if (!class_exists('PEAR_Config')) {
-            return false;
+        $res = include_once('PEAR/Config.php');
+        if (!$res || !class_exists('PEAR_Config')) {
+                throw new Exception("Cannot load pear config");
         }
         $pearDir = PEAR_Config::singleton()->get('data_dir');
         $this->_fileName = $pearDir . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'xinc.ini';
@@ -57,6 +57,8 @@ class Xinc_Ini
             if (!is_array($this->_ini)) {
                 $this->_ini = array();
             }
+        } else if (!touch($this->_fileName)) {
+            throw new Exception("Cannot load pear config");
         } else {
             $this->_ini = array();
         }

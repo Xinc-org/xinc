@@ -323,7 +323,20 @@ class Xinc
 
     private function _isProcessRunning($pid)
     {
-        
+        if (isset($_SERVER['OS']) && stristr($_SERVER['OS'],'Windows')) {
+            return true;
+        } else {
+            exec('ps --no-heading -p ' . $pid, $out, $res);
+            if ($res!=0) {
+                return false;
+            } else {
+                if (count($out)>0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
     }
     
     /**
@@ -337,10 +350,13 @@ class Xinc
          * write pid file
          */
         if (file_exists($this->_pidFile)) {
-            
-            Xinc_Logger::getInstance()->error('Pid File: ' . $this->_pidFile . ' exists.');
-            Xinc_Logger::getInstance()->error('Xinc instance running already or you need to clean up after a crash');
-            exit(-1);
+            $oldPid = file_get_contents($this->_pidFile);
+            if ($this->_isProcessRunning($oldPid)) {
+                Xinc_Logger::getInstance()->error('Xinc Instance with PID '.$pid.' still running. Check pidfile '.$this->_pidFile.'. Shutting down.');
+                exit(-1);
+            } else {
+                Xinc_Logger::getInstance()->error('Cleaning up old pidFile.');
+            }
         }
         file_put_contents($this->_pidFile, getmypid());
         while (true) {

@@ -36,7 +36,12 @@ abstract class Xinc_Postinstall
         if ($this->_iniFileExists) {
             @include_once('Xinc/Ini.php');
             if (class_exists('Xinc_Ini')) {
-                $xincIni = Xinc_Ini::getInstance();
+                try {
+                    $xincIni = Xinc_Ini::getInstance();
+                } catch (Exception $e) {
+                    $this->_ui->outputData('Could not initiate xinc.ini configuration');
+                    return $this->_failedInstall();
+                }
                 $xincIni->set('version', $this->_pkg->getVersion(),'xinc');
                 
                 foreach ($prompts as $k=>$item) {
@@ -76,7 +81,8 @@ abstract class Xinc_Postinstall
     {
         $uninstallFileFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'xinc.uninstall.files';
         $uninstallDirFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'xinc.uninstall.dirs';
-        
+        $this->_uninstallFiles = array_reverse($this->_uninstallFiles);
+        $this->_uninstallDirs = array_reverse($this->_uninstallDirs);
         file_put_contents($uninstallFileFile, implode("\n", $this->_uninstallFiles));
         file_put_contents($uninstallDirFile, implode("\n", $this->_uninstallDirs));
     }
@@ -119,25 +125,32 @@ abstract class Xinc_Postinstall
     
     public function run($answers, $phase)
     {
-        $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
-        $xincPhpDir = PEAR_Config::singleton()->get('php_dir') . DIRECTORY_SEPARATOR . 'Xinc';
-        $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
-        $binDir = PEAR_Config::singleton()->get('bin_dir');
-        if(!$this->_iniFileExists) {
-            $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR .'xinc.ini.tpl', $pearDataDir . DIRECTORY_SEPARATOR .'xinc.ini');
-        }
-        include_once $pearPhpDir . '/Xinc/Ini.php';
-        if (class_exists('Xinc_Ini')) {
-            $xincIni = Xinc_Ini::getInstance();
-        } else {
-            $this->_ui->outputData('Cannot initialize Xinc_Ini class');
-            return false;
-        }
+        
         
         switch($phase) {
             
             case 'daemoninstall':
-                
+                $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
+                $xincPhpDir = PEAR_Config::singleton()->get('php_dir') . DIRECTORY_SEPARATOR . 'Xinc';
+                $pearPhpDir = PEAR_Config::singleton()->get('php_dir');
+                $binDir = PEAR_Config::singleton()->get('bin_dir');
+                if(!$this->_iniFileExists) {
+                    $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR .'xinc.ini.tpl', $pearDataDir . DIRECTORY_SEPARATOR .'xinc.ini');
+                    $this->_iniFileExists = true;
+                }
+                include_once $pearPhpDir . '/Xinc/Ini.php';
+                if (class_exists('Xinc_Ini')) {
+                    try {
+                        $xincIni = Xinc_Ini::getInstance();
+                    } catch (Exception $e) {
+                        $this->_ui->outputData($e->getMessage());
+                        $this->_failedInstall();
+                    }
+                } else {
+                    $this->_ui->outputData('Cannot initialize Xinc_Ini class');
+                    $this->_failedInstall();
+                    return false;
+                }
                 $xincDir = $answers['xinc_dir'];
                 $this->_createDir($xincDir, 0655);
                 $xincDir = realpath($xincDir);
@@ -230,8 +243,7 @@ abstract class Xinc_Postinstall
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '.htaccess', $wwwDir);
                 
-                copy($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall',
-                     $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall');
+                
                 chmod($binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall', 0755);
                 $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'web'
                                  . DIRECTORY_SEPARATOR . '*', $wwwDir, '-Rf');
@@ -248,6 +260,38 @@ abstract class Xinc_Postinstall
                 
                 $this->_platformSpecificInstall($etcDir, $logDir, $statusDir, $dataDir, $initDir);
                 
+                $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall.php',
+                     $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall.php');
+                
+                
+                /**
+                 * check for XAMPP
+                 */
+                $includePath = ini_get('include_path');
+                $isXampp = false;
+                if (stristr($includePath,'xampp')) {
+                    $isXampp = true;
+                    $this->_ui->outputData('############################## WARNING ##############################');
+                    $this->_ui->outputData(' You are using a XAMPP installation.');
+                    $this->_ui->outputData(' XAMPP uses a directory structure and an include_path configuration');
+                    $this->_ui->outputData(' which causes problems with Xinc admin scripts.');
+                    $this->_ui->outputData('');
+                    $this->_ui->outputData(' Current include path: ' . $includePath);
+                    $parts = split(';', $includePath);
+                    $parts = array_reverse($parts);
+                    if (!in_array('.', $parts)) {
+                        $parts[] = '.';
+                    }
+                    $newIncludePath = join(';', $parts);
+                    $this->_ui->outputData(' Please change to: ' . $newIncludePath);
+                    $this->_ui->outputData('#####################################################################');
+                    if (DIRECTORY_SEPARATOR != '/') {
+                        $this->_ui->outputData('Setting phing path to: ' . $binDir . DIRECTORY_SEPARATOR . 'phing');
+                        $xincIni->set('path', $binDir . DIRECTORY_SEPARATOR . 'phing', 'phing');
+                    }
+                }
+                
+
                 
                 $this->_ui->outputData('Xinc installation complete.');
                 $this->_ui->outputData("- Please include $etcDir/www.conf in your apache virtual hosts.");
@@ -257,6 +301,9 @@ abstract class Xinc_Postinstall
                 $this->_ui->outputData("UNINSTALL instructions:");
                 $this->_ui->outputData("- pear uninstall xinc/Xinc");
                 $this->_ui->outputData("- run: $binDir/xinc-uninstall to cleanup installed files");
+                
+                
+                
                 /**
                  * Handle uninstall info, write uninstall.ini into data dir
                  */
@@ -264,8 +311,10 @@ abstract class Xinc_Postinstall
                 $res = $xincIni->save();
                 if (!$res) {
                     $this->_ui->outputData("[ERROR] Could not save ini settings");
+                } else {
+                    $this->_ui->outputData("[OK] Saved ini settings");
                 }
-                
+                return true;
                 break;
             case '_undoOnError' :
                    

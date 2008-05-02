@@ -1,0 +1,1 @@
+@PHP_BIN@ @BIN_DIR@\xinc-uninstall.php

@@ -150,16 +150,20 @@ start_xinc() {
     $logbegin "Starting $DESC"
     
     if [ -r $PIDFILE ]; then
-     $logbegin ":Xinc already running"
-     $logend
-     
-    else
-     #$logbegin "$start_daemon $start_daemon_options $DAEMON -- $OPTIONS $daemon_end"
-     $start_daemon $start_daemon_options $DAEMON $OPTIONS $start_daemon_end
-     $logend
-     
-    fi
-
+      read pid < "$PIDFILE"
+      TEST=`ps -o pid --no-heading -p $pid`
+      if [ "${pid}" -eq "${TEST}" ]; then
+        
+        $logbegin ":Xinc already running"
+        $logend
+        exit 0
+      else 
+        $logbegin ":PID File $PIDFILE exists but Xinc is not running"
+        $logend
+      fi
+    fi 
+    $start_daemon $start_daemon_options $DAEMON $OPTIONS $start_daemon_end
+    $logend
 
 }
 

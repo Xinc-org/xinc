@@ -404,7 +404,11 @@ class Xinc_Build_History
         } else if ($isXincMode) {
             $statusDir = Xinc::getInstance()->getStatusDir();
         } else {
-            $statusDir = Xinc_Ini::getInstance()->get('status_dir','xinc');
+            try {
+                $statusDir = Xinc_Ini::getInstance()->get('status_dir','xinc');
+            } catch (Exception $e) {
+                $statusDir = null;
+            }
         }
         return $statusDir;
     }

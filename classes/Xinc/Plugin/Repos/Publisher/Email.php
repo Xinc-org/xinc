@@ -32,7 +32,12 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
     private function _sendPearMail($from, $to, $subject, $message)
     {
         require_once 'Xinc/Ini.php';
-        $smtpSettings = Xinc_Ini::getInstance()->get('email_smtp');
+        
+        try {
+            $smtpSettings = Xinc_Ini::getInstance()->get('email_smtp');
+        } catch (Exception $e) {
+            $smtpSettings = null;
+        }
         if ($smtpSettings != null) {
             $mailer = Mail::factory('smtp', $smtpSettings);
         } else {

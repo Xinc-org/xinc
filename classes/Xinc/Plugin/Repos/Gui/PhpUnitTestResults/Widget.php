@@ -93,7 +93,12 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
             
             if ($sourceFile != null && file_exists($sourceFile) && class_exists('XSLTProcessor')) {
                 $xslFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'phpunit' . DIRECTORY_SEPARATOR . 'details.xsl';
-                $outputFileName = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc') . DIRECTORY_SEPARATOR . 'phpunit_details_' . $projectName . '_' . $buildTimestamp;
+                try {
+                    $outputFileName = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc') . DIRECTORY_SEPARATOR . 'phpunit_details_' . $projectName . '_' . $buildTime;
+                } catch (Exception $e) {
+                    Xinc_Logger::getInstance()->error('Cannot get xinc.ini configuration');
+                    $outputFileName = 'phpunit_details_' . $projectName . '_' . $buildTime;
+                }
                 if (file_exists($outputFileName)) {
                     $details = file_get_contents($outputFileName);
                 } else {
@@ -139,7 +144,12 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
         
         if ($sourceFile != null && file_exists($sourceFile) && class_exists('XSLTProcessor')) {
             $xslFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'phpunit' . DIRECTORY_SEPARATOR . 'summary.xsl';
-            $outputFileName = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc') . DIRECTORY_SEPARATOR . 'phpunit_summary_' . $projectName . '_' . $buildTimestamp;
+            try {
+                $outputFileName = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc') . DIRECTORY_SEPARATOR . 'phpunit_summary_' . $projectName . '_' . $buildTimestamp;
+            } catch (Exception $e) {
+                Xinc_Logger::getInstance()->error('Cannot get xinc.ini configuration');
+                $outputFileName = 'phpunit_summary_' . $projectName . '_' . $buildTimestamp;
+            }
             if (file_exists($outputFileName)) {
                 $summary = file_get_contents($outputFileName);
             } else {

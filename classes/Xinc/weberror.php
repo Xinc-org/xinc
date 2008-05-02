@@ -1,5 +1,5 @@
 <?php
 
-echo "<h4>you need to enable the mod_rewrite module</h4>";
-global $_RUN;
-$_RUN = false;
+global $_NO_RUN,$_NO_RUN_REASON;
+$_NO_RUN = true;
+$_NO_RUN_REASON = 2;

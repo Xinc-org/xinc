@@ -114,12 +114,28 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         foreach ($build->getProperties()->getAllProperties() as $name => $value) {
             $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
-        
-        $phingPath = Xinc_Ini::getInstance()->get('path', 'phing');
-        if (empty($phingPath)) {
-            $phingPath = 'phing';
+        try {
+            $phingPath = Xinc_Ini::getInstance()->get('path', 'phing');
+        } catch (Exception $e) {
+            $phingPath = null;
         }
-        exec($phingPath . ' ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . '2>&1', $output, $returnValue);
+        if (empty($phingPath)) {
+            if (DIRECTORY_SEPARATOR != '/') {
+                /**
+                 * windows has the phing command inside the bin_dir directory
+                 */
+                $phingPath = PEAR_Config::singleton()->get('bin_dir') . DIRECTORY_SEPARATOR . 'phing';
+            } else {
+                $phingPath = 'phing';
+            }
+        }
+        if (DIRECTORY_SEPARATOR == '/') {
+            $redirect = "2>&1";
+        } else {
+            $redirect = "";
+        }
+        $command = $phingPath . ' ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . $redirect;
+        exec($command, $output, $returnValue);
         chdir($oldPwd);
         
         $buildSuccess = false;
@@ -150,7 +166,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 if ($buildSuccess) {
                     return true;
                 } else {
-                    $build->error('Phing build script: ' . $buildfile . ' exited with status: ' . $returnValue);
+                    $build->error('Phing command '.$command.' exited with status: ' . $returnValue);
                     $build->setStatus(Xinc_Build_Interface::FAILED);
                     return false;
                 }
@@ -158,7 +174,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 
             case -1:
             case -2:
-                $build->error('Phing build script: ' . $buildfile . ' exited with status: ' . $returnValue);
+                $build->error('Phing build script: '.$command.' exited with status: ' . $returnValue);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 return false;
                 break;

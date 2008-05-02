@@ -35,6 +35,7 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
                 return $this->_failedInstall();
             }
             $this->_undoDirs[] = $dirName; //;'rmdir "' . $dirName . '" /s /q';
+            $this->_uninstallDirs[] = $dirName;
         }
         return true;
     }
@@ -42,7 +43,7 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
     {
         $out = null;
         $res = null;
-        exec('rmdir "' . $dirname . '" /s /q', $out, $res);
+        exec('rmdir /S /Q "' . $dirname . '"', $out, $res);
         return $res==0;
     }
     protected function _copyFiles($src, $target, $extra = '')
@@ -50,22 +51,55 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
         $out = null;
         $res = null;
         $files = glob($src);
+        
         if (!empty($extra)) {
-            $cmd = 'xcopy /E /Y "' . $src . '" "' . $target .'"';
+            foreach ($files as $file) {
+                $targetDirName = $target;
+                if (is_dir($file) && is_dir($target)) {
+                    $targetDirName = $target . DIRECTORY_SEPARATOR . basename($file);
+                    if (!file_exists($targetDirName)) {
+                        mkdir($targetDirName);
+                    }
+                    $file = $file . DIRECTORY_SEPARATOR . '*';
+                    
+                }
+                $cmd = 'xcopy /E /Y "' . $file . '" "' . $targetDirName .'"';
+                exec($cmd, $out, $res);
+                $this->_ui->outputData($cmd, $out, $res);
+                $baseFileName = basename($file);
+                $targetDir = dirname($target);
+                
+            }
+            
         } else {
             $cmd = 'copy /Y "' . $src . '" "' . $target .'"';
+            exec($cmd, $out, $res);
+            $this->_ui->outputData($cmd, $out, $res);
         }
-        $this->_ui->outputData($cmd, $out, $res);
-        exec($cmd, $out, $res);
+        
+        
         if ($res != 0) {
             $this->_ui->outputData('Could not copy "' . $src . '" to: ' . $target);
             return $this->_failedInstall();
         } else {
+            $srcDir = dirname($src);
+            $srcDir = realpath($srcDir);
             foreach ($files as $file) {
-                $baseFileName = basename($file);
-                $targetDir = dirname($target);
-                $this->_undoFiles[] = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
-                $this->_uninstallFiles[] = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
+                $file = realpath($file);
+                if (is_dir($target)) {
+                    $targetDir = $target;
+                } else {
+                    $targetDir = dirname($target);
+                }
+                $undo = $targetDir . DIRECTORY_SEPARATOR . str_replace($srcDir, '', $file);
+                //$undo = $targetDir . DIRECTORY_SEPARATOR . $baseFileName;
+                if (is_dir($undo)) {
+                    $this->_undoDirs[] = $undo;
+                    $this->_uninstallDirs[] = $undo;
+                } else {
+                    $this->_undoFiles[] = $undo;
+                    $this->_uninstallFiles[] = $undo;
+                }
             }
             $this->_ui->outputData('Successfully copied ' . $src . '  to: ' . $target);
         }
@@ -122,6 +156,9 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
                               '@DATADIR@' => $dataDir));
         $this->_undoFiles[] = $initDir . DIRECTORY_SEPARATOR . 'xinc.bat';
         $this->_uninstallFiles[] = $initDir . DIRECTORY_SEPARATOR . 'xinc.bat';
+        $binDir = $this->_config->get('bin_dir');
+        $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall.bat',
+                     $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall.bat');
     }
     
     protected function _deleteFile($file, $extra='')

@@ -49,7 +49,11 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
-        $this->_tmpDir = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc');
+        try {
+            $this->_tmpDir = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc');
+        } catch (Exception $e) {
+            $this->_tmpDir = '/tmp/';
+        }
         
     }
     
