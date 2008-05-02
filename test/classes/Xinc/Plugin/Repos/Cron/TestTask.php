@@ -35,7 +35,7 @@ class Xinc_Plugin_Repos_Cron_TestTask extends Xinc_BaseTest
         $task = new Xinc_Plugin_Repos_Cron_Task(new Xinc_Plugin_Repos_Schedule());
         $task->setTimer('*/2 * * * *');
         $nextTime = $task->getTimeFromCron(time());
-        $this->assertTrue($nextTime-time()<=120, 'Build time should be within 120 seconds');
+        $this->assertTrue($nextTime-time()<=239, 'Build time should be within 239 seconds');
         
         $nowMinute = date('i');
         if ($nowMinute>1) {
