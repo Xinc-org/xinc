@@ -109,12 +109,18 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
     
     
 
-    private function _createWindowsService($pearDataDir, $initDir)
+    private function _createWindowsService($binDir, $pearDataDir, $etcDir, $logDir, $statusDir, $dataDir, $initDir)
     {
         $winDir = isset($_SERVER['SystemRoot'])?$_SERVER['SystemRoot']:"C:\\Windows\\";
         $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'winserv.exe',
                      $winDir . DIRECTORY_SEPARATOR . 'winserv.exe');
-        exec('winserv install Xinc ' . $initDir . '\\xinc.bat', $out, $res);
+        $XINC_CONFIG="$etcDir\system.xml";
+        $XINC_PROJECTS="$etcDir\conf.d\*.xml";
+        $XINC_LOG="$logDir/xinc.log";
+        $XINC_STATUS=$statusDir;
+        $phpBin = $this->_config->get('php_bin');
+        $XINC_DATADIR=$dataDir;
+        exec('winserv install Xinc -ipcmethod blind ' . $phpBin . "$binDir\xinc.php -f $XINC_CONFIG -p $XINC_DATADIR -s $XINC_STATUS -w $XINC_DATADIR -l $XINC_LOG $XINC_PROJECTS", $out, $res);
         if ($res!=0) {
             $this->_ui->outputData('Could not install windows service');
         } else {
@@ -136,7 +142,7 @@ class Xinc_Postinstall_Win_postinstall extends Xinc_Postinstall
         $binDir = $this->_config->get('bin_dir');
         $this->_copyFiles($pearDataDir . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'xinc-uninstall.bat',
                      $binDir . DIRECTORY_SEPARATOR . 'xinc-uninstall.bat');
-        $this->_createWindowsService($pearDataDir, $initDir);
+        $this->_createWindowsService($binDir, $pearDataDir, $etcDir, $logDir, $statusDir, $dataDir, $initDir);
     }
     
     protected function _deleteFile($file, $extra='')

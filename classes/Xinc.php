@@ -323,16 +323,11 @@ class Xinc
 
     private function _isProcessRunning($pid)
     {
-        if (isset($_SERVER['OS']) && stristr($_SERVER['OS'],'Windows')) {
-            exec('winserv status Xinc', $output, $res);
-            if ($res!=0) {
-                return true;
-            } else {
-                foreach($output as $out) {
-                    if (stristr($out, "running")) return true;
-                }
-                return false;
-            }
+        if (isset($_SERVER['SystemRoot']) && DIRECTORY_SEPARATOR != '/') {
+            /**
+             * winserv is handling that
+             */
+            return false;
         } else {
             exec('ps --no-heading -p ' . $pid, $out, $res);
             if ($res!=0) {

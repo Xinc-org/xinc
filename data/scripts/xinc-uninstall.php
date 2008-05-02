@@ -4,6 +4,15 @@ require_once 'PEAR/Config.php';
 $uninstallFileFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'xinc.uninstall.files';
 $uninstallDirFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'xinc.uninstall.dirs';
 
+if (DIRECTORY_SEPARATOR != '/') {
+    exec('winserv uninstall Xinc', $out, $res);
+    if ($res==0) {
+        echo "[OK] Uninstalled Xinc service\n";
+    } else {
+        echo "[NOK] Could not uninstall Xinc service\n";
+    }
+}
+
 if (file_exists($uninstallFileFile)) {
 
     $files = file($uninstallFileFile);
