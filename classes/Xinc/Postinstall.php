@@ -300,7 +300,7 @@ abstract class Xinc_Postinstall
                 
                 
                 if (DIRECTORY_SEPARATOR != '/') {
-                    $this->_ui->outputData("- To start xinc execute: net start Xinc");
+                    $this->_ui->outputData("- To start xinc execute: winserv start Xinc");
                 } else {
                     $this->_ui->outputData("- To start xinc execute: sudo $initDir/xinc start");
                 }
