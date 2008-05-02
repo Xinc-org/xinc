@@ -178,11 +178,13 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
             }
         } elseif ($unit=="minute") {
             if ($dateArr["minutes"]==59) {
-                $dateArr["minutes"]=0;
+                $dateArr["minutes"] = 0;
+                $dateArr["seconds"] = 0;
                 return $this->incDate($dateArr, 1, "hour");
             } else {
                 $dateArr["seconds"] = 0;
                 $dateArr["minutes"]++;
+                
             }
         }
         //if ($debug) echo sprintf("to %02d.%02d. %02d:%02d\n",$dateArr[mday],$dateArr[mon],$dateArr[hours],$dateArr[minutes]);
@@ -246,7 +248,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base implements Xinc_
             $extjob[self::PC_HOUR][$dateArr['hours']]=false;
         }
         if ($job[1] != '*') {
-            $extjob[self::PC_HOUR][$dateArr['minutes']]=false;
+            $extjob[self::PC_MINUTE][$dateArr['minutes']]=false;
         }
         $minutesAhead = 0;
         while (
