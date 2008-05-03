@@ -30,6 +30,16 @@ require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph.php';
 class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildDuration extends Xinc_Plugin_Repos_Gui_Statistics_Graph
 {
     
+    public function getBgColor()
+    {
+        return '#000000';
+    }
+    
+    public function getColorScheme()
+    {
+        return array('#00ff00','#ff0000');
+    }
+    
     public function buildDataSet(Xinc_Project &$project, array $buildHistoryArr = array(), $previousData = array())
     {
         if (count($previousData)>0) {

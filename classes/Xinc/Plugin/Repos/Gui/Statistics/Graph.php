@@ -32,6 +32,8 @@ require_once 'Xinc/Data/Repository.php';
 
 //
 
+
+
 abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extension_Interface
 {
     private $_id;
@@ -75,12 +77,21 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
     private function _initEzcGraph()
     {
         require_once 'ezc/Graph/graph.php';
+        require_once 'ezc/Base/exceptions/exception.php';
+        require_once 'ezc/Base/exceptions/property_not_found.php';
+        
+        require_once 'ezc/Base/exceptions/value.php';
+        require_once 'ezc/Graph/interfaces/palette.php';
+        
+        require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/Palette.php';
+        
         require_once 'ezc/Graph/interfaces/chart.php';
         require_once 'ezc/Base/base.php';
         require_once 'ezc/Base/options.php';
         require_once 'ezc/Graph/options/driver.php';
         require_once 'ezc/Graph/options/svg_driver.php';
         require_once 'ezc/Graph/colors/color.php';
+        require_once 'ezc/Graph/colors/linear_gradient.php';
         require_once 'ezc/Graph/data_container/base.php';
         require_once 'ezc/Graph/data_container/single.php';
         require_once 'ezc/Graph/math/boundings.php';
@@ -103,11 +114,14 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         require_once 'ezc/Graph/structs/coordinate.php';
         require_once 'ezc/Graph/options/renderer.php';
         require_once 'ezc/Graph/options/renderer_2d.php';
+        require_once 'ezc/Graph/options/renderer_3d.php';
+        
         require_once 'ezc/Graph/interfaces/renderer.php';
         require_once 'ezc/Graph/interfaces/radar_renderer.php';
         require_once 'ezc/Graph/interfaces/stacked_bar_renderer.php';
         require_once 'ezc/Graph/interfaces/odometer_renderer.php';
         require_once 'ezc/Graph/renderer/2d.php';
+        require_once 'ezc/Graph/renderer/3d.php';
         require_once 'ezc/Graph/element/axis.php';
         require_once 'ezc/Graph/axis/labeled.php';
         require_once 'ezc/Graph/interfaces/axis_label_renderer.php';
@@ -125,10 +139,10 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         require_once 'ezc/Graph/structs/step.php';
         require_once 'ezc/Graph/math/vector.php';
         require_once 'ezc/Graph/structs/context.php';
-        require_once 'ezc/Base/exceptions/exception.php';
+        
         require_once 'ezc/Graph/exceptions/exception.php';
         require_once 'ezc/Graph/exceptions/no_such_data.php';
-        
+        require_once 'ezc/Graph/exceptions/reducement_failed.php';
     }
     
     public function setWidget(Xinc_Gui_Widget_Interface &$widget)
@@ -192,11 +206,14 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
     {
         $this->_data = $data;
         $this->_customColors = $colorScheme;
+        
+        $this->_colorScheme = $this->getColorScheme();
         $this->_initEzcGraph();
         try {
             switch ($this->_type) {
                 case 'pie':
                     $graph = new ezcGraphPieChart();
+                    $graph->renderer = new ezcGraphRenderer3d(); 
                     break;
                 case 'line':
                 default:
@@ -204,17 +221,29 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
             }
             
             $graph->title = "";//$this->getTitle(); 
+            //$graph->background->color = $this->getBgColor();
+            //$keyNo = 0;
+            if (count($this->_colorScheme)>0) {
+                $graph->palette = new Xinc_Plugin_Repos_Gui_Statistics_Graph_Palette($this->_colorScheme);
+            }
             foreach ( $data as $key => $value )
-             {
-             $graph->data[$key] = new ezcGraphArrayDataSet( $value );
+            {
+                 
+                 $graph->data[$key] = new ezcGraphArrayDataSet( $value );
+                 /**if (isset($this->_colorScheme[$key])) {
+                     $graph->data[$key]->color[0] = $this->_colorScheme[$key]; 
+                 } else if (isset($this->_colorScheme[$keyNo])) {
+                     $graph->data[$key]->color[0] = $this->_colorScheme[$keyNo]; 
+                 }
+                 $keyNo++;*/
              } 
              //echo "Writing id: " . $this->getId();
              $fileName = $this->_widget->getGraphFileName($this->getId());
              //echo " filename: $fileName";
-             $width = 500;
-             $height = 200;
+             $width = 375;
+             $height = 180;
              $graph->render( $width, $height, $fileName); 
-             $includeString = '<p><h3>'.$this->getTitle().'</h3><iframe src="/statistics/graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe><br/><br/></p>';
+             $includeString = '<div style="position:relative;padding-left:10px;float:left" class="none"><h3>'.$this->getTitle().'</h3><iframe src="/statistics/graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe></div>';
              return $includeString;
         } catch (Exception $e) {
             //var_dump($e);
@@ -226,10 +255,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         return $this->_bgColor;
     }
     
-    public function getColorScheme()
-    {
-        return $this->_colorScheme;
-    }
+    public abstract function getColorScheme();
     
     public function getLabelColor()
     {

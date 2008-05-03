@@ -29,7 +29,10 @@ require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph.php';
 
 class Xinc_Plugin_Repos_Gui_Statistics_Graph_PhpUnitTestResults extends Xinc_Plugin_Repos_Gui_Statistics_Graph
 {
-    
+    public function getColorScheme()
+    {
+        return array('#000000','#00ff00', '#ff0000');
+    }
     public function buildDataSet(Xinc_Project &$project, array $buildHistoryArr = array(), $previousData = array())
     {
         if (count($previousData)>0) {

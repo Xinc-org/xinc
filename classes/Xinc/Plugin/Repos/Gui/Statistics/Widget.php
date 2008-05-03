@@ -151,6 +151,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
                 $historyBuilds = array();
             }
             if (isset($this->_extensions['STATISTIC_GRAPH'])) {
+                $i=0;
                 foreach ($this->_extensions['STATISTIC_GRAPH'] as $extension) {
                     
                     if ($extension instanceof Xinc_Plugin_Repos_Gui_Statistics_Graph) {
@@ -162,6 +163,10 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
                         $data = $extension->buildDataSet($project, $historyBuilds, $baseBuildData);
                         $this->_storeGraphData($project, $extension->getId(), $data);
                         $contents[] = $extension->generate($data, array('#1c4a7e','#bb5b3d'));
+                        $i++;
+                        if ($i % 2 == 0) {
+                            $contents[]="<br/>";
+                        }
                     }
                 }
             }

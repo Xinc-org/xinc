@@ -29,13 +29,16 @@ require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph.php';
 
 class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildStatus extends Xinc_Plugin_Repos_Gui_Statistics_Graph
 {
-    
+    public function getColorScheme()
+    {
+        return array('#00ff00','#ff0000');
+    }
     public function buildDataSet(Xinc_Project &$project, array $buildHistoryArr = array(), $previousData = array())
     {
         if (count($previousData)>0) {
             $data = $previousData;
         } else {
-            $data = array('Build Status'=>array('failed'=>0,'successful'=>0));
+            $data = array('Build Status'=>array('Successful Builds'=>0, 'Failed Builds'=>0));
         }
         
         foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
@@ -44,9 +47,9 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildStatus extends Xinc_Plugin_Rep
                                                        $buildTimestamp,
                                                        Xinc_Gui_Handler::getInstance()->getStatusDir());
                 if ($buildObject->getStatus() == Xinc_Build_Interface::PASSED) {
-                    $data['Build Status']['successful']++;
+                    $data['Build Status']['Successful Builds']++;
                 } else {
-                    $data['Build Status']['failed']++;
+                    $data['Build Status']['Failed Builds']++;
                 }
                 
                 unset($buildObject);
