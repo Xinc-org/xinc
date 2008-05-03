@@ -1,7 +1,8 @@
 <?php
+require_once 'ezc/Graph/interfaces/palette.php';
 
- class Xinc_Plugin_Repos_Gui_Statistics_Graph_Palette extends ezcGraphPalette
- {
+class Xinc_Plugin_Repos_Gui_Statistics_Graph_Palette extends ezcGraphPalette
+{
      public function __construct(array $colors)
      {
          $this->dataSetColor = $colors;
