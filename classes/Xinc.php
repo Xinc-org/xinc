@@ -378,7 +378,8 @@ class Xinc
             if ($sleep > 0) {
                 $this->buildActive=false;
                 Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
-                for ($i=0; $i<$sleep*100; $i++) {
+                $start = time() + microtime(true);
+                while(((time()+microtime(true)) - $start)<=$sleep) {
                     usleep(10000);
                     /**
                      * Check for forceonly builds here
