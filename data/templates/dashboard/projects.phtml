@@ -63,12 +63,12 @@ EOJ;
         
             <?php
     if (is_array($this->features)) {
-?><br/><br/><?
+?><br/><br/><?php
         foreach ($this->features as $ext) {
            if (($content = $ext->getContent($build))) {
-           ?><b><?echo $ext->getTitle(); ?>: </b><?
+           ?><b><?php echo $ext->getTitle(); ?>: </b><?php
            echo $content;
-           ?><br/><?
+           ?><br/><?php
 }
         }
         echo "<br/>";
