@@ -38,6 +38,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     private $_update = false;
     private $_username = null;
     private $_password = null;
+    private $_property;
     
     public function getName()
     {
@@ -59,7 +60,17 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     {
         $this->_directory = (string)$directory;
     }
-
+    
+    /**
+     * sets the name of the property, which will be set to
+     * TRUE in case a modification was detected
+     *
+     * @param string $property
+     */
+    public function setProperty($property)
+    {
+        $this->_property = (string) $property;
+    }
     /**
      * Sets the username for the svn commands
      *
@@ -101,9 +112,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
 
     public function checkModified(Xinc_Build_Interface &$build)
     {
-        return $this->_plugin->checkModified($build, $this->_directory,
+        $res = $this->_plugin->checkModified($build, $this->_directory,
                                              $this->_update, $this->_username,
                                              $this->_password);
+        if ($res->isChanged() && !empty($this->_property)) {
+            // a modification in this tag has been detected
+            $build->getProperties()->set($this->_property, true);
+            $build->info("Property '".$this->_property."' set to TRUE");
+        }
+        return $res;
     }
 
     public function validateTask()
