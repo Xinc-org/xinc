@@ -55,7 +55,7 @@ class Xinc_Config_TestGetopt extends Xinc_BaseTest
 		}
 	}
 
-	public function testCanParseOptionsAfterProjectFiles()
+	public function testCanParseMultipleProjectFilesInAnyOrder()
 	{
 		try {
 			$args = explode(' ', $this->_arguments['allowMultipleProjectFilesInAnyOrder']);
@@ -71,7 +71,7 @@ class Xinc_Config_TestGetopt extends Xinc_BaseTest
 		}
 	}
 
-	public function	testCanParseMultipleProjectFilesInAnyOrder()
+	public function	testCanParseOptionsAfterProjectFiles()
 	{
 		try {
 			$args = explode(' ', $this->_arguments['allowOptionsAfterProjectFiles']);
