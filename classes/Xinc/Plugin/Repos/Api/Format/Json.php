@@ -1,7 +1,7 @@
 <?php
 /**
  * Json Response Format
- * 
+ *
  * @package Xinc.Api
  * @author Arno Schneider
  * @version 2.0
@@ -10,7 +10,7 @@
  *    This file is part of Xinc.
  *    Xinc is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
+ *    by the Free Software Foundation; either version 2.1 of the License, or
  *    (at your option) any later version.
  *
  *    Xinc is distributed in the hope that it will be useful,
@@ -37,7 +37,7 @@ class Xinc_Plugin_Repos_Api_Format_Json implements Xinc_Api_Response_Format_Inte
         $result = $this->_json_encode($responseObject->get());
         return $result;
     }
-    
+
     /**
      * Encodes a php object in the json format
      *
@@ -54,12 +54,12 @@ class Xinc_Plugin_Repos_Api_Format_Json implements Xinc_Api_Response_Format_Inte
             $a = str_replace("\n", '\n', $a);
             $a = str_replace("\r", '\r', $a);
             $a = preg_replace('{(</)(script)}i', "$1'+'$2", $a);
-            return "'$a'";
+            return '"' . $a . '"';
         }
         $isList = true;
         for ($i=0, reset($a); $i<count($a); $i++, next($a))
             if (key($a) !== $i) {
-                $isList = false; break; 
+                $isList = false; break;
             }
         $result = array();
         if ($isList) {
