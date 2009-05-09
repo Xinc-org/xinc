@@ -30,7 +30,7 @@ require_once 'Xinc/Build.php';
 require_once 'Xinc/Gui/Widget/Extension/Interface.php';
 require_once 'Xinc/Data/Repository.php';
 
-//
+require 'ezc/Base/ezc_bootstrap.php';
 
 
 
