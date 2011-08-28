@@ -1,28 +1,33 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * This class represents the build that is going to be run
- * with Xinc
+ * Xinc - Continuous Integration.
+ * This class represents the build that is going to be run with Xinc
  *
- * @package Xinc.Build
- * @author Arno Schneider
- * @version 2.0
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Build
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
  */
+
 require_once 'Xinc/Build/Interface.php';
 require_once 'Xinc/Build/Properties.php';
 require_once 'Xinc/Build/Exception/NotRun.php';
@@ -138,18 +143,18 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     private $_config = array();
     
-     /** 
+    /**
      * sets the project, engine
      * and timestamp for the build
      *
      * @param Xinc_Engine_Interface $engine
-     * @param Xinc_Project $project
-     * @param integer $buildTimestamp
+     * @param Xinc_Project          $project
+     * @param integer               $buildTimestamp
      */
     public function __construct(Xinc_Engine_Interface &$engine,
                                 Xinc_Project &$project,
-                                $buildTimestamp = null)
-    {
+                                $buildTimestamp = null
+    ) {
         $this->_engine = $engine;
         $this->_project = $project;
         
@@ -164,10 +169,12 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->setLabeler(new Xinc_Build_Labeler_Default());
         $this->setScheduler(new Xinc_Build_Scheduler_Default());
     }
+
     public function setLabeler(Xinc_Build_Labeler_Interface &$labeler)
     {
         $this->_labeler = $labeler;
     }
+
     /**
      * 
      * Returns the last build
@@ -181,6 +188,7 @@ class Xinc_Build implements Xinc_Build_Interface
         }
         return $this->_lastBuild;
     }
+
     /**
      *
      * @return Xinc_Build_Properties
@@ -206,7 +214,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_statistics;
     }
-     /**
+    /**
      * sets the build time for this build
      *
      * @param integer $buildTime unixtimestamp
@@ -216,8 +224,10 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->getProperties()->set('build.timestamp', $buildTime);
         $this->_buildTimestamp = $buildTime;
     }
+
     /**
      * returns the timestamp of this build
+     *
      * @return integer Timestamp of build (unixtimestamp)
      */
     public function getBuildTime()
@@ -234,6 +244,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_scheduler->getNextBuildTime($this);
     }
+
     /**
      * 
      * @return Xinc_Project
@@ -329,6 +340,7 @@ class Xinc_Build implements Xinc_Build_Interface
      *
      * @param Xinc_Project $project
      * @param integer $buildTimestamp
+     *
      * @return Xinc_Build
      * @throws Xinc_Build_Exception_Unserialization
      * @throws Xinc_Build_Exception_NotFound
@@ -434,7 +446,8 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $this->_internalProperties = new Xinc_Build_Properties();
     }
-        /**
+
+    /**
      * Sets the sequence number for this build
      *
      * @param integer $no
@@ -477,7 +490,7 @@ class Xinc_Build implements Xinc_Build_Interface
         return $this->_labeler;
     }
     
-        /**
+    /**
      *
      * @param Xinc_Build_Tasks_Registry $taskRegistry
      */
@@ -485,6 +498,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $this->_taskRegistry = $taskRegistry;
     }
+
     /**
      * Sets a build scheduler,
      * which calculates the next build time based
@@ -505,6 +519,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_scheduler;
     }
+
     /**
      * @return Xinc_Build_Tasks_Registry
      *
@@ -513,6 +528,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_taskRegistry;
     }
+
     /**
      * processes the tasks that are registered for the slot
      *
@@ -557,6 +573,7 @@ class Xinc_Build implements Xinc_Build_Interface
                                         . ': '.$message);
             
     }
+
     /**
      * Logs a message of priority warn
      *
@@ -582,6 +599,7 @@ class Xinc_Build implements Xinc_Build_Interface
                                         . ': '.$message);
             
     }
+
     /**
      * Logs a message of priority debug
      *
@@ -594,6 +612,7 @@ class Xinc_Build implements Xinc_Build_Interface
                                          . ': '.$message);
             
     }
+
     /**
      * Logs a message of priority error
      *
@@ -680,6 +699,7 @@ class Xinc_Build implements Xinc_Build_Interface
         $subDirectory = self::generateStatusSubDir($this->getProject()->getName(), $this->getBuildTime());
         return $subDirectory;
     }
+
     private function _updateTask(Xinc_Plugin_Task_Interface &$task)
     {
         $element = $task->getXml();
@@ -743,6 +763,7 @@ class Xinc_Build implements Xinc_Build_Interface
      * Returns the configuration directive for the name
      *
      * @param string $name
+     *
      * @return mixed
      */
     public function getConfigDirective($name)

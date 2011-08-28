@@ -1,36 +1,42 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * Extension to the Dashboard Widget
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Gui.Dashboard
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Build/Interface.php';
 require_once 'Xinc/Gui/Widget/Extension/Interface.php';
 
 abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension implements Xinc_Gui_Widget_Extension_Interface
 {
     public abstract function getTitle();
-    
+
     public abstract function getContent(Xinc_Build_Interface &$build);
-    
+
     public final function generate(Xinc_Build_Interface &$build, $templateFile)
     {
         $templateContent = file_get_contents($templateFile);
@@ -44,6 +50,4 @@ abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension implements Xinc_Gui_Wid
                               $templateContent);
         return $result;
     }
-    
-   
 }

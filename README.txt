@@ -1,12 +1,13 @@
 ################################################################################
-# Xinc - Continuous Integration for PHP.                                         
-# 
+# Xinc - Continuous Integration
+#
 # package Xinc
 # author David Ellis
 # author Gavin Foster
 # author Arno Schneider
-# version 2.0
-# copyright 2007 David Ellis, One Degree Square
+# author Alexander Opitz
+# version 0.90
+# copyright 2007 - 2011 David Ellis, One Degree Square
 # license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
 # 	This file is part of Xinc.
 # 	Xinc is free software; you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 # 
 # 	Xinc is distributed in the hope that it will be useful,
 # 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-# 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # 	GNU Lesser General Public License for more details.
 # 
 # 	You should have received a copy of the GNU Lesser General Public License

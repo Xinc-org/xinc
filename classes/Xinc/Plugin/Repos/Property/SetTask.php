@@ -1,32 +1,39 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * Property setter task
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Property
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Plugin/Task/Base.php';
 
 class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
 {
     private $_lastPair = array();
+
     /**
      *
      * @var string
@@ -34,6 +41,7 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
     private $_name;
     
     private $_if;
+
     private $_file;
     
     /**
@@ -42,12 +50,13 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
      * @var array
      */
     private $_properties = array();
+
     /**
      *
      * @var string
      */
     private $_value;
-    
+
     /**
      * sets the name of the property
      *
@@ -60,6 +69,7 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
             $build->getProperties()->set($this->_name, $this->_value);
         }
     }
+
     /**
      * sets the value of the property
      *
@@ -72,26 +82,24 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
             $build->getProperties()->set($this->_name, $this->_value);
         }
     }
-    
+
     public function setIf($if)
     {
         $this->_if = $if;
     }
-    
+
     public function setFile($fileName)
     {
         $this->_file = $fileName;
     }
-    
+
     public function validate()
     {
-        
         foreach ( $this->_subtasks as $task ) {
             /**
              * cannot have subtasks
              */
             return false;
-                
         }
         if (!isset($this->_name) && !isset($this->_value) && !isset($this->_file)) {
             return false;
@@ -108,20 +116,17 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
     {
         return 'property';
     }
-    
+
     public function registerTask(Xinc_Plugin_Task_Interface &$task)
     {
-        
         $this->_subtasks[]=$task;
-
     }
-    
-
 
     public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::INIT_PROCESS;
     }
+
     public function process(Xinc_Build_Interface &$build)
     {
         if ($this->_if !== null) {
@@ -150,7 +155,5 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
             $build->getProperties()->set($this->_name, $this->_value);
             $build->setStatus(Xinc_Build_Interface::PASSED);
         }
-
     }
-
 }

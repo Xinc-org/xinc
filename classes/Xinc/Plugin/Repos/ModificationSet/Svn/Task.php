@@ -1,45 +1,52 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * This interface represents a publishing mechanism to publish build results
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.ModificationSet.Svn
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Xinc_Plugin_Repos_ModificationSet_Svn_Task
+    extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
-
-    
-
     /**
      * Directory containing the Subversion project.
      *
      * @var string
      */
     private $_directory = '.';
+
     private $_update = false;
+
     private $_username = null;
+
     private $_password = null;
+
     private $_property;
-    
+
     public function getName()
     {
         return 'svn';
@@ -50,7 +57,6 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
         $this->_subtasks[]=$task;
     }
 
-
     /**
      * Sets the svn checkout directory.
      *
@@ -60,7 +66,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     {
         $this->_directory = (string)$directory;
     }
-    
+
     /**
      * sets the name of the property, which will be set to
      * TRUE in case a modification was detected
@@ -71,6 +77,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     {
         $this->_property = (string) $property;
     }
+
     /**
      * Sets the username for the svn commands
      *
@@ -80,7 +87,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     {
         $this->_username = (string)$username;
     }
-    
+
     /**
      * Sets the password for the svn commands
      *
@@ -90,7 +97,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     {
         $this->_password = (string)$password;
     }
-    
+
     /**
      * Tells whether to update the working copy directly here or not
      *
@@ -101,14 +108,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
         $update = (string) $update;
         $this->_update = in_array($update, array('true', '1')) ? true:false;
     }
-    
+
     public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
-
-
-
 
     public function checkModified(Xinc_Build_Interface &$build)
     {
@@ -145,5 +149,4 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
         //return false;
         return true;
     }
-     
 }

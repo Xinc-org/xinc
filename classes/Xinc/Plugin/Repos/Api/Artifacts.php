@@ -1,27 +1,32 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * Api to get information about builds
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Api
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Api/Module/Interface.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 require_once 'Xinc/Build/Repository.php';
@@ -34,12 +39,13 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
      * @var Xinc_Plugin_Interface
      */
     protected $_plugin;
-    
+
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
         
     }
+
     /**
      *
      * @return string
@@ -48,6 +54,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
     {
         return 'artifacts';
     }
+
     /**
      * returns methods of this api
      *
@@ -57,6 +64,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
     {
         return array('get', 'list');
     }
+
     /**
      * Process an api call with the requested methodname and parameters
      *
@@ -75,14 +83,13 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
                 return $this->_getArtifactFile($params);
                 break;
         }
-          
-       
-       
     }
+
     /**
      * determine the mime content type of a file
      *
      * @param string $fileName
+     *
      * @return string
      */
     public function mime_content_type2($fileName)
@@ -104,11 +111,10 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         if (function_exists('mime_content_type')) {
             $contentType = mime_content_type($fileName);
         }
-    
+
         return $contentType;
-    
     }
-    
+
     /**
      * Load the requested artifacts file and output it to the browser
      *
@@ -119,11 +125,11 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         /**$projectName = $params['p'];
         $buildTime = $params['buildtime'];
         $file = $params['file'];*/
-        
+
         $query = urldecode($_SERVER['REQUEST_URI']);
-       
+
         preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
-       
+
         if (count($matches)!=8) {
             echo "Could not find artifact";
             die();
@@ -150,8 +156,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
                 $build = Xinc_Build_Repository::getBuild($project, $buildTime);
                 $statusDir = Xinc_Build_History::getBuildDir($project, $buildTime);
             }
-           
-            
+
             $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                           DIRECTORY_SEPARATOR;
 
@@ -176,7 +181,6 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
                 echo "Could not find artifact";
                 die();
             }
-           
         } catch (Exception $e) {
             echo "Could not find any artifacts";
             die();
@@ -187,6 +191,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
      * Get the list of registered artifacts
      *
      * @param array $params
+     *
      * @return Xinc_Api_Response_Object
      */
     private function _getArtifacts($params)
@@ -200,34 +205,36 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         $node = str_replace(',', '/', $node);
         $artifacts = array();
         try {
-            $buildObject = Xinc_Build::unserialize($project,
-                                                       $buildtime,
-                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+            $buildObject = Xinc_Build::unserialize(
+                $project,
+                $buildtime,
+                Xinc_Gui_Handler::getInstance()->getStatusDir()
+            );
             $artifacts = $this->_getArtifactsTree($buildObject, $node);
         } catch(Exception $e) {
-            
         }
-        
-        
+
         $responseObject = new Xinc_Api_Response_Object();
         $responseObject->set($artifacts);
         return $responseObject;
     }
+
     /**
      * Build the artifacts tree
      *
      * @param Xinc_Build_Interface $build
      * @param string $dirname
+     *
      * @return array
      */
     private function _getArtifactsTree(Xinc_Build_Interface &$build, $dirname)
     {
         $projectName = $build->getProject()->getName();
         $buildTime = $build->getBuildTime();
-        
+
         try {
             $statusDir = Xinc_Build_History::getBuildDir($build->getProject(), $buildTime);
-            
+
             $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Artifacts::ARTIFACTS_DIR .
                           DIRECTORY_SEPARATOR;
             $directory = $statusDir . $dirname;
@@ -243,11 +250,18 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
                         $class = 'file';
                         $leaf = true;
                     }
-                    $items[] = array('text'=> $file,
-                                     'id'=> addslashes(str_replace(DIRECTORY_SEPARATOR,
-                                                       '/', $dirname . DIRECTORY_SEPARATOR . $file)),
-                                     'cls'=> $class, 
-                                     'leaf'=> $leaf);
+                    $items[] = array(
+                        'text' => $file,
+                        'id'   => addslashes(
+                                    str_replace(
+                                        DIRECTORY_SEPARATOR,
+                                        '/',
+                                        $dirname . DIRECTORY_SEPARATOR . $file
+                                    )
+                        ),
+                        'cls'  => $class, 
+                        'leaf' => $leaf
+                    );
                 }
             }
         } catch (Exception $e1) {
@@ -255,14 +269,14 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
         }
         return $items;
     }
-    
-   
+
     /**
      * Get history of all the builds for a project
      *
      * @param string $projectName
      * @param integer $start
      * @param integer $limit
+     *
      * @return stdClass
      */
     private function _getHistoryBuilds($projectName, $start, $limit=null)
@@ -277,24 +291,24 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
             $limit = $totalCount;
         }
         $buildHistoryArr = array_slice($buildHistoryArr, $start, $limit, true);
-        
+
         $builds = array();
-        
+
         foreach ($buildHistoryArr as $buildTimestamp => $buildFileName) {
             try {
-                $buildObject = Xinc_Build::unserialize($project,
-                                                       $buildTimestamp,
-                                                       Xinc_Gui_Handler::getInstance()->getStatusDir());
+                $buildObject = Xinc_Build::unserialize(
+                    $project,
+                    $buildTimestamp,
+                    Xinc_Gui_Handler::getInstance()->getStatusDir()
+                );
                 $builds[] = array('buildtime'=>$buildObject->getBuildTime(),'label'=>$buildObject->getLabel());
             } catch (Exception $e) {
                 // TODO: Handle
-                
             }
-            
         }
-        
+
         $builds = array_reverse($builds);
-        
+
         $object = new stdClass();
         $object->totalcount = $totalCount;
         $object->builds = $builds;

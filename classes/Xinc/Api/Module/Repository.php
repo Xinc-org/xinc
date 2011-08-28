@@ -1,38 +1,41 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * The Api Repository holds all the Api Modules
  * that are defined by the loaded plugins.
- * 
- * 
- * @package Xinc.Api
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Api
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
 
 /**
  * The Widget-Repository allows the Web-Frontend of Xinc to choose the right
  * plugin for execution based on the Http-Request
+ *
  * @package Xinc.Gui
- * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- * @version    2.0
- * @author     Arno Schneider
- * @since      Class available since Release 2.0
+ * @license http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ * @author  Arno Schneider
  */
 class Xinc_Api_Module_Repository
 {
@@ -40,6 +43,7 @@ class Xinc_Api_Module_Repository
      * @var Xinc_Gui_Widget_Repository
      */
     private static $_instance;
+
     /**
      * @var Xinc_Api_Module_Interface[]
      */
@@ -88,15 +92,16 @@ class Xinc_Api_Module_Repository
         $this->_modules[$moduleName] = $module;
         
     }
+
     /**
      * Determines the Api Module that should be used
      * for the specified Name that 
      * is called
      *
      * @param String $moduleName Name of the module
+     *
      * @return Xinc_Api_Module_Interface
      */
-
     public function &getModuleByName($moduleName)
     {
         
@@ -114,6 +119,7 @@ class Xinc_Api_Module_Repository
      *
      * @param String $moduleName Name of the module
      * @param String $methodName Name of the method
+     *
      * @return Xinc_Api_Module_Interface
      */
     public function &getModuleByNameAndMethod($moduleName, $methodName)

@@ -1,28 +1,33 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * This class represents the project to be continuously integrated
  *
- * @package Xinc.Project
- * @author David Ellis
- * @author Gavin Foster
- * @author Arno Schneider
- * @version 1.0
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Project
+ * @author    David Ellis <username@example.com>
+ * @author    Gavin Foster <username@example.com>
+ * @author    Arno Schneider <username@example.com>
  * @copyright 2007 David Ellis, One Degree Square
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
  */
 
 require_once 'Xinc/Build/Scheduler/Interface.php';
@@ -77,6 +82,7 @@ class Xinc_Project
     {
         return $this->_config;
     }
+
     /**
      * Returns this project's name.
      *
@@ -98,6 +104,7 @@ class Xinc_Project
         $this->info('Setting status to '.$status);
         $this->_status = $status;
     }
+
     /**
      * Retrieves the status of the current project
      * @see Xinc_Project_Status
@@ -120,7 +127,8 @@ class Xinc_Project
                                         . ': '.$message);
             
     }
-     /**
+
+    /**
      * Logs a message of priority warn
      *
      * @param string $message
@@ -132,7 +140,8 @@ class Xinc_Project
                                         . ': '.$message);
             
     }
-     /**
+
+    /**
      * Logs a message of priority verbose
      *
      * @param string $message
@@ -144,6 +153,7 @@ class Xinc_Project
                                             . ': '.$message);
             
     }
+
     /**
      * Logs a message of priority debug
      *
@@ -156,6 +166,7 @@ class Xinc_Project
                                          . ': '.$message);
             
     }
+
     /**
      * Logs a message of priority error
      *

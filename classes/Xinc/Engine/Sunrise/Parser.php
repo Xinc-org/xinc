@@ -1,29 +1,34 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * Parser for the Sunrise Engine
- * 
+ *
  * Parses a project xml for the sunrise engine
- * 
- * @package Xinc.Engine
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Engine.Sunrise
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
 
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Build/Tasks/Registry.php';
@@ -52,18 +57,21 @@ class Xinc_Engine_Sunrise_Parser
     {
         $this->_engine = $engine;
     }
+
     /**
      * Parses the projects xml
      * loads all the tasks
      * assigns them to the builds
      *
      * @param Xinc_Project_Config_Iterator $projects
+     *
      * @return array the builds
      */
     public function parseProjects(Xinc_Project_Iterator &$projects)
     {
         $builds = array();
-        $this->_setters = Xinc_Plugin_Repository::getInstance()->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
+        $this->_setters = Xinc_Plugin_Repository::getInstance()
+            ->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
         
         while ($projects->hasNext()) {
             
@@ -73,19 +81,17 @@ class Xinc_Engine_Sunrise_Parser
              * trying to recover the last build information
              */
             try {
-                
-                
                 $build = Xinc_Build::unserialize($project);
                 $build->setBuildTime(null);
                 $build->resetConfigDirective();
-                
-                
-                
-                
             } catch (Xinc_Build_Exception_NotFound $e) {
-                Xinc_Logger::getInstance()->info('No status data found for ' . $project->getName());
+                Xinc_Logger::getInstance()->info(
+                    'No status data found for ' . $project->getName()
+                );
             } catch (Exception $e) {
-                Xinc_Logger::getInstance()->error('Could not unserialize old status of ' . $project->getName());
+                Xinc_Logger::getInstance()->error(
+                    'Could not unserialize old status of ' . $project->getName()
+                );
             }
             $projectXml = $project->getConfig();
             if (!$build instanceof Xinc_Build_Interface) {
@@ -187,10 +193,6 @@ class Xinc_Engine_Sunrise_Parser
                 $project->setStatus(Xinc_Project_Status::MISCONFIGURED);
                 return;
             }
-
-
         }
     }
-    
-    
 }

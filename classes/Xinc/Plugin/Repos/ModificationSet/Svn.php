@@ -1,29 +1,32 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * This interface represents a publishing mechanism to publish build results
- * 
- * @package Xinc.Plugin
- * @author David Ellis
- * @author Gavin Foster
- * @author Arno Schneider
- * @version 2.0
- * @copyright 2007 David Ellis, One Degree Square
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * Xinc - Continuous Integration.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ * PHP version 5
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.ModificationSet
+ * @author    Arno Schneider <username@example.org>
+ * @copyright 2007 Arno Schneider, Barcelona
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
+ *
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
 require_once 'Xinc/Ini.php';
@@ -35,7 +38,7 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 {
     private $_svnPath;
-    
+
     public function __construct()
     {
         try {
@@ -47,20 +50,18 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $svnPath = 'svn';
         }
         $this->_svnPath = $svnPath;
-        
     }
-    
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_ModificationSet_Svn_Task($this));
     }
-    
 
-    protected function _getChangeLog(Xinc_Build_Interface &$build,
-                                   $dir, Xinc_Plugin_Repos_ModificationSet_Result &$set,
-                                   $fromRevision, $toRevision, $username, $password)
-    {
-        
+    protected function _getChangeLog(
+        Xinc_Build_Interface &$build, $dir,
+        Xinc_Plugin_Repos_ModificationSet_Result &$set,
+        $fromRevision, $toRevision, $username, $password
+    ) {
         if ($fromRevision < $toRevision) {
             $fromRevision++;
         }
@@ -105,9 +106,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                         }
                     }
                 }
-                
+
                 $message = (string) $entry->msg;
-                
+
                 $set->addLogMessage($revision, $timestamp, $author, $message);
             }
         } else {
@@ -118,11 +119,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $build->error('Could not retrieve log messages from svn: ' . $strOutput);
         }
     }
-    
-    protected function _getModifiedFiles(Xinc_Build_Interface &$build,
-                                      $dir, Xinc_Plugin_Repos_ModificationSet_Result &$set,
-                                      $username, $password)
-    {
+
+    protected function _getModifiedFiles(
+        Xinc_Build_Interface &$build, $dir,
+        Xinc_Plugin_Repos_ModificationSet_Result &$set,
+        $username, $password
+    ) {
         $credentials = '';
         if ($username != null) { 
             $credentials .= ' --username ' . $username; 
@@ -131,7 +133,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $credentials .= ' --password ' . $password; 
         }
         exec($this->_svnPath . ' status -u --xml ' . $credentials . ' ' . $dir, $output, $result);
-        
+
         if ($result == 0) {
             try {
                 array_shift($output);
@@ -140,9 +142,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $basePath = $basePaths[0];
                 $baseAttributes = $basePath->attributes();
                 $basePathName = (string) $baseAttributes->path;
-                
+
                 $set->setBasePath($basePathName);
-                
+
                 $entries = $xml->xpath("//entry");
                 //$build->info(var_export($entries,true));
                 //var_dump($entries);
@@ -183,11 +185,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             $build->error('SVN status query failed: ' . $strOutput);
         }
     }
-    
-    private function _update(Xinc_Build_Interface &$build,
-                             $dir, Xinc_Plugin_Repos_ModificationSet_Result &$set,
-                             $username, $password)
-    {
+
+    private function _update(
+        Xinc_Build_Interface &$build, $dir,
+        Xinc_Plugin_Repos_ModificationSet_Result &$set,
+        $username, $password
+    ) {
         $credentials = '';
         if ($username != null) { 
             $credentials .= ' --username ' . $username; 
@@ -214,6 +217,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      *
      * @param string $inputStr
      * @param array $maskElements
+     *
      * @return string
      */
     private function _maskOutput($inputStr, array $maskElements)
@@ -273,14 +277,14 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             }
             $output = '';
             $result = 9;
-            
+
             if (DIRECTORY_SEPARATOR == '/') {
                 // we are on Linux/Unix
                 $redirectErrors = ' 2>&1';
             } else {
                 $redirectErrors = ' ';
             }
-            
+
             exec($this->_svnPath . ' info ' . $credentials . ' ' . $url . ' --xml' . $redirectErrors, $output, $result);
             $remoteSet = implode("\n", $output);
 
@@ -332,8 +336,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
                 return $modResult;
             }
-            
-                
+
             $build->info('Subversion checkout dir is '.$dir.' '
                            .'local revision @ '.$localRevision.' '
                            .'Remote Revision @ '.$remoteRevision);
@@ -341,7 +344,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
             //$changed = $localRevision < $remoteRevision;
             $modResult->setLocalRevision($localRevision);
             $modResult->setRemoteRevision($remoteRevision);
-            
+
             if ($update && $modResult->isChanged()) {
                 if ($build->getLastBuild()->getStatus() === Xinc_Build_Interface::FAILED) {
                     try {
@@ -401,17 +404,16 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      * Parse the result of an svn command for the Subversion project URL.
      *
      * @param string $result
+     *
      * @return string
      * @throws Exception
      */
     private function getUrl($result)
     {
-        
         $xml = new SimpleXMLElement($result);
         $urls = $xml->xpath('/info/entry/url');
         $url = (string) $urls[0];
         return $url;
-        
     }
 
     /**
@@ -419,17 +421,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      * for the Subversion project revision number.
      *
      * @param string $result
+     *
      * @return string
      * @throws Exception
      */
     public function getRevision($result)
     {
-
         return $this->_getRevisionXml($result);
-
-        
     }
-    
+
     /**
      * Takes the svn info output of a working copy
      * and looks for R[eé]vision to identify the current revision of
@@ -437,6 +437,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      * we cannot identify them correclty for all locales
      * 
      * @param $result the svn info output
+     *
      * @return integer the revision number
      * @deprecated 
      */
@@ -451,10 +452,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         }
         return null;
     }
+
     /**
      * Enter description here...
      *
      * @param string $xmlString
+     *
      * @return integer
      * @throws Exception
      */
@@ -467,12 +470,13 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         $rev = (int)$attributes->revision;
         return $rev;
     }
-    
+
     /**
      * Relying on the output of version 1.4 and up to have the
      * actual revision one line after the UUID line. Return
      * 
      * @param $result the svn info output
+     *
      * @return integer the revision number
      * @deprecated 
      */
@@ -489,13 +493,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         }
         return null;
     }
-     /**
+
+    /**
      * Relying on the output of version >1.3 and up to have the
      * actual revision one line after the URL line.
-     * 
+     *
      * @param $result the svn info output
+     *
      * @return integer the revision number
-     * @deprecated 
+     * @deprecated
      */
     protected function _getRevisionOldOld($result)
     {
@@ -510,6 +516,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         }
         return null;
     }
+
     /**
      * Check necessary variables are set
      *
@@ -527,10 +534,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
         /**
          * See Issue 56, check r
          */
-        
+
         if ($result != 0) {
             Xinc_Logger::getInstance()->error('command "svn" not found');
-                
+
             return false;
         } else {
             if (DIRECTORY_SEPARATOR == '/') {
@@ -556,6 +563,5 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                 return false;
             }
         }
-
     }
 }

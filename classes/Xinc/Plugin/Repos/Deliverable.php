@@ -1,27 +1,32 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * Artifacts Plugin - allows to register artifacts for a build
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Deliverable/Task.php';
 require_once 'Xinc/Plugin/Repos/Gui/Deliverable/Widget.php';
@@ -30,16 +35,17 @@ require_once 'Xinc/Plugin/Repos/Api/Deliverable.php';
 class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
 {
     const DELIVERABLE_DIR = 'deliverable';
-    
+
     public function validate()
     {
         return true;
     }
-    
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_Publisher_Deliverable_Task($this));
     }
+
     /**
      *
      * @return array of Gui Widgets
@@ -48,29 +54,32 @@ class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
     {
         return array(new Xinc_Plugin_Repos_Gui_Deliverable_Widget($this));
     }
-    
+
     public function getApiModules()
     {
         return array();
     }
-    
+
     public function getDeliverableDir(Xinc_Build_Interface &$build)
     {
         $statusDir = Xinc::getInstance()->getStatusDir();
         $subDir = $build->getStatusSubDir();
         $fullDir = $statusDir . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . self::DELIVERABLE_DIR;
-        
+
         return $fullDir;
     }
+
     /**
      * Copies a file into a special artifacts directory for the build
      *
      * @param Xinc_Build_Interface $build
      * @param string $sourceFile
+     *
      * @return boolean
      */
-    public function registerDeliverable(Xinc_Build_Interface &$build, $sourceFile, $alias = null)
-    {
+    public function registerDeliverable(
+        Xinc_Build_Interface &$build, $sourceFile, $alias = null
+    ) {
         $build->debug('Trying to register deliverable: ' . $sourceFile);
         $sourceFile = realpath($sourceFile);
         $alias = basename($alias);
@@ -137,7 +146,7 @@ class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
                 $status = 'FAILURE';
             }
         }
-        
+
         $build->info('Registering deliverable: ' . $sourceFile . '->' . $targetFile . ', result: ' . $status);
         return $res;
     }

@@ -1,27 +1,31 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * This interface represents a publishing mechanism to publish build results
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Gui.Dashboard
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
 
 require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Build.php';
@@ -37,16 +41,25 @@ require_once 'Xinc/Build/History.php';
 class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interface
 {
     public $menu;
+
     protected $_plugin;
+
     private $_extensions = array();
+
     private $_internalExtensions = array();
+
     public $projectName;
+
     public $project;
+
     public $build;
+
     public $logXml;
+
     public $historyBuilds;
+
     public $buildTimeStamp;
-    
+
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
@@ -54,26 +67,25 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
 
     private function _generateExternalExtensions()
     {
-        
-
         foreach ($this->_extensions['BUILD_DETAILS'] as $extension) { 
-            
             //$obj = call_user_func_array($extension, array($this->build));
             $this->_registerExtension('BUILD_DETAILS', $extension);
         }
-         
     }
+
     private function _getTemplate($name)
     {
         $dir = dirname(__FILE__);
         $fileName = $dir . DIRECTORY_SEPARATOR . $name;
         return file_get_contents($fileName);
     }
+
     private function _generateLogView()
     {
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Log();
         $this->_registerExtension('BUILD_DETAILS', $extension);
     }
+
     private function _generateSummaryView()
     {
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary();
@@ -82,17 +94,19 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         }
         $this->_registerExtension('BUILD_DETAILS', $extension);
     }
+
     private function _generateBuildsView()
     {
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Builds();
         $this->_registerExtension('BUILD_SELECTOR', $extension);
     }
+
     public function getTabs($name)
     {
         if (!isset($this->_internalExtensions[$name])) return array();
         return $this->_internalExtensions[$name];
     }
-    
+
     public function handleEvent($eventId)
     {
         $this->projectName = $_GET['project'];
@@ -103,30 +117,30 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         $this->project->setName($this->projectName);
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
-                    
                     $handler = Xinc_Gui_Handler::getInstance();
                     $statusDir = $handler->getStatusDir();
-                    
+
                     if ($this->buildTimeStamp != null) {
-                        $fullStatusDir = Xinc_Build_History::getBuildDir($this->project, $this->buildTimeStamp);
-                        
+                        $fullStatusDir = Xinc_Build_History::getBuildDir(
+                            $this->project, $this->buildTimeStamp
+                        );
                     } else {
                         $fullStatusDir = Xinc_Build_History::getLastBuildDir($this->project);
                         $this->buildTimeStamp = Xinc_Build_History::getLastBuildTime($this->project);
                         
                     }
                     //$statusFile = $fullStatusDir . DIRECTORY_SEPARATOR . 'build.ser';
-                    
-                        
-                        $this->build = Xinc_Build::unserialize($this->project, 
-                                                               $this->buildTimeStamp,
-                                                               Xinc_Gui_Handler::getInstance()->getStatusDir());
-                        $timezone = $this->build->getConfigDirective('timezone');
-                        if ($timezone !== null) {
-                            Xinc_Timezone::set($timezone);
-                        }
+                    $this->build = Xinc_Build::unserialize(
+                        $this->project, 
+                        $this->buildTimeStamp,
+                        Xinc_Gui_Handler::getInstance()->getStatusDir()
+                    );
+                    $timezone = $this->build->getConfigDirective('timezone');
+                    if ($timezone !== null) {
+                        Xinc_Timezone::set($timezone);
+                    }
 
-                        $detailDir = $fullStatusDir;
+                    $detailDir = $fullStatusDir;
 
                         /**$logXmlFile = $detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
                         
@@ -181,16 +195,16 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
             Xinc_Timezone::reset();
         }
     }
-    
+
     public function getPaths()
     {
         return array('/dashboard/detail', '/dashboard/detail/');
     }
+
     public function init()
     {
-        
     }
-    
+
     private function _registerExtension($extensionPoint, &$detail)
     {
         if (!isset($this->_internalExtensions[$extensionPoint])) {
@@ -198,25 +212,26 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         }
         $this->_internalExtensions[$extensionPoint][] = $detail;
     }
-    
+
     public function registerExtension($extensionPoint, &$extension)
     {
-        
         if (!isset($this->_extensions[$extensionPoint])) {
             $this->_extensions[$extensionPoint] = array();
         }
         $this->_extensions[$extensionPoint][] = $extension;
     }
+
     public function getExtensionPoints()
     {
         return array('BUILD_DETAILS', 'BUILD_SUMMARY');
     }
+
     public function hasExceptionHandler()
     {
         return false;
     }
+
     public function handleException(Exception $e)
     {
-        
     }
 }

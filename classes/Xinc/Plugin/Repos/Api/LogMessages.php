@@ -1,27 +1,33 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * Api to get log messages for a build
  *
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Api
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
  */
+
 require_once 'Xinc/Api/Module/Interface.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 
@@ -41,7 +47,6 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
     public function __construct(Xinc_Plugin_Interface &$plugin)
     {
         $this->_plugin = $plugin;
-
     }
 
     /**
@@ -52,6 +57,7 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
     {
         return 'logmessages';
     }
+
     /**
      *
      * @return array
@@ -69,25 +75,22 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
      */
     public function processCall($methodName, $params = array())
     {
-
         switch ($methodName){
             case 'get':
                 return $this->_getLogMessages($params);
                 break;
         }
-
-         
-         
     }
+
     /**
      * get logmessages and return them
      *
      * @param array $params
+     *
      * @return Xinc_Api_Response_Object
      */
     private function _getLogMessages($params)
     {
-
         $project = isset($params['p']) ? $params['p'] : null;
         $buildtime = isset($params['buildtime']) ? $params['buildtime'] : null;
         $start = isset($params['start']) ? (int)$params['start'] : 0;
@@ -95,9 +98,10 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
         $builds = $this->_getLogMessagesArr($project, $buildtime, $start, $limit);
         $responseObject = new Xinc_Api_Response_Object();
         $responseObject->set($builds);
+
         return $responseObject;
     }
-     
+
     private function _getNextMessage($fh)
     {
         $message = false;
@@ -120,27 +124,23 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                 } else {
                     $message .= "<br/>";
                 }
-
-
             }
-
-
         }
         //echo $message; echo "\n<br>";
         return $message;
     }
-     
+
     /**
      * Get a list of all builds of a project
      *
      * @param string $projectName
      * @param integer $start
      * @param integer $limit
+     *
      * @return stdClass
      */
     private function _getLogMessagesArr($projectName, $buildTime, $start, $limit=null)
     {
-
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $projectName . '.history';
         $project = new Xinc_Project();
@@ -177,20 +177,14 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                 if ($limit!=null) {
                     $addClosingTag = true;
                     while ($pos<$start+$limit && ($message = $this->_getNextMessage($fh))!== false) {
-
                         $xmlStr.= $message;
-
                         $pos++;
                         $totalCount++;
                     }
-                     
                     $xmlStr .='</build>';
-
                 } else {
                     while (($message = $this->_getNextMessage($fh))!== false) {
-
                         $xmlStr.= $message;
-
                         $totalCount++;
                         $pos++;
                     }
@@ -199,15 +193,12 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                 $tagOpen = false;
                 $tagClosed = false;
                 while (($message = $this->_getNextMessage($fh))!== false) {
-
                     $totalCount++;
-                     
                     $pos++;
                 }
                 fclose($fh);
                 //echo($xmlStr);
                 $logXml = new SimpleXMLElement($xmlStr);
-
             } else {
                 $logXml = new SimpleXmlElement('<log/>');
             }
@@ -218,12 +209,14 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
 
             foreach ($logXml->children() as $logEntry) {
                 $attributes = $logEntry->attributes();
-                $logmessages[] = array( 'id'=>$id--,
-                         'date'=> (string)$attributes->timestamp,
-                         'stringdate'=> date('Y-m-d H:i:s', (int)$attributes->timestamp),
-                         'timezone' => Xinc_Timezone::get(),
-                         'priority'=>(string)$attributes->priority,
-                         'message'=>str_replace("\n", '\\n', addcslashes($logEntry, '"\'')));
+                $logmessages[] = array(
+                    'id'=>$id--,
+                    'date'=> (string)$attributes->timestamp,
+                    'stringdate'=> date('Y-m-d H:i:s', (int)$attributes->timestamp),
+                    'timezone' => Xinc_Timezone::get(),
+                    'priority'=>(string)$attributes->priority,
+                    'message'=>str_replace("\n", '\\n', addcslashes($logEntry, '"\''))
+                );
             }
             /**
              * restore to system timezone

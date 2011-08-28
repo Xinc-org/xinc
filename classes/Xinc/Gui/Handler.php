@@ -1,27 +1,32 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * This class handles the core Frontend-Activity of Xinc
- * 
- * @package Xinc.Gui
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Gui
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
 
 require_once 'Xinc/Gui/Event.php';
 require_once 'Xinc/Gui/Widget/Repository.php';
@@ -88,6 +93,7 @@ class Xinc_Gui_Handler
     {
         return $this->_systemTimezone;
     }
+
     /**
      * Return an instance of Xinc_Gui_Handler
      *
@@ -97,6 +103,7 @@ class Xinc_Gui_Handler
     {
         return self::$_instance;
     }
+
     /**
      * Returns the directory where Xinc stores the Project-Statuses
      *
@@ -106,6 +113,7 @@ class Xinc_Gui_Handler
     {
         return $this->_statusDir;
     }
+
     /**
      * Set the plugin.xml file and parse it
      * to load the plugins and register the Widgets with the
@@ -154,6 +162,7 @@ class Xinc_Gui_Handler
                 
         }
     }
+
     private function _setConfigDirective($name, $value)
     {
         $this->_config[$name] = $value;
@@ -167,6 +176,7 @@ class Xinc_Gui_Handler
             default:
         }
     }
+
     public function getConfigDirective($name)
     {
         return isset($this->_config[$name])?$this->_config[$name]:null;
@@ -253,5 +263,5 @@ class Xinc_Gui_Handler
     {
         echo "An unknown error occurred. Please contact the server administrator.";
     }
-    
+   
 }

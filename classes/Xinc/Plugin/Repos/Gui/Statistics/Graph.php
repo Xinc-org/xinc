@@ -1,28 +1,31 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * Menu Widget, displays the menu items and the current position
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Gui.Statistics
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
 
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
@@ -30,30 +33,27 @@ require_once 'Xinc/Build.php';
 require_once 'Xinc/Gui/Widget/Extension/Interface.php';
 require_once 'Xinc/Data/Repository.php';
 
-//
-
-
-
-abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget_Extension_Interface
+abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph
+    implements Xinc_Gui_Widget_Extension_Interface
 {
     private $_id;
-    
+
     private $_title;
-    
+
     private $_type;
-    
+
     private $_data;
-    
+
     private $_bgColor;
-    
+
     private $_colorScheme;
-    
+
     private $_labelColor;
-    
+
     private $_customColor = array();
-    
+
     protected $_widget;
-    
+
     /**
      *
      * @param string $title
@@ -62,10 +62,10 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
      * @param string $colorScheme
      * @param string $labelColor
      */
-    public function __construct($title = 'Graph', $type = 'line',
-                                $bgColor = '#f2f2f2', $colorScheme = 'blue',
-                                $labelColor = '#000000')
-    {
+    public function __construct(
+        $title = 'Graph', $type = 'line', $bgColor = '#f2f2f2',
+        $colorScheme = 'blue', $labelColor = '#000000'
+    ) {
         $this->_id = md5($title . $type . $bgColor . $colorScheme . $labelColor);
         $this->_title = $title;
         $this->_type = $type;
@@ -73,18 +73,18 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         $this->_colorScheme = $colorScheme;
         $this->_labelColor = $labelColor;
     }
-    
+
     private function _initEzcGraph()
     {
         require_once 'ezc/Graph/graph.php';
         require_once 'ezc/Base/exceptions/exception.php';
         require_once 'ezc/Base/exceptions/property_not_found.php';
-        
+
         require_once 'ezc/Base/exceptions/value.php';
         require_once 'ezc/Graph/interfaces/palette.php';
-        
+
         require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/Palette.php';
-        
+
         require_once 'ezc/Graph/interfaces/chart.php';
         require_once 'ezc/Base/base.php';
         require_once 'ezc/Base/options.php';
@@ -100,6 +100,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         require_once 'ezc/Graph/element/text.php';
         require_once 'ezc/Graph/element/legend.php';
         require_once 'ezc/Graph/interfaces/driver.php';
+        require_once 'ezc/Graph/driver/svg_font.php';
         require_once 'ezc/Graph/driver/svg.php';
         require_once 'ezc/Graph/interfaces/palette.php';
         require_once 'ezc/Graph/palette/tango.php';
@@ -115,7 +116,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         require_once 'ezc/Graph/options/renderer.php';
         require_once 'ezc/Graph/options/renderer_2d.php';
         require_once 'ezc/Graph/options/renderer_3d.php';
-        
+
         require_once 'ezc/Graph/interfaces/renderer.php';
         require_once 'ezc/Graph/interfaces/radar_renderer.php';
         require_once 'ezc/Graph/interfaces/stacked_bar_renderer.php';
@@ -139,17 +140,17 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         require_once 'ezc/Graph/structs/step.php';
         require_once 'ezc/Graph/math/vector.php';
         require_once 'ezc/Graph/structs/context.php';
-        
+
         require_once 'ezc/Graph/exceptions/exception.php';
         require_once 'ezc/Graph/exceptions/no_such_data.php';
         require_once 'ezc/Graph/exceptions/reducement_failed.php';
     }
-    
+
     public function setWidget(Xinc_Gui_Widget_Interface &$widget)
     {
         $this->_widget = $widget;
     }
-    
+
     private function _getTemplateFileName($type = 'line')
     {
         $base = Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR . 'statistics');
@@ -160,21 +161,22 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
                 break;
         }
     }
-    
+
     public function getId()
     {
         return $this->_id;
     }
-    
+
     public function getTitle()
     {
         return $this->_title;
     }
-    
+
     public function getType()
     {
         return $this->_type;
     }
+
     public function getXAxis()
     {
         $dataSet = array();
@@ -187,6 +189,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         }
         return implode(',', $dataSet);
     }
+
     public function getDataSet(array $data)
     {
         $dataSet = array();
@@ -196,17 +199,21 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
         }
         return implode(',', $dataSet);
     }
+
     public function getDataSets()
     {
         return $this->_data;
     }
-    
-    public abstract function buildDataSet(Xinc_Project &$project, array $buildHistory = array(), $previousData = array());
+
+    public abstract function buildDataSet(
+        Xinc_Project &$project, array $buildHistory = array(), $previousData = array()
+    );
+
     public function generate($data = array(), $colorScheme = array())
     {
         $this->_data = $data;
         $this->_customColors = $colorScheme;
-        
+
         $this->_colorScheme = $this->getColorScheme();
         $this->_initEzcGraph();
         try {
@@ -219,7 +226,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
                 default:
                     $graph = new ezcGraphLineChart();
             }
-            
+
             $graph->title = "";//$this->getTitle(); 
             //$graph->background->color = $this->getBgColor();
             //$keyNo = 0;
@@ -228,7 +235,6 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
             }
             foreach ( $data as $key => $value )
             {
-                 
                  $graph->data[$key] = new ezcGraphArrayDataSet( $value );
                  /**if (isset($this->_colorScheme[$key])) {
                      $graph->data[$key]->color[0] = $this->_colorScheme[$key]; 
@@ -249,19 +255,19 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph implements Xinc_Gui_Widget
             //var_dump($e);
         }
     }
-    
+
     public function getBgColor()
     {
         return $this->_bgColor;
     }
-    
+
     public abstract function getColorScheme();
-    
+
     public function getLabelColor()
     {
         return $this->_labelColor;
     }
-    
+
     public function getExtensionPoint()
     {
         return 'STATISTIC_GRAPH';

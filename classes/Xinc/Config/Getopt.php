@@ -1,42 +1,45 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * Parser for xinc command-line options.
  *
- * @package Xinc.Config
- * @author Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @author Jamie Talbot
- * @version 2.0
- * @copyright  2002-2007 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or
- *    (at your option) any later version.
+ * PHP version 5
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ * @category  Development
+ * @package   Xinc.Config
+ * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author    Jamie Talbot <username@example.org>
+ * @copyright 2002-2007 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
  */
 
 require_once 'Xinc/Config/Exception/Getopt.php';
 
-
 /**
  * Command-line options parsing class.
  * 
- * @package Xinc.Config
- * @author Andrei Zmievski <andrei@php.net>
- * @author Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @author Jamie Talbot
+ * @package   Xinc.Config
+ * @author    Andrei Zmievski <andrei@php.net>
+ * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author    Jamie Talbot
  * @copyright 2002-2007 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @abstract
+ * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 class Xinc_Config_Getopt
 {

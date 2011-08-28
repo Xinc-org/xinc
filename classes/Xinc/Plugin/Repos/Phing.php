@@ -1,27 +1,33 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * Phing plugin to execute the phing command for a certain build file
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Ini.php';
 require_once 'Xinc/Plugin/Repos/Builder/Phing/Task.php';
@@ -29,12 +35,10 @@ require_once 'Xinc/Plugin/Repos/Publisher/Phing/Task.php';
 
 class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
 {
-    
     public function __construct()
     {
-        
     }
-    
+
     public function validate()
     {
         $res = @include_once('phing/Phing.php');
@@ -44,20 +48,21 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 return false;
             }
         } else {
-             Xinc_Logger::getInstance()->error('Could not include '
-                                              . 'necessary files. '
-                                              . 'You may need to adopt your '
-                                              . 'classpath to include Phing');
+            Xinc_Logger::getInstance()->error(
+                'Could not include necessary files. '
+                . 'You may need to adopt your classpath to include Phing'
+            );
              return false;
         }
         return true;
     }
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_Builder_Phing_Task($this),
                      new Xinc_Plugin_Repos_Publisher_Phing_Task($this));
     }
-    
+
     /**
      * calling phing
      *
@@ -66,10 +71,13 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
      * @param string $target
      * @param string $extraParams
      * @param string $workingDir
+     *
      * @return boolean
      */
-    public function build(Xinc_Build_Interface &$build, $buildfile, $target, $extraParams = null, $workingDir = null)
-    {
+    public function build(
+        Xinc_Build_Interface &$build, $buildfile, $target,
+        $extraParams = null, $workingDir = null
+    ) {
         //$phing = new Phing();
         $logLevel = Xinc_Logger::getInstance()->getLogLevel();
         $arguments = array();
@@ -89,10 +97,9 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         }
         if (is_dir($workingDir)) {
             Xinc_Logger::getInstance()->debug('Switching to directory: ' . $workingDir);
-            
             chdir($workingDir);
         }
-        
+
         $logFile = getcwd() . DIRECTORY_SEPARATOR . md5($build->getProject()->getName() . time()) . '.log';
         if (file_exists($logFile)) {
             unlink($logFile);
@@ -110,7 +117,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         $arguments[] = '-Dxinc.buildlabel=' . $this->_encodeParam($build->getLabel());
         $arguments[] = '-Dprojectname=' . $this->_encodeParam($build->getProject()->getName());
         $arguments[] = '-Dcctimestamp=' . $this->_encodeParam($build->getBuildTime());
-        
+
         foreach ($build->getProperties()->getAllProperties() as $name => $value) {
             $arguments[] = '-Dxinc.' . $this->_encodeParam($name) . '=' . $this->_encodeParam($value);
         }
@@ -137,9 +144,9 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         $command = $phingPath . ' ' . implode(' ', $arguments) . ' ' . $extraParams . ' ' . $redirect;
         exec($command, $output, $returnValue);
         chdir($oldPwd);
-        
+
         $buildSuccess = false;
-        
+
         if (file_exists($logFile)) {
             $fh = fopen($logFile, 'r');
             if (is_resource($fh)) {
@@ -159,7 +166,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                 Xinc_Logger::getInstance()->error($line);
             }
         }
-        
+
         switch ($returnValue) {
             case 0:
             case 1:
@@ -171,7 +178,6 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
                     return false;
                 }
                 break;
-                
             case -1:
             case -2:
                 $build->error('Phing build script: '.$command.' exited with status: ' . $returnValue);
@@ -181,10 +187,12 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         }
         return false;
     }
+
     /**
      * Makes the passed properties command line safe
      *
      * @param string $value
+     *
      * @return string
      */
     private function _encodeParam($value)

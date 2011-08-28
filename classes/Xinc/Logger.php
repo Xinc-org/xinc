@@ -1,29 +1,35 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * The logging singleton.
- * 
- * @package Xinc.Logger
- * @author David Ellis
- * @author Gavin Foster
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Logger
+ * @author    David Ellis <username@example.com>
+ * @author    Gavin Foster <username@example.com>
+ * @author    Arno Schneider <username@example.com>
  * @copyright 2007 David Ellis, One Degree Square
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Logger/Message.php';
 require_once 'Xinc/Logger/Exception/NonWriteable.php';
 
@@ -42,12 +48,14 @@ class Xinc_Logger
      * @var string
      */
     private $_logFile;
-        /**
+
+    /**
      * Path to the log file.
      *
      * @var string
      */
     private $_buildLogFile;
+
     /**
      * Queue of logger messages.
      *
@@ -93,6 +101,7 @@ class Xinc_Logger
         $this->_logQueue = array();
         $this->_max = 50;
     }
+
     public function setLogLevel($level)
     {
         $this->_logLevelSet = true;
@@ -113,6 +122,7 @@ class Xinc_Logger
     {
         return $this->_logLevel;
     }
+
     /**
      * Singleton getInstance method.
      *
@@ -220,6 +230,7 @@ class Xinc_Logger
     {
         $this->log(self::$logLevelDebug, $msg, $fileHandle);
     }
+
     /**
      * Log a message with priority 'verbose'.
      *
@@ -230,6 +241,7 @@ class Xinc_Logger
     {
         $this->log(self::$logLevelVerbose, $msg, $fileHandle = null);
     }    
+
     /**
      * Empty the log queue
      *

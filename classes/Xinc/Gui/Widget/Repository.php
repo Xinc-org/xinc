@@ -1,34 +1,41 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * The Widget Repository holds all the Widgets
  * that are defined by the loaded plugins.
- * 
- * 
- * @package Xinc.Gui
- * @author Arno Schneider
- * @version 2.0
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Gui.Widget
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Gui/Widget/Exception/NotFound.php';
+
 /**
  * The Widget-Repository allows the Web-Frontend of Xinc to choose the right
  * plugin for execution based on the Http-Request
- * @package Xinc.Gui
+ *
+ * @package Xinc.Gui.Widget
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  * @version    2.0
  * @author     Arno Schneider
@@ -40,12 +47,14 @@ class Xinc_Gui_Widget_Repository
      * @var Xinc_Gui_Widget_Repository
      */
     private static $_instance;
+
     /**
      * @var Xinc_Gui_Widget_Interface[]
      */
     private $_definedWidgets = array();
     
     private $_widgetClasses = array();
+
     /**
      * Contains all the registered widgets
      *
@@ -101,6 +110,7 @@ class Xinc_Gui_Widget_Repository
      * Gets a registered widget by its classname
      *
      * @param string $name
+     *
      * @return Xinc_Gui_Widget_Interface or null
      * @throws Xinc_Gui_Widget_Exception_NotFound
      */
@@ -117,6 +127,7 @@ class Xinc_Gui_Widget_Repository
      * is called
      *
      * @param String $path Pathname of the HTTP-Request
+     *
      * @return Xinc_Gui_Widget_Interface
      */    
     public function &getWidgetForPath($path)

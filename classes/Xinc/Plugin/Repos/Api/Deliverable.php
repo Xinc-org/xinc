@@ -1,27 +1,32 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * Api to get information about builds
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Repos.Api
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://xincplus.sourceforge.net
+ */
+
 require_once 'Xinc/Api/Module/Interface.php';
 require_once 'Xinc/Build/Repository.php';
 require_once 'Xinc/Api/Response/Object.php';
@@ -40,6 +45,7 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
         $this->_plugin = $plugin;
         
     }
+
     /**
      *
      * @return string
@@ -48,6 +54,7 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
     {
         return 'deliverable';
     }
+
     /**
      * returns methods of this api
      *
@@ -57,29 +64,29 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
     {
         return array('get');
     }
+
     /**
      * Process an api call with the requested methodname and parameters
      *
      * @param string $methodName
      * @param array $params
+     *
      * @return mixed
      */
     public function processCall($methodName, $params = array())
     {
-
         switch ($methodName){
             case 'get':
                 return $this->_getDeliverableFile($params);
                 break;
         }
-          
-       
-       
     }
+
     /**
      * determine the mime content type of a file
      *
      * @param string $fileName
+     *
      * @return string
      */
     public function mime_content_type2($fileName)
@@ -99,11 +106,10 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
         if (function_exists('mime_content_type')) {
             $contentType = mime_content_type($fileName);
         }
-    
+
         return $contentType;
-    
     }
-    
+
     /**
      * Load the requested artifacts file and output it to the browser
      *
@@ -114,9 +120,9 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
         /**$projectName = $params['p'];
         $buildTime = $params['buildtime'];
         $file = $params['file'];*/
-        
+
         $query = urldecode($_SERVER['REQUEST_URI']);
-       
+
         preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
         if (count($matches)!=8) {
             echo "Could not find deliverable";
@@ -144,8 +150,7 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
                 $build = Xinc_Build_Repository::getBuild($project, $buildTime);
                 $statusDir = Xinc_Build_History::getBuildDir($project, $buildTime);
             }
-           
-            
+
             $statusDir .= DIRECTORY_SEPARATOR . Xinc_Plugin_Repos_Deliverable::DELIVERABLE_DIR .
                           DIRECTORY_SEPARATOR;
 
@@ -175,12 +180,12 @@ class Xinc_Plugin_Repos_Api_Deliverable implements Xinc_Api_Module_Interface
                 echo "Could not find deliverable";
                 die();
             }
-           
         } catch (Exception $e) {
             echo "Could not find any deliverable";
             die();
         }
     }
+
     private function _outputDeliverable($fileName)
     {
         $responseObject = new Xinc_Api_Response_Object();

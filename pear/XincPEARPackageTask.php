@@ -123,7 +123,7 @@ class XincPEARPackageTask extends MatchingTask {
         $package->setPackage('Xinc');
         $package->setSummary('Xinc summary');
         $package->setDescription('Xinc');
-        $package->setChannel('pear.xinc.eu');
+        $package->setChannel('pear.php.net');
         $package->setPackageType('php');
 
         $package->setReleaseVersion($this->version);
