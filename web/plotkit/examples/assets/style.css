@@ -1,0 +1,33 @@
+body{
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size:11px;
+	line-height:15px;
+	background:#9DB98D none repeat scroll 0%;
+}
+
+h1,h2{
+	color:#fff;
+	letter-spacing:-2px;
+	font-size: 2.2em;
+}
+
+#wrapper,#footer{
+	width: 700px;
+	margin: 0px auto;
+}
+
+#footer{
+	text-align:center;
+}
+
+pre code {
+	background:#1e1e1e no-repeat;
+	color:#fff;
+	display:block;
+	line-height:21px;
+	overflow:auto;
+	white-space:pre;
+	margin:0;
+	padding:0 5px 0 26px;
+	border: 1px solid #fff;
+}

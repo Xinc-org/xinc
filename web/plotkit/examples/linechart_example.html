@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Solutoire.com: Plotr - Linechart Example</title>
+		<link type="text/css" rel="stylesheet" href="assets/style.css" />
+		<script src="../lib/prototype/prototype.js" type="text/javascript"></script>
+		<script src="../lib/excanvas/excanvas.js" type="text/javascript"></script>
+		<script src="../plotr.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<h1>Solutoire.com: Plotr - Linechart Example</h1><br />
+		<div id="wrapper">
+			<h2>LineChart (shouldFill = true)</h2>
+			<div><canvas id="lines1" height="500" width="600"></canvas></div>
+
+			<h2>LineChart (shouldFill = false)</h2>
+			<div><canvas id="lines2" height="500" width="600"></canvas></div>
+			<pre><code>// Define a dataset.
+var dataset = {
+	'myFirstDataset': 	[[0, 3], [1, 2], [2, 1.414], [3, 2.3]],
+	'mySecondDataset': 	[[0, 1.4], [1, 2.67], [2, 1.34], [3, 1.2]],
+	'myThirdDataset': 	[[0, 0.46], [1, 1.45], [2, 1.0], [3, 1.6]],
+	'myFourthDataset': 	[[0, 0.3], [1, 0.83], [2, 0.7], [3, 0.2]]
+};
+
+// Define options.
+var options = {
+	
+	// Define a padding for the canvas node
+	padding: {
+		left: 30, 
+		right: 0, 
+		top: 10, 
+		bottom: 30
+	},
+	
+	// Background color to render.
+	background: {
+		color: '#f2f2f2'
+	},
+	
+	// Use the predefined blue colorscheme.
+	colorScheme: 'blue',
+	
+	axis: {
+		// The fontcolor of the labels is black.
+		labelColor: '#000000',
+		// Add the ticks. Keep in mind, x and y axis are swapped
+		// when the BarOrientation is horizontal.
+		x: {
+			ticks: [
+				{v:0, label:'day 1'}, 
+		      	{v:1, label:'day 2'}, 
+		      	{v:2, label:'day 3'},
+		      	{v:3, label:'day 4'}
+			]
+		}	
+	},
+	// Set the legend position.
+	legend: {
+		position:{
+			left: '420px'	
+		}	
+	}
+};
+
+// Instantiate a new LineCart.
+var line = new Plotr.LineChart('lines1',options);
+// Add a dataset to it.
+line.addDataset(dataset);
+// Render it.
+line.render();		
+			
+// Instead of instantiating a new LineChart object,
+// you also can use reset(), that resets the options and datasets.
+line.reset();
+
+// Change some attributes.
+Object.extend(options,{
+					
+	shouldFill: false,
+	
+	// Set a custom colorScheme
+	colorScheme: new Hash({
+		'myFirstDataset': '#1c4a7e',
+		'mySecondDataset': '#bb5b3d',
+		'myThirdDataset': '#3a8133',
+		'myFourthDataset': '#813379'
+	}),
+	
+	axis: {
+		// Add the ticks.
+		x: {
+			ticks: [
+				{v:0, label:'IE6'}, 
+		      	{v:1, label:'IE7'}, 
+		      	{v:2, label:'FF2'},
+		      	{v:3, label:'Opera 9'}
+			]
+		}	
+	},
+	legend:{}
+});
+// Parse the table.
+line.addDataset(dataset);
+// Render the BarChart.
+line.render('lines2', options);
+			</code></pre>
+		</div>
+		
+		<div id="footer">
+			© Bas Wenneker 2006-2007 // <a href="solutoire.com">Solutoire.com</a>			
+		</div>
+		
+		<script type="text/javascript">			
+			// Define a dataset.
+			var dataset = {
+				'myFirstDataset': 	[[0, 3], [1, 2], [2, 1.414], [3, 2.3]],
+				'mySecondDataset': 	[[0, 1.4], [1, 2.67], [2, 1.34], [3, 1.2]],
+				'myThirdDataset': 	[[0, 0.46], [1, 1.45], [2, 1.0], [3, 1.6]],
+				'myFourthDataset': 	[[0, 0.3], [1, 0.83], [2, 0.7], [3, 0.2]]
+			};
+			
+			// Define options.
+			var options = {
+				
+				// Define a padding for the canvas node
+				padding: {
+					left: 30, 
+					right: 0, 
+					top: 10, 
+					bottom: 30
+				},
+				
+				// Background color to render.
+				background: {
+					color: '#f2f2f2'
+				},
+				
+				// Use the predefined blue colorscheme.
+				colorScheme: 'blue',
+				
+				axis: {
+					// The fontcolor of the labels is black.
+					labelColor: '#000000',
+					// Add the ticks. Keep in mind, x and y axis are swapped
+					// when the BarOrientation is horizontal.
+					x: {
+						ticks: [
+							{v:0, label:'day 1'}, 
+					      	{v:1, label:'day 2'}, 
+					      	{v:2, label:'day 3'},
+					      	{v:3, label:'day 4'}
+						]
+					}	
+				},
+				// Set the legend position.
+				legend: {
+					position:{
+						left: '420px'	
+					}	
+				}
+			};
+			
+			// Instantiate a new LineCart.
+			var line = new Plotr.LineChart('lines1',options);
+			// Add a dataset to it.
+			line.addDataset(dataset);
+			// Render it.
+			line.render();		
+						
+			// Instead of instantiating a new LineChart object,
+			// you also can use reset(), that resets the options and datasets.
+			line.reset();
+		
+			// Change some attributes.
+			Object.extend(options,{
+								
+				shouldFill: false,
+				
+				// Set a custom colorScheme
+				colorScheme: new Hash({
+					'myFirstDataset': '#1c4a7e',
+					'mySecondDataset': '#bb5b3d',
+					'myThirdDataset': '#3a8133',
+					'myFourthDataset': '#813379'
+				}),
+				
+				axis: {
+					// Add the ticks.
+					x: {
+						ticks: [
+							{v:0, label:'IE6'}, 
+					      	{v:1, label:'IE7'}, 
+					      	{v:2, label:'FF2'},
+					      	{v:3, label:'Opera 9'}
+						]
+					}	
+				},
+				legend:{}
+			});
+			// Parse the table.
+			line.addDataset(dataset);
+			// Render the BarChart.
+			line.render('lines2', options);
+		</script>
+	</body>
+</html>
