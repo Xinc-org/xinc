@@ -25,6 +25,21 @@
 # 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ################################################################################
 
+### BEGIN CHKCONFIG INFO ###
+# chkconfig:   2345 86 14
+# description: Xinc - continous integration server
+# pidfile:     @STATUSDIR@/xinc.pid
+### END CHKCONFIG INFO ###
+### BEGIN INIT INFO
+# Provides:          xinc
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop xinc continous integration server
+### END INIT INFO
+
+
 CONFIG=@ETC@/system.xml
 PROJECTS=@ETC@/conf.d/*.xml
 LOG=@LOG@/xinc.log
