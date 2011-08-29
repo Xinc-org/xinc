@@ -31,7 +31,7 @@ require_once 'Xinc/Gui/Widget/Interface.php';
 require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Extension/Summary.php';
 require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Extension/ChangeLog.php';
 
-mplements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_ModificationSet_Widget implements Xinc_Gui_Widget_Interface
 {
     protected $_plugin;
 
