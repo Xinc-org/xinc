@@ -42,7 +42,7 @@ class Xinc_Build_Repository implements Xinc_Build_Repository_Interface
      * @throws Xinc_Build_Exception_NotFound
      * @return Xinc_Build_Interface
      */
-    public static function getBuild(Xinc_Project &$project, $buildTime)
+    public static function getBuild(Xinc_Project $project, $buildTime)
     {
         $statusDir = null;
         if (class_exists('Xinc_Gui_Handler')) {
@@ -63,7 +63,7 @@ class Xinc_Build_Repository implements Xinc_Build_Repository_Interface
      * @throws Xinc_Build_Exception_NotFound
      * @return Xinc_Build_Interface
      */
-    public static function getLastBuild(Xinc_Project &$project)
+    public static function getLastBuild(Xinc_Project $project)
     {
         $lastBuildTime = Xinc_Build_History::getLastBuildTime($project);
         //$lastBuildTime = $buildHistoryArr[count($buildHistoryArr) - 1];
