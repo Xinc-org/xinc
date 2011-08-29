@@ -90,7 +90,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
         $build->setScheduler($this);
     }
 
-    public function getNextBuildTime(Xinc_Build_Interface &$build)
+    public function getNextBuildTime(Xinc_Build_Interface $build)
     {
         if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
             return null;
