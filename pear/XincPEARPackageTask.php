@@ -19,11 +19,6 @@
  * <http://phing.info>.
  */
 
-
-
-
-
-
 include_once 'phing/tasks/ext/pearpackage/Fileset.php';
 include_once 'PEAR.php';
 include_once 'PEAR/Frontend.php';
@@ -36,8 +31,8 @@ include_once 'PEAR/Task/Postinstallscript/rw.php';
  * @package  phing.tasks.ext
  * @version  $Revision$
  */
-class XincPEARPackageTask extends MatchingTask {
-
+class XincPEARPackageTask extends MatchingTask
+{
     /** Base directory for reading files. */
     private $dir;
 
@@ -57,8 +52,8 @@ class XincPEARPackageTask extends MatchingTask {
         }
     }
 
-    private function setOptions($pkg){
-
+    private function setOptions($pkg)
+    {
         $options['baseinstalldir'] = '/';
         $options['packagedirectory'] = $this->dir->getAbsolutePath();
 
@@ -87,26 +82,28 @@ class XincPEARPackageTask extends MatchingTask {
         // add install exceptions
         //$options['installexceptions'] = array('Xinc/Postinstall.php'=>'script');
 
-        $options['dir_roles'] = array(	'bin' => 'script',
-										'templates' => 'data',
-										'scripts' => 'data',
-										'examples' => 'data',
-										'resources' => 'data',
-		                                'etc' => 'data',
-		                                'web' => 'data');
+        $options['dir_roles'] = array(
+            'bin'       => 'script',
+            'templates' => 'data',
+            'scripts'   => 'data',
+            'examples'  => 'data',
+            'resources' => 'data',
+            'etc'       => 'data',
+            'web'       => 'data'
+        );
 
         //$options['exceptions'] = array('Xinc/Postinstall.php'=>'script');
         $options['scriptphaseexceptions'] = array ('Xinc/Postinstall.php' => 'postinstall');
         $pkg->setOptions($options);
-
     }
 
     /**
      * Main entry point.
+     *
      * @return void
      */
-    public function main() {
-
+     public function main()
+     {
         if ($this->dir === null) {
             throw new BuildException("You must specify the \"dir\" attribute for PEAR package task.");
         }
@@ -138,9 +135,8 @@ class XincPEARPackageTask extends MatchingTask {
 
         // Add package maintainers
         $package->addMaintainer('lead', 'arnoschn', 'Arno Schneider', 'arnoschn@gmail.com');
+        $package->addMaintainer('lead', 'opi', 'Alexander Opitz', 'alexander.opitz@gmail.com');
         $package->addMaintainer('lead', 'gavinleefoster', 'Gavin Foster', 'gavinleefoster@gmail.com', 'no');
-
-
 
         // (wow ... this is a poor design ...)
         //
@@ -151,7 +147,6 @@ class XincPEARPackageTask extends MatchingTask {
         // Programmatically, I feel the need to re-iterate that this API for PEAR_PackageFileManager
         // seems really wrong.  Sub-sections should be encapsulated in objects instead of having
         // a "flat" API that does not represent the structure being created....
-
 
         // creating a sub-section for 'windows'
 
@@ -201,14 +196,11 @@ class XincPEARPackageTask extends MatchingTask {
         $package->addReplacement('etc/init.d/xinc.bat', 'pear-config', '@BIN_DIR@', 'bin_dir');
         $package->addReplacement('etc/init.d/xinc', 'pear-config', '@BIN_DIR@', 'bin_dir');
         // creating a sub-section for non-windows
-        	
-        	
-        	
+
         //$package->setOSInstallCondition('(*ix|*ux|darwin*|*BSD|SunOS*)');
-        	
+
         /**$package->addInstallAs('bin/pear-phing', 'phing');
          $package->addIgnoreToRelease('bin/pear-phing.bat');*/
-
 
         // "core" dependencies
         $package->setPhpDep('5.0.3');
@@ -270,26 +262,20 @@ class XincPEARPackageTask extends MatchingTask {
         );
         $package->addPostinstallTask($taskWin, 'Xinc/Postinstall/Win.php');
 
-
-
-
         // now we run this weird generateContents() method that apparently
         // is necessary before we can add replacements ... ?
         $package->generateContents();
 
         $e = $package->writePackageFile();
 
-
         if (PEAR::isError($e)) {
             throw new BuildException("Unable to write package file.", new Exception($e->getMessage()));
         }
-
-
-
     }
 
     /**
      * Used by the PEAR_PackageFileManager_FileSet lister.
+     *
      * @return array FileSet[]
      */
     public function getFileSets() {
@@ -312,7 +298,9 @@ class XincPEARPackageTask extends MatchingTask {
 
     /**
      * Set the version we are building.
+     *
      * @param string $v
+     *
      * @return void
      */
     public function setVersion($v){
@@ -321,7 +309,9 @@ class XincPEARPackageTask extends MatchingTask {
 
     /**
      * Set the state we are building.
+     *
      * @param string $v
+     *
      * @return void
      */
     public function setState($v) {
@@ -330,15 +320,20 @@ class XincPEARPackageTask extends MatchingTask {
 
     /**
      * Sets release notes field.
+     *
      * @param string $v
+     *
      * @return void
      */
     public function setNotes($v) {
         $this->notes = $v;
     }
+
     /**
      * Sets "dir" property from XML.
-     * @param File $f
+     *
+     * @param PhingFile $f
+     *
      * @return void
      */
     public function setDir(PhingFile $f) {
@@ -347,11 +342,12 @@ class XincPEARPackageTask extends MatchingTask {
 
     /**
      * Sets the file to use for generated package.xml
+     *
+     * @param PhingFile $f
+     *
+     * @return void
      */
     public function setDestFile(PhingFile $f) {
         $this->packageFile = $f;
     }
-
 }
-
-

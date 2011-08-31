@@ -32,8 +32,8 @@
 		<!-- Need to include xinc.properties in xinc build script, to have the same pkg.version available there -->
 		  
 			<phing phingfile="build.xml" dir="pear">
-				<property name="version" value="${pkg.version}.${xinc.build.number}"/>
-				<property name="state" value="beta"/>
+				<property name="version" value="${pkg.version}"/>
+				<property name="state" value="${pkg.stability}"/>
 			</phing>
 
 		</target>
