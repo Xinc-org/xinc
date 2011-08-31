@@ -135,7 +135,7 @@ class XincPEARPackageTask extends MatchingTask
 
         // Add package maintainers
         $package->addMaintainer('lead', 'arnoschn', 'Arno Schneider', 'arnoschn@gmail.com');
-        $package->addMaintainer('lead', 'opi', 'Alexander Opitz', 'alexander.opitz@gmail.com');
+        $package->addMaintainer('lead', 'opi', 'Alexander Opitz', 'opitz.alexander@gmail.com');
         $package->addMaintainer('lead', 'gavinleefoster', 'Gavin Foster', 'gavinleefoster@gmail.com', 'no');
 
         // (wow ... this is a poor design ...)
