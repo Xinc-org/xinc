@@ -29,6 +29,7 @@ declare(encoding = 'utf-8');
  */
 
 require_once 'Xinc/Iterator.php';
+require_once 'Xinc/Config/Exception/InvalidElement.php';
 
 
 class Xinc_Config_Element_Iterator extends Xinc_Iterator

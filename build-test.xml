@@ -48,7 +48,7 @@
 	</target>
 
 	<target name="generate-report">
-  		<phpunit2report infile="${report.dir}/logfile.xml" styledir="resources/xsl" todir="report" format="noframes"/>
+  		<phpunitreport infile="${report.dir}/logfile.xml" styledir="resources/xsl" todir="report" format="noframes"/>
 		
   	</target>
 

@@ -22,10 +22,12 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+require_once 'Xinc/BaseTest.php';
+
 require_once 'Xinc/Config/File.php';
 require_once 'Xinc/Config/Parser.php';
 require_once 'Xinc/Engine/Sunrise/Parser.php';
-require_once 'Xinc/BaseTest.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet.php';
 
 class Xinc_Engine_Sunrise_TestParser extends Xinc_BaseTest
 {
