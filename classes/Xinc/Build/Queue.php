@@ -34,18 +34,18 @@ require_once 'Xinc/Build/Iterator.php';
 
 class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
 {
-  
     /**
-     * 
-     *
      * @var Xinc_Build_Iterator
      */
     private $_builds;
-    
+
     private $_lastBuild;
-    
+
+    /**
+     * @var array
+     */
     private $_queue=array();
-    
+
     /**
      * constructor for build queue
      *
@@ -54,30 +54,30 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
     {
         $this->_builds = new Xinc_Build_Iterator();
     }
+
     /**
      * adds a build to the queue
-     * 
+     *
      * @param Xinc_Build_Interface $build
      */
-    public function addBuild(Xinc_Build_Interface &$build)
+    public function addBuild(Xinc_Build_Interface $build)
     {
-        
         $this->_builds->add($build);
     }
-    
+
     /**
      * Adds a number of builds to the queue
      *
      * @param Xinc_Build_Iterator $builds
      */
-    public function addBuilds(Xinc_Build_Iterator &$builds)
+    public function addBuilds(Xinc_Build_Iterator $builds)
     {
         while ($builds->hasNext()) {
             $this->_builds->add($builds->next());
         }
     }
-    
-    private function _handleBuildConfig(Xinc_Build_Interface &$build)
+
+    private function _handleBuildConfig(Xinc_Build_Interface $build)
     {
         $timezone = $build->getConfigDirective('timezone');
         if ($timezone !== null) {
@@ -86,7 +86,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
             Xinc_Timezone::reset();
         }
     }
-    
+
     /**
      * Returns the next build time of all the builds scheduled
      * in this queue
@@ -106,7 +106,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
             if ($build->getNextBuildTime() <= $nextBuildTime || $nextBuildTime === null) {
                 if ($build->getStatus() != Xinc_Build_Interface::STOPPED) {
                     $buildTime = $build->getNextBuildTime();
-                    
+
                     if ($buildTime !== null && !$build->isQueued()) {
                         $nextBuildTime = $buildTime;
                         /**
@@ -126,32 +126,32 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
                     }
                 }
             }
-        
         }
         usort($this->_queue, array(&$this, 'sortQueue'));
         $this->_builds->rewind();
         return $nextBuildTime;
     }
-    
+
     /**
      * Sorts the builds in the queue by buildtime
      *
      * @param Xinc_Build_Interface $a
      * @param Xinc_Build_Interface $b
+     *
      * @return integer
      */
     public function sortQueue($a, $b)
     {
         $this->_handleBuildConfig($a);
         $buildTimeA = $a->getNextBuildTime();
-        
+
         $this->_handleBuildConfig($b);
         $buildTimeB = $b->getNextBuildTime();
-        
+
         if ($buildTimeA == $buildTimeB) return 0;
         return $buildTimeA<$buildTimeB ? -1:1;
     }
-    
+
     /**
      * Removes the next scheduled build from the queue
      * and returns it
@@ -167,7 +167,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         if (isset($this->_queue[0])) {
             $this->_handleBuildConfig($this->_queue[0]);
             if ($this->_queue[0]->getNextBuildTime() <= time()) {
-                
+
                 $build = array_shift($this->_queue);
                 $build->dequeue();
                 return $build;
@@ -175,5 +175,4 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
         }
         return null;
     }
-   
 }
