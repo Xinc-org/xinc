@@ -318,7 +318,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                     $strOutput = $this->_maskOutput($strOutput, array($username, $password));
                 }
                 $build->error('Problem with remote '
-                             . 'Subversion repository, cannot get revision of working copy ' . $localSet);
+                             . 'Subversion repository, cannot get revision of working copy ' . $strOutput);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
                 return $modResult;
@@ -331,7 +331,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
                     $strOutput = $this->_maskOutput($strOutput, array($username, $password));
                 }
                 $build->error('Problem with remote '
-                             . 'Subversion repository, cannot get revision of remote repos ' . $remoteSet);
+                             . 'Subversion repository, cannot get revision of remote repos ' . $strOutput);
                 $build->setStatus(Xinc_Build_Interface::FAILED);
                 $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
                 return $modResult;
