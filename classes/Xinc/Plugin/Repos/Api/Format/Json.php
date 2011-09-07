@@ -43,43 +43,8 @@ class Xinc_Plugin_Repos_Api_Format_Json implements Xinc_Api_Response_Format_Inte
      */
     public function generate(Xinc_Api_Response_Object &$responseObject)
     {
-        $result = $this->_json_encode($responseObject->get());
+        $result = $this->json_encode($responseObject->get());
         return $result;
-    }
-    
-    /**
-     * Encodes a php object in the json format
-     *
-     * @param object $a
-     *
-     * @return string
-     */
-    private function _json_encode($a)
-    {
-        if (is_null($a)) return 'null';
-        if ($a === false) return 'false';
-        if ($a === true) return 'true';
-        if (is_scalar($a)) {
-            $a = addslashes($a);
-            $a = str_replace("\n", '\n', $a);
-            $a = str_replace("\r", '\r', $a);
-            $a = preg_replace('{(</)(script)}i', "$1'+'$2", $a);
-            return "'$a'";
-        }
-        $isList = true;
-        for ($i=0, reset($a); $i<count($a); $i++, next($a))
-            if (key($a) !== $i) {
-                $isList = false; break; 
-            }
-        $result = array();
-        if ($isList) {
-            foreach ($a as $v) $result[] = $this->_json_encode($v);
-            return '[ ' . join(', ', $result) . ' ]';
-        } else {
-            foreach ($a as $k=>$v)
-                $result[] = $this->_json_encode($k) . ': ' . $this->_json_encode($v);
-            return '{ ' . join(', ', $result) . ' }';
-        }
     }
 
     /**
