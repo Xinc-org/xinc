@@ -60,33 +60,4 @@ class Xinc_Plugin_Repos_Api extends Xinc_Plugin_Base
                      new Xinc_Plugin_Repos_Api_Projects($this),
                      new Xinc_Plugin_Repos_Api_LogMessages($this));
     }
-    
-    public function json_encode($a)
-    {
-        if (is_null($a)) return 'null';
-        if ($a === false) return 'false';
-        if ($a === true) return 'true';
-        if (is_scalar($a)) {
-            $a = addslashes($a);
-            $a = str_replace("\n", '\n', $a);
-            $a = str_replace("\r", '\r', $a);
-            $a = preg_replace('{(</)(script)}i', "$1'+'$2", $a);
-            return "'$a'";
-        }
-        $isList = true;
-        for ($i=0, reset($a); $i<count($a); $i++, next($a))
-            if (key($a) !== $i) {
-                $isList = false; break;
-            }
-        $result = array();
-        if ($isList) {
-            foreach ($a as $v) $result[] = $this->json_encode($v);
-            return '[ ' . join(', ', $result) . ' ]';
-        } else {
-            foreach ($a as $k=>$v)
-                $result[] = $this->json_encode($k) . ': ' . $this->json_encode($v);
-            return '{ ' . join(', ', $result) . ' }';
-        }
-    }
-   
 }
