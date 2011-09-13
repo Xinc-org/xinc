@@ -120,7 +120,7 @@ class XincPEARPackageTask extends MatchingTask
         $package->setPackage('Xinc');
         $package->setSummary('Xinc summary');
         $package->setDescription('Xinc');
-        $package->setChannel('pear.php.net');
+        $package->setChannel('pear.elektrischeslicht.de');
         $package->setPackageType('php');
 
         $package->setReleaseVersion($this->version);
