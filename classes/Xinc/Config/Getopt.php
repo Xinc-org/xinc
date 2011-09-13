@@ -33,7 +33,7 @@ require_once 'Xinc/Config/Exception/Getopt.php';
 
 /**
  * Command-line options parsing class.
- * 
+ *
  * @package   Xinc.Config
  * @author    Andrei Zmievski <andrei@php.net>
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
@@ -77,8 +77,9 @@ class Xinc_Config_Getopt
             }
 
             if ($arg{0} != '-' || (strlen($arg) > 1 && $arg{1} == '-' && !$longOptions)) {
-                $nonOpts = array_merge($nonOpts, array_slice($args, $i));
-                break;
+                // This argument is a project file, but there could be other
+                // options following, so just take the next one and continue.
+            		$nonOpts = array_merge($nonOpts, array_slice($args, $i, 1));
             } else if (strlen($arg) > 1 && $arg{1} == '-') {
                 self::parseLongOption(substr($arg, 2), $longOptions, $opts, $args);
             } else {
@@ -91,7 +92,7 @@ class Xinc_Config_Getopt
 
     /**
      * Parses short options from the command line.
-     * 
+     *
      * @param string $arg The argument to parse.
      * @param string $short_options Short options to match.
      * @param array $opts The options accumulator.
@@ -103,7 +104,7 @@ class Xinc_Config_Getopt
         for ($i = 0; $i < strlen($arg); $i++) {
             $opt = $arg{$i};
             $optArg = null;
-            
+
             if (($spec = strstr($shortOptions, $opt)) === false || $arg{$i} == ':') {
                 throw new Xinc_Config_Exception_Getopt("unrecognized option -- $opt");
             }
@@ -131,7 +132,7 @@ class Xinc_Config_Getopt
 
     /**
      * Parses long options from the command line.
-     * 
+     *
      * @param string $arg The argument to parse.
      * @param array $long_options Long options to match.
      * @param array $opts The options accumulator.
