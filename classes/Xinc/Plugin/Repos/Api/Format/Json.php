@@ -43,7 +43,7 @@ class Xinc_Plugin_Repos_Api_Format_Json implements Xinc_Api_Response_Format_Inte
      */
     public function generate(Xinc_Api_Response_Object &$responseObject)
     {
-        $result = $this->json_encode($responseObject->get());
+        $result = json_encode($responseObject->get());
         return $result;
     }
 
