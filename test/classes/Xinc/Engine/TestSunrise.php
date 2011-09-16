@@ -24,6 +24,10 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once 'Xinc/Engine/Sunrise.php';
+require_once 'Xinc/Plugin/Repos/Builder.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/BuildAlways.php';
+require_once 'Xinc/Plugin/Repos/Phing.php';
 require_once 'Xinc/BaseTest.php';
 
 class Xinc_Engine_TestSunrise extends Xinc_BaseTest
