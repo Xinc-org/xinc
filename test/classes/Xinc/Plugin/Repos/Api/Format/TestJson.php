@@ -59,14 +59,14 @@ class Xinc_Plugin_Repos_Api_Format_TestJson extends Xinc_BaseTest
 	{		
 		$responseMock = $this->generateMockResponseObject(array('string',0,false));
 		
-		$this->assertEquals("[ \"string\", \"0\", false ]", $this->json->generate($responseMock));
+		$this->assertEquals("[\"string\",0,false]", $this->json->generate($responseMock));
 	}
 	
 	public function testHashIsEncodedAsObject()
 	{
 		$responseMock = $this->generateMockResponseObject(array('property' => 'value'));
 		
-		$this->assertEquals("{ \"property\": \"value\" }", $this->json->generate($responseMock));
+		$this->assertEquals("{\"property\":\"value\"}", $this->json->generate($responseMock));
 	}
 	
 	public function testFormatPluginNameIsJson()
