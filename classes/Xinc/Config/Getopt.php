@@ -71,6 +71,10 @@ class Xinc_Config_Getopt
         reset($args);
 
         while (list($i, $arg) = each($args)) {
+            if (empty($arg)) {
+                continue;
+            }
+
             if ($arg == '--') {
                 $nonOpts = array_merge($nonOpts, array_slice($args, $i + 1));
                 break;
