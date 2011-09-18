@@ -47,7 +47,11 @@ class Xinc_Engine_Iterator extends Xinc_Iterator
     {
         foreach ($array as $element) {
             if (!$element instanceof Xinc_Engine_Interface ) {
-                throw new Xinc_Engine_Exception_Invalid(get_class($element));
+                if (is_object($element)) {
+                    throw new Xinc_Engine_Exception_Invalid(get_class($element));
+                } else {
+                    throw new Xinc_Engine_Exception_Invalid('No object');
+                }
             }
             
         }
