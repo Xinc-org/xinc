@@ -140,31 +140,21 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
     {
         if ($unit=="mday") {
             $compareTime = mktime(null,null,null,$dateArr["mon"],1,date('Y'));
-            if ( date('t', $compareTime) == $dateArr['mday']) {
+
+            $dateArr["hours"] = 0;
+            $dateArr["minutes"] = 0;
+            $dateArr["seconds"] = 0;
+            $dateArr["mday"] += $amount;
+            $dateArr["wday"] += $amount % 7;
+            if ($dateArr["wday"]>6) {
+                $dateArr["wday"]-=7;
+            }
+            if (date('t', $compareTime) < $dateArr['mday']) {
                 $dateArr["mon"]++;
                 $dateArr["mday"] = 1;
                 $dateArr["hours"] = 0;
                 $dateArr["minutes"] = 0;
-            } else {
-                $dateArr["hours"] = 0;
-                $dateArr["minutes"] = 0;
-                $dateArr["seconds"] = 0;
-                $dateArr["mday"] += $amount;
-                $dateArr["wday"] += $amount % 7;
-                if ($dateArr["wday"]>6) {
-                    $dateArr["wday"]-=7;
-                }
-
-                $months30 = Array(4,6,9,11);
-                $months31 = Array(1,3,5,7,8,10,12);
-
-                if (date('L') == 1) {
-                    $months28 = array();
-                    $months29 = array(2);
-                } else {
-                    $months28 = array(2);
-                    $months29 = array();
-                }
+                $dateArr["wday"] = date('N', mktime(null, null, null, $dateArr["mon"], 1, date('Y')));
             }
         } elseif ($unit=="hour") {
             if ($dateArr["hours"]==23) {
@@ -190,7 +180,8 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
         //if ($debug) echo sprintf("to %02d.%02d. %02d:%02d\n",$dateArr[mday],$dateArr[mon],$dateArr[hours],$dateArr[minutes]);
     }
 
-    public function parseElement($element, &$targetArray, $numberOfElements) {
+    public function parseElement($element, &$targetArray, $numberOfElements)
+    {
         $subelements = explode(",",$element);
         for ($i=0;$i<$numberOfElements;$i++) {
             $targetArray[$i] = $subelements[0]=="*";
@@ -198,14 +189,14 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
 
         for ($i=0;$i<count($subelements);$i++) {
             if (preg_match("~^(\\*|([0-9]{1,2})(-([0-9]{1,2}))?)(/([0-9]{1,2}))?$~",$subelements[$i],$matches)) {
-                if ($matches[1]=="*") {
+                if ($matches[1] == '*') {
                     $matches[2] = 0;        // from
                     $matches[4] = $numberOfElements;        //to
-                } elseif ($matches[4]=="") {
+                } elseif (!isset($matches[4]) || $matches[4] == '') {
                     $matches[4] = $matches[2];
                 }
                 if (isset($matches[5])) {
-                    if ($matches[5][0]!="/") {
+                    if ($matches[5][0] != '/') {
                         $matches[6] = 1;        // step
                     }
                 } else {
@@ -224,7 +215,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
 
     public function getTimeFromCron($last)
     {
-        if (preg_match("~^([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-7,/*]+|(-|/|Sun|Mon|Tue|Wed|Thu|Fri|Sat)+)\\s+([^#]*)\\s*(#.*)?$~i",$this->_timer . ' test',$job)) {
+        if (preg_match("~^([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-7,/*]+|(-|/|Sun|Mon|Tue|Wed|Thu|Fri|Sat)+)\\s+([^#]*)\\s*(#.*)?$~i", $this->_timer . ' test', $job)) {
             return $this->getLastScheduledRunTime($job, $last+60);
         } else {
             return false;
@@ -240,7 +231,9 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
         $this->parseElement($job[self::PC_DOM], $extjob[self::PC_DOM], date('t', $last));
         $this->parseElement($job[self::PC_MONTH], $extjob[self::PC_MONTH], 12);
         $this->parseElement($job[self::PC_DOW], $extjob[self::PC_DOW], 7);
+
         $dateArr = getdate($last);
+
         if ($job[4] != '*') {
             $extjob[self::PC_MONTH][$dateArr['mon']]=false;
         }
@@ -254,6 +247,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
             $extjob[self::PC_MINUTE][$dateArr['minutes']]=false;
         }
         $minutesAhead = 0;
+
         while (
             $minutesAhead<2678400 AND
             (!$extjob[self::PC_MINUTE][$dateArr["minutes"]]
