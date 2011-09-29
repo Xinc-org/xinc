@@ -33,7 +33,9 @@ class Xinc_Plugin_Repos_TestDocumentation extends Xinc_BaseTest
 {
     public function setUp()
     {
-        define('DS', DIRECTORY_SEPARATOR);
+        if (!defined('DS')) {
+            define('DS', DIRECTORY_SEPARATOR);
+        }
         $project = new Xinc_Project();
         $project->setName('SimpleProject');
         $plugin = new Xinc_Plugin_Repos_Documentation();
@@ -41,18 +43,27 @@ class Xinc_Plugin_Repos_TestDocumentation extends Xinc_BaseTest
         $this->sharedFixture=array();
         $this->sharedFixture[0] = $build;
         $this->sharedFixture[1] = $plugin;
-        
+
         $docDir = Xinc::getInstance()->getStatusDir() . DS . 'SimpleProject' . DS . 'docs';
         $this->sharedFixture[2] = $docDir;
-        
+
         $docSubDir = $docDir . DS . 'sub';
         mkdir($docDir);
         mkdir($docSubDir);
         file_put_contents($docDir . DS . 'test.html', 'test');
         file_put_contents($docSubDir . DS . 'index.html', 'index');
-        
     }
-   
+
+    public function tearDown()
+    {
+        $docDir = Xinc::getInstance()->getStatusDir() . DS . 'SimpleProject' . DS . 'docs';
+        $docSubDir = $docDir . DS . 'sub';
+        unlink($docSubDir . DS . 'index.html');
+        unlink($docDir . DS . 'test.html');
+        rmdir($docSubDir);
+        rmdir($docDir);
+    }
+
     public function testRegisterDocumentationDir()
     {
         try {
