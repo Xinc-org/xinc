@@ -151,5 +151,16 @@
       		<formatter type="xml" todir="${report.dir}" outfile="logfile.xml"/>	    
 		</phpunit>
   	</target>
+	
+	<target name="test-plugins" depends="prepare">
+    	<includepath classpath="classes" /> 
+        <includepath classpath="test/classes" /> 
+    	<phpunit printsummary="true" haltonerror="false" haltonfailure="false" errorproperty="test-failed" failureproperty="test-failed">
+      		<batchtest>
+        		<fileset refid="xinc-plugin-tests"/>
+    	    </batchtest>
+      		<formatter type="xml" todir="${report.dir}" outfile="logfile.xml"/>	    
+		</phpunit>
+  	</target>
 
 </project>
