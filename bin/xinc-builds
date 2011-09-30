@@ -1,4 +1,4 @@
-#!@PHP_BIN@
+#!/usr/bin/php
 <?php
 declare(encoding = 'utf-8');
 /**
@@ -10,7 +10,7 @@ declare(encoding = 'utf-8');
  * @package   Xinc
  * @author    David Ellis  <username@example.org>
  * @author    Gavin Foster <username@example.org>
- * @author    Alexander Opitz <opi@users.sf.net>
+ * @author    Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright 2007 David Ellis, One Degree Square
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
@@ -34,24 +34,39 @@ require 'Xinc/Build/History.php';
 
 $args = $_SERVER['argv'];
 array_shift($args);
-$command = $args[0];
 
-switch ($command) {
+if (isset($args[0])) {
+    $command = $args[0];
 
-    case 'delete':
-        /**
-         * xinc-builds delete PROJECT BUILDTIMESTAMP [TOTIMESTAMP]
-         */
-        if (isset($args[1]) && isset($args[2]) && isset($args[3])) {
-            $res = Xinc_Build_History::deleteBuilds($args[1], $args[2], $args[3]);
-        } else if (isset($args[1]) && isset($args[2])) {
-            $res = Xinc_Build_History::deleteBuild($args[1], $args[2]);
-            if ($res) {
-                echo "[OK] Build of Project: " . $args[1] . " with Build Timestamp:". $args[2] . " successfully deleted";
+    switch ($command) {
+
+        case 'delete':
+            /**
+             * xinc-builds delete PROJECT BUILDTIMESTAMP [TOTIMESTAMP]
+             */
+            if (isset($args[1]) && isset($args[2]) && isset($args[3])) {
+                $res = Xinc_Build_History::deleteBuilds($args[1], $args[2], $args[3]);
+            } else if (isset($args[1]) && isset($args[2])) {
+                $res = Xinc_Build_History::deleteBuild($args[1], $args[2]);
+                if ($res) {
+                    echo "[OK] Build of Project: " . $args[1] . " with Build Timestamp:". $args[2] . " successfully deleted" . "\n";
+                } else {
+                    echo "[NOK] Build of Project: " . $args[1] . " with Build Timestamp:". $args[2] . " could not be deleted" . "\n";
+                }
             } else {
-                echo "[NOK] Build of Project: " . $args[1] . " with Build Timestamp:". $args[2] . " could not be deleted";
+                echo '[NOK] The delete command needs at least 2 parameters.' . "\n";
+                echo ' xinc-builds delete PROJECT TIMESTAMP - to delete one build with timestamp' . "\n";
+                echo ' xinc-builds delete PROJECT FROMTIMESTAMP TOTIMESTAMP - to delete all builds between the timestamp' . "\n";
             }
-        }
         break;
-
+        default:
+                echo '[NOK] Unknown command given.' . "\n";
+                echo ' Commands are:' . "\n";
+                echo '  delete - To delete one or more builds' . "\n";
+        break;
+    }
+} else {
+    echo '[NOK] No command given.' . "\n";
+    echo ' Commands are:' . "\n";
+    echo '  delete - To delete one or more builds' . "\n";
 }
