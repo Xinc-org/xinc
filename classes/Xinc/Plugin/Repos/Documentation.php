@@ -24,7 +24,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc
  */
 
 require_once 'Xinc/Plugin/Base.php';
@@ -64,7 +64,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         $statusDir = Xinc::getInstance()->getStatusDir();
         $subDir = $build->getStatusSubDir();
         $fullDir = $statusDir . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . self::DOCUMENTATION_DIR;
-        
+
         return $fullDir;
     }
 
@@ -73,6 +73,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
      *
      * @param Xinc_Build_Interface $build
      * @param string $sourceFile
+     *
      * @return boolean
      */
     public function registerDocumentation(Xinc_Build_Interface &$build, $sourceFile, $alias, $index)
@@ -81,15 +82,14 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         $sourceFile = realpath($sourceFile);
         $alias = basename($alias);
         $statusDir = Xinc::getInstance()->getStatusDir();
-        
+
         $projectDir = Xinc::getInstance()->getProjectDir();
-        
+
         $sourceFile = preg_replace('/\/+/', '/', $sourceFile);
         $index = preg_replace('/\/+/', '/', $index);
-        
-        
+
         $relativeIndex = str_replace($sourceFile, '', $index);
-        
+
         $subDir = $build->getStatusSubDir();
         $fullDir = self::getDocumentationDir($build);
         $targetDir = $fullDir . DIRECTORY_SEPARATOR . basename($alias);
@@ -131,9 +131,9 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
                 return false;
             }
             if (DIRECTORY_SEPARATOR == '\\') {
-                exec('xcopy /E /Y /I ' . str_replace(' ','\ ',$sourceFile) . '\*" "' . $targetDir . '"', $out, $res1);
+                exec('xcopy /E /Y /I ' . escapeshellarg($sourceFile) . '\*" "' . escapeshellarg($targetDir) . '"', $out, $res1);
             } else {
-                exec('cp  -Rf ' . str_replace(' ','\ ',$sourceFile) . '/* "' . $targetDir . '"', $out, $res1);
+                exec('cp  -Rf ' . escapeshellarg($sourceFile) . '/* "' . escapeshellarg($targetDir) . '"', $out, $res1);
             }
             $res = false;
             if ($res1==0) {
