@@ -203,18 +203,18 @@ class XincPEARPackageTask extends MatchingTask
          $package->addIgnoreToRelease('bin/pear-phing.bat');*/
 
         // "core" dependencies
-        $package->setPhpDep('5.2.6');
+        $package->setPhpDep('5.2.7');
         $package->setPearinstallerDep('1.4.0');
 
         // "package" dependencies
         $package->addExtensionDep('required', 'xsl');
         $package->addExtensionDep('required', 'xml');
-        $package->addPackageDepWithChannel('required', 'phing', 'pear.phing.info', '2.2.0');
-        $package->addPackageDepWithChannel('required', 'VersionControl_SVN', 'pear.php.net', '0.3.4alpha');
+        $package->addPackageDepWithChannel('required', 'phing', 'pear.phing.info', '2.4.0');
+        //$package->addPackageDepWithChannel('required', 'VersionControl_SVN', 'pear.php.net', '0.3.4alpha');
         $package->addPackageDepWithChannel('required', 'Base', 'components.ez.no', '1.4.1');
         $package->addPackageDepWithChannel('required', 'Graph', 'components.ez.no', '1.2.1');
         $package->addPackageDepWithChannel('optional', 'Mail', 'pear.php.net', '1.2.0');
-        $package->addPackageDepWithChannel('optional', 'PHPUnit', 'pear.phpunit.de', '3.0.0');
+        $package->addPackageDepWithChannel('optional', 'PHPUnit', 'pear.phpunit.de', '3.5.0');
         $package->addPackageDepWithChannel('optional', 'PhpDocumentor', 'pear.php.net', '1.4.0');
         $package->addPackageDepWithChannel('optional', 'PHP_CodeSniffer', 'pear.php.net', '1.3.0');
         $package->addPackageDepWithChannel('optional', 'Xdebug', 'pecl.php.net', '2.0.0');
