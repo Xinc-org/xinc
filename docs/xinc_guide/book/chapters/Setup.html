@@ -16,7 +16,7 @@
 
 <h2><a name="SystemRequirements"></a>System Requirements</h2>
 
-<p> Xinc requires PHP 5.0.3+ to be installed as well as PEAR 1.4.0+</p>
+<p> Xinc requires PHP 5.2.6+ to be installed as well as PEAR 1.4.0+</p>
 
 
 <h3><a name="OperatingSystems"></a>Operating Systems</h3>
@@ -25,7 +25,7 @@
 <p>However the Windows support is not the main focus of the current development.
 If you detect windows specific bugs, please <a href="http://code.google.com/p/xinc/issues/entry"> report them.</a>
 </p>
-<p>Xinc is developed on Ubuntu 7.10 and being tested on Fedora 7.</p>
+<p>Xinc is developed on Ubuntu 11.10 and being tested on ArchLinux.</p>
 
 <h3><a name="SoftwareDependencies"></a>Software Dependencies</h3>
 
@@ -45,27 +45,22 @@ the following table of Software dependencies</p>
   </thead>
   <tbody>
     <tr>
-      <td>PHP 5.0.3+</td>
+      <td>PHP 5.2.7+</td>
       <td>Execution</td>
       <td><a href="http://www.php.net">http://www.php.net</a></td>
     </tr>
     <tr>
-      <td>VersionControl_SVN 0.3.0alpha1+</td>
-      <td>Execution</td>
-      <td><a href="http://pear.php.net/package/VersionControl_SVN">http://pear.php.net/package/VersionControl_SVN</a></td>
-    </tr>
-    <tr>
-      <td>Phing 2.3.0</td>
+      <td>Phing 2.4.0</td>
       <td>Execution</td>
       <td><a href="http://www.phing.info">http://www.phing.info</a></td>
     </tr>
     <tr>
-      <td>PhpUnit2 3.2.0+</td>
+      <td>PhpUnit2 3.5.0+</td>
       <td>Additional functionality</td>
       <td><a href="http://www.phpunit.de">http://www.phpunit.de</a></td>
     </tr>
     <tr>
-      <td>PhpDocumentor 1.3.0RC3+</td>
+      <td>PhpDocumentor 1.4.0</td>
       <td>Additional functionality</td>
       <td><a href="http://www.phpdoc.org">http://www.phpdoc.org</a></td>
     </tr>
@@ -94,25 +89,15 @@ the following table of Software dependencies</p>
 
 <h3><a name="DistributionFiles"></a>Distribution Files</h3>
 
-<p>Xinc is obtainable through a pear channel or directly from <a href="http://xinc.eu/#project:xinc-dev">xinc.eu</a></p>
+<p>Xinc is obtainable through the pear channel or directly from <a href="http://code.google.com/p/xinc">code.google.com/p/xinc</a></p>
 
 <h2><a name="Setup.PearInstall"></a>PEAR Install</h2>
-<p>You can install Xinc through a pear package in two ways:
 <pre>
-pear channel-discover pear.xinc.eu
+pear channel-discover pear.elektrischeslicht.de
 pear channel-discover pear.phing.info
 pear channel-discover components.ez.no
-pear install xinc/Xinc
+pear install Xinc/xinc
 </pre>
-<p><strong>-OR-</strong></p>
-<pre>
-pear channel-discover pear.xinc.eu
-pear channel-discover pear.phing.info
-pear channel-discover components.ez.no
-pear install http://xinc.eu/api/deliverable/get/download/xinc-dev/latest-successful/Xinc-Latest-Dev-2.0.1.tgz
-</pre>
-
-
 <h2><a name="Setup.Configure"></a>Post Installation Configuration</h2>
 
 <p>To get xinc ready for execution you need to run a configuration script:</p>
