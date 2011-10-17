@@ -6,7 +6,7 @@
 # author Gavin Foster
 # author Arno Schneider
 # author Alexander Opitz
-# version 0.90
+# version 2.1.0
 # copyright 2007 - 2011 David Ellis, One Degree Square
 # license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
 # 	This file is part of Xinc.
@@ -25,5 +25,4 @@
 # 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ################################################################################
 
-See http://code.google.com/p/xinc/wiki/Documentation_2_0_Preview for more information.
-See http://www.xinc.eu for a demo installation
+See http://www.elektrischeslicht.de/xinc/book/ for more information.
