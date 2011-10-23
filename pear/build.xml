@@ -4,91 +4,50 @@
     using PEAR and creates the TAR and TGZ files.
 -->
 <project name="phing" basedir="." default="main">
-    <property name="phingpkg.home" value=".."/>
-    <property name="build.base.dir" value="build"/>
-    <property name="pkgname" value="Xinc-${version}"/>
-    <property name="build.src.dir" value="${build.base.dir}/${pkgname}"/>
+    <target name="prepare">
+        <property name="phingpkg.home" value=".."/>
+        <property name="build.base.dir" value="build"/>
+        <property name="pkgname" value="Xinc-${version}"/>
+        <property name="build.src.dir" value="${build.base.dir}/${pkgname}"/>
 
-    <!-- some default properties -->
-    <property name="notes" override="true">This is the latest release of Xinc.</property>
-    <property name="state" value="beta" override="true"/>
+        <!-- some default properties -->
+        <property name="notes" override="true">This is the latest release of Xinc.</property>
+        <property name="state" value="beta" override="true"/>
 
-    <taskdef name="pear-package" classname="XincPEARPackageTask" classpath="."/>
+        <taskdef name="pear-package" classname="XincPEARPackageTask" classpath="."/>
 
-    <fileset dir="${phingpkg.home}/classes/" id="classes">
-        <include name="**"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}/" id="web">
-        <include name="web/**"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}/data" id="data">
-        <include name="**"/>
-    </fileset>
-    <fileset dir="${build.src.dir}/" id="data2">
-        <include name="scripts/**"/>
-        <include name="templates/**"/>
-        <include name="xinc.ini.tpl"/>
-    </fileset>
-    <fileset dir="${build.src.dir}/" id="web2">
-        <include name="web/**"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}" id="docs">
-        <include name="examples/**"/>
-    </fileset>
-    <fileset dir="${build.src.dir}/" id="docs2">
-        <include name="examples/**"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}" id="etc">
-        <include name="etc/**"/>
-    </fileset>
-    <fileset dir="${build.src.dir}" id="etc2">
-        <include name="etc/**"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}" id="etc-no-version">
-        <include name="etc/**"/>
-        <exclude name="etc/VERSION.TXT"/>
-    </fileset>
-    <fileset dir="${build.src.dir}" id="etc-no-version2">
-        <include name="etc/**"/>
-        <exclude name="etc/VERSION.TXT"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}" id="installscripts">
-        <include name="pear-install.sh"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}" id="scripts">
-        <include name="bin/**"/>
-        <include name="bin/*.exe"/>
-    </fileset>
-    <fileset dir="${build.src.dir}" id="scripts2">
-        <include name="bin/**"/>
-        <include name="bin/*.exe"/>
-    </fileset>
-    <fileset dir="${phingpkg.home}" id="misc">
-    <!--	<include name="CHANGELOG"/>
-        <include name="CREDITS"/>-->
-        <include name="README.txt"/>
-        <include name="resources/**"/>
-        <include name="examples/**"/>
-        <!--<include name="TODO"/>
-        <exclude name="INSTALL*"/>-->
-    </fileset>
-    <fileset dir="${build.src.dir}" id="misc2">
-        <!--	<include name="CHANGELOG"/>
-            <include name="CREDITS"/>-->
-            <include name="Xinc/README.txt"/>
-        <include name="Xinc/examples/**"/>
-
-            <include name="resources/**"/>
-
-            <!--<include name="TODO"/>
-            <exclude name="INSTALL*"/>-->
+        <fileset dir="${phingpkg.home}/classes" id="classes">
+            <include name="**"/>
         </fileset>
+        <fileset dir="${phingpkg.home}" id="web">
+            <include name="web/**"/>
+        </fileset>
+        <fileset dir="${phingpkg.home}/data" id="data">
+            <include name="**"/>
+        </fileset>
+        <fileset dir="${phingpkg.home}" id="docs">
+            <include name="examples/**"/>
+        </fileset>
+        <fileset dir="${phingpkg.home}" id="etc">
+            <include name="etc/**"/>
+        </fileset>
+        <fileset dir="${phingpkg.home}" id="scripts">
+            <include name="bin/**"/>
+            <include name="bin/*.exe"/>
+        </fileset>
+        <fileset dir="${phingpkg.home}" id="misc">
+            <include name="README.txt"/>
+            <include name="resources/**"/>
+            <include name="examples/**"/>
+        </fileset>
+    </target>
+
     <!--
         ==============================================
         Main entry point
         ==============================================
     -->
-    <target name="main" if="version" depends="versioncheck,copy-files,create-package-xml,tar"/>
+    <target name="main" if="version" depends="versioncheck,prepare,copy-files,create-package-xml,tar"/>
 
     <!--
         ===================================================================
@@ -117,7 +76,7 @@
         structure that will be needed for PEAR install
         ==============================================
     -->
-    <target name="copy-files">
+    <target name="copy-files" depends="versioncheck" if="version">
 
         <echo>-----------------------------</echo>
         <echo>| Creating directory layout |</echo>
@@ -127,32 +86,29 @@
 
         <copy todir="${build.src.dir}">
             <fileset refid="classes"/>
-
         </copy>
+
         <copy todir="${build.src.dir}">
-                    <fileset refid="scripts"/>
+            <fileset refid="scripts"/>
+        </copy>
 
-                </copy>
         <copy todir="${build.src.dir}/bin">
-                            <fileset dir="${phingpkg.home}/bin">
-                                <include name="*.exe"/>
-                                <include name="*.bat"/>
-                                </fileset>
+            <fileset dir="${phingpkg.home}/bin">
+                <include name="*.exe"/>
+                <include name="*.bat"/>
+            </fileset>
+        </copy>
 
-                        </copy>
         <copy todir="${build.src.dir}/">
             <fileset refid="web"/>
             <fileset refid="data"/>
-                        <fileset refid="docs"/>
-                        <fileset refid="etc-no-version"/>
-                        <fileset refid="misc"/>
+            <fileset refid="docs"/>
+            <fileset refid="etc"/>
+            <fileset refid="misc"/>
         </copy>
-        <append destFile="${build.src.dir}/etc/VERSION.TXT">Phing version ${version}</append>
 
         <chmod file="${build.src.dir}/bin/xinc" mode="755"/>
         <chmod file="${build.src.dir}/scripts/xinc-uninstall" mode="755"/>
-        <!--<chmod file="${build.src.dir}/bin/pear-install.sh" mode="755"/>-->
-
     </target>
 
     <!--
@@ -171,6 +127,7 @@
 
         <delete	file="${tarfile}"/>
         <echo>Dir: ${build.src.dir}</echo>
+
         <pear-package
             dir      = "${build.src.dir}"
             destFile = "${build.base.dir}/package.xml"
@@ -179,12 +136,12 @@
             notes    = "${notes}"
         >
             <fileset refid="classes"/>
-            <fileset refid="web2"/>
-            <fileset refid="data2"/>
-            <fileset refid="docs2"/>
-            <fileset refid="etc2"/>
-            <fileset refid="misc2"/>
-            <fileset refid="scripts2"/>
+            <fileset refid="web"/>
+            <fileset refid="data"/>
+            <fileset refid="docs"/>
+            <fileset refid="etc"/>
+            <fileset refid="misc"/>
+            <fileset refid="scripts"/>
 
         </pear-package>
 

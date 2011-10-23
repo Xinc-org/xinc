@@ -58,13 +58,10 @@ class XincPEARPackageTask extends MatchingTask
     /** @var string . */
     private $notes;
 
-    /** @var string . */
-    private $_outputdir;
-
     /** @var array of FileSet. */
     private $arFilesets = array();
 
-    /** @var ? Package file */
+    /** @var PhingFile Package file */
     private $packageFile;
 
     public function init()
@@ -79,47 +76,10 @@ class XincPEARPackageTask extends MatchingTask
     }
 
     /**
-     * Sets the options in the package manager
-     *
-     * @return void
-     */
-    private function setOptions()
-    {
-        $arOptions = array(
-            'baseinstalldir' => '/',
-            'packagedirectory' => $this->dir->getAbsolutePath(),
-            'filelistgenerator' => 'Fileset',
-            'dir_roles' => array(
-                'bin'       => 'script',
-                'templates' => 'data',
-                'examples'  => 'doc',
-                'resources' => 'data',
-                'etc'       => 'data',
-                'web'       => 'data',
-                'tests'     => 'test',
-            ),
-            // options needed by phing Fileset reader
-            'phing_project' => $this->getProject(),
-            'phing_filesets' => $this->arFilesets,
-        );
-
-        if ($this->packageFile !== null) {
-            // create one w/ full path
-            $f = new PhingFile($this->packageFile->getAbsolutePath());
-            $arOptions['packagefile'] = $f->getName();
-            // must end in trailing slash
-            $arOptions['outputdirectory'] = $f->getParent() . DIRECTORY_SEPARATOR;
-            $this->_outputdir = $f->getParent() . DIRECTORY_SEPARATOR;
-            $this->log("Creating package file: " . $f->getPath(), PROJECT_MSG_INFO);
-        } else {
-            $this->log("Creating [default] package.xml file in base directory.", PROJECT_MSG_INFO);
-        }
-    }
-
-    /**
      * Main entry point.
      *
      * @return void
+     * @throws BuildException
      */
      public function main()
      {
@@ -230,7 +190,6 @@ class XincPEARPackageTask extends MatchingTask
         );
         $package->addPostinstallTask($task, 'Xinc/Postinstall/Nix.php');
 
-
         $taskWin = new PEAR_Task_Postinstallscript_rw(
             $package, $config, $log,
             array('name' => 'Xinc/Postinstall/Win.php', 'role' => 'php')
@@ -291,6 +250,45 @@ class XincPEARPackageTask extends MatchingTask
                 'You must specify the "version" attribute for PEAR package task.'
             );
         }
+    }
+
+    /**
+     * Sets the options in the package manager
+     *
+     * @return array Option array for package manager.
+     */
+    private function getOptions()
+    {
+        $arOptions = array(
+            'baseinstalldir' => '/',
+            'packagedirectory' => $this->dir->getAbsolutePath(),
+            'filelistgenerator' => 'Fileset',
+            'dir_roles' => array(
+                'bin'       => 'script',
+                'templates' => 'data',
+                'examples'  => 'doc',
+                'resources' => 'data',
+                'etc'       => 'data',
+                'web'       => 'data',
+                'tests'     => 'test',
+            ),
+            // options needed by phing Fileset reader
+            'phing_project' => $this->getProject(),
+            'phing_filesets' => $this->arFilesets,
+        );
+
+        if ($this->packageFile !== null) {
+            // create one w/ full path
+            $f = new PhingFile($this->packageFile->getAbsolutePath());
+            $arOptions['packagefile'] = $f->getName();
+            // must end in trailing slash
+            $arOptions['outputdirectory'] = $f->getParent() . DIRECTORY_SEPARATOR;
+            $this->log("Creating package file: " . $f->getPath(), PROJECT_MSG_INFO);
+        } else {
+            $this->log("Creating [default] package.xml file in base directory.", PROJECT_MSG_INFO);
+        }
+
+        return $arOptions;
     }
 
     /**
