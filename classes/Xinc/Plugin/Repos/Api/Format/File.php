@@ -41,7 +41,7 @@ class Xinc_Plugin_Repos_Api_Format_File implements Xinc_Api_Response_Format_Inte
      *
      * @return String
      */
-    public function generate(Xinc_Api_Response_Object &$responseObject)
+    public function generate(Xinc_Api_Response_Object $responseObject)
     {
         $result = $this->_handleFileResponse($responseObject->get());
         return $result;

@@ -39,7 +39,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Extension_ChangeLog
         return 'Change Log';
     }
 
-    public function getContent(Xinc_Build_Interface &$build)
+    public function getContent(Xinc_Build_Interface $build)
     {
         $changeSet = $build->getProperties()->get('changeset');
         if ($changeSet instanceof Xinc_Plugin_Repos_ModificationSet_Result ) {

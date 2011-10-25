@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Task/Base.php';
@@ -44,7 +44,7 @@ class Xinc_Plugin_Repos_Property_SubstituteTask extends Xinc_Plugin_Task_Base
         return 'propertySubstitution';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface &$task)
+    public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
         $this->_subtasks[]=$task;
     }
@@ -54,13 +54,13 @@ class Xinc_Plugin_Repos_Property_SubstituteTask extends Xinc_Plugin_Task_Base
         return Xinc_Plugin_Slot::PROJECT_SET_VALUES;
     }
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         $build->debug('Setting property "${' . $this->_name . '}" to "' . $this->_value . '"');
         //$build->getProperties()->set($this->_name, $this->_value);
     }
 
-    public function set(Xinc_Build_Interface &$build, $value)
+    public function set(Xinc_Build_Interface $build, $value)
     {
         $newvalue = $build->getProperties()->parseString($value);
         return $newvalue;

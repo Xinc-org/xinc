@@ -46,7 +46,7 @@ class Xinc_Plugin_Repos_Gui_Documentation_Widget implements Xinc_Gui_Widget_Inte
 
     public $builds;
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
     }
@@ -76,7 +76,7 @@ class Xinc_Plugin_Repos_Gui_Documentation_Widget implements Xinc_Gui_Widget_Inte
         $dashboardWidget->registerExtension('PROJECT_FEATURE', $extension);
     }
 
-    public function registerExtension($extensionPoint, &$extension)
+    public function registerExtension($extensionPoint, $extension)
     {
         $this->_extensions[$extensionPoint] = $extension;
     }

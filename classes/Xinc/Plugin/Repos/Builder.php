@@ -30,7 +30,7 @@ declare(encoding = 'utf-8');
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Builder/Task.php';
 
-class Xinc_Plugin_Repos_Builder  extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Builder extends Xinc_Plugin_Base
 {
     public function validate()
     {

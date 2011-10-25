@@ -45,7 +45,7 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
      *
      * @param Xinc_Build_Interface $build
      */
-    public final function process(Xinc_Build_Interface &$build)
+    public final function process(Xinc_Build_Interface $build)
     {
         $result = $this->checkModified($build);
         $build->info($result);
@@ -67,7 +67,7 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
      * Check if this modification set has been modified
      * @return Xinc_Plugin_Repos_ModificationSet_Result
      */
-    public abstract function checkModified(Xinc_Build_Interface &$build);
+    public abstract function checkModified(Xinc_Build_Interface $build);
 
     /**
      * Check necessary variables are set

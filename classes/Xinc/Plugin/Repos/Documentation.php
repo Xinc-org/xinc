@@ -24,7 +24,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://code.google.com/p/xinc
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Base.php';
@@ -59,7 +59,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
         return array();
     }
 
-    public function getDocumentationDir(Xinc_Build_Interface &$build)
+    public function getDocumentationDir(Xinc_Build_Interface $build)
     {
         $statusDir = Xinc::getInstance()->getStatusDir();
         $subDir = $build->getStatusSubDir();
@@ -76,8 +76,9 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
      *
      * @return boolean
      */
-    public function registerDocumentation(Xinc_Build_Interface &$build, $sourceFile, $alias, $index)
-    {
+    public function registerDocumentation(
+        Xinc_Build_Interface $build, $sourceFile, $alias, $index
+    ) {
         $build->debug('Trying to register documentation: ' . $sourceFile);
         $sourceFile = realpath($sourceFile);
         $alias = basename($alias);

@@ -52,7 +52,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
         return 'svn';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface &$task)
+    public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
         $this->_subtasks[]=$task;
     }
@@ -114,7 +114,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
 
-    public function checkModified(Xinc_Build_Interface &$build)
+    public function checkModified(Xinc_Build_Interface $build)
     {
         $res = $this->_plugin->checkModified($build, $this->_directory,
                                              $this->_update, $this->_username,

@@ -44,7 +44,7 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
      *
      * @param Xinc_Plugin_Interface $plugin
      */
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
     }

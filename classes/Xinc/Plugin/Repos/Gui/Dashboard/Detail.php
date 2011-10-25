@@ -205,7 +205,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     {
     }
 
-    private function _registerExtension($extensionPoint, &$detail)
+    private function _registerExtension($extensionPoint, $detail)
     {
         if (!isset($this->_internalExtensions[$extensionPoint])) {
             $this->_internalExtensions[$extensionPoint] = array();
@@ -213,7 +213,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         $this->_internalExtensions[$extensionPoint][] = $detail;
     }
 
-    public function registerExtension($extensionPoint, &$extension)
+    public function registerExtension($extensionPoint, $extension)
     {
         if (!isset($this->_extensions[$extensionPoint])) {
             $this->_extensions[$extensionPoint] = array();

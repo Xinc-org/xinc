@@ -41,7 +41,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Widget implements Xinc_Gui_Widget_In
 
     private $_projectName;
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
     }
@@ -73,7 +73,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Widget implements Xinc_Gui_Widget_In
         }
     }
 
-    public function registerExtension($extensionPoint, &$extension)
+    public function registerExtension($extensionPoint, $extension)
     {
         if (!isset($this->_extensions[$extensionPoint])) {
             $this->_extensions[$extensionPoint] = array();

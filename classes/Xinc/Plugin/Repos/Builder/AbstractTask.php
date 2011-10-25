@@ -36,7 +36,7 @@ abstract class Xinc_Plugin_Repos_Builder_AbstractTask extends Xinc_Plugin_Task_B
      *
      * @param Xinc_Build_Interface $build
      */
-    public final function process(Xinc_Build_Interface &$build)
+    public final function process(Xinc_Build_Interface $build)
     {
         if ( ($status = $this->build($build)) === true ) {
             $build->setStatus(Xinc_Build_Interface::PASSED);
@@ -64,7 +64,7 @@ abstract class Xinc_Plugin_Repos_Builder_AbstractTask extends Xinc_Plugin_Task_B
         }
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface &$task)
+    public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
     }
 
@@ -76,5 +76,5 @@ abstract class Xinc_Plugin_Repos_Builder_AbstractTask extends Xinc_Plugin_Task_B
      */
     public abstract function validateTask();
 
-    public abstract function build(Xinc_Build_Interface &$build);
+    public abstract function build(Xinc_Build_Interface $build);
 }

@@ -44,7 +44,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary
         return 'Summary';
     }
 
-    public function getContent(Xinc_Build_Interface &$build)
+    public function getContent(Xinc_Build_Interface $build)
     {
         switch ($build->getStatus()) {
             case 1:
@@ -84,7 +84,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary
         $this->_extensions[] = $extension;
     }
 
-    protected function _generateAllExtensions(Xinc_Build_Interface &$build)
+    protected function _generateAllExtensions(Xinc_Build_Interface $build)
     {
         $overviewTemplateFile = Xinc_Data_Repository::getInstance()->get(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR

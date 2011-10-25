@@ -35,7 +35,7 @@ abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension_ProjectInfo extends Xin
 {
     protected $_widget;
 
-    public function setWidget(Xinc_Gui_Widget_Interface &$widget)
+    public function setWidget(Xinc_Gui_Widget_Interface $widget)
     {
         $this->_widget = $widget;
     }

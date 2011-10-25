@@ -37,5 +37,5 @@ abstract class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Extension_Item
      *
      * @return Xinc_Plugin_Repos_Gui_Menu_Extension_Item
      */
-    public abstract function getItem(Xinc_Project &$project);
+    public abstract function getItem(Xinc_Project $project);
 }

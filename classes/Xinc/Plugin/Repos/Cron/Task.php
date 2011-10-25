@@ -59,7 +59,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
 
     private $_lastBuildTime;
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         /**if (!isset($this->_project)) {
          $build->setScheduler($this);
@@ -76,7 +76,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
         $this->_timer = $timer;
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface &$task)
+    public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
     }
 
@@ -85,7 +85,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Base
         $this->_lastBuildTime = $time;
     }
 
-    public function init(Xinc_Build_Interface &$build)
+    public function init(Xinc_Build_Interface $build)
     {
         $build->setScheduler($this);
     }

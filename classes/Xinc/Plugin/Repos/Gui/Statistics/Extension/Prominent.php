@@ -39,7 +39,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Extension_Prominent
         return 'Statistics<sup><span style="color:red">NEW</span></sup>';
     }
 
-    public function getContent(Xinc_Build_Interface &$build)
+    public function getContent(Xinc_Build_Interface $build)
     {
         $projectName = $build->getProject()->getName();
         $url = '/statistics/?project=' . $projectName;

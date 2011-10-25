@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Task/Exception.php';
@@ -76,7 +76,7 @@ class Xinc_Plugin_Repository
      * @return boolean
      * @throws Xinc_Plugin_Task_Exception
      */
-    public function registerPlugin(Xinc_Plugin_Interface &$plugin)
+    public function registerPlugin(Xinc_Plugin_Interface $plugin)
     {
         $pluginClass = get_class($plugin);
         if (!$plugin->validate()) {

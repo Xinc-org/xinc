@@ -46,7 +46,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
 
     public $builds;
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
     }
@@ -120,7 +120,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         return array('/artifacts/get', '/artifacts/get/');
     }
 
-    public function getArtifacts(Xinc_Build_Interface &$build)
+    public function getArtifacts(Xinc_Build_Interface $build)
     {
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $projectName = $build->getProject()->getName();
@@ -154,7 +154,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $detailWidget->registerExtension('BUILD_DETAILS', $extension);
     }
 
-    public function registerExtension($extensionPoint, &$extension)
+    public function registerExtension($extensionPoint, $extension)
     {
         $this->_extensions[$extensionPoint] = $extension;
     }

@@ -51,7 +51,7 @@ class Xinc_Plugin_Repos_Configuration_Setting_Task
         return 'setting';
     }
 
-    public function configure(Xinc_Build &$build)
+    public function configure(Xinc_Build $build)
     {
         $build->setConfigDirective($this->_name, $this->_value);
     }

@@ -40,7 +40,7 @@ class Xinc_Plugin_Repos_Gui_Menu_Extension_Menu
 
     private $_extensions;
 
-    public function __construct(Xinc_Plugin_Repos_Gui_Menu_Widget &$menu)
+    public function __construct(Xinc_Plugin_Repos_Gui_Menu_Widget $menu)
     {
         $this->_menu = $menu;
         $this->_extensions = $this->_menu->getExtensions();

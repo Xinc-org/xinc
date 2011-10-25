@@ -52,7 +52,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
 
     public $projectMenuItem;
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
         $this->builds = new Xinc_Build_Iterator();
@@ -184,7 +184,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
         return $this->projectMenuItem;
     }
 
-    public function registerExtension($extension, &$ext)
+    public function registerExtension($extension, $ext)
     {
         if ($extension == 'PROJECT_MENU_ITEM' && $this->projectMenuItem !== null) {
             $this->projectMenuItem->registerSubExtension($ext);

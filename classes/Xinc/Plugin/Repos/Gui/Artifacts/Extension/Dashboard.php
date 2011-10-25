@@ -43,7 +43,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Extension_Dashboard
 
     private $_build;
 
-    public function setWidget(Xinc_Plugin_Repos_Gui_Artifacts_Widget &$widget)
+    public function setWidget(Xinc_Plugin_Repos_Gui_Artifacts_Widget $widget)
     {
         $this->_artifactsWidget = $widget;
     }
@@ -53,7 +53,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Extension_Dashboard
         return 'Artifacts';
     }
 
-    public function getContent(Xinc_Build_Interface &$build)
+    public function getContent(Xinc_Build_Interface $build)
     {
         return $this->_artifactsWidget->getArtifacts($build);
     }

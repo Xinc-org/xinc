@@ -127,7 +127,7 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
         return Xinc_Plugin_Slot::INIT_PROCESS;
     }
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         if ($this->_if !== null) {
             /**

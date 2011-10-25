@@ -38,13 +38,13 @@ class Xinc_Plugin_Repos_Gui_Statistics_Menu_Item
 
     private $_extensions;
 
-    public function __construct(Xinc_Plugin_Repos_Gui_Statistics_Widget &$statWidget)
+    public function __construct(Xinc_Plugin_Repos_Gui_Statistics_Widget $statWidget)
     {
         $this->_widget = $statWidget;
         $this->_extensions = $this->_widget->getExtensions();
     }
 
-    public function getItem(Xinc_Project &$project)
+    public function getItem(Xinc_Project $project)
     {
         //$this->_extensions = $this->_widget->getExtensions();
         $numberOfGraphs = 3;

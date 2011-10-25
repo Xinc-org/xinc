@@ -52,7 +52,7 @@ class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Base
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         foreach ( $this->_subtasks as $task ) {
             $task->process($build);

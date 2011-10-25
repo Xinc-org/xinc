@@ -35,9 +35,9 @@ abstract class Xinc_Plugin_Repos_Gui_Dashboard_Extension implements Xinc_Gui_Wid
 {
     public abstract function getTitle();
 
-    public abstract function getContent(Xinc_Build_Interface &$build);
+    public abstract function getContent(Xinc_Build_Interface $build);
 
-    public final function generate(Xinc_Build_Interface &$build, $templateFile)
+    public final function generate(Xinc_Build_Interface $build, $templateFile)
     {
         $templateContent = file_get_contents($templateFile);
         $id = strtolower(str_replace(' ', '-', $this->getTitle()));

@@ -133,7 +133,7 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
      *
      * @return boolean
      */
-    public function build(Xinc_Build_Interface &$build)
+    public function build(Xinc_Build_Interface $build)
     {
         if ($this->_if !== null) {
             $build->info('Checking condidition property: ' . $this->_if);

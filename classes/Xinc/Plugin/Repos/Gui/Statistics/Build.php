@@ -47,7 +47,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
 
     public $scripts = '';
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
     }
@@ -85,7 +85,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
         return $graph;
     }
 
-    private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
+    private function _getHistoryBuilds(Xinc_Project $project, $start, $limit=null)
     {
         /**$statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();
         $historyFile = $statusDir . DIRECTORY_SEPARATOR . $project->getName() . '.history';
@@ -149,7 +149,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
         $dashboardWidget->registerExtension('PROJECT_FEATURE', $extension);
     }
 
-    public function registerExtension($extensionPoint, &$extension)
+    public function registerExtension($extensionPoint, $extension)
     {
     }
 

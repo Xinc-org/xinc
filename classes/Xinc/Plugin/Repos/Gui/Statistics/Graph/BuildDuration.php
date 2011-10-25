@@ -42,7 +42,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Graph_BuildDuration extends Xinc_Plugin_R
     }
 
     public function buildDataSet(
-        Xinc_Project &$project, array $buildHistoryArr = array(), $previousData = array()
+        Xinc_Project $project, array $buildHistoryArr = array(), $previousData = array()
     ) {
         if (count($previousData)>0) {
             $data = $previousData;

@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Base.php';
@@ -55,7 +55,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
         return array(new Xinc_Plugin_Repos_Gui_Artifacts_Widget($this));
     }
     
-    public function getArtifactsDir(Xinc_Build_Interface &$build)
+    public function getArtifactsDir(Xinc_Build_Interface $build)
     {
         $statusDir = Xinc::getInstance()->getStatusDir();
         $subDir = $build->getStatusSubDir();
@@ -72,7 +72,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
      *
      * @return boolean
      */
-    public function registerArtifact(Xinc_Build_Interface &$build, $sourceFile)
+    public function registerArtifact(Xinc_Build_Interface $build, $sourceFile)
     {
         $sourceFile = realpath($sourceFile);
         

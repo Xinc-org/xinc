@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Exception.php';
@@ -36,6 +36,7 @@ interface Xinc_Plugin_Interface
     
     /**
      * Returns the defined tasks of the plugin
+     *
      * @return Xinc_Plugin_Task[]
      */
     public function getTaskDefinitions();

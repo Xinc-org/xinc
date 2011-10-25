@@ -26,7 +26,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Base.php';
@@ -42,7 +42,7 @@ class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Base
      * @param Xinc_Build_Interface $build
      * @param string $fileName
      */
-    public function parsePropertyFile(Xinc_Build_Interface &$build, $fileName)
+    public function parsePropertyFile(Xinc_Build_Interface $build, $fileName)
     {
         $activeProperty = false;
         $trimNextLine = false;

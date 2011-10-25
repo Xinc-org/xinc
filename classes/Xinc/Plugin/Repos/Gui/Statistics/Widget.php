@@ -49,7 +49,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     private $_tmpDir = '/tmp/';
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
         try {
@@ -176,14 +176,14 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         return $contents;
     }
 
-    private function _storeGraphData(Xinc_Project &$project, $id, $data)
+    private function _storeGraphData(Xinc_Project $project, $id, $data)
     {
         //$fileName = $this->getGraphFileName($id);
         $fileName = $this->_tmpDir . DIRECTORY_SEPARATOR . 'graph_data_' . $project->getName().'_'.$id.'.ser';
         file_put_contents($fileName, serialize($data));
     }
 
-    private function _loadGraphData(Xinc_Project &$project, $id)
+    private function _loadGraphData(Xinc_Project $project, $id)
     {
         $fileName = $this->_tmpDir . DIRECTORY_SEPARATOR . 'graph_data_' . $project->getName().'_'.$id.'.ser';
         //$fileName = $this->getGraphFileName($id);
@@ -196,14 +196,14 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         return $this->_projectName;
     }
 
-    private function _getHistoryBuilds(Xinc_Project &$project, $start, $limit=null)
+    private function _getHistoryBuilds(Xinc_Project $project, $start, $limit=null)
     {
         $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit, false);
 
         return $buildHistoryArr;
     }
 
-    private function _getHistoryBuildsByTimestamp(Xinc_Project &$project, $timestamp, $limit=null)
+    private function _getHistoryBuildsByTimestamp(Xinc_Project $project, $timestamp, $limit=null)
     {
         $buildHistoryArr = Xinc_Build_History::getFromToTimestamp($project, $timestamp, $limit, false);
 
@@ -219,7 +219,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         $indexWidget->registerExtension('PROJECT_MENU_ITEM', $extension);
     }
 
-    public function generateStatisticsMenu(Xinc_Project &$project)
+    public function generateStatisticsMenu(Xinc_Project $project)
     {
         $numberOfGraphs = count($this->_extensions['STATISTIC_GRAPH']);
         $graphHeight = 350;
@@ -232,7 +232,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         return $statisticsMenu;
     }
 
-    public function registerExtension($extensionPoint, &$extension)
+    public function registerExtension($extensionPoint, $extension)
     {
         if (!isset($this->_extensions[$extensionPoint])) {
             $this->_extensions[$extensionPoint] = array();

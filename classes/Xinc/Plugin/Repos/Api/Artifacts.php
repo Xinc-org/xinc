@@ -40,7 +40,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
      */
     protected $_plugin;
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
         
@@ -227,7 +227,7 @@ class Xinc_Plugin_Repos_Api_Artifacts implements Xinc_Api_Module_Interface
      *
      * @return array
      */
-    private function _getArtifactsTree(Xinc_Build_Interface &$build, $dirname)
+    private function _getArtifactsTree(Xinc_Build_Interface $build, $dirname)
     {
         $projectName = $build->getProject()->getName();
         $buildTime = $build->getBuildTime();

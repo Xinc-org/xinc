@@ -40,7 +40,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Extension_Dashboard
 
     private $_build;
 
-    public function setWidget(Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget &$widget)
+    public function setWidget(Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget $widget)
     {
         $this->_widget = $widget;
     }
@@ -50,7 +50,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Extension_Dashboard
         return 'PHPUnit Summary';
     }
 
-    public function getContent(Xinc_Build_Interface &$build)
+    public function getContent(Xinc_Build_Interface $build)
     {
         return $this->_widget->getTestResults($build);
     }

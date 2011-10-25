@@ -1,32 +1,37 @@
 <?php
+declare(encoding = 'utf-8');
 /**
- * Plugin that provides test results from phpunit logfile
- * 
- * @package Xinc.Plugin
- * @author Arno Schneider
- * @version 2.0
+ * Xinc - Continuous Integration.
+ *
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Plugin.Publisher
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://code.google.com/p/xinc/
+ */
+
 require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/Publisher/PHPUnitTestResults/Task.php';
 require_once 'Xinc/Plugin/Repos/Gui/PhpUnitTestResults/Widget.php';
 
-class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults extends Xinc_Plugin_Base
 {
     const TESTRESULTS_DIR = 'testresults';
    
@@ -39,19 +44,22 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
     {
         return array(new Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task($this));
     }
+
     public function getGuiWidgets()
     {
         return array(new Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget($this));
     }
+
     /**
      * Copies a file into a special test results directory for the build and
      * parse the xml file to generate statistics
      *
      * @param Xinc_Build_Interface $build
      * @param string $sourceFile
+     *
      * @return boolean
      */
-    public function registerResults(Xinc_Build_Interface &$build, $sourceFile)
+    public function registerResults(Xinc_Build_Interface $build, $sourceFile)
     {
         $sourceFile = realpath($sourceFile);
         
@@ -113,7 +121,7 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults  extends Xinc_Plugin_Base
         return $res;
     }
     
-    private function _parseXml(Xinc_Build_Interface &$build, $file)
+    private function _parseXml(Xinc_Build_Interface $build, $file)
     {
         try {
 

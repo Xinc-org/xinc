@@ -53,7 +53,7 @@ class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Base
          return 'configuration';
     }
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         foreach ($this->_subtasks as $task) {
             $task->configure($build);

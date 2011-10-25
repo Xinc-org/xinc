@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Base.php';
@@ -75,7 +75,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
      * @return boolean
      */
     public function build(
-        Xinc_Build_Interface &$build, $buildfile, $target,
+        Xinc_Build_Interface $build, $buildfile, $target,
         $extraParams = null, $workingDir = null
     ) {
         //$phing = new Phing();

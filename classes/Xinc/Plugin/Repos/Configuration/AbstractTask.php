@@ -31,7 +31,7 @@ require_once 'Xinc/Plugin/Task/Base.php';
 
 abstract class Xinc_Plugin_Repos_Configuration_AbstractTask extends Xinc_Plugin_Task_Base
 {
-    public abstract function configure(Xinc_Build &$build);
+    public abstract function configure(Xinc_Build $build);
 
     public function getPluginSlot(){
         /**
@@ -47,7 +47,7 @@ abstract class Xinc_Plugin_Repos_Configuration_AbstractTask extends Xinc_Plugin_
         return true;
     }
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         $this->configure($build);
     }

@@ -40,7 +40,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Log
         return 'Log Message';
     }
 
-    public function getContent(Xinc_Build_Interface &$build)
+    public function getContent(Xinc_Build_Interface $build)
     {
         $logTemplateFile = Xinc_Data_Repository::getInstance()->get(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR

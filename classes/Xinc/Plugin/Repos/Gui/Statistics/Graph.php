@@ -146,7 +146,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph
         require_once 'ezc/Graph/exceptions/reducement_failed.php';
     }
 
-    public function setWidget(Xinc_Gui_Widget_Interface &$widget)
+    public function setWidget(Xinc_Gui_Widget_Interface $widget)
     {
         $this->_widget = $widget;
     }
@@ -206,7 +206,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph
     }
 
     public abstract function buildDataSet(
-        Xinc_Project &$project, array $buildHistory = array(), $previousData = array()
+        Xinc_Project $project, array $buildHistory = array(), $previousData = array()
     );
 
     public function generate($data = array(), $colorScheme = array())

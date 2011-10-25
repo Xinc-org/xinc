@@ -47,7 +47,7 @@ class Xinc_Plugin_Repos_Builder_Task extends Xinc_Plugin_Task_Base
         return 'builders';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface &$task)
+    public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
         $this->_subtasks[]=$task;
     }
@@ -57,7 +57,7 @@ class Xinc_Plugin_Repos_Builder_Task extends Xinc_Plugin_Task_Base
         return Xinc_Plugin_Slot::PROCESS;
     }
 
-    public function process(Xinc_Build_Interface &$build)
+    public function process(Xinc_Build_Interface $build)
     {
         $build->info('Processing builders');
         foreach ( $this->_subtasks as $task ) {
