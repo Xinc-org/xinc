@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Api/Response/Object.php';
@@ -42,7 +42,7 @@ interface Xinc_Api_Module_Interface
      *
      * @param Xinc_Plugin_Interface $plugin
      */
-    public function __construct(Xinc_Plugin_Interface &$plugin);
+    public function __construct(Xinc_Plugin_Interface $plugin);
     
     /**
      * The Xinc_Api_Handler passes the called methodName and

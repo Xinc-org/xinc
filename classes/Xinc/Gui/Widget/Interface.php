@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Widget/Extension/Interface.php';
@@ -42,7 +42,7 @@ interface Xinc_Gui_Widget_Interface
      *
      * @param Xinc_Plugin_Interface $plugin
      */
-    public function __construct(Xinc_Plugin_Interface &$plugin);
+    public function __construct(Xinc_Plugin_Interface $plugin);
     
     /**
      * The Xinc_Gui_Handler fires different events on the
@@ -94,7 +94,7 @@ interface Xinc_Gui_Widget_Interface
      * @param string $extensionPoint
      * @param Xinc_Gui_Widget_Extension $extension extension
      */
-    public function registerExtension($extensionPoint, &$extension);
+    public function registerExtension($extensionPoint, $extension);
     
     /**
      * @return boolean

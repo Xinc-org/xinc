@@ -1,31 +1,38 @@
 <?php
+declare(encoding = 'utf-8');
 /**
+ * Xinc - Continuous Integration.
  * task to define which branches/tags should trigger a build
  *
- * @package Xinc.Contrib
- * @author Olivier Hoareau
- * @author Arno Schneider
- * @version 2.0
+ * PHP version 5
+ *
+ * @category  Development
+ * @package   Xinc.Contrib
+ * @author    Olivier Hoareau <username@example.org>
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 David Ellis, One Degree Square
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://code.google.com/p/xinc/
  */
+
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
+    extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     private $_directory = '.';
     protected $_prefix = '';
@@ -33,7 +40,7 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task extends Xinc_Plugin_
     private $_switch = false;
     protected $_tagNameProperty = null;
 
-    public function registerTask(Xinc_Plugin_Task_Interface &$task)
+    public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
         $this->_subtasks[]=$task;
     }
@@ -43,7 +50,7 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task extends Xinc_Plugin_
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
 
-    public function checkModified(Xinc_Build_Interface &$build)
+    public function checkModified(Xinc_Build_Interface $build)
     {
        $res = $this->_plugin->checkModified($build, $this->_directory, $this->_prefix,
                                             $this->_switch, $this->_tagNameProperty);

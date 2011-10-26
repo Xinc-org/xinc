@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Event.php';
@@ -46,7 +46,7 @@ class Xinc_Api_Handler
      * @param string $basePath
      * @return Xinc_Api_Handler
      */
-    public static function &getInstance($basePath = '/api')
+    public static function getInstance($basePath = '/api')
     {
         if (!isset(Xinc_Api_Handler::$_instance)) {
             Xinc_Api_Handler::$_instance = new Xinc_Api_Handler($basePath);

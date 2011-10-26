@@ -24,7 +24,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Widget/Interface.php';
@@ -60,7 +60,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
 
     public $buildTimeStamp;
 
-    public function __construct(Xinc_Plugin_Interface &$plugin)
+    public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
     }

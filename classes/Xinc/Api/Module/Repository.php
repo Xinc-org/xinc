@@ -26,7 +26,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 /**
@@ -74,7 +74,7 @@ class Xinc_Api_Module_Repository
      *
      * @param Xinc_Api_Module_Repository $module
      */
-    public function registerModule(Xinc_Api_Module_Interface &$module)
+    public function registerModule(Xinc_Api_Module_Interface $module)
     {
         $moduleName = $module->getName();
         $this->_definedModules[$moduleName] = array();

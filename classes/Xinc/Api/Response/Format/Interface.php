@@ -25,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 interface Xinc_Api_Response_Format_Interface
@@ -36,7 +36,7 @@ interface Xinc_Api_Response_Format_Interface
      * @param Xinc_Api_Response_Object $responseObject
      * @return String
      */
-    public function generate(Xinc_Api_Response_Object &$responseObject);
+    public function generate(Xinc_Api_Response_Object $responseObject);
     
     /**
      * returns the name of the format
