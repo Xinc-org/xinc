@@ -8,6 +8,7 @@
 	<plugin filename="Xinc/Plugin/Repos/ModificationSet.php" classname="Xinc_Plugin_Repos_ModificationSet"/>
 	<plugin filename="Xinc/Plugin/Repos/Configuration.php" classname="Xinc_Plugin_Repos_Configuration"/>
 	<plugin filename="Xinc/Plugin/Repos/ModificationSet/Svn.php" classname="Xinc_Plugin_Repos_ModificationSet_Svn"/>
+	<plugin filename="Xinc/Plugin/Repos/ModificationSet/Git.php" classname="Xinc_Plugin_Repos_ModificationSet_Git"/>
 	<plugin filename="Xinc/Plugin/Repos/ModificationSet/BuildAlways.php" classname="Xinc_Plugin_Repos_ModificationSet_BuildAlways"/>
 	<plugin filename="Xinc/Plugin/Repos/Schedule.php" classname="Xinc_Plugin_Repos_Schedule"/>
 	<plugin filename="Xinc/Plugin/Repos/Builder.php" classname="Xinc_Plugin_Repos_Builder"/>
