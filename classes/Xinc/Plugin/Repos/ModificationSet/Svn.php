@@ -59,7 +59,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
     protected function _getChangeLog(
         Xinc_Build_Interface $build, $dir,
-        Xinc_Plugin_Repos_ModificationSet_Result &$set,
+        Xinc_Plugin_Repos_ModificationSet_Result $set,
         $fromRevision, $toRevision, $username, $password
     ) {
         if ($fromRevision < $toRevision) {
@@ -122,7 +122,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
     protected function _getModifiedFiles(
         Xinc_Build_Interface $build, $dir,
-        Xinc_Plugin_Repos_ModificationSet_Result &$set,
+        Xinc_Plugin_Repos_ModificationSet_Result $set,
         $username, $password
     ) {
         $credentials = '';
@@ -188,7 +188,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
 
     private function _update(
         Xinc_Build_Interface $build, $dir,
-        Xinc_Plugin_Repos_ModificationSet_Result &$set,
+        Xinc_Plugin_Repos_ModificationSet_Result $set,
         $username, $password
     ) {
         $credentials = '';
@@ -231,7 +231,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
      *
      * @return boolean
      */
-    public function checkModified(Xinc_Build_Interface &$build,
+    public function checkModified(Xinc_Build_Interface $build,
                                  $dir, $update = false,
                                  $username = null, $password = null)
     {
