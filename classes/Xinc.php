@@ -536,24 +536,35 @@ class Xinc
                     self::$_instance->_addProjectFile($projectFile);
                 }
             }
-
             self::$_instance->start($arguments['daemon']);
         } catch (Xinc_Config_Exception_Getopt $e) {
             $logger->error('Handling Arguments: ' . $e->getMessage(), STDERR);
         } catch (Xinc_Build_Status_Exception_NoDirectory $statusNoDir) {
-            $logger->error('Xinc stopped: '
-                          . 'Status Dir: "' . $statusNoDir->getDirectory() . '" is not a directory', STDERR);
+            $logger->error(
+                'Xinc stopped: ' . 'Status Dir: "'
+                . $statusNoDir->getDirectory() . '" is not a directory',
+                STDERR
+            );
         } catch (Xinc_Build_Status_Exception_NonWriteable $statusNotWriteable) {
-            $logger->error('Xinc stopped: '
-                          . 'Status Dir: "' . $statusNotWriteable->getDirectory() . '" is not writeable', STDERR);
+            $logger->error(
+                'Xinc stopped: ' . 'Status Dir: "'
+                . $statusNotWriteable->getDirectoryName() . '" is not writeable',
+                STDERR
+            );
         } catch (Xinc_Config_Exception_FileNotFound $configFileNotFound) {
-            $logger->error('Xinc stopped: ' 
-                          . 'Config File "' . $configFileNotFound->getFileName() . '" not found', STDERR);
+            $logger->error(
+                'Xinc stopped: ' . 'Config File "'
+                . $configFileNotFound->getFileName() . '" not found',
+                STDERR
+            );
         } catch (Exception $e) {
             // we need to catch everything here
-            $logger->error('Xinc stopped due to an uncaught exception: ' 
-                          . $e->getMessage() . ' in File : ' . $e->getFile() . ' on line ' . $e->getLine() 
-                          . $e->getTraceAsString(), STDERR);
+            $logger->error(
+                'Xinc stopped due to an uncaught exception: ' 
+                . $e->getMessage() . ' in File : ' . $e->getFile() . ' on line '
+                . $e->getLine() . $e->getTraceAsString(),
+                STDERR
+            );
         }
 
         self::$_instance->shutDown();
