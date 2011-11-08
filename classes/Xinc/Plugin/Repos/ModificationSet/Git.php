@@ -38,6 +38,9 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 */
 class Xinc_Plugin_Repos_ModificationSet_Git extends Xinc_Plugin_Base
 {
+    /**
+     * @var string Path to project
+     */
     private $strPath;
 
     public function __construct()
@@ -47,6 +50,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git extends Xinc_Plugin_Base
         } catch (Exception $e) {
             $this->strPath = 'git';
         }
+        var_dump($this->strPath);
     }
 
     public function getTaskDefinitions()
@@ -90,14 +94,17 @@ class Xinc_Plugin_Repos_ModificationSet_Git extends Xinc_Plugin_Base
     }
 
     /**
-     * Checks whether the Subversion project has been modified.
+     * Checks whether the Git project has been modified.
      *
-     * @return boolean
+     * @return Xinc_Plugin_Repos_ModificationSet_Result ChangeSet since last pull
      */
     public function checkModified(Xinc_Build_Interface $build,
                                  $dir, $update = false,
                                  $username = null, $password = null)
     {
+        $modResult = new Xinc_Plugin_Repos_ModificationSet_Result();
+
+        return $modResult;
     }
 
     /**

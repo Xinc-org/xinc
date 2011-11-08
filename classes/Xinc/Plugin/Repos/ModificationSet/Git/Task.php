@@ -37,7 +37,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      *
      * @var string
      */
-    private $_directory = '.';
+    private $strPath = '.';
 
     private $_update = false;
 
@@ -46,6 +46,11 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     private $_password = null;
 
     private $_property;
+
+    /**
+     * @var VersionControl_Git The git object.
+     */
+    private $git = null;
 
     public function getName()
     {
@@ -64,7 +69,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      */
     public function setDirectory($directory)
     {
-        $this->_directory = (string)$directory;
+        $this->strPath = (string)$directory;
     }
 
     /**
@@ -116,7 +121,9 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
 
     public function checkModified(Xinc_Build_Interface $build)
     {
-        $res = $this->_plugin->checkModified($build, $this->_directory,
+        var_dump('A');
+        var_dump($this->git->getCommits());
+        $res = $this->_plugin->checkModified($build, $this->strPath,
                                              $this->_update, $this->_username,
                                              $this->_password);
 /*        if ($res->isChanged() && !empty($this->_property)) {
@@ -129,14 +136,20 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
 
     public function validateTask()
     {
-        if (!isset($this->_directory)) {
-            throw new Xinc_Exception_MalformedConfig('Element modificationSet/svn'
+        if (!isset($this->strPath)) {
+            throw new Xinc_Exception_MalformedConfig('Element modificationSet/git'
                                                     . ' - required attribute '
                                                     . '\'directory\' is not set');
-            // @codeCoverageIgnoreStart
         }
-            // @codeCoverageIgnoreEnd
-        $file = $this->_directory;
+
+        $this->git = new VersionControl_Git($this->strPath);
+
+        try {
+            var_dump($this->git->getHeadCommits());
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+        }
+/*        $file = $this->_directory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file) && !file_exists($file2)) {
             Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
@@ -147,6 +160,6 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
             //return false;
         }
         //return false;
-        return true;
+        return true;*/
     }
 }
