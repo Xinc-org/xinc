@@ -121,16 +121,21 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
 
     public function checkModified(Xinc_Build_Interface $build)
     {
-        var_dump('A');
-        var_dump($this->git->getCommits());
-        $res = $this->_plugin->checkModified($build, $this->strPath,
-                                             $this->_update, $this->_username,
-                                             $this->_password);
-/*        if ($res->isChanged() && !empty($this->_property)) {
-            // a modification in this tag has been detected
-            $build->getProperties()->set($this->_property, true);
-            $build->info("Property '".$this->_property."' set to TRUE");
-        }*/
+        $strBranch = $this->git->getCurrentBranch();
+
+        $strRemoteHash = $this->getRemoteHash($strBranch);
+        $strLocalHash = $this->getLocalHash($strBranch);
+
+        $res = new Xinc_Plugin_Repos_ModificationSet_Result();
+
+        $res->setRemoteRevision($strRemoteHash);
+        $res->setLocalRevision($strLocalHash);
+
+        if ($strRemoteHash !== $strLocalHash) {
+            $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
+            var_dump($this->git->getCommits());
+        }
+
         return $res;
     }
 
@@ -145,9 +150,10 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         $this->git = new VersionControl_Git($this->strPath);
 
         try {
-            var_dump($this->git->getHeadCommits());
+            $this->git->getHeadCommits();
         } catch (Exception $e) {
             var_dump($e->getMessage());
+            return false;
         }
 /*        $file = $this->_directory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
@@ -159,15 +165,39 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
             //Xinc_Logger::getInstance()->error("Directory $file2 does not exist");
             //return false;
         }
-        //return false;
-        return true;*/
+        //return false;*/
+        return true;
     }
 
-    public function getRemoteHash()
-    {
-        git ls-remote -h
+/*      git ls-remote -h
         git ls-remote -h .
-        git log --pretty=format:'%H' -1
+        git log --pretty=format:'%H' -1*/
+    public function getRemoteHash($strBranchName)
+    {
+        $command = $this->git->getCommand('ls-remote')
+            ->setOption('h');
+        $arCommandLines = explode(PHP_EOL, trim($command->execute()));
+        foreach($arCommandLines as $strCommandLine) {
+            $arParts = explode("\t", $strCommandLine);
+            if ($arParts[1] === 'refs/heads/' . $strBranchName) {
+                return $arParts[0];
+            }
+        }
+
+        throw new Xinc_Exception_ModificationSet(
+            'Branch "' . $strBranchName . '" not exists in remote git repository.'
+        );
     }
+
+    public function getLocalHash($strBranchName)
+    {
+        $arHashs = $this->git->getHeadCommits();
+        if (isset($arHashs[$strBranchName])) {
+            return $arHashs[$strBranchName];
+        }
+
+        throw new Xinc_Exception_ModificationSet(
+            'Branch "' . $strBranchName . '" not exists in local git repository.'
+        );
     }
 }
