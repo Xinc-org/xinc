@@ -162,4 +162,12 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         //return false;
         return true;*/
     }
+
+    public function getRemoteHash()
+    {
+        git ls-remote -h
+        git ls-remote -h .
+        git log --pretty=format:'%H' -1
+    }
+    }
 }
