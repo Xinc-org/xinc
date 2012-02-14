@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.0
- * Copyright(c) 2006-2007, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -44,6 +44,11 @@
     width:47px;
     height:32px;
 }
+.x-window-dlg .ext-mb-icon {
+    float:left;
+    width:47px;
+    height:32px;
+}
 .ext-ie .x-window-dlg .ext-mb-icon {
     width:44px; /* 3px IE margin issue */
 }
@@ -58,4 +63,7 @@
 }
 .x-window-dlg .ext-mb-error {
     background:transparent url(../images/default/window/icon-error.gif) no-repeat top left;
+}
+.ext-gecko2 .ext-mb-fix-cursor {
+    overflow:auto;
 }

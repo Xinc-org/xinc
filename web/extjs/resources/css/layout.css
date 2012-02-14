@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.0
- * Copyright(c) 2006-2007, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -144,6 +144,12 @@
     background-color:transparent;
 }
 
+/* IE6 strict won't drag w/out a color */
+.ext-strict .ext-ie6 .x-layout-split{
+    background-color: #fff !important;
+    filter: alpha(opacity=1);
+}
+        
 .x-layout-split-h{
     background-image:url(../images/default/s.gif);
     background-position: left;
@@ -260,4 +266,8 @@
     position:absolute;
     left:0;
     top:0;
+}
+
+.ext-ie input.x-abs-layout-item, .ext-ie textarea.x-abs-layout-item {
+    margin:0;
 }

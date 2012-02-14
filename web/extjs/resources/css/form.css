@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.0
- * Copyright(c) 2006-2007, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -14,9 +14,12 @@
 
 /* ---- text fields ---- */
 .x-form-text, textarea.x-form-field{
-    padding: 1px 3px;
+    padding:1px 3px;
     background:#fff url(../images/default/form/text-bg.gif) repeat-x 0 0;
-    border: 1px solid #B5B8C8;
+    border:1px solid #B5B8C8;
+}
+textarea.x-form-field {
+    padding:2px 3px;
 }
 .x-form-text {
     height:22px;
@@ -24,10 +27,12 @@
     vertical-align:middle;
 }
 .ext-ie .x-form-text {
-    margin-top:-1px; /* ie bogus margin bug */
-    margin-bottom:-1px;
+    margin:-1px 0; /* ie bogus margin bug */
     height:22px; /* ie quirks */
     line-height:18px;
+}
+.ext-ie textarea.x-form-field {
+    margin:-1px 0; /* ie bogus margin bug */
 }
 .ext-strict .x-form-text {
     height:18px;
@@ -36,10 +41,17 @@
     height:20px; /* safari always same size */
     padding:0 3px; /* remove extra top/bottom padding */
 }
+.ext-safari.ext-mac textarea.x-form-field {
+    margin-bottom:-2px; /* another bogus margin bug, safari/mac only */
+}
 .ext-gecko .x-form-text {
     padding-top:2px; /* FF won't center the text vertically */
     padding-bottom:0;
 }
+textarea {
+    resize: none;  /* Disable browser resizable textarea */
+}
+
 /* select boxes */
 
 .x-form-select-one {
@@ -54,14 +66,78 @@
 
 /* --- TODO --- */
 
-/* checkboxes */
-
-/* --- TODO --- */
-
-/* radios */
-
-/* --- TODO --- */
-
+/* checkboxes / radios */
+.x-form-check-group, .x-form-radio-group {
+    margin-bottom: 0;
+}
+.x-form-check-group .x-form-invalid .x-panel-body,
+.x-form-radio-group .x-form-invalid .x-panel-body {
+    background-color: transparent;
+}
+.x-form-check-wrap, .x-form-radio-wrap {
+    padding: 3px 0 0 0;
+    line-height:18px;
+}
+.x-form-check-group .x-form-check-wrap, 
+.x-form-radio-group .x-form-radio-wrap {
+    height: 18px;
+}
+.ext-ie .x-form-check-group .x-form-check-wrap, 
+.ext-ie .x-form-radio-group .x-form-radio-wrap {
+    height: 21px;
+}
+.ext-ie .x-form-check-wrap input,
+.ext-ie .x-form-radio-wrap input {
+    width:15px;
+    height:15px;
+}
+.x-form-check, .x-form-radio {
+	height: 13px;
+	width: 13px;
+    vertical-align: bottom;
+} 
+.x-form-radio {
+    margin-bottom: 3px;
+}
+.x-form-check, .ext-ie .x-form-radio {
+    margin-bottom: 2px;
+}
+.x-form-check-wrap-inner, .x-form-radio-wrap-inner {
+    display: inline;
+    padding: 3px 0 0 0;
+}
+.x-form-check {
+	background: url('../images/default/form/checkbox.gif') no-repeat 0 0;
+}
+.x-form-radio {
+	background: url('../images/default/form/radio.gif') no-repeat 0 0;
+}
+.x-form-check-focus .x-form-check, .x-form-check-over .x-form-check,
+.x-form-check-focus .x-form-radio, .x-form-check-over .x-form-radio {
+	background-position: -13px 0;
+}
+.x-form-check-down .x-form-check, 
+.x-form-check-down .x-form-radio {
+	background-position:-26px 0;
+}
+.x-form-check-checked .x-form-check-focus .x-form-check, 
+.x-form-check-checked .x-form-check-over .x-form-check {
+	background-position:-13px -13px;
+}
+.x-form-check-checked .x-form-check-down .x-form-check {
+	background-position:-26px -13px;
+}
+.x-form-check-checked .x-form-check, 
+.x-form-check-checked .x-form-radio {
+	background-position:0 -13px;
+}
+.x-form-check-group-label {
+    border-bottom: 1px solid #99BBE8;
+    color: #15428B;
+    margin-bottom: 5px;
+    padding-left: 3px !important;
+    float: none !important;
+}
 
 /* wrapped fields and triggers */
 
@@ -69,10 +145,6 @@
     position:relative;
     zoom:1;
     white-space: nowrap;
-}
-
-.x-editor .x-form-check-wrap {
-    background:#fff;
 }
 .x-form-field-wrap .x-form-trigger{
     width:17px;
@@ -158,20 +230,14 @@
 }
 
 /* editors */
-
 .x-editor {
     visibility:hidden;
     padding:0;
     margin:0;
 }
-.x-form-check-wrap {
-    line-height:18px;
-}
-.ext-ie .x-form-check-wrap input {
-    width:15px;
-    height:15px;
-}
-.x-editor .x-form-check-wrap {
+.x-editor .x-form-check-wrap,
+.x-editor .x-form-radio-wrap {
+    background:#fff;
     padding:3px;
 }
 .x-editor .x-form-checkbox {
@@ -203,6 +269,7 @@
     font:normal 12px tahoma, arial, helvetica, sans-serif;
     display:block;
     margin-bottom:4px;
+    zoom:1;
 }
 
 .x-form-item label {
@@ -231,7 +298,9 @@
     width:200px;
 }
 
-
+.x-form-label-left label {
+   text-align:left;
+}
 .x-form-label-right label {
    text-align:right;
 }
@@ -317,7 +386,7 @@
 }
 
 .x-form-cb-label {
-    width:'auto' !important;
+    width:auto !important;
     float:none !important;
     clear:none !important;
     display:inline !important;
@@ -395,6 +464,7 @@
     border:1px solid #B5B8C8;
     padding:10px;
     margin-bottom:10px;
+    display:block; /* preserve margins in IE */
 }
 .x-fieldset legend {
     font:bold 11px tahoma, arial, helvetica, sans-serif;
@@ -405,7 +475,7 @@
 }
 .ext-ie .x-fieldset {
     padding-top: 0;
-    padding-bottom:5px;
+    padding-bottom:10px;
 }
 .x-fieldset legend .x-tool-toggle {
     margin-right:3px;
@@ -420,7 +490,15 @@
 }
 fieldset.x-panel-collapsed {
     padding-bottom:0 !important;
+    border-width: 1px 1px 0 1px !important;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}        
+.ext-ie6 fieldset.x-panel-collapsed{
+    padding-bottom:0 !important;
     border-width: 1px 0 0 0 !important;
+    margin-left: 1px;
+    margin-right: 1px;
 }
 fieldset.x-panel-collapsed .x-fieldset-bwrap {
     visibility:hidden;
@@ -435,7 +513,22 @@ fieldset.x-panel-collapsed .x-fieldset-bwrap {
     position:relative;
     top:-1px;
 }
-
+.x-fieldset-noborder {
+    border:0px none transparent;
+}
+.x-fieldset-noborder legend {
+    margin-left:-3px;
+}
+/* IE legend positioing bug */
+.ext-ie .x-fieldset-noborder legend {
+    position: relative;
+    margin-bottom:23px;
+}
+.ext-ie .x-fieldset-noborder legend span {
+    position: absolute;
+    left:16px;
+}
+        
 .ext-gecko .x-window-body .x-form-item {
     -moz-outline: none;
     overflow: auto;
@@ -450,4 +543,17 @@ fieldset.x-panel-collapsed .x-fieldset-bwrap {
 }
 .x-hide-label .x-form-element {
      padding-left: 0 !important;
+}
+
+.x-fieldset {
+    overflow:hidden;
+}
+
+.x-fieldset-bwrap {
+    overflow:hidden;
+    zoom:1;
+}
+
+.x-fieldset-body {
+    overflow:hidden;
 }

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.0
- * Copyright(c) 2006-2007, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -21,7 +21,7 @@
     border:1px solid #99bbe8;
 }
 
-.ext-ie .x-grid3 table,.ext-safari .x-grid3 table {
+.x-grid3 table {
     table-layout:fixed;
 }
 .x-grid3-viewport{
@@ -139,11 +139,16 @@
 }
 .x-grid3-focus {
 	position:absolute;
+	left:0;
 	top:0;
-	-moz-outline:0 none;
+	width:1px;
+	height:1px;
+    line-height:1px;
+    font-size:1px;
+    -moz-outline:0 none;
     outline:0 none;
-    -moz-user-select: normal;
-    -khtml-user-select: normal;
+    -moz-user-select: text;
+    -khtml-user-select: text;
 }
 
 /* header styles */
@@ -527,13 +532,23 @@ a.x-grid3-hd-btn:hover {
     background-image:url(../images/default/grid/group-by.gif);
 }
 
-.ext-ie .x-grid3 .x-editor .x-form-text { /* ie  bug */
+.ext-ie .x-grid3 .x-editor .x-form-text {
     position:relative;
     top:-1px;
+}
+.ext-ie .x-props-grid .x-editor .x-form-text {
+    position:static;
+    top:0;
 }
 
 .x-grid-empty {
     padding:10px;
     color:gray;
     font:normal 11px tahoma, arial, helvetica, sans-serif;
+}
+
+
+/* fix floating toolbar issue */
+.ext-ie7 .x-grid-panel .x-panel-bbar {
+    position:relative;
 }
