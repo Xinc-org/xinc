@@ -48,7 +48,7 @@ html, body {
 
 .loading-indicator {
     font-size:11px;
-    background-image:url('/ext-2.0/resources/images/default/grid/loading.gif');
+    background-image:url('/extjs/resources/images/default/grid/loading.gif');
     background-repeat: no-repeat;
     background-position:top left;
     padding-left:20px;
@@ -62,7 +62,7 @@ html, body {
     top:35%;
     left:43%;
     color:#444;
-    background-image:url(/ext-2.0/resources/images/default/shared/large-loading.gif);
+    background-image:url(/extjs/resources/images/default/shared/large-loading.gif);
     background-repeat: no-repeat;
     background-position:left 5px;
     padding:10px 10px 10px 38px;
@@ -257,7 +257,7 @@ a:hover {
 }
 
 #doc-body .x-tab-panel-body {
-    background:#fff url(/ext-2.0/resources/images/default/form/text-bg.gif) repeat-x 0 0;
+    background:#fff url(/extjs/resources/images/default/form/text-bg.gif) repeat-x 0 0;
 }
 #doc-body .x-panel-body, #doc-body .body-wrap {
     background:transparent !important;

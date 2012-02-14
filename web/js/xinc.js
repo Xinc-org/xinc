@@ -104,7 +104,7 @@ return false;
 
 }
 
-Ext.BLANK_IMAGE_URL = '/ext-2.0/resources/s.gif';
+Ext.BLANK_IMAGE_URL = '/extjs/resources/s.gif';
 
 
 ApiPanel = function() {
@@ -346,7 +346,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 	        '<tpl for=".">',
 	        '<div class="search-item">',
 	            '<a class="member" ext:cls="{cls}" ext:member="{member}" href="output/{cls}.html">',
-				'<img src="/ext-2.0/resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
+				'<img src="/extjs/resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
 				'</a> ',
 				'<a class="cls" ext:cls="{cls}" href="output/{cls}.html">{cls}</a>',
 	            '<p>{doc}</p>',

@@ -5,9 +5,9 @@
   <?php } else { ?>
     <title>Xinc 2.1 - Continuous Integration Server for PHP</title>
     <?php } ?>
-    <link rel="stylesheet" type="text/css" href="/ext-2.0/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="/extjs/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="/css/xinc.css"></link>
-    <link rel="stylesheet" type="text/css" href="/ext-2.0/resources/style.css"></link>
+    <link rel="stylesheet" type="text/css" href="/extjs/resources/style.css"></link>
     <?php if (($icon = Xinc_Ini::getInstance()->get('icon', 'web')) !== null) {?>
   <link rel="shortcut icon" href="<?php echo $icon; ?>" />
   <link rel="icon" href="<?php echo $icon; ?>" />
@@ -15,8 +15,7 @@
     <link rel="shortcut icon" href="/images/xinc.ico" />
     <link rel="icon" href="/images/xinc.ico" />
     <?php } ?>
-    
-    
+
     <style type="text/css">
         </style>
 
@@ -25,14 +24,14 @@
 <body scroll="no" id="docs">
   <div id="loading-mask" style=""></div>
   <div id="loading">
-    <div class="loading-indicator"><img src="/ext-2.0/resources/images/default/shared/large-loading.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle"/>Loading...</div>
+    <div class="loading-indicator"><img src="/extjs/resources/images/default/shared/large-loading.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle"/>Loading...</div>
   </div>
     <!-- include everything after the loading indicator -->
-    <script type="text/javascript" src="/ext-2.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="/extjs/adapter/ext/ext-base.js"></script>
 
-    <script type="text/javascript" src="/ext-2.0/ext-all.js"></script>
-    <script type="text/javascript" src="/ext-2.0/miframe.js"></script>
-    <script type="text/javascript" src="/ext-2.0/resources/TabCloseMenu.js"></script>
+    <script type="text/javascript" src="/extjs/ext-all.js"></script>
+    <script type="text/javascript" src="/extjs/miframe.js"></script>
+    <script type="text/javascript" src="/extjs/resources/TabCloseMenu.js"></script>
     <script type="text/javascript" src="/js/xinc.js"></script>
 <script>
 MenuItems={text:'Menu',children:[],leaf:true};
