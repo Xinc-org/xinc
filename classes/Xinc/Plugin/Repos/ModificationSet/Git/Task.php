@@ -2,6 +2,7 @@
 declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
+ * Provides git support.
  *
  * PHP version 5
  *
@@ -24,7 +25,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
@@ -121,6 +122,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
 
     public function checkModified(Xinc_Build_Interface $build)
     {
+        $this->git = new VersionControl_Git($this->strPath);
         $strBranch = $this->git->getCurrentBranch();
 
         $strRemoteHash = $this->getRemoteHash($strBranch);
@@ -131,9 +133,19 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         $res->setRemoteRevision($strRemoteHash);
         $res->setLocalRevision($strLocalHash);
 
+var_dump($strRemoteHash);
+var_dump($strLocalHash);
+
         if ($strRemoteHash !== $strLocalHash) {
+            if ($this->_update) {
+                try {
+                    $this->update();
+                } catch(Exception $e) {
+                    $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
+                }
+            }
             $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
-            var_dump($this->git->getCommits());
+            //var_dump($this->git->getCommits());
         }
 
         return $res;
@@ -169,13 +181,25 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         return true;
     }
 
-/*      git ls-remote -h
+    public function update()
+    {
+        $command = $this->git->getCommand('pull')
+            ->setOption('ff-only')
+            ->setOption('stat');
+        try {
+            $command->execute();
+        } catch (VersionControl_Git_Exception $e) {
+            throw new Xinc_Exception_ModificationSet($e);
+        }
+    }
+
+/*      git ls-remote -heads
         git ls-remote -h .
         git log --pretty=format:'%H' -1*/
     public function getRemoteHash($strBranchName)
     {
         $command = $this->git->getCommand('ls-remote')
-            ->setOption('h');
+            ->setOption('heads');
         $arCommandLines = explode(PHP_EOL, trim($command->execute()));
         foreach($arCommandLines as $strCommandLine) {
             $arParts = explode("\t", $strCommandLine);

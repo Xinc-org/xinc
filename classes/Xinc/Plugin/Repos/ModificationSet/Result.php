@@ -24,11 +24,14 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 class Xinc_Plugin_Repos_ModificationSet_Result
 {
+    /**
+     * @deprecated You should check $_status
+     */
     private $_changed = false;
 
     private $_previousRevision;
@@ -93,12 +96,18 @@ class Xinc_Plugin_Repos_ModificationSet_Result
         return $this->_currentRevision;
     }
 
+    /**
+     * @deprecated use Check status
+     */
     public function isChanged()
     {
         if ($this->_changed == true) return true;
         else return $this->_previousRevision < $this->_currentRevision;
     }
 
+    /**
+     * @deprecated use Set status
+     */
     public function setChanged($bool)
     {
         $this->_changed = $bool;
