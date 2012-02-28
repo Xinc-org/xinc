@@ -34,13 +34,14 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     /**
-     * Directory containing the Git project.
-     *
-     * @var string
+     * @var string Directory containing the Git project.
      */
     private $strPath = '.';
 
-    private $_update = false;
+    /**
+     * @var boolean Update repository if change detected.
+     */
+    private $bUpdate = false;
 
     private $_username = null;
 
@@ -109,10 +110,9 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      *
      * @param string $update
      */
-    public function setUpdate($update)
+    public function setUpdate($strUpdate)
     {
-        $update = (string) $update;
-        $this->_update = in_array($update, array('true', '1')) ? true:false;
+        $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true:false;
     }
 
     public function getPluginSlot()
@@ -122,13 +122,19 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
 
     public function checkModified(Xinc_Build_Interface $build)
     {
-        $this->git = new VersionControl_Git($this->strPath);
-        $strBranch = $this->git->getCurrentBranch();
-
-        $strRemoteHash = $this->getRemoteHash($strBranch);
-        $strLocalHash = $this->getLocalHash($strBranch);
-
         $res = new Xinc_Plugin_Repos_ModificationSet_Result();
+
+        try {
+            $this->git = new VersionControl_Git($this->strPath);
+            $strBranch = $this->git->getCurrentBranch();
+
+            $strRemoteHash = $this->getRemoteHash($strBranch);
+            $strLocalHash = $this->getLocalHash($strBranch);
+        } catch(Exception $e) {
+            $build->error('Test of GIT Repos failed: ' . $e->getMessage());
+            $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
+            return $res;
+        }
 
         $res->setRemoteRevision($strRemoteHash);
         $res->setLocalRevision($strLocalHash);
@@ -137,11 +143,13 @@ var_dump($strRemoteHash);
 var_dump($strLocalHash);
 
         if ($strRemoteHash !== $strLocalHash) {
-            if ($this->_update) {
+            if ($this->bUpdate) {
                 try {
                     $this->update();
                 } catch(Exception $e) {
+                    $build->error('Update of GIT local failed: ' . $e->getMessage());
                     $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
+                    return $res;
                 }
             }
             $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
@@ -187,9 +195,12 @@ var_dump($strLocalHash);
             ->setOption('ff-only')
             ->setOption('stat');
         try {
-            $command->execute();
+            $result = $command->execute();
         } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet($e);
+            throw new Xinc_Exception_ModificationSet(
+                'GIT update failed: ' . $e->getMessage(),
+                0, $e
+            );
         }
     }
 
@@ -200,7 +211,15 @@ var_dump($strLocalHash);
     {
         $command = $this->git->getCommand('ls-remote')
             ->setOption('heads');
-        $arCommandLines = explode(PHP_EOL, trim($command->execute()));
+        try {
+            $result = $command->execute();
+        } catch (VersionControl_Git_Exception $e) {
+            throw new Xinc_Exception_ModificationSet(
+                'GIT get remote hash failed: ' . $e->getMessage(),
+                0, $e
+            );
+        }
+        $arCommandLines = explode(PHP_EOL, trim($result));
         foreach($arCommandLines as $strCommandLine) {
             $arParts = explode("\t", $strCommandLine);
             if ($arParts[1] === 'refs/heads/' . $strBranchName) {
@@ -215,7 +234,14 @@ var_dump($strLocalHash);
 
     public function getLocalHash($strBranchName)
     {
-        $arHashs = $this->git->getHeadCommits();
+        try {
+            $arHashs = $this->git->getHeadCommits();
+        } catch (VersionControl_Git_Exception $e) {
+            throw new Xinc_Exception_ModificationSet(
+                'GIT get local hash failed: ' . $e->getMessage(),
+                0, $e
+            );
+        }
         if (isset($arHashs[$strBranchName])) {
             return $arHashs[$strBranchName];
         }
