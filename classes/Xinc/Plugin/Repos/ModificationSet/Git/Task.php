@@ -145,6 +145,7 @@ var_dump($strLocalHash);
         if ($strRemoteHash !== $strLocalHash) {
             $this->fetch();
             $this->getModifiedFiles($build, $res);
+            $this->getChangeLog($build, $res);
 
             if ($this->bUpdate) {
                 try {
@@ -274,8 +275,9 @@ var_dump($strLocalHash);
     ) {
         $command = $this->git->getCommand('diff')
             ->setOption('name-status')
-            ->addArgument($res->getLocalRevision())
-            ->addArgument($res->getRemoteRevision());
+            ->addArgument(
+                $res->getLocalRevision() . '..' . $res->getRemoteRevision()
+            );
         try {
             $strResult = $command->execute();
         } catch (VersionControl_Git_Exception $e) {
@@ -308,6 +310,59 @@ var_dump($strLocalHash);
                 $res->addConflictResource($strFile, $author);
                 break;
             }
+        }
+    }
+
+    protected function getChangeLog(
+        Xinc_Build_Interface $build, 
+        Xinc_Plugin_Repos_ModificationSet_Result $res
+    ) {
+        $command = $this->git->getCommand('log')
+            ->setOption('pretty', 'H:%H%nA:%aN%nD:%aD%nM:%s')
+            ->addArgument(
+                $res->getLocalRevision() . '..' . $res->getRemoteRevision()
+            );
+        try {
+            $strResult = $command->execute();
+        } catch (VersionControl_Git_Exception $e) {
+            throw new Xinc_Exception_ModificationSet(
+                'GIT get log failed: ' . $e->getMessage(),
+                0, $e
+            );
+        }
+        $arCommandLines = explode(PHP_EOL, trim($strResult));
+        while (count($arCommandLines)) {
+            $strHash    = $this->getLogEntry('H', $arCommandLines);
+            $strAuthor  = $this->getLogEntry('A', $arCommandLines);
+            $strDate    = $this->getLogEntry('D', $arCommandLines);
+            $strMessage = $this->getLogEntry('M', $arCommandLines);
+            
+            $res->addLogMessage($strHash, $timestamp, $strAuthor, $strMessage);
+        }
+    }
+
+    protected function getLogEntry($strType, array &$arLogEntries)
+    {
+        $strLogEntry = array_shift($arLogEntries);
+        if ($strType . ':' !== substr($strLogEntry, 0, 2)) {
+            throw new Xinc_Exception_ModificationSet(
+                'GIT log: Cannot parse log line'
+            );
+        }
+        $strLogEntry = substr($strLogEntry, 2);
+        switch ($strType) {
+        case 'D':
+            $nTime = strtotime($strLogEntry);
+            if (false === $nTime) {
+                throw new Xinc_Exception_ModificationSet(
+                    'GIT log: Cannot date in parse log line'
+                );
+            }
+            return $nTime;
+            break;
+        default:
+            return $strLogEntry;
+            break;
         }
     }
 }
