@@ -143,6 +143,9 @@ var_dump($strRemoteHash);
 var_dump($strLocalHash);
 
         if ($strRemoteHash !== $strLocalHash) {
+            $this->fetch();
+            $this->getModifiedFiles($build, $res);
+
             if ($this->bUpdate) {
                 try {
                     $this->update();
@@ -189,13 +192,13 @@ var_dump($strLocalHash);
         return true;
     }
 
-    public function update()
+    protected function update()
     {
         $command = $this->git->getCommand('pull')
             ->setOption('ff-only')
             ->setOption('stat');
         try {
-            $result = $command->execute();
+            $strResult = $command->execute();
         } catch (VersionControl_Git_Exception $e) {
             throw new Xinc_Exception_ModificationSet(
                 'GIT update failed: ' . $e->getMessage(),
@@ -204,22 +207,36 @@ var_dump($strLocalHash);
         }
     }
 
+    protected function fetch()
+    {
+        $command = $this->git->getCommand('fetch')
+            ->setOption('no-recurse-submodules');
+        try {
+            $strResult = $command->execute();
+        } catch (VersionControl_Git_Exception $e) {
+            throw new Xinc_Exception_ModificationSet(
+                'GIT fetch failed: ' . $e->getMessage(),
+                0, $e
+            );
+        }
+    }
+
 /*      git ls-remote -heads
         git ls-remote -h .
         git log --pretty=format:'%H' -1*/
-    public function getRemoteHash($strBranchName)
+    protected function getRemoteHash($strBranchName)
     {
         $command = $this->git->getCommand('ls-remote')
             ->setOption('heads');
         try {
-            $result = $command->execute();
+            $strResult = $command->execute();
         } catch (VersionControl_Git_Exception $e) {
             throw new Xinc_Exception_ModificationSet(
                 'GIT get remote hash failed: ' . $e->getMessage(),
                 0, $e
             );
         }
-        $arCommandLines = explode(PHP_EOL, trim($result));
+        $arCommandLines = explode(PHP_EOL, trim($strResult));
         foreach($arCommandLines as $strCommandLine) {
             $arParts = explode("\t", $strCommandLine);
             if ($arParts[1] === 'refs/heads/' . $strBranchName) {
@@ -232,7 +249,7 @@ var_dump($strLocalHash);
         );
     }
 
-    public function getLocalHash($strBranchName)
+    protected function getLocalHash($strBranchName)
     {
         try {
             $arHashs = $this->git->getHeadCommits();
@@ -249,5 +266,48 @@ var_dump($strLocalHash);
         throw new Xinc_Exception_ModificationSet(
             'Branch "' . $strBranchName . '" not exists in local git repository.'
         );
+    }
+
+    protected function getModifiedFiles(
+        Xinc_Build_Interface $build,
+        Xinc_Plugin_Repos_ModificationSet_Result $res
+    ) {
+        $command = $this->git->getCommand('diff')
+            ->setOption('name-status')
+            ->addArgument($res->getLocalRevision())
+            ->addArgument($res->getRemoteRevision());
+        try {
+            $strResult = $command->execute();
+        } catch (VersionControl_Git_Exception $e) {
+            throw new Xinc_Exception_ModificationSet(
+                'GIT get version diff failed: ' . $e->getMessage(),
+                0, $e
+            );
+        }
+        
+        $arCommandLines = explode(PHP_EOL, trim($strResult));
+        foreach($arCommandLines as $strCommandLine) {
+            list($strStatus, $strFile) = explode("\t", $strCommandLine);
+            switch($strStatus) {
+            case 'M': //Modified
+            case 'R': //Renamed
+            case 'T': //Type changed
+                $res->addUpdatedResource($strFile, $author);
+                break;
+            case 'D': //Deleted
+                $res->addDeletedResource($strFile, $author);
+                break;
+            case 'A': //Added
+            case 'C': //Copied
+                $res->addNewResource($strFile, $author);
+                break;
+            case 'U': // Unmerged
+            case 'X': // Unknown
+            case 'B': // Broken pairing
+            default:
+                $res->addConflictResource($strFile, $author);
+                break;
+            }
+        }
     }
 }
