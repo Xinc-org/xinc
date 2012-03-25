@@ -1,100 +1,112 @@
-<!--
--File         $Id:FrameToCTop.html 123 2006-09-14 20:19:08Z mrook $
--License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
--Copyright    2002, turing
--Author       alex black, enigma@turingstudio.com
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title> binarycloud contributor guide </title> 
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<link rel="Stylesheet" rev="Stylesheet" href="../css/FrameToc.css" type="text/css" media="All" charset="iso-8859-1" />
+    <title> binarycloud contributor guide </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="Stylesheet" rev="Stylesheet" href="../css/FrameToc.css" type="text/css" media="All" charset="iso-8859-1" />
 </head>
 <body>
-
-<ul>
-<li><a href="../chapters/AboutThisBook.html" target="Content">About this book</a></li>
-<ul>
-<li><a href="../chapters/AboutThisBook.html#General" target="Content">General</a></li>
-<li><a href="../chapters/AboutThisBook.html#Authors" target="Content">Authors</a></li>
-<li><a href="../chapters/AboutThisBook.html#License" target="Content">License</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/Introduction.html" target="Content">Introduction</a></li>
-<ul>
-<li><a href="../chapters/Introduction.html#WhatXincIs" target="Content">What Xinc Is</a></li>
-<li><a href="../chapters/Introduction.html#HowXincWorks" target="Content">How Xinc Works</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/Setup.html" target="Content">Setting-Up Xinc</a></li>
-<ul>
-<li><a href="../chapters/Setup.html#SystemRequirements" target="Content">System Requirements</a></li>
-<li><a href="../chapters/Setup.html#ObtainingXinc" target="Content">Obtaining Xinc</a></li>
-<li><a href="../chapters/Setup.html#Setup.PearInstall" target="Content">PEAR Install</a></li>
-<li><a href="../chapters/Setup.html#Setup.Configure" target="Content">Post Installation Configuration</a></li>
-<li><a href="../chapters/Setup.html#IniOptions" target="Content">Xinc Ini Configuration</a></li>
-<li><a href="../chapters/Setup.html#RunningXinc" target="Content">Running Xinc</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/GettingStarted.html" target="Content">Getting Started</a></li>
-<ul>
-<li><a href="../chapters/GettingStarted.html#XMLAndXinc" target="Content">XML And Xinc</a></li>
-<li><a href="../chapters/GettingStarted.html#SettingUpASimpleProject" target="Content">Setting up a simple project</a></li>
-<li><a href="../chapters/GettingStarted.html#OwnProject" target="Content">Setting up your own Project</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/appendixes/AppendixA-FactSheet.html" target="Content">Appendix A: Fact Sheet</a></li>
-<ul>
-<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#BuiltInProperties" target="Content">Built-In Properties</a></li>
-<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#CommandLineArguments" target="Content">Command Line Arguments</a></li>
-<li><a href="../chapters/appendixes/AppendixA-FactSheet.html#LGPLLicense" target="Content">The LGPL License</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html" target="Content">Appendix B: Core Tasks</a></li>
-<ul>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#Xinc" target="Content">&lt;xinc/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#Project" target="Content">&lt;project/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ConfigurationTask" target="Content">&lt;configuration/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#SettingTask" target="Content">&lt;setting/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PropertyTask" target="Content">&lt;property/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ScheduleTask" target="Content">&lt;schedule/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#CronTask" target="Content">&lt;cron/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ModificationSetTask" target="Content">&lt;modificationset/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#BuildersTask" target="Content">&lt;builders/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PublishersTask" target="Content">&lt;publishers/&gt;</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/appendixes/AppendixC-ModificationSet.html" target="Content">Appendix C: ModificationSet</a></li>
-<ul>
-<li><a href="../chapters/appendixes/AppendixC-ModificationSet.html#BuildalwaysTask" target="Content">&lt;buildalways/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixC-ModificationSet.html#SvnTask" target="Content">&lt;svn/&gt;</a></li>
-</ul>
-</ul>
-<ul>
-<li><a href="../chapters/appendixes/AppendixD-Builders.html" target="Content">Appendix D: Builders</a></li>
-<ul><li><a href="../chapters/appendixes/AppendixD-Builders.html#PhingbuilderTask" target="Content">&lt;phingbuilder/&gt;</a></li></ul>
-</ul>
-<ul>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html" target="Content">Appendix D: Publishers</a></li>
-<ul>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#PhingpublisherTask" target="Content">&lt;phingpublisher/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#EmailTask" target="Content">&lt;email/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#ArtifactspublisherTask" target="Content">&lt;artifactspublisher/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#DeliverableTask" target="Content">&lt;deliverable/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#DocumentationTask" target="Content">&lt;documentation/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#OnsuccessTask" target="Content">&lt;onsuccess/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#OnfailureTask" target="Content">&lt;onfailure/&gt;</a></li>
-<li><a href="../chapters/appendixes/AppendixE-Publishers.html#OnrecoveryTask" target="Content">&lt;onrecovery/&gt;</a></li>
-</ul>
-</ul>
-
+    <ul>
+        <li>
+            <a href="../chapters/AboutThisBook.html" target="Content">About this book</a>
+            <ul>
+                <li><a href="../chapters/AboutThisBook.html#General" target="Content">General</a></li>
+                <li><a href="../chapters/AboutThisBook.html#Authors" target="Content">Authors</a></li>
+                <li><a href="../chapters/AboutThisBook.html#License" target="Content">License</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/Introduction.html" target="Content">Introduction</a>
+            <ul>
+                <li><a href="../chapters/Introduction.html#WhatXincIs" target="Content">What Xinc Is</a></li>
+                <li><a href="../chapters/Introduction.html#HowXincWorks" target="Content">How Xinc Works</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/Setup.html" target="Content">Setting-Up Xinc</a>
+            <ul>
+                <li><a href="../chapters/Setup.html#SystemRequirements" target="Content">System Requirements</a></li>
+                <li><a href="../chapters/Setup.html#ObtainingXinc" target="Content">Obtaining Xinc</a></li>
+                <li><a href="../chapters/Setup.html#Setup.PearInstall" target="Content">PEAR Install</a></li>
+                <li><a href="../chapters/Setup.html#Setup.Configure" target="Content">Post Installation Configuration</a></li>
+                <li><a href="../chapters/Setup.html#IniOptions" target="Content">Xinc Ini Configuration</a></li>
+                <li><a href="../chapters/Setup.html#RunningXinc" target="Content">Running Xinc</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/GettingStarted.html" target="Content">Getting Started</a>
+            <ul>
+                <li><a href="../chapters/GettingStarted.html#XMLAndXinc" target="Content">XML And Xinc</a></li>
+                <li><a href="../chapters/GettingStarted.html#SettingUpASimpleProject" target="Content">Setting up a simple project</a></li>
+                <li><a href="../chapters/GettingStarted.html#OwnProject" target="Content">Setting up your own Project</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/appendixes/AppendixA-FactSheet.html" target="Content">Appendix A: Fact Sheet</a>
+            <ul>
+                <li><a href="../chapters/appendixes/AppendixA-FactSheet.html#BuiltInProperties" target="Content">Built-In Properties</a></li>
+                <li><a href="../chapters/appendixes/AppendixA-FactSheet.html#CommandLineArguments" target="Content">Command Line Arguments</a></li>
+                <li><a href="../chapters/appendixes/AppendixA-FactSheet.html#LGPLLicense" target="Content">The LGPL License</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/appendixes/AppendixB-CoreTasks.html" target="Content">Appendix B: Core Tasks</a>
+            <ul>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#Xinc" target="Content">&lt;xinc/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#Project" target="Content">&lt;project/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ConfigurationTask" target="Content">&lt;configuration/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#SettingTask" target="Content">&lt;setting/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PropertyTask" target="Content">&lt;property/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ScheduleTask" target="Content">&lt;schedule/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#CronTask" target="Content">&lt;cron/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#ModificationSetTask" target="Content">&lt;modificationset/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#BuildersTask" target="Content">&lt;builders/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixB-CoreTasks.html#PublishersTask" target="Content">&lt;publishers/&gt;</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/appendixes/AppendixC-ModificationSet.html" target="Content">Appendix C: ModificationSet</a>
+            <ul>
+                <li><a href="../chapters/appendixes/AppendixC-ModificationSet.html#BuildalwaysTask" target="Content">&lt;buildalways/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixC-ModificationSet.html#SvnTask" target="Content">&lt;svn/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixC-ModificationSet.html#GitTask" target="Content">&lt;git/&gt;</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/appendixes/AppendixD-Builders.html" target="Content">Appendix D: Builders</a>
+            <ul>
+                <li><a href="../chapters/appendixes/AppendixD-Builders.html#PhingbuilderTask" target="Content">&lt;phingbuilder/&gt;</a></li>
+            </ul>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a href="../chapters/appendixes/AppendixE-Publishers.html" target="Content">Appendix D: Publishers</a>
+            <ul>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#PhingpublisherTask" target="Content">&lt;phingpublisher/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#EmailTask" target="Content">&lt;email/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#ArtifactspublisherTask" target="Content">&lt;artifactspublisher/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#DeliverableTask" target="Content">&lt;deliverable/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#DocumentationTask" target="Content">&lt;documentation/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#OnsuccessTask" target="Content">&lt;onsuccess/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#OnfailureTask" target="Content">&lt;onfailure/&gt;</a></li>
+                <li><a href="../chapters/appendixes/AppendixE-Publishers.html#OnrecoveryTask" target="Content">&lt;onrecovery/&gt;</a></li>
+            </ul>
+        </li>
+    </ul>
 </body>
 </html>
-<!-- $Id -->
