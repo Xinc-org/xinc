@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Xinc Guide - ModificationSets</title>
@@ -6,12 +6,14 @@
     <link rel="Stylesheet" rev="Stylesheet" href="../../css/Documentation.css" type="text/css" media="All" charset="iso-8859-1" />
 </head>
 <body>
+
 <h1><a name="AppendixC"></a>Appendix C: ModificationSet</h1>
 
 <p>
 This appendix contains a reference of all modificationset tasks, i.e. all
 tasks that can trigger a build to happen.
 </p>
+
 <h2><a name="BuildalwaysTask"></a>&lt;buildalways/&gt;</h2>
 <p> The buildalways task fakes a modification and triggers a build each time Xinc checks for a modification.</p>
 <h3>Parent Tags</h3>
@@ -35,15 +37,21 @@ The above example will execute a build every 240 seconds, since the buildalways 
 <table>
   <thead>
     <tr>
-      <th>None</th>
-      
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
     </tr>
   </thead>
   <tbody>
-    
+    <tr>
+      <td colspan="5">None</td>
+    </tr>
   </tbody>
 </table>
 <p>&nbsp;</p>
+
 <h2><a name="SvnTask"></a>&lt;svn/&gt;</h2>
 <p> The svn task checks repository changes between a local working copy and a remote subversion repository.
 <br/>
@@ -80,7 +88,7 @@ The above example will check the local working copy "/var/xinc/projects/ProjectN
     <tr>
       <td>directory</td>
       <td>String</td>
-      <td>Directory of the Local SVN Working Copy</td>
+      <td>Directory of the local SVN Working Copy</td>
       <td>n/a</td>
       <td>Yes</td>
     </tr>
@@ -102,6 +110,70 @@ The above example will check the local working copy "/var/xinc/projects/ProjectN
       <td>update</td>
       <td>boolean</td>
       <td>Determines whether the local working copy should be updated if a change is detected or not.</td>
+      <td>false</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2><a name="GitTask"></a>&lt;git/&gt;</h2>
+<p> The git task checks repository changes between a local working copy and a remote git repository.
+<br/>
+If a revision difference between the local working copy and the remote repository has been detected a build is triggered.</p>
+<h3>Parent Tags</h3>
+<ul>
+  <li>&lt;<a href="AppendixB-CoreTasks.html#ModificationSet">modificationset</a>/&gt;</li>
+</ul>
+<pre title="Example of how to use GitTask">
+&lt;project name=&quot;ProjectName&quot;&gt;
+    &lt;<a href="AppendixB-CoreTasks.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+...
+    &lt;<a href="AppendixB-CoreTasks.html#ModificationSetTask">modificationset</a>&gt;
+        &lt;git directory=&quot;/var/xinc/projects/ProjectName&quot; update=&quot;true&quot;/&gt;
+    &lt;/modificationset&gt;
+...
+&lt;/project&gt;
+</pre>
+<p>
+The above example will check the local working copy "/var/xinc/projects/ProjectName" every 240 seconds for changes. If a change is detected it will update the local working copy and trigger a build.
+</p>
+<h3>Parameters</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>directory</td>
+      <td>String</td>
+      <td>Directory of the local git repository</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+     <tr>
+      <td>username</td>
+      <td>String</td>
+      <td>Username for the remote git repository</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>password</td>
+      <td>String</td>
+      <td>Password for the remote git repository</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>update</td>
+      <td>boolean</td>
+      <td>Determines whether the local repository should be updated if a change is detected or not.</td>
       <td>false</td>
       <td>No</td>
     </tr>

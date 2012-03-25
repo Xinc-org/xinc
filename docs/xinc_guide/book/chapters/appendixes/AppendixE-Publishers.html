@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Xinc Guide - Publishers</title>
@@ -76,15 +76,11 @@ The above example will execute the Phing publish script "build.xml" and call the
   </tbody>
 </table>
 <p>
-<strong>
 All Properties that are available in Xinc will be passed to the Phing buildscript with the prefix "xinc.".
-<br/>
-<p><strong>Example:</strong><br/>
-build.number => xinc.build.number
 </p>
+<p><strong>Example:</strong></p>
+<ul><li>build.number => xinc.build.number</li></ul>
 
-</strong>
-</p>
 <p>&nbsp;</p>
 <h2><a name="EmailTask"></a>&lt;email/&gt;</h2>
 <p></p>
@@ -335,14 +331,20 @@ The above example will send an email with the subject "build success" only if th
 <table>
   <thead>
     <tr>
-      <th>None</th>
-      
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
     </tr>
   </thead>
   <tbody>
-    
+    <tr>
+      <td colspan="5">None</td>
+    </tr>
   </tbody>
 </table>
+
 <h3>Supported Nested Tags</h3>
 <ul>
   <li>All Publishers except: &lt;<a href="OnsuccessTask">onsuccess</a>&gt;,&lt;<a href="OnfailureTask">onfailure</a>&gt;,&lt;<a href="OnrecoveryTask">onrecovery</a>&gt;</li>
@@ -374,14 +376,20 @@ The above example will send an email with the subject "build failed" only if the
 <table>
   <thead>
     <tr>
-      <th>None</th>
-      
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
     </tr>
   </thead>
   <tbody>
-    
+    <tr>
+      <td colspan="5">None</td>
+    </tr>
   </tbody>
 </table>
+
 <h3>Supported Nested Tags</h3>
 <ul>
   <li>All Publishers except: &lt;<a href="OnsuccessTask">onsuccess</a>&gt;,&lt;<a href="OnfailureTask">onfailure</a>&gt;,&lt;<a href="OnrecoveryTask">onrecovery</a>&gt;</li>
@@ -413,14 +421,20 @@ The above example will send an email with the subject "build recovered" only if 
 <table>
   <thead>
     <tr>
-      <th>None</th>
-      
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+      <th>Required</th>
     </tr>
   </thead>
   <tbody>
-    
+    <tr>
+      <td colspan="5">None</td>
+    </tr>
   </tbody>
 </table>
+
 <h3>Supported Nested Tags</h3>
 <ul>
   <li>All Publishers except: &lt;<a href="OnsuccessTask">onsuccess</a>&gt;,&lt;<a href="OnfailureTask">onfailure</a>&gt;,&lt;<a href="OnrecoveryTask">onrecovery</a>&gt;</li>
