@@ -1,10 +1,4 @@
-<!--
--File         $Id:ExtendingXinc.html 123 2006-09-14 20:19:08Z mrook $
--License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
--Copyright    2002, turing
--Author       alex black, enigma@turingstudio.com
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Xinc Guide - Extending Xinc</title>
@@ -245,7 +239,8 @@ proper variables for you. However you should always set them.
 <p>This section exists to explain -- or try -- how Xinc &quot;works&quot;. Particularly,
   how Xinc procedes through a build file and invokes tasks and types based on
   the tags that it encounters.</p>
-<h3><a name=""></a>How Xinc Parses Buildfiles</h3>
+  
+<h3><a name="HowXincParsesBuildfiles"></a>How Xinc Parses Buildfiles</h3>
 <p>Xinc uses an ExpatParser class and PHP's native expat XML functions to handle
   the parsing of build files. The handler classes all extend the Xinc.parser.AbstractHandler
   class. These handler classes &quot;handle&quot; the tags that are found in the
