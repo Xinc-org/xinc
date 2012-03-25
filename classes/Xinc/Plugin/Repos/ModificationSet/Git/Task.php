@@ -9,7 +9,7 @@ declare(encoding = 'utf-8');
  * @category  Development
  * @package   Xinc.Plugin.Repos.ModificationSet.Git
  * @author    Alexander Opitz <opitz.alexander@gmail.com>
- * @copyright 2011 Alexander Opitz, Leipzig
+ * @copyright 2011-2012 Alexander Opitz, Leipzig
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
  *            Xinc is free software; you can redistribute it and/or modify
@@ -43,66 +43,44 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      */
     private $bUpdate = false;
 
-    private $_username = null;
-
-    private $_password = null;
-
-    private $_property;
+    /**
+     * @var string The remote repository to clone from.
+     */
+    private $strRepository = '';
 
     /**
      * @var VersionControl_Git The git object.
      */
     private $git = null;
 
+    /**
+     * Returns name of Task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return 'git';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-        $this->_subtasks[]=$task;
-    }
-
     /**
-     * Sets the svn checkout directory.
+     * Sets the git checkout directory.
      *
      * @param string
      */
-    public function setDirectory($directory)
+    public function setDirectory($strDirectory)
     {
-        $this->strPath = (string)$directory;
+        $this->strPath = (string)$strDirectory;
     }
 
     /**
-     * sets the name of the property, which will be set to
-     * TRUE in case a modification was detected
-     *
-     * @param string $property
-     */
-    public function setProperty($property)
-    {
-        $this->_property = (string) $property;
-    }
-
-    /**
-     * Sets the username for the svn commands
+     * Sets the remote repository.
      *
      * @param string
      */
-    public function setUsername($username)
+    public function setRepository($strRepository)
     {
-        $this->_username = (string)$username;
-    }
-
-    /**
-     * Sets the password for the svn commands
-     *
-     * @param string
-     */
-    public function setPassword($password)
-    {
-        $this->_password = (string)$password;
+        $this->strRepository = (string)$strRepository;
     }
 
     /**
@@ -120,6 +98,13 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         return Xinc_Plugin_Slot::PRE_PROCESS;
     }
 
+    /**
+     * Check if this modification set has been modified
+     *
+     * @param Xinc_Build_Interface $build The running build.
+     *
+     * @return Xinc_Plugin_Repos_ModificationSet_Result The result of the check.
+     */
     public function checkModified(Xinc_Build_Interface $build)
     {
         $res = new Xinc_Plugin_Repos_ModificationSet_Result();
@@ -165,10 +150,17 @@ var_dump($strLocalHash);
 
     public function validateTask()
     {
+        if (!class_exists('VersionControl_Git')) {
+            throw new Xinc_Exception_MalformedConfig(
+                'PEAR::VersionControl_Git doesn\'t exists.'
+                . 'You need to install it to use this task. '
+            );
+        }
         if (!isset($this->strPath)) {
-            throw new Xinc_Exception_MalformedConfig('Element modificationSet/git'
-                                                    . ' - required attribute '
-                                                    . '\'directory\' is not set');
+            throw new Xinc_Exception_MalformedConfig(
+                'Element modificationSet/git - required attribute '
+                . '\'directory\' is not set'
+            );
         }
 
         $this->git = new VersionControl_Git($this->strPath);
@@ -179,7 +171,8 @@ var_dump($strLocalHash);
             var_dump($e->getMessage());
             return false;
         }
-/*        $file = $this->_directory;
+        /*
+        $file = $this->_directory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file) && !file_exists($file2)) {
             Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
@@ -289,25 +282,28 @@ var_dump($strLocalHash);
         
         $arCommandLines = explode(PHP_EOL, trim($strResult));
         foreach($arCommandLines as $strCommandLine) {
+            // @TODO We need to diff from rev to rev so we can add Author Name.
+            $strAuthor = null;
+
             list($strStatus, $strFile) = explode("\t", $strCommandLine);
             switch($strStatus) {
             case 'M': //Modified
             case 'R': //Renamed
             case 'T': //Type changed
-                $res->addUpdatedResource($strFile, $author);
+                $res->addUpdatedResource($strFile, $strAuthor);
                 break;
             case 'D': //Deleted
-                $res->addDeletedResource($strFile, $author);
+                $res->addDeletedResource($strFile, $strAuthor);
                 break;
             case 'A': //Added
             case 'C': //Copied
-                $res->addNewResource($strFile, $author);
+                $res->addNewResource($strFile, $strAuthor);
                 break;
             case 'U': // Unmerged
             case 'X': // Unknown
             case 'B': // Broken pairing
             default:
-                $res->addConflictResource($strFile, $author);
+                $res->addConflictResource($strFile, $strAuthor);
                 break;
             }
         }
@@ -337,7 +333,7 @@ var_dump($strLocalHash);
             $strDate    = $this->getLogEntry('D', $arCommandLines);
             $strMessage = $this->getLogEntry('M', $arCommandLines);
             
-            $res->addLogMessage($strHash, $timestamp, $strAuthor, $strMessage);
+            $res->addLogMessage($strHash, $strDate, $strAuthor, $strMessage);
         }
     }
 

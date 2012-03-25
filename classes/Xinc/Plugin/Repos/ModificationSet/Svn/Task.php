@@ -47,14 +47,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
 
     private $_property;
 
+
+    /**
+     * Returns name of Task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return 'svn';
-    }
-
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-        $this->_subtasks[]=$task;
     }
 
     /**
