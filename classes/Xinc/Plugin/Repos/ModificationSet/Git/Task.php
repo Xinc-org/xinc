@@ -36,7 +36,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     /**
      * @var string Directory containing the Git project.
      */
-    private $strPath = '.';
+    private $strDirectory = '.';
 
     /**
      * @var boolean Update repository if change detected.
@@ -70,7 +70,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      */
     public function setDirectory($strDirectory)
     {
-        $this->strPath = (string)$strDirectory;
+        $this->strDirectory = (string)$strDirectory;
     }
 
     /**
@@ -110,7 +110,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         $res = new Xinc_Plugin_Repos_ModificationSet_Result();
 
         try {
-            $this->git = new VersionControl_Git($this->strPath);
+            $this->git = new VersionControl_Git($this->strDirectory);
             $strBranch = $this->git->getCurrentBranch();
 
             $strRemoteHash = $this->getRemoteHash($strBranch);
@@ -156,14 +156,14 @@ var_dump($strLocalHash);
                 . 'You need to install it to use this task. '
             );
         }
-        if (!isset($this->strPath)) {
+        if (!isset($this->strDirectory)) {
             throw new Xinc_Exception_MalformedConfig(
                 'Element modificationSet/git - required attribute '
                 . '\'directory\' is not set'
             );
         }
 
-        $this->git = new VersionControl_Git($this->strPath);
+        $this->git = new VersionControl_Git($this->strDirectory);
 
         try {
             $this->git->getHeadCommits();
