@@ -54,7 +54,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     private $git = null;
 
     /**
-     * Returns name of Task.
+     * Returns name of task.
      *
      * @return string Name of task.
      */
@@ -102,7 +102,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-        $res = new Xinc_Plugin_Repos_ModificationSet_Result();
+        $result = new Xinc_Plugin_Repos_ModificationSet_Result();
 
         try {
             $this->git = new VersionControl_Git($this->strDirectory);
@@ -112,37 +112,47 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
             $strLocalHash = $this->getLocalHash($strBranch);
         } catch(Exception $e) {
             $build->error('Test of GIT Repos failed: ' . $e->getMessage());
-            $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
-            return $res;
+            $result->setStatus(
+                Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
+            );
+            return $result;
         }
 
-        $res->setRemoteRevision($strRemoteHash);
-        $res->setLocalRevision($strLocalHash);
+        $result->setRemoteRevision($strRemoteHash);
+        $result->setLocalRevision($strLocalHash);
 
 var_dump($strRemoteHash);
 var_dump($strLocalHash);
 
         if ($strRemoteHash !== $strLocalHash) {
             $this->fetch();
-            $this->getModifiedFiles($build, $res);
-            $this->getChangeLog($build, $res);
+            $this->getModifiedFiles($res);
+            $this->getChangeLog($res);
 
             if ($this->bUpdate) {
                 try {
                     $this->update();
                 } catch(Exception $e) {
                     $build->error('Update of GIT local failed: ' . $e->getMessage());
-                    $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
+                    $result>setStatus(
+                        Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
+                    );
                     return $res;
                 }
             }
-            $res->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
-            //var_dump($this->git->getCommits());
+            $result->setStatus(
+                Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
+            );
         }
 
-        return $res;
+        return $result;
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validateTask()
     {
         if (!class_exists('VersionControl_Git')) {
@@ -181,6 +191,12 @@ var_dump($strLocalHash);
         return true;
     }
 
+    /**
+     * Update local copy of git.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function update()
     {
         $command = $this->git->getCommand('pull')
@@ -196,6 +212,13 @@ var_dump($strLocalHash);
         }
     }
 
+
+    /**
+     * Fetches remote branch state.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function fetch()
     {
         $command = $this->git->getCommand('fetch')
@@ -210,9 +233,15 @@ var_dump($strLocalHash);
         }
     }
 
-/*      git ls-remote -heads
-        git ls-remote -h .
-        git log --pretty=format:'%H' -1*/
+
+    /**
+     * Gets remote hash for branch.
+     *
+     * @param string $strBranchName Name of branch to get hash.
+     *
+     * @return string The remote hash for given branch.
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function getRemoteHash($strBranchName)
     {
         $command = $this->git->getCommand('ls-remote')
@@ -238,6 +267,15 @@ var_dump($strLocalHash);
         );
     }
 
+
+    /**
+     * Gets local hash for branch.
+     *
+     * @param string $strBranchName Name of branch to get hash.
+     *
+     * @return string The local hash for given branch.
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function getLocalHash($strBranchName)
     {
         try {
@@ -257,14 +295,24 @@ var_dump($strLocalHash);
         );
     }
 
+
+    /**
+     * Gets the modified files between two revisions from git and puts this info
+     * into the ModificationSet_Result.
+     *
+     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
+     *  Hash ids from and set modified files.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function getModifiedFiles(
-        Xinc_Build_Interface $build,
-        Xinc_Plugin_Repos_ModificationSet_Result $res
+        Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
         $command = $this->git->getCommand('diff')
             ->setOption('name-status')
             ->addArgument(
-                $res->getLocalRevision() . '..' . $res->getRemoteRevision()
+                $result->getLocalRevision() . '..' . $result->getRemoteRevision()
             );
         try {
             $strResult = $command->execute();
@@ -285,33 +333,42 @@ var_dump($strLocalHash);
             case 'M': //Modified
             case 'R': //Renamed
             case 'T': //Type changed
-                $res->addUpdatedResource($strFile, $strAuthor);
+                $result->addUpdatedResource($strFile, $strAuthor);
                 break;
             case 'D': //Deleted
-                $res->addDeletedResource($strFile, $strAuthor);
+                $result->addDeletedResource($strFile, $strAuthor);
                 break;
             case 'A': //Added
             case 'C': //Copied
-                $res->addNewResource($strFile, $strAuthor);
+                $result->addNewResource($strFile, $strAuthor);
                 break;
             case 'U': // Unmerged
             case 'X': // Unknown
             case 'B': // Broken pairing
             default:
-                $res->addConflictResource($strFile, $strAuthor);
+                $result->addConflictResource($strFile, $strAuthor);
                 break;
             }
         }
     }
 
+    /**
+     * Gets the changelog data between two revisions from git and puts this info
+     * into the ModificationSet_Result. (This are author, date and commit message.)
+     *
+     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
+     *  Hash ids from and set change log data.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function getChangeLog(
-        Xinc_Build_Interface $build, 
-        Xinc_Plugin_Repos_ModificationSet_Result $res
+        Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
         $command = $this->git->getCommand('log')
             ->setOption('pretty', 'H:%H%nA:%aN%nD:%aD%nM:%s')
             ->addArgument(
-                $res->getLocalRevision() . '..' . $res->getRemoteRevision()
+                $result->getLocalRevision() . '..' . $result->getRemoteRevision()
             );
         try {
             $strResult = $command->execute();
@@ -328,10 +385,20 @@ var_dump($strLocalHash);
             $strDate    = $this->getLogEntry('D', $arCommandLines);
             $strMessage = $this->getLogEntry('M', $arCommandLines);
             
-            $res->addLogMessage($strHash, $strDate, $strAuthor, $strMessage);
+            $result->addLogMessage($strHash, $strDate, $strAuthor, $strMessage);
         }
     }
 
+    /**
+     *Analiezes the log entry data from the git command line call.
+     *
+     * @param string $strType       Type to handle next.
+     * @param array  &$arLogEntries The entries from the command line call.
+     *  Processed ones will be shifted out.
+     *
+     * @return string|integer The value of the log entry.
+     * @throw Xinc_Exception_ModificationSet
+     */
     protected function getLogEntry($strType, array &$arLogEntries)
     {
         $strLogEntry = array_shift($arLogEntries);

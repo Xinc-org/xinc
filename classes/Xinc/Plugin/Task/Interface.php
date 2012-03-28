@@ -39,7 +39,19 @@ interface Xinc_Plugin_Task_Interface
     public function init(Xinc_Build_Interface $build);
     public function process(Xinc_Build_Interface $build);
     public function registerTask(Xinc_Plugin_Task_Interface $task);
+
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validate();
+
+    /**
+     * Returns name of task.
+     *
+     * @return string Name of task.
+     */
     public function getName();
 
     /**

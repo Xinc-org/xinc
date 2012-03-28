@@ -61,6 +61,12 @@ abstract class Xinc_Plugin_Task_Base implements Xinc_Plugin_Task_Interface
         $this->_subtasks[] = $task;
     }
 
+
+    /**
+     * Returns name of task by lowercasing class name.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return strtolower(get_class($this));

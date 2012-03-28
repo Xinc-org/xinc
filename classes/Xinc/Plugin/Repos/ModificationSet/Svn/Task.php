@@ -49,7 +49,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
 
 
     /**
-     * Returns name of Task.
+     * Returns name of task.
      *
      * @return string Name of task.
      */
@@ -123,15 +123,20 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
         return $res;
     }
 
+
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validateTask()
     {
         if (!isset($this->_directory)) {
             throw new Xinc_Exception_MalformedConfig('Element modificationSet/svn'
                                                     . ' - required attribute '
                                                     . '\'directory\' is not set');
-            // @codeCoverageIgnoreStart
         }
-            // @codeCoverageIgnoreEnd
+
         $file = $this->_directory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file) && !file_exists($file2)) {

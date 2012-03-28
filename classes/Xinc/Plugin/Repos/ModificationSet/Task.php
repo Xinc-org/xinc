@@ -24,17 +24,18 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Task/Base.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Interface.php';
 
-class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_ModificationSet_Task
+    extends Xinc_Plugin_Task_Base
 {
     public function validate()
     {
-        foreach ( $this->_subtasks as $task ) {
+        foreach ($this->_subtasks as $task) {
             if (!$task instanceof Xinc_Plugin_Repos_ModificationSet_AbstractTask) {
                 return false;
             }
@@ -42,11 +43,21 @@ class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Base
         return true;
     }
 
+    /**
+     * Returns name of Task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return 'modificationset';
     }
 
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     */
     public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PRE_PROCESS;
@@ -54,7 +65,7 @@ class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Base
 
     public function process(Xinc_Build_Interface $build)
     {
-        foreach ( $this->_subtasks as $task ) {
+        foreach ($this->_subtasks as $task) {
             $task->process($build);
             if ( $build->getStatus() == Xinc_Build_Interface::PASSED ) {
                 return;

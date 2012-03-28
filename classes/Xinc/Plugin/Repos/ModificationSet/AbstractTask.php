@@ -99,5 +99,11 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
         }
     }
 
+
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public abstract function validateTask();
 }
