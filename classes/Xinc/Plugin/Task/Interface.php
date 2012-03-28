@@ -33,8 +33,7 @@ require_once 'Xinc/Plugin/Task/Processor/Interface.php';
 interface Xinc_Plugin_Task_Interface
 {
     /**
-     * Returns the slot of the process the plugin is run
-     * @return
+     * Constructor
      */
     public function __construct(Xinc_Plugin_Interface $plugin);
     public function init(Xinc_Build_Interface $build);
@@ -42,6 +41,12 @@ interface Xinc_Plugin_Task_Interface
     public function registerTask(Xinc_Plugin_Task_Interface $task);
     public function validate();
     public function getName();
+
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     */
     public function getPluginSlot();
     public function getTasks();
     public function getXml();

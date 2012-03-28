@@ -93,11 +93,6 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
         $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true:false;
     }
 
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::PRE_PROCESS;
-    }
-
     /**
      * Check if this modification set has been modified
      *

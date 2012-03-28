@@ -43,7 +43,9 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
     /**
      * abstract process of a modification set
      *
-     * @param Xinc_Build_Interface $build
+     * @param Xinc_Build_Interface $build The running build.
+     *
+     * @return void
      */
     public final function process(Xinc_Build_Interface $build)
     {
@@ -65,9 +67,20 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
 
     /**
      * Check if this modification set has been modified
+     *
      * @return Xinc_Plugin_Repos_ModificationSet_Result
      */
     public abstract function checkModified(Xinc_Build_Interface $build);
+
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     */
+    public function getPluginSlot()
+    {
+        return Xinc_Plugin_Slot::PRE_PROCESS;
+    }
 
     /**
      * Check necessary variables are set

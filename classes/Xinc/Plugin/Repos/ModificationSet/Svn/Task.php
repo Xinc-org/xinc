@@ -110,11 +110,6 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
         $this->_update = in_array($update, array('true', '1')) ? true:false;
     }
 
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::PRE_PROCESS;
-    }
-
     public function checkModified(Xinc_Build_Interface $build)
     {
         $res = $this->_plugin->checkModified($build, $this->_directory,
