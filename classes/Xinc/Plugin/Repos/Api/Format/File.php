@@ -25,12 +25,13 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Api/Response/Format/Interface.php';
 
-class Xinc_Plugin_Repos_Api_Format_File implements Xinc_Api_Response_Format_Interface
+class Xinc_Plugin_Repos_Api_Format_File
+    implements Xinc_Api_Response_Format_Interface
 {
     const NAME = 'file';
 
@@ -78,12 +79,16 @@ class Xinc_Plugin_Repos_Api_Format_File implements Xinc_Api_Response_Format_Inte
     public function mime_content_type2($fileName)
     {
         $contentType = null;
-        if (preg_match('/.*?.tar\.gz/', $fileName) || 
+        if (preg_match('/.*?.tar\.gz$/', $fileName) || 
             preg_match('/^.*?.tar$/', $fileName) ||  
             preg_match('/^.*?.tgz$/', $fileName)) {
             return 'application/x-gzip';
-        } else if (preg_match('/.*?\.css/', $fileName)) {
+        }
+        if (preg_match('/.*?\.css$/', $fileName)) {
             return 'text/css';
+        }
+        if (preg_match('/.*?\.htm(l)?$/', $fileName)) {
+            return 'text/html';
         }
         /**if (function_exists('finfo_open')) {
             $finfo = finfo_open(FILEINFO_MIME); // return mime type ala mimetype extension
