@@ -49,11 +49,6 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     private $strRepository = '';
 
     /**
-     * @var VersionControl_Git The git object.
-     */
-    private $git = null;
-
-    /**
      * Returns name of task.
      *
      * @return string Name of task.
@@ -66,11 +61,21 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     /**
      * Sets the git checkout directory.
      *
-     * @param string
+     * @param string Directory for git checkout.
      */
     public function setDirectory($strDirectory)
     {
         $this->strDirectory = (string)$strDirectory;
+    }
+
+    /**
+     * Gets the git checkout directory.
+     *
+     * @return string Directory which was set.
+     */
+    public function getDirectory()
+    {
+        return $this->strDirectory;
     }
 
     /**
@@ -86,11 +91,22 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     /**
      * Tells whether to update the working copy directly here or not
      *
-     * @param string $update
+     * @param string $strUpdate "true" or "1" as string to set update otherwise
+     *  it is interpreted as false.
      */
     public function setUpdate($strUpdate)
     {
         $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true:false;
+    }
+
+    /**
+     * Get if git should be automaticaly updated.
+     *
+     * @return boolean True if git repos should be updated.
+     */
+    public function getUpdate()
+    {
+        return $this->bUpdate;
     }
 
     /**
@@ -102,54 +118,11 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-        $result = new Xinc_Plugin_Repos_ModificationSet_Result();
-
-        try {
-            $this->git = new VersionControl_Git($this->strDirectory);
-            $strBranch = $this->git->getCurrentBranch();
-
-            $strRemoteHash = $this->getRemoteHash($strBranch);
-            $strLocalHash = $this->getLocalHash($strBranch);
-        } catch(Exception $e) {
-            $build->error('Test of GIT Repos failed: ' . $e->getMessage());
-            $result->setStatus(
-                Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
-            );
-            return $result;
-        }
-
-        $result->setRemoteRevision($strRemoteHash);
-        $result->setLocalRevision($strLocalHash);
-
-var_dump($strRemoteHash);
-var_dump($strLocalHash);
-
-        if ($strRemoteHash !== $strLocalHash) {
-            $this->fetch();
-            $this->getModifiedFiles($res);
-            $this->getChangeLog($res);
-
-            if ($this->bUpdate) {
-                try {
-                    $this->update();
-                } catch(Exception $e) {
-                    $build->error('Update of GIT local failed: ' . $e->getMessage());
-                    $result>setStatus(
-                        Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
-                    );
-                    return $res;
-                }
-            }
-            $result->setStatus(
-                Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
-            );
-        }
-
-        return $result;
+        return $this->_plugin->checkModified($build, $this);
     }
 
     /**
-     * Validates if a task can run by checking configs, directries and so on.
+     * Validates if a task can run by checking configs, directories and so on.
      *
      * @return boolean Is true if task can run.
      */
@@ -168,259 +141,6 @@ var_dump($strLocalHash);
             );
         }
 
-        $this->git = new VersionControl_Git($this->strDirectory);
-
-        try {
-            $this->git->getHeadCommits();
-        } catch (Exception $e) {
-            var_dump($e->getMessage());
-            return false;
-        }
-        /*
-        $file = $this->_directory;
-        $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
-        if (!file_exists($file) && !file_exists($file2)) {
-            Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
-            return false;
-        } else if (file_exists($file2)) {
-            $this->_directory = $file2;
-            //Xinc_Logger::getInstance()->error("Directory $file2 does not exist");
-            //return false;
-        }
-        //return false;*/
         return true;
-    }
-
-    /**
-     * Update local copy of git.
-     *
-     * @return void
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function update()
-    {
-        $command = $this->git->getCommand('pull')
-            ->setOption('ff-only')
-            ->setOption('stat');
-        try {
-            $strResult = $command->execute();
-        } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT update failed: ' . $e->getMessage(),
-                0, $e
-            );
-        }
-    }
-
-
-    /**
-     * Fetches remote branch state.
-     *
-     * @return void
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function fetch()
-    {
-        $command = $this->git->getCommand('fetch')
-            ->setOption('no-recurse-submodules');
-        try {
-            $strResult = $command->execute();
-        } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT fetch failed: ' . $e->getMessage(),
-                0, $e
-            );
-        }
-    }
-
-
-    /**
-     * Gets remote hash for branch.
-     *
-     * @param string $strBranchName Name of branch to get hash.
-     *
-     * @return string The remote hash for given branch.
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function getRemoteHash($strBranchName)
-    {
-        $command = $this->git->getCommand('ls-remote')
-            ->setOption('heads');
-        try {
-            $strResult = $command->execute();
-        } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT get remote hash failed: ' . $e->getMessage(),
-                0, $e
-            );
-        }
-        $arCommandLines = explode(PHP_EOL, trim($strResult));
-        foreach($arCommandLines as $strCommandLine) {
-            $arParts = explode("\t", $strCommandLine);
-            if ($arParts[1] === 'refs/heads/' . $strBranchName) {
-                return $arParts[0];
-            }
-        }
-
-        throw new Xinc_Exception_ModificationSet(
-            'Branch "' . $strBranchName . '" not exists in remote git repository.'
-        );
-    }
-
-
-    /**
-     * Gets local hash for branch.
-     *
-     * @param string $strBranchName Name of branch to get hash.
-     *
-     * @return string The local hash for given branch.
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function getLocalHash($strBranchName)
-    {
-        try {
-            $arHashs = $this->git->getHeadCommits();
-        } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT get local hash failed: ' . $e->getMessage(),
-                0, $e
-            );
-        }
-        if (isset($arHashs[$strBranchName])) {
-            return $arHashs[$strBranchName];
-        }
-
-        throw new Xinc_Exception_ModificationSet(
-            'Branch "' . $strBranchName . '" not exists in local git repository.'
-        );
-    }
-
-
-    /**
-     * Gets the modified files between two revisions from git and puts this info
-     * into the ModificationSet_Result.
-     *
-     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
-     *  Hash ids from and set modified files.
-     *
-     * @return void
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function getModifiedFiles(
-        Xinc_Plugin_Repos_ModificationSet_Result $result
-    ) {
-        $command = $this->git->getCommand('diff')
-            ->setOption('name-status')
-            ->addArgument(
-                $result->getLocalRevision() . '..' . $result->getRemoteRevision()
-            );
-        try {
-            $strResult = $command->execute();
-        } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT get version diff failed: ' . $e->getMessage(),
-                0, $e
-            );
-        }
-        
-        $arCommandLines = explode(PHP_EOL, trim($strResult));
-        foreach($arCommandLines as $strCommandLine) {
-            // @TODO We need to diff from rev to rev so we can add Author Name.
-            $strAuthor = null;
-
-            list($strStatus, $strFile) = explode("\t", $strCommandLine);
-            switch($strStatus) {
-            case 'M': //Modified
-            case 'R': //Renamed
-            case 'T': //Type changed
-                $result->addUpdatedResource($strFile, $strAuthor);
-                break;
-            case 'D': //Deleted
-                $result->addDeletedResource($strFile, $strAuthor);
-                break;
-            case 'A': //Added
-            case 'C': //Copied
-                $result->addNewResource($strFile, $strAuthor);
-                break;
-            case 'U': // Unmerged
-            case 'X': // Unknown
-            case 'B': // Broken pairing
-            default:
-                $result->addConflictResource($strFile, $strAuthor);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Gets the changelog data between two revisions from git and puts this info
-     * into the ModificationSet_Result. (This are author, date and commit message.)
-     *
-     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
-     *  Hash ids from and set change log data.
-     *
-     * @return void
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function getChangeLog(
-        Xinc_Plugin_Repos_ModificationSet_Result $result
-    ) {
-        $command = $this->git->getCommand('log')
-            ->setOption('pretty', 'H:%H%nA:%aN%nD:%aD%nM:%s')
-            ->addArgument(
-                $result->getLocalRevision() . '..' . $result->getRemoteRevision()
-            );
-        try {
-            $strResult = $command->execute();
-        } catch (VersionControl_Git_Exception $e) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT get log failed: ' . $e->getMessage(),
-                0, $e
-            );
-        }
-        $arCommandLines = explode(PHP_EOL, trim($strResult));
-        while (count($arCommandLines)) {
-            $strHash    = $this->getLogEntry('H', $arCommandLines);
-            $strAuthor  = $this->getLogEntry('A', $arCommandLines);
-            $strDate    = $this->getLogEntry('D', $arCommandLines);
-            $strMessage = $this->getLogEntry('M', $arCommandLines);
-            
-            $result->addLogMessage($strHash, $strDate, $strAuthor, $strMessage);
-        }
-    }
-
-    /**
-     *Analiezes the log entry data from the git command line call.
-     *
-     * @param string $strType       Type to handle next.
-     * @param array  &$arLogEntries The entries from the command line call.
-     *  Processed ones will be shifted out.
-     *
-     * @return string|integer The value of the log entry.
-     * @throw Xinc_Exception_ModificationSet
-     */
-    protected function getLogEntry($strType, array &$arLogEntries)
-    {
-        $strLogEntry = array_shift($arLogEntries);
-        if ($strType . ':' !== substr($strLogEntry, 0, 2)) {
-            throw new Xinc_Exception_ModificationSet(
-                'GIT log: Cannot parse log line'
-            );
-        }
-        $strLogEntry = substr($strLogEntry, 2);
-        switch ($strType) {
-        case 'D':
-            $nTime = strtotime($strLogEntry);
-            if (false === $nTime) {
-                throw new Xinc_Exception_ModificationSet(
-                    'GIT log: Cannot date in parse log line'
-                );
-            }
-            return $nTime;
-            break;
-        default:
-            return $strLogEntry;
-            break;
-        }
     }
 }

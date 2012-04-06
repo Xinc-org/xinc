@@ -518,9 +518,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Base
     }
 
     /**
-     * Check necessary variables are set
+     * Validate if the plugin can run properly on this system
      *
-     * @throws Xinc_Exception_MalformedConfig
+     * @return boolean True if plugin can run properly otherwise false.
      */
     public function validate()
     {

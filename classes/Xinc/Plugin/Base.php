@@ -46,6 +46,11 @@ abstract class Xinc_Plugin_Base implements Xinc_Plugin_Interface
         return array();
     }
     
+    /**
+     * Validate if the plugin can run properly on this system
+     *
+     * @return boolean True if plugin can run properly otherwise false.
+     */
     public function validate()
     {
         return true;

@@ -110,6 +110,13 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
         $this->_update = in_array($update, array('true', '1')) ? true:false;
     }
 
+    /**
+     * Check if this modification set has been modified
+     *
+     * @param Xinc_Build_Interface $build The running build.
+     *
+     * @return Xinc_Plugin_Repos_ModificationSet_Result The result of the check.
+     */
     public function checkModified(Xinc_Build_Interface $build)
     {
         $res = $this->_plugin->checkModified($build, $this->_directory,
@@ -139,15 +146,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
 
         $file = $this->_directory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
+
         if (!file_exists($file) && !file_exists($file2)) {
-            Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
+            Xinc_Logger::getInstance()->error(
+                'Directory ' . $file2 . ' does not exist'
+            );
             return false;
         } else if (file_exists($file2)) {
             $this->_directory = $file2;
-            //Xinc_Logger::getInstance()->error("Directory $file2 does not exist");
-            //return false;
         }
-        //return false;
         return true;
     }
 }
