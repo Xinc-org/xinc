@@ -89,9 +89,6 @@ class Xinc_Plugin_Repos_ModificationSet_Git
         $result->setRemoteRevision($strRemoteHash);
         $result->setLocalRevision($strLocalHash);
 
-var_dump($strRemoteHash);
-var_dump($strLocalHash);
-
         if ($strRemoteHash !== $strLocalHash) {
             $this->fetch();
             $this->getModifiedFiles($res);
