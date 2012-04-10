@@ -61,7 +61,9 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     /**
      * Sets the git checkout directory.
      *
-     * @param string Directory for git checkout.
+     * @param string $strDirectory Directory for git checkout.
+     *
+     * @return void
      */
     public function setDirectory($strDirectory)
     {
@@ -81,7 +83,9 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     /**
      * Sets the remote repository.
      *
-     * @param string
+     * @param string $strRepository The remote repository.
+     *
+     * @return void
      */
     public function setRepository($strRepository)
     {
@@ -93,6 +97,8 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      *
      * @param string $strUpdate "true" or "1" as string to set update otherwise
      *  it is interpreted as false.
+     *
+     * @return void
      */
     public function setUpdate($strUpdate)
     {
