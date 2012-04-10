@@ -43,6 +43,9 @@ class Xinc_Plugin_Repos_ModificationSet_Git
      */
     private $git = null;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         try {
@@ -52,6 +55,11 @@ class Xinc_Plugin_Repos_ModificationSet_Git
         }
     }
 
+    /**
+     * Returns definition of task.
+     *
+     * @return array Array of definition.
+     */
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_ModificationSet_Git_Task($this));
@@ -62,7 +70,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git
      * Check if this modification set has been modified
      *
      * @param Xinc_Build_Interface                       $build The running build.
-     * @param Xinc_Plugin_Repos_ModificationSet_Git_Task $task The configured task
+     * @param Xinc_Plugin_Repos_ModificationSet_Git_Task $task  The configured task
      *
      * @return Xinc_Plugin_Repos_ModificationSet_Result The result of the check.
      */
@@ -178,7 +186,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git
             );
         }
         $arCommandLines = explode(PHP_EOL, trim($strResult));
-        foreach($arCommandLines as $strCommandLine) {
+        foreach ($arCommandLines as $strCommandLine) {
             $arParts = explode("\t", $strCommandLine);
             if ($arParts[1] === 'refs/heads/' . $strBranchName) {
                 return $arParts[0];
@@ -247,7 +255,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git
         }
 
         $arCommandLines = explode(PHP_EOL, trim($strResult));
-        foreach($arCommandLines as $strCommandLine) {
+        foreach ($arCommandLines as $strCommandLine) {
             // @TODO We need to diff from rev to rev so we can add Author Name.
             $strAuthor = null;
 
