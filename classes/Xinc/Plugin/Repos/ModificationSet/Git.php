@@ -91,8 +91,8 @@ class Xinc_Plugin_Repos_ModificationSet_Git
 
         if ($strRemoteHash !== $strLocalHash) {
             $this->fetch();
-            $this->getModifiedFiles($res);
-            $this->getChangeLog($res);
+            $this->getModifiedFiles($result);
+            $this->getChangeLog($result);
 
             if ($task->getUpdate()) {
                 try {
@@ -102,7 +102,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git
                     $result>setStatus(
                         Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
                     );
-                    return $res;
+                    return $result;
                 }
             }
             $result->setStatus(
