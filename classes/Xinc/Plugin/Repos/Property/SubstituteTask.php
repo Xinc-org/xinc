@@ -31,24 +31,35 @@ declare(encoding = 'utf-8');
 require_once 'Xinc/Plugin/Task/Base.php';
 require_once 'Xinc/Plugin/Task/Setter/Interface.php';
 
-class Xinc_Plugin_Repos_Property_SubstituteTask extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_Property_SubstituteTask
+    extends Xinc_Plugin_Task_Base
     implements Xinc_Plugin_Task_Setter_Interface
 {
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validate()
     {
         return true;
     }
 
+    /**
+     * Returns name of Task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return 'propertySubstitution';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-        $this->_subtasks[]=$task;
-    }
-
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     */
     public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::PROJECT_SET_VALUES;

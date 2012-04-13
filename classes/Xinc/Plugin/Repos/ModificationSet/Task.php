@@ -33,9 +33,14 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Interface.php';
 class Xinc_Plugin_Repos_ModificationSet_Task
     extends Xinc_Plugin_Task_Base
 {
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validate()
     {
-        foreach ($this->_subtasks as $task) {
+        foreach ($this->arSubtasks as $task) {
             if (!$task instanceof Xinc_Plugin_Repos_ModificationSet_AbstractTask) {
                 return false;
             }
@@ -65,7 +70,7 @@ class Xinc_Plugin_Repos_ModificationSet_Task
 
     public function process(Xinc_Build_Interface $build)
     {
-        foreach ($this->_subtasks as $task) {
+        foreach ($this->arSubtasks as $task) {
             $task->process($build);
             if ( $build->getStatus() == Xinc_Build_Interface::PASSED ) {
                 return;

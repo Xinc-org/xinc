@@ -30,9 +30,14 @@ declare(encoding = 'utf-8');
 require_once 'Xinc/Plugin/Task/Interface.php';
 require_once 'Xinc/Build/Tasks/Iterator.php';
 
-abstract class Xinc_Plugin_Task_Base implements Xinc_Plugin_Task_Interface
+abstract class Xinc_Plugin_Task_Base
+    implements Xinc_Plugin_Task_Interface
 {
-    protected $_subtasks = array();
+    /**
+     * @var array Subtasks for this task
+     */
+    protected $arSubtasks = array();
+
     protected $_plugin;
     protected $_xml;
     
@@ -51,16 +56,17 @@ abstract class Xinc_Plugin_Task_Base implements Xinc_Plugin_Task_Interface
     }
 
     /**
-     * Support for subtasks, empty by default
-     * needs to be overriden if needed in the extending class
+     * Support for subtasks, empty by default.
      *
-     * @param Xinc_Plugin_Task_Interface $task
+     * @param Xinc_Plugin_Task_Interface $task Task to register
+     *
+     * @return void
      */
     public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
-        $this->_subtasks[] = $task;
+        Xinc_Logger::getInstance()->debug('Registering Task: ' . get_class($task));
+        $this->arSubtasks[] = $task;
     }
-
 
     /**
      * Returns name of task by lowercasing class name.
@@ -74,7 +80,7 @@ abstract class Xinc_Plugin_Task_Base implements Xinc_Plugin_Task_Interface
 
     public function getTasks()
     {
-        return new Xinc_Build_Tasks_Iterator($this->_subtasks);
+        return new Xinc_Build_Tasks_Iterator($this->arSubtasks);
     }
 
     public function getXml()

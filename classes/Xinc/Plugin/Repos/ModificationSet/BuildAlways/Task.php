@@ -24,7 +24,7 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
@@ -33,32 +33,30 @@ class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task
     extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     /**
-     * Directory containing the Subversion project.
+     * Returns name of task.
      *
-     * @var string
+     * @return string Name of task.
      */
-    private $_directory = '.';
-
     public function getName()
     {
         return 'buildalways';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-        $this->_subtasks[]=$task;
-    }
-
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::PRE_PROCESS;
-    }
-
+    /**
+     * Check if this modification set has been modified
+     *
+     * @return Xinc_Plugin_Repos_ModificationSet_Result
+     */
     public function checkModified(Xinc_Build_Interface $build)
     {
         return $this->_plugin->checkModified();
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validateTask()
     {
         return true;

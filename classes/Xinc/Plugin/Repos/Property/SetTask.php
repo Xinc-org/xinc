@@ -30,7 +30,8 @@ declare(encoding = 'utf-8');
 
 require_once 'Xinc/Plugin/Task/Base.php';
 
-class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_Property_SetTask
+    extends Xinc_Plugin_Task_Base
 {
     private $_lastPair = array();
 
@@ -93,9 +94,14 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
         $this->_file = $fileName;
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validate()
     {
-        foreach ( $this->_subtasks as $task ) {
+        if (count($this->arSubtasks) > 0) {
             /**
              * cannot have subtasks
              */
@@ -112,16 +118,21 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Base
         }
     }
 
+    /**
+     * Returns name of Task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return 'property';
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-        $this->_subtasks[]=$task;
-    }
-
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     */
     public function getPluginSlot()
     {
         return Xinc_Plugin_Slot::INIT_PROCESS;

@@ -24,30 +24,44 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Task/Base.php';
 
 class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Base
 {
-    public function getPluginSlot(){
-        /**
-         * see Xinc/Plugin/Slot.php for available slots
-         */
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     * @see Xinc/Plugin/Slot.php for available slots
+     */
+    public function getPluginSlot()
+    {
         return Xinc_Plugin_Slot::PROJECT_INIT;
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validate()
     {
-        foreach ($this->_subtasks as $task) {
-            if (!$task instanceof Xinc_Plugin_Repos_Configuration_AbstractTask ) {
+        foreach ($this->arSubtasks as $task) {
+            if (!$task instanceof Xinc_Plugin_Repos_Configuration_AbstractTask) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     * Returns name of task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
          return 'configuration';
@@ -55,7 +69,7 @@ class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Base
 
     public function process(Xinc_Build_Interface $build)
     {
-        foreach ($this->_subtasks as $task) {
+        foreach ($this->arSubtasks as $task) {
             $task->configure($build);
         }
     }

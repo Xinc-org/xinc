@@ -38,6 +38,14 @@ interface Xinc_Plugin_Task_Interface
     public function __construct(Xinc_Plugin_Interface $plugin);
     public function init(Xinc_Build_Interface $build);
     public function process(Xinc_Build_Interface $build);
+
+    /**
+     * Support for subtasks, empty by default.
+     *
+     * @param Xinc_Plugin_Task_Interface $task Task to register
+     *
+     * @return void
+     */
     public function registerTask(Xinc_Plugin_Task_Interface $task);
 
     /**
@@ -58,6 +66,7 @@ interface Xinc_Plugin_Task_Interface
      * Returns the slot of this task inside a build.
      *
      * @return integer The slot number.
+     * @see Xinc/Plugin/Slot.php for available slots
      */
     public function getPluginSlot();
     public function getTasks();

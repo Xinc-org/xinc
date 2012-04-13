@@ -91,14 +91,12 @@ abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
     {
         try {
             return $this->validateTask();
-        }
-        catch(Exception $e){
+        } catch(Exception $e) {
             Xinc_Logger::getInstance()->error('Could not validate: '
                                              . $e->getMessage());
             return false;
         }
     }
-
 
     /**
      * Validates if a task can run by checking configs, directries and so on.

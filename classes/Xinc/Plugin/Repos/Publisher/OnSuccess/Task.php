@@ -33,15 +33,25 @@ require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 class Xinc_Plugin_Repos_Publisher_OnSuccess_Task
     extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-   
+    /**
+     * Returns name of task.
+     *
+     * @return string Name of task.
+     */
     public function getName()
     {
         return 'onsuccess';
     }
+
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validateTask()
     {
         
-        foreach ( $this->_subtasks as $task ) {
+        foreach ( $this->arSubtasks as $task ) {
             if (!$task instanceof Xinc_Plugin_Repos_Publisher_AbstractTask) {
                 return false;
             }
@@ -60,7 +70,7 @@ class Xinc_Plugin_Repos_Publisher_OnSuccess_Task
         
         $published = false;
         $build->info('Publishing with OnSuccess Publishers');
-        foreach ($this->_subtasks as $task) {
+        foreach ($this->arSubtasks as $task) {
             $published = true;
             $build->info('Publishing with OnSuccess Publisher: ' . get_class($task));
             $task->publish($build);

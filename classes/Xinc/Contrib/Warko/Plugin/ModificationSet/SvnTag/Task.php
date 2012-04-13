@@ -40,16 +40,11 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
     private $_switch = false;
     protected $_tagNameProperty = null;
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-        $this->_subtasks[]=$task;
-    }
-
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::PRE_PROCESS;
-    }
-
+    /**
+     * Check if this modification set has been modified
+     *
+     * @return Xinc_Plugin_Repos_ModificationSet_Result
+     */
     public function checkModified(Xinc_Build_Interface $build)
     {
        $res = $this->_plugin->checkModified($build, $this->_directory, $this->_prefix,
@@ -65,18 +60,22 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
     public function getName(){
          return "svntag";
     }
+
     public function setTagNameProperty($value)
     {
         $this->_tagNameProperty = $value;
     }
+
     public function setDirectory($directory)
     {
         $this->_directory = $directory;
     }
+
     public function setSwitch($switch)
     {
         $this->_switch = $switch;
     }
+
     public function setPrefix($prefix)
     {
         $this->_prefix = $prefix;
@@ -87,6 +86,11 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
         $this->_property = $property;
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
     public function validateTask()
     {
         if (!isset($this->_directory)) {
