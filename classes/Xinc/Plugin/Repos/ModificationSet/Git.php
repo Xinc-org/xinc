@@ -27,8 +27,13 @@ declare(encoding = 'utf-8');
  * @link      http://code.google.com/p/xinc/
  */
 
+require_once 'Xinc/Exception/ModificationSet.php';
+require_once 'Xinc/Ini.php';
+require_once 'Xinc/Logger.php';
 require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Git/Task.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 
 class Xinc_Plugin_Repos_ModificationSet_Git
     extends Xinc_Plugin_Base
@@ -88,6 +93,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git
             $strLocalHash = $this->getLocalHash($strBranch);
         } catch(Exception $e) {
             $build->error('Test of GIT Repos failed: ' . $e->getMessage());
+            $build->setStatus(Xinc_Build_Interface::FAILED);
             $result->setStatus(
                 Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
             );

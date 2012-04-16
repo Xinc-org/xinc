@@ -151,12 +151,24 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
     /**
      * Tells whether to update the working copy directly here or not
      *
-     * @param string $update
+     * @param string $strUpdate "true" or "1" as string to set update otherwise
+     *  it is interpreted as false.
+     *
+     * @return void
      */
-    public function setUpdate($update)
+    public function setUpdate($strUpdate)
     {
-        $update = (string) $update;
-        $this->_update = in_array($update, array('true', '1')) ? true:false;
+        $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true:false;
+    }
+
+    /**
+     * Get if git should be automaticaly updated.
+     *
+     * @return boolean True if git repos should be updated.
+     */
+    public function getUpdate()
+    {
+        return $this->bUpdate;
     }
 
     /**
@@ -168,15 +180,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-        $res = $this->_plugin->checkModified($build, $this->_directory,
-                                             $this->_update, $this->_username,
-                                             $this->_password);
-        if ($res->isChanged() && !empty($this->_property)) {
-            // a modification in this tag has been detected
-            $build->getProperties()->set($this->_property, true);
-            $build->info("Property '".$this->_property."' set to TRUE");
-        }
-        return $res;
+        return $this->_plugin->checkModified($build, $this);
     }
 
 
@@ -187,6 +191,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function validateTask()
     {
+        if (!class_exists('VersionControl_SVN')) {
+            throw new Xinc_Exception_MalformedConfig(
+                'PEAR::VersionControl_SVN doesn\'t exists.'
+                . 'You need to install it to use this task. '
+            );
+        }
         if (!isset($this->_directory)) {
             throw new Xinc_Exception_MalformedConfig('Element modificationSet/svn'
                                                     . ' - required attribute '

@@ -8,6 +8,7 @@ declare(encoding = 'utf-8');
  * @category  Development
  * @package   Xinc.Plugin.Repos.ModificationSet
  * @author    Arno Schneider <username@example.org>
+ * @author    Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
@@ -27,13 +28,13 @@ declare(encoding = 'utf-8');
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
-require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
+require_once 'Xinc/Exception/ModificationSet.php';
 require_once 'Xinc/Ini.php';
 require_once 'Xinc/Logger.php';
-require_once 'Xinc/Exception/ModificationSet.php';
+require_once 'Xinc/Plugin/Base.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
+require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
 
 class Xinc_Plugin_Repos_ModificationSet_Svn
     extends Xinc_Plugin_Base
@@ -85,169 +86,66 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
     ) {
         $result = new Xinc_Plugin_Repos_ModificationSet_Result();
 
-
         try {
             $this->svn = VersionControl_SVN::factory(
                 array('info'), 
                 array(
                     'fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_ARRAY,
+                    // @TODO VersionControl_SVN doesn't work as the documentation tolds.
                     'path'      => $task->getDirectory(),
                     'url'       => $task->getRepository(),
                     'username'  => $task->getUsername(),
                     'password'  => $task->getPassword(),
                 )
             );
+
+            $strRemoteHash = $this->getRemoteHash();
+            $strLocalHash = $this->getLocalHash();
         } catch(Exception $e) {
-            
+            $build->error('Test of Subversion failed: ' . $e->getMessage());
+            $build->setStatus(Xinc_Build_Interface::FAILED);
+            $result->setStatus(
+                Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR
+            );
+            return $result;
         }
         
 
-        exec($this->_svnPath . ' info ' . $credentials . ' --xml', $output, $result);
-        //$build->debug('result of "svn info --xml":' . var_export($output,true));
-        if ($result == 0) {
-            $localSet = implode("\n", $output);
+        $result->setRemoteRevision($strRemoteHash);
+        $result->setLocalRevision($strLocalHash);
 
-            try {
-                $url = $this->getURL($localSet);
-            } catch (Exception $e) {
-                $strOutput = $localSet;
-                if ($username != null || $password != null) {
-                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+
+        if ($strRemoteHash !== $strLocalHash) {
+            $this->fetch();
+            $this->getModifiedFiles($result);
+            $this->getChangeLog($result);
+
+            if ($task->getUpdate()) {
+                try {
+                    $this->update();
+                } catch(Exception $e) {
+                    $build->error('Update of GIT local failed: ' . $e->getMessage());
+                    $result>setStatus(
+                        Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
+                    );
+                    return $result;
                 }
-                $build->error('Problem with remote '
-                             . 'Subversion repository, cannot get URL of working copy ' . $strOutput);
-                $build->setStatus(Xinc_Build_Interface::FAILED);
-                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
-                return $modResult;
             }
-            $output = '';
-            $result = 9;
-
-            if (DIRECTORY_SEPARATOR == '/') {
-                // we are on Linux/Unix
-                $redirectErrors = ' 2>&1';
-            } else {
-                $redirectErrors = ' ';
-            }
-
-            exec($this->_svnPath . ' info ' . $credentials . ' ' . $url . ' --xml' . $redirectErrors, $output, $result);
-            $remoteSet = implode("\n", $output);
-
-            if ($result != 0) {
-                chdir($cwd);
-                /**throw new Xinc_Exception_ModificationSet('Problem with remote '
-                                                          . 'Subversion repository');*/
-                /**
-                 * Dont throw exception, but log error and make build fail
-                 */
-                $strOutput = $remoteSet;
-                if ($username != null || $password != null) {
-                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
-                }
-                $build->error('Problem with remote '
-                             . 'Subversion repository, output: ' . $strOutput);
-                $build->setStatus(Xinc_Build_Interface::FAILED);
-                /**
-                 * return -2 instead of true, see Issue 79
-                 */
-                //return Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED;
-                // dont make build fail if there are timeouts
-                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
-                return $modResult;
-            }
-            try {
-                $localRevision = $this->getRevision($localSet);
-            } catch (Exception $e) {
-                $strOutput = $localSet;
-                if ($username != null || $password != null) {
-                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
-                }
-                $build->error('Problem with remote '
-                             . 'Subversion repository, cannot get revision of working copy ' . $strOutput);
-                $build->setStatus(Xinc_Build_Interface::FAILED);
-                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
-                return $modResult;
-            }
-            try {
-                $remoteRevision = $this->getRevision($remoteSet);
-            } catch (Exception $e) {
-                $strOutput = $remoteSet;
-                if ($username != null || $password != null) {
-                    $strOutput = $this->_maskOutput($strOutput, array($username, $password));
-                }
-                $build->error('Problem with remote '
-                             . 'Subversion repository, cannot get revision of remote repos ' . $strOutput);
-                $build->setStatus(Xinc_Build_Interface::FAILED);
-                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
-                return $modResult;
-            }
-
-            $build->info('Subversion checkout dir is '.$dir.' '
-                           .'local revision @ '.$localRevision.' '
-                           .'Remote Revision @ '.$remoteRevision);
-            chdir($cwd);
-            //$changed = $localRevision < $remoteRevision;
-            $modResult->setLocalRevision($localRevision);
-            $modResult->setRemoteRevision($remoteRevision);
-
-            if ($update && $modResult->isChanged()) {
-                if ($build->getLastBuild()->getStatus() === Xinc_Build_Interface::FAILED) {
-                    try {
-                        $lastSuccessfulBuild = Xinc_Build_Repository::getLastSuccessfulBuild($build->getProject());
-                        //$modResult->mergeResultSet($lastSuccessfulBuild->getProperties()->get('changeset'));
-                        $changeSet = $lastSuccessfulBuild->getProperties()->get('changeset');
-                        if ($changeSet instanceof Xinc_Plugin_Repos_ModificationSet_Result) {
-                            $lasSuccessRev = $changeSet->getRemoteRevision();
-                            $this->_getChangeLog($build, $dir, $modResult,
-                                                 $lasSuccessRev, $localRevision,
-                                                 $username, $password);
-                        }
-                    } catch (Exception $e) {
-
-                    }
-                }
-                $this->_getModifiedFiles($build, $dir, $modResult, $username, $password);
-                $this->_getChangeLog($build, $dir, $modResult, $localRevision, $remoteRevision, $username, $password);
-                $this->_update($build, $dir, $modResult, $username, $password);
-                //$build->setStatus(Xinc_Build_Interface::PASSED);
-                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
-            } else if ($modResult->isChanged()) {
-                if ($build->getLastBuild()->getStatus() === Xinc_Build_Interface::FAILED) {
-                    try {
-                        $lastSuccessfulBuild = Xinc_Build_Repository::getLastSuccessfulBuild($build->getProject());
-                        //$modResult->mergeResultSet($lastSuccessfulBuild->getProperties()->get('changeset'));
-                        $changeSet = $lastSuccessfulBuild->getProperties()->get('changeset');
-                        if ($changeSet instanceof Xinc_Plugin_Repos_ModificationSet_Result) {
-                            $lasSuccessRev = $changeSet->getRemoteRevision();
-                            $this->_getChangeLog($build, $dir,
-                                                 $modResult, $lasSuccessRev,
-                                                 $localRevision, $username, $password);
-                        }
-                    } catch (Exception $e) {
-
-                    }
-                }
-                $this->_getModifiedFiles($build, $dir, $modResult, $username, $password);
-                $this->_getChangeLog($build, $dir, $modResult, $localRevision, $remoteRevision, $username, $password);
-                //$build->setStatus(Xinc_Build_Interface::PASSED);
-                $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED);
-            }
-            return $modResult;
-        } else {
-            chdir($cwd);
-            $build->error('Subversion checkout directory '
-                         . 'is not a working copy.');
-            $build->setStatus(Xinc_Build_Interface::FAILED);
-            //throw new Xinc_Exception_ModificationSet('Subversion checkout directory '
-            //                                        . 'is not a working copy.');
-            $modResult->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED);
-            return $modResult;
+            $result->setStatus(
+                Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
+            );
         }
+
+        return $result;
+    }
+
+    protected function getRemoteHash()
+    {
+        var_dump($this->svn->info->run());
     }
 
 
-
-    protected function _getChangeLog(
+    protected function getChangeLog(
         Xinc_Build_Interface $build, $dir,
         Xinc_Plugin_Repos_ModificationSet_Result $set,
         $fromRevision, $toRevision, $username, $password
@@ -310,7 +208,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         }
     }
 
-    protected function _getModifiedFiles(
+    protected function getModifiedFiles(
         Xinc_Build_Interface $build, $dir,
         Xinc_Plugin_Repos_ModificationSet_Result $set,
         $username, $password
@@ -376,7 +274,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         }
     }
 
-    private function _update(
+    private function update(
         Xinc_Build_Interface $build, $dir,
         Xinc_Plugin_Repos_ModificationSet_Result $set,
         $username, $password
@@ -416,42 +314,6 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         return $outputStr;
     }
 
-
-    /**
-     * Parse the result of an svn command for the Subversion project URL.
-     *
-     * @param string $result
-     *
-     * @return string
-     * @throws Exception
-     */
-    private function getUrl($result)
-    {
-        $xml = new SimpleXMLElement($result);
-        $urls = $xml->xpath('/info/entry/url');
-        $url = (string) $urls[0];
-        return $url;
-    }
-
-    /**
-     * Parse the result of an svn command 
-     * for the Subversion project revision number.
-     *
-     * @param string $result
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function getRevision($result)
-    {
-        $xml = new SimpleXMLElement($xmlString);
-        $commits = $xml->xpath("/info/entry/commit");
-        $commit = $commits[0];
-        $attributes = $commit->attributes();
-        $rev = (int)$attributes->revision;
-        return $rev;
-    }
-
     /**
      * Validate if the plugin can run properly on this system
      *
@@ -465,5 +327,6 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
             );
             return false;
         }
+        return true;
     }
 }
