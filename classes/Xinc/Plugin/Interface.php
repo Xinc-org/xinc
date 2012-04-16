@@ -32,24 +32,29 @@ require_once 'Xinc/Plugin/Exception.php';
 
 interface Xinc_Plugin_Interface
 {
-    public function validate();
-    
+    /**
+     *
+     * @return Xinc_Api_Module_Interface[]
+     */
+    public function getApiModules();
+
+    /**
+     *
+     * @return Xinc_Gui_Widget_Interface[]
+     */
+    public function getGuiWidgets();
+
     /**
      * Returns the defined tasks of the plugin
      *
      * @return Xinc_Plugin_Task[]
      */
     public function getTaskDefinitions();
-    
+
     /**
-     * 
-     * @return Xinc_Gui_Widget_Interface[]
+     * Validate if the plugin can run properly on this system
+     *
+     * @return boolean True if plugin can run properly otherwise false.
      */
-    public function getGuiWidgets();
-    
-    /**
-     * 
-     * @return Xinc_Api_Module_Interface[]
-     */
-    public function getApiModules();
+    public function validate();
 }

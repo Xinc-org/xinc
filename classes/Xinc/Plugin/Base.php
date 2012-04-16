@@ -31,17 +31,30 @@ require_once 'Xinc/Plugin/Interface.php';
 
 abstract class Xinc_Plugin_Base implements Xinc_Plugin_Interface
 {
+    /**
+     *
+     * @return Xinc_Api_Module_Interface[]
+     */
+    public function getApiModules()
+    {
+        return array();
+    }
+
+    /**
+     *
+     * @return Xinc_Gui_Widget_Interface[]
+     */
     public function getGuiWidgets()
     {
         return array();
     }
 
+    /**
+     * Returns the defined tasks of the plugin
+     *
+     * @return Xinc_Plugin_Task[]
+     */
     public function getTaskDefinitions()
-    {
-        return array();
-    }
-    
-    public function getApiModules()
     {
         return array();
     }

@@ -37,15 +37,21 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      *
      * @var string
      */
-    private $_directory = '.';
+    private $strDirectory = '.';
 
-    private $_update = false;
+    /**
+     * @var boolean Update repository if change detected.
+     */
+    private $bUpdate = false;
 
-    private $_username = null;
+    /**
+     * @var string The remote repository to clone from.
+     */
+    private $strRepository = '';
 
-    private $_password = null;
+    private $strUsername = null;
 
-    private $_property;
+    private $strPassword = null;
 
 
     /**
@@ -59,24 +65,47 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
     }
 
     /**
-     * Sets the svn checkout directory.
+     * Sets the git checkout directory.
      *
-     * @param string
+     * @param string $strDirectory Directory for git checkout.
+     *
+     * @return void
      */
-    public function setDirectory($directory)
+    public function setDirectory($strDirectory)
     {
-        $this->_directory = (string)$directory;
+        $this->strDirectory = (string)$strDirectory;
     }
 
     /**
-     * sets the name of the property, which will be set to
-     * TRUE in case a modification was detected
+     * Gets the SVN checkout directory.
      *
-     * @param string $property
+     * @return string Directory which was set.
      */
-    public function setProperty($property)
+    public function getDirectory()
     {
-        $this->_property = (string) $property;
+        return $this->strDirectory;
+    }
+
+    /**
+     * Sets the remote repository.
+     *
+     * @param string $strRepository The remote repository.
+     *
+     * @return void
+     */
+    public function setRepository($strRepository)
+    {
+        $this->strRepository = (string)$strRepository;
+    }
+
+    /**
+     * Gets the remote repository url.
+     *
+     * @return string Repository url which was set.
+     */
+    public function getRepository()
+    {
+        return $this->strRepository;
     }
 
     /**
@@ -84,9 +113,19 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      *
      * @param string
      */
-    public function setUsername($username)
+    public function setUsername($strUsername)
     {
-        $this->_username = (string)$username;
+        $this->strUsername = (string)$strUsername;
+    }
+
+    /**
+     * Gets the user name
+     *
+     * @return string Username which was set.
+     */
+    public function getUsername()
+    {
+        return $this->strUsername;
     }
 
     /**
@@ -94,9 +133,19 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      *
      * @param string
      */
-    public function setPassword($password)
+    public function setPassword($strPassword)
     {
-        $this->_password = (string)$password;
+        $this->strPassword = (string)$strPassword;
+    }
+
+    /**
+     * Gets the password
+     *
+     * @return string Password which was set.
+     */
+    public function getPassword()
+    {
+        return $this->strPassword;
     }
 
     /**
