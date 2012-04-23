@@ -40,7 +40,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
     extends Xinc_Plugin_Base
 {
     /**
-     * @var string Path to project
+     * @var string Path to project.
      */
     private $strPath;
 
@@ -48,6 +48,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      * @var VersionControl_SVN The svn object.
      */
     private $svn = null;
+
+    /**
+     * @var Xinc_Plugin_Repos_ModificationSet_Svn_Task The task config.
+     */
+    private $task = null;
 
     /**
      * Constructor
@@ -87,10 +92,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         $result = new Xinc_Plugin_Repos_ModificationSet_Result();
 
         try {
+            $this->task = $task;
             $this->svn = VersionControl_SVN::factory(
-                array('info'), 
+                array('info', 'log'), 
                 array(
-                    'fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_ARRAY,
+                    'fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_ASSOC,
                     // @TODO VersionControl_SVN doesn't work as the documentation tolds.
                     'path'      => $task->getDirectory(),
                     'url'       => $task->getRepository(),
@@ -99,8 +105,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                 )
             );
 
-            $strRemoteHash = $this->getRemoteHash();
-            $strLocalHash = $this->getLocalHash();
+            $strRemoteVersion = $this->getRemoteVersion();
+            $strLocalVersion = $this->getLocalVersion();
         } catch(Exception $e) {
             $build->error('Test of Subversion failed: ' . $e->getMessage());
             $build->setStatus(Xinc_Build_Interface::FAILED);
@@ -111,11 +117,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         }
         
 
-        $result->setRemoteRevision($strRemoteHash);
-        $result->setLocalRevision($strLocalHash);
+        $result->setRemoteRevision($strRemoteVersion);
+        $result->setLocalRevision($strLocalVersion);
 
 
-        if ($strRemoteHash !== $strLocalHash) {
+        if ($strRemoteVersion !== $strLocalVersion) {
             $this->fetch();
             $this->getModifiedFiles($result);
             $this->getChangeLog($result);
@@ -139,11 +145,23 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         return $result;
     }
 
-    protected function getRemoteHash()
+    protected function getRemoteVersion()
     {
-        var_dump($this->svn->info->run());
+        $this->svn->info->run(
+            array($this->task->getRepository()),
+            array('xml' => true)
+        );
+        die('A');
     }
 
+
+    protected function getLocalVersion()
+    {
+        var_dump($this->svn->info->run(
+            array($this->task->getDirectory()),
+            array('xml' => true)
+        ));
+    }
 
     protected function getChangeLog(
         Xinc_Build_Interface $build, $dir,
