@@ -134,7 +134,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Base
             if (DIRECTORY_SEPARATOR == '\\') {
                 exec('xcopy /E /Y /I ' . escapeshellarg($sourceFile . '\*') . ' ' . escapeshellarg($targetDir), $out, $res1);
             } else {
-                exec('cp  -Rf ' . escapeshellarg($sourceFile . '/*') . ' ' . escapeshellarg($targetDir), $out, $res1);
+                exec('cp -Rf ' . escapeshellarg($sourceFile) . ' ' . escapeshellarg($targetDir), $out, $res1);
             }
             $res = false;
             if ($res1==0) {
