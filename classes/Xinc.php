@@ -260,42 +260,56 @@ class Xinc
     /**
      * Set the directory in which to save project status files
      *
-     * @param string $statusDir
+     * @param string $strStatusDir Directory for the status files.
+     *
      * @throws Xinc_Build_Status_Exception_NonWriteable
      */
-    function setStatusDir($statusDir)
+    function setStatusDir($strStatusDir)
     {
-        /**
-         * we need to check if the statusdir is writeable otherwise
-         * exit
-         */
-        //echo "Incoming: $statusDir\n";
-        $statusDir = realpath($statusDir);
-        //echo "Realpath: $statusDir\n";
-        Xinc_Logger::getInstance()->verbose('Setting statusdir: ' . $statusDir);
-        if (!is_dir($statusDir)) {
-            Xinc_Logger::getInstance()->verbose('statusdir "' . $statusDir .'" does not exist. Trying to create');
-            $parentDir = dirname($statusDir);
-            if (!is_writeable($parentDir)) {
-                Xinc_Logger::getInstance()->verbose('parentDir "' . $parentDir .'" not writeable.');
-                throw new Xinc_Build_Status_Exception_NonWriteable($statusDir);
-            } else {
-                /**
-                 * create the directory
-                 */
-                mkdir($statusDir, 0755, true);
-                Xinc_Logger::getInstance()->verbose('creating statusdir "' . $statusDir .'"');
-            }
-        } else if (!is_writeable($statusDir)) {
-            Xinc_Logger::getInstance()->verbose('statusDir "' . $statusDir .'" is not writeable.');
-            throw new Xinc_Build_Status_Exception_NonWriteable($statusDir);
+        Xinc_Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
+        try {
+            $this->_statusDir = $this->checkDirectory($strStatusDir);
+        } catch (Exception $e) {
+            throw new Xinc_Build_Status_Exception_NonWriteable($strStatusDir);
         }
-        $this->_statusDir = $statusDir;
+    }
+
+
+    /**
+     * Checks if the directory is available otherwise tries to create it.
+     * Returns the realpath of the directory afterwards.
+     *
+     * @param string $strDirectory Directory to check for.
+     *
+     * @return string The realpath of given directory.
+     * @throws Xinc_Build_Status_Exception_NonWriteable
+     */
+    protected function checkDirectory($strDirectory)
+    {
+        if (!is_dir($strDirectory)) {
+            Xinc_Logger::getInstance()->verbose(
+                'Directory "' . $strDirectory .'" does not exist. Trying to create'
+            );
+            $bCreated = mkdir($strDirectory, 0755, true);
+            if (!$bCreated) {
+                Xinc_Logger::getInstance()->verbose(
+                    'Directory "' . $strDirectory .'" could not be created.'
+                );
+                throw new Xinc_Build_Status_Exception_NonWriteable($strDirectory);
+            }
+        } else if (!is_writeable($strDirectory)) {
+            Xinc_Logger::getInstance()->verbose(
+                'Directory "' . $strDirectory .'" is not writeable.'
+            );
+            throw new Xinc_Build_Status_Exception_NonWriteable($strDirectory);
+        }
+        return realpath($strDirectory);
     }
 
     /**
+     * Returns the  Directory for the status files.
      *
-     * @return String
+     * @return string Directory for the status files.
      */
     public function getStatusDir()
     {
@@ -394,24 +408,37 @@ class Xinc
     }
 
     /**
-     * @param string $dir
+     * Sets the working directory.
+     *
+     * @param string $strWorkingDir The working directory.
+     *
+     * @throws Xinc_Build_Status_Exception_NonWriteable
      */
-    public function setWorkingDir($dir)
+    public function setWorkingDir($strWorkingDir)
     {
-        $dir = realpath($dir);
-        Xinc_Logger::getInstance()->verbose('Setting workingdir: ' . $dir);
-        $this->_workingDir = $dir;
+        Xinc_Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
+        try {
+            $this->_workingDir = $this->checkDirectory($strWorkingDir);
+        } catch (Exception $e) {
+            throw new Xinc_Build_Status_Exception_NonWriteable($strWorkingDir);
+        }
     }
 
     /**
+     * Set the directory in which to project files lies.
      *
-     * @param string $dir
+     * @param string $strProjectDir Directory of the project files.
+     *
+     * @throws Xinc_Build_Status_Exception_NonWriteable
      */
-    public function setProjectDir($dir)
+    public function setProjectDir($strProjectDir)
     {
-        $dir = realpath($dir);
-        Xinc_Logger::getInstance()->verbose('Setting projectdir: ' . $dir);
-        $this->_projectDir = $dir;
+        Xinc_Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
+        try {
+            $this->_projectDir = $this->checkDirectory($strProjectDir);
+        } catch (Exception $e) {
+            throw new Xinc_Build_Status_Exception_NonWriteable($strProjectDir);
+        }
     }
 
     /**
