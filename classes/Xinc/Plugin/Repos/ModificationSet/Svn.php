@@ -94,7 +94,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         try {
             $this->task = $task;
             $this->svn = VersionControl_SVN::factory(
-                array('info', 'log'), 
+                array('info', 'log', 'status'), 
                 array(
                     'fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_ASSOC,
                     // @TODO VersionControl_SVN doesn't work as the documentation tolds.
@@ -115,14 +115,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
             );
             return $result;
         }
-        
 
         $result->setRemoteRevision($strRemoteVersion);
         $result->setLocalRevision($strLocalVersion);
 
-
         if ($strRemoteVersion !== $strLocalVersion) {
-            $this->fetch();
+            // $this->fetch();
             $this->getModifiedFiles($result);
             $this->getChangeLog($result);
 
@@ -130,7 +128,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                 try {
                     $this->update();
                 } catch(Exception $e) {
-                    $build->error('Update of GIT local failed: ' . $e->getMessage());
+                    $build->error('Update of local SVN failed: ' . $e->getMessage());
                     $result>setStatus(
                         Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
                     );
@@ -141,43 +139,45 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                 Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
             );
         }
-
+die('Z');
         return $result;
     }
 
     protected function getRemoteVersion()
     {
-        $this->svn->info->run(
-            array($this->task->getRepository()),
-            array('xml' => true)
+        return $this->getRevisionFromXML(
+            $this->svn->info->run(
+                array($this->task->getRepository())
+            )
         );
-        die('A');
     }
 
 
     protected function getLocalVersion()
     {
-        var_dump($this->svn->info->run(
-            array($this->task->getDirectory()),
-            array('xml' => true)
-        ));
+        return $this->getRevisionFromXML(
+            $this->svn->info->run(
+                array($this->task->getDirectory())
+            )
+        );
+    }
+
+    /**
+     * Returns the revison number from the PEAR::SVN Info XML
+     *
+     * @param array $arXml The XML as array from SVN info
+     *
+     * @return string Revision number
+     */
+    protected function getRevisionFromXML(array $arXml)
+    {
+        return $arXml[0]['REVISION'];
     }
 
     protected function getChangeLog(
-        Xinc_Build_Interface $build, $dir,
-        Xinc_Plugin_Repos_ModificationSet_Result $set,
-        $fromRevision, $toRevision, $username, $password
+        Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
-        if ($fromRevision < $toRevision) {
-            $fromRevision++;
-        }
-        $credentials = '';
-        if ($username != null) { 
-            $credentials .= ' --username ' . $username; 
-        }
-        if ($password != null) { 
-            $credentials .= ' --password ' . $password; 
-        }
+die('M');
         exec($this->_svnPath . '  log -r ' . $fromRevision . ':' . $toRevision . ' --xml '
             . $credentials . ' ' . $dir,
             $output, $result);
@@ -227,68 +227,37 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
     }
 
     protected function getModifiedFiles(
-        Xinc_Build_Interface $build, $dir,
-        Xinc_Plugin_Repos_ModificationSet_Result $set,
-        $username, $password
+        Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
-        $credentials = '';
-        if ($username != null) { 
-            $credentials .= ' --username ' . $username; 
-        }
-        if ($password != null) {
-            $credentials .= ' --password ' . $password; 
-        }
-        exec($this->_svnPath . ' status -u --xml ' . $credentials . ' ' . $dir, $output, $result);
+        $arStatus = $this->svn->status->run(
+            array($this->task->getDirectory()),
+            array('u' => true)
+        );
 
-        if ($result == 0) {
-            try {
-                array_shift($output);
-                $xml = new SimpleXMLElement(join('', $output));
-                $basePaths = $xml->xpath("/status/target");
-                $basePath = $basePaths[0];
-                $baseAttributes = $basePath->attributes();
-                $basePathName = (string) $baseAttributes->path;
+        $result->setBasePath($arStatus['TARGET']['PATH']);
 
-                $set->setBasePath($basePathName);
-
-                $entries = $xml->xpath("//entry");
-                //$build->info(var_export($entries,true));
-                //var_dump($entries);
-                foreach ($entries as $entry) {
-                    $attributes = $entry->attributes();
-                    $fileName = (string) $attributes->path;
-                    $author = null;
-                    $reposStatus = $entry->{'repos-status'};
-                    if ($reposStatus) {
-                        $reposAttributes = $reposStatus->attributes();
-                        $reposStatus = (string)$reposAttributes->item;
-                    } else {
-                        $reposStatus = '';
-                    }
-                    switch ($reposStatus) {
-                        case 'modified':
-                            $set->addUpdatedResource($fileName, $author);
-                            break;
-                        case 'deleted':
-                            $set->addDeletedResource($fileName, $author);
-                            break;
-                        case 'added':
-                            $set->addNewResource($fileName, $author);
-                            break;
-                        case 'conflict':
-                            $set->addConflictResource($fileName, $author);
-                            break;
-                    }
-                }
-            } catch (Exception $e) {
-                $build->error('Could not parse modification set xml.');
+        foreach ($arStatus['TARGET']['ENTRY'] as $entry) {
+            $strFileName = $entry['PATH'];
+            $author = null;
+            if (isset($entry['REPOS-STATUS'])) {
+                $strReposStatus = $entry['REPOS-STATUS']['ITEM'];
+            } else {
+                $strReposStatus = '';
             }
-        } else {
-            $strOutput = join('', $output);
-            if ($username != null || $password != null) {
-                $strOutput = $this->_maskOutput($strOutput, array($username, $password));
+            switch ($strReposStatus) {
+                case 'modified':
+                    $result->addUpdatedResource($strFileName, $author);
+                    break;
+                case 'deleted':
+                    $result->addDeletedResource($strFileName, $author);
+                    break;
+                case 'added':
+                    $result->addNewResource($strFileName, $author);
+                    break;
+                case 'conflict':
+                    $result->addConflictResource($strFileName, $author);
+                    break;
             }
-            $build->error('SVN status query failed: ' . $strOutput);
         }
     }
 
