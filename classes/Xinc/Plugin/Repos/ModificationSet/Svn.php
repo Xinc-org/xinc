@@ -251,23 +251,29 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                     $strReposStatus = '';
                 }
                 switch ($strReposStatus) {
-                    case 'modified':
-                        $result->addUpdatedResource($strFileName, $author);
-                        break;
-                    case 'deleted':
-                        $result->addDeletedResource($strFileName, $author);
-                        break;
-                    case 'added':
-                        $result->addNewResource($strFileName, $author);
-                        break;
-                    case 'conflict':
-                        $result->addConflictResource($strFileName, $author);
-                        break;
+                case 'modified':
+                    $result->addUpdatedResource($strFileName, $author);
+                    break;
+                case 'deleted':
+                    $result->addDeletedResource($strFileName, $author);
+                    break;
+                case 'added':
+                    $result->addNewResource($strFileName, $author);
+                    break;
+                case 'conflict':
+                    $result->addConflictResource($strFileName, $author);
+                    break;
                 }
             }
         }
     }
 
+    /**
+     * Updates local svn to the remoteRevision for this test.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
     private function update()
     {
         $arUpdate = $this->svn->update->run(
@@ -276,8 +282,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         );
 
         if (false === $arUpdate) {
-            $build->error('Update of SVN working copy failed');
-            $set->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
+            throw new Xinc_Exception_ModificationSet(
+                'SVN update local working copy failed',
+                0
+            );
         }
     }
 
