@@ -25,14 +25,14 @@ declare(encoding = 'utf-8');
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 class Xinc_Ini
 {
     private static $_instance;
     private static $_tabPos = 15;
-    private $_fileName;
+    private $strFileName = '';
     private $_ini;
     
     /**
@@ -50,20 +50,28 @@ class Xinc_Ini
     
     private function __construct()
     {
-        
-        $res = include_once 'PEAR/Config.php';
-        if (!$res || !class_exists('PEAR_Config')) {
-                throw new Exception("Cannot load pear config");
+        $ret = include_once 'PEAR/Config.php';
+        if (!$ret || !class_exists('PEAR_Config')) {
+            throw new Exception('Cannot load pear config');
         }
-        $pearDir = PEAR_Config::singleton()->get('data_dir');
-        $this->_fileName = $pearDir . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'xinc.ini';
-        if (file_exists($this->_fileName)) {
-            $this->_ini = @parse_ini_file($this->_fileName, true);
-            if (!is_array($this->_ini)) {
-                $this->_ini = array();
+
+        $strIniDir = PEAR_Config::singleton()->get('data_dir')
+            . DIRECTORY_SEPARATOR . 'Xinc';
+        $this->strFileName = $strIniDir . DIRECTORY_SEPARATOR . 'xinc.ini';
+
+        if (file_exists($this->strFileName)) {
+            if (is_readable($this->strFileName)) {
+                $this->_ini = @parse_ini_file($this->strFileName, true);
+                if (!is_array($this->_ini)) {
+                    $this->_ini = array();
+                }
+            } else {
+                throw new Exception('Cannot read xinc.ini, permission denied?');
             }
-        } else if (!touch($this->_fileName)) {
-            throw new Exception("Cannot load pear config");
+        } elseif ((!is_dir($strIniDir) && !mkdir($strIniDir, 0700, true))
+            || !touch($this->strFileName)
+        ) {
+            throw new Exception('Cannot create empty xinc.ini.');
         } else {
             $this->_ini = array();
         }
@@ -100,7 +108,7 @@ class Xinc_Ini
     
     public function save()
     {
-        return $this->_write($this->_fileName, $this->_ini);
+        return $this->_write($this->strFileName, $this->_ini);
     }
     
     private function _write($path, $assoc_arr)
