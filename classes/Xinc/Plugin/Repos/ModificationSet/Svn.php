@@ -145,7 +145,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      *
      * @return string The remote version.
      */
-    private function getRemoteVersion()
+    protected function getRemoteVersion()
     {
         return $this->getRevisionFromXML(
             $this->svn->info->run(
@@ -159,7 +159,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      *
      * @return string The local version.
      */
-    private function getLocalVersion()
+    protected function getLocalVersion()
     {
         return $this->getRevisionFromXML(
             $this->svn->info->run(
@@ -175,7 +175,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      *
      * @return string Revision number
      */
-    private function getRevisionFromXML(array $arXml)
+    protected function getRevisionFromXML(array $arXml)
     {
         return $arXml[0]['REVISION'];
     }
@@ -190,7 +190,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      * @return void
      * @throw Xinc_Exception_ModificationSet
      */
-    private function getChangeLog(
+    protected function getChangeLog(
         Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
         $arLog = $this->svn->log->run(
@@ -229,7 +229,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      * @return void
      * @throw Xinc_Exception_ModificationSet
      */
-    private function getModifiedFiles(
+    protected function getModifiedFiles(
         Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
         $arStatus = $this->svn->status->run(
@@ -274,7 +274,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      * @return void
      * @throw Xinc_Exception_ModificationSet
      */
-    private function update()
+    protected function update()
     {
         $arUpdate = $this->svn->update->run(
             array($this->task->getDirectory()),
