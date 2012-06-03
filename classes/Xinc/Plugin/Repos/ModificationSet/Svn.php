@@ -94,10 +94,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         try {
             $this->task = $task;
             $this->svn = VersionControl_SVN::factory(
-                array('info', 'log', 'status'), 
+                array('info', 'log', 'status', 'update'), 
                 array(
                     'fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_ASSOC,
-                    // @TODO VersionControl_SVN doesn't work as the documentation tolds.
+                    // @TODO VersionControl_SVN doesn't work as documented.
                     'path'      => $task->getDirectory(),
                     'url'       => $task->getRepository(),
                     'username'  => $task->getUsername(),
@@ -120,30 +120,32 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
         $result->setLocalRevision($strLocalVersion);
 
         if ($strRemoteVersion !== $strLocalVersion) {
-            // $this->fetch();
-            $this->getModifiedFiles($result);
-            $this->getChangeLog($result);
-
-            if ($task->getUpdate()) {
-                try {
+            try {
+                $this->getModifiedFiles($result);
+                $this->getChangeLog($result);
+                if ($this->task->getUpdate()) {
                     $this->update();
-                } catch(Exception $e) {
-                    $build->error('Update of local SVN failed: ' . $e->getMessage());
-                    $result>setStatus(
-                        Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
-                    );
-                    return $result;
                 }
+                $result->setStatus(
+                    Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
+                );
+            } catch(Exception $e) {
+                $build->error('Processing SVN failed: ' . $e->getMessage());
+                $result>setStatus(
+                    Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
+                );
             }
-            $result->setStatus(
-                Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
-            );
         }
-die('Z');
+
         return $result;
     }
 
-    protected function getRemoteVersion()
+    /**
+     * Gets remote version.
+     *
+     * @return string The remote version.
+     */
+    private function getRemoteVersion()
     {
         return $this->getRevisionFromXML(
             $this->svn->info->run(
@@ -152,8 +154,12 @@ die('Z');
         );
     }
 
-
-    protected function getLocalVersion()
+    /**
+     * Gets local version.
+     *
+     * @return string The local version.
+     */
+    private function getLocalVersion()
     {
         return $this->getRevisionFromXML(
             $this->svn->info->run(
@@ -169,64 +175,61 @@ die('Z');
      *
      * @return string Revision number
      */
-    protected function getRevisionFromXML(array $arXml)
+    private function getRevisionFromXML(array $arXml)
     {
         return $arXml[0]['REVISION'];
     }
 
-    protected function getChangeLog(
+    /**
+     * Gets the modified files between two revisions from SVN and puts this info
+     * into the ModificationSet_Result.
+     *
+     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
+     *  Hash ids from and set modified files.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
+    private function getChangeLog(
         Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
-die('M');
-        exec($this->_svnPath . '  log -r ' . $fromRevision . ':' . $toRevision . ' --xml '
-            . $credentials . ' ' . $dir,
-            $output, $result);
-        if ($result == 0) {
-            array_shift($output);
-            $xml = new SimpleXMLElement(join('', $output));
-            $entries = $xml->xpath("//logentry");
-            foreach ($entries as $entry) {
-                $attributes = $entry->attributes();
-                $revision = (int) $attributes->revision;
-                $author = (string) $entry->author;
-                $dateStr = (string) $entry->date;
-                $dateArr = preg_match("/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).*?([Z+-])(.*)/",
-                                      $dateStr, $matches);
-                $zIndicator = $dateArr[7];
-                $year = $dateArr[1];
-                $month = $dateArr[2];
-                $day = $dateArr[3];
-                $hours = $dateArr[4];
-                $minutes = $dateArr[5];
-                $seconds = $dateArr[6];
-                $timestamp = mktime($hours, $minutes, $seconds, $month, $day, $year);
-                if ($zIndicator != 'Z') {
-                    $addArr = split(':', $dateArr[8]);
-                    if (count($addArr)>1) {
-                        $addHours = $addArr[0];
-                        $addMinutes = $addArr[1];
-                        if ($zIndicator == '+') {
-                            $timestamp += $addHours * 60 * 60;
-                        } else if ($zIndicator == '-') {
-                            $timestamp -= $addHours * 60 * 60;
-                        }
-                    }
-                }
+        $arLog = $this->svn->log->run(
+            array($this->task->getDirectory()),
+            array(
+                'r' => $result->getLocalRevision() + 1
+                    . ':' . $result->getRemoteRevision()
+            )
+        );
 
-                $message = (string) $entry->msg;
-
-                $set->addLogMessage($revision, $timestamp, $author, $message);
+        if (false !== $arLog) {
+            foreach ($arLog as $arEntry) {
+                $result->addLogMessage(
+                    $arEntry['REVISION'],
+                    strtotime($arEntry['DATE']),
+                    $arEntry['AUTHOR'],
+                    $arEntry['MSG']
+                );
             }
         } else {
-            $strOutput = join('', $output);
-            if ($username != null || $password != null) {
-                $strOutput = $this->_maskOutput($strOutput, array($username, $password));
-            }
-            $build->error('Could not retrieve log messages from svn: ' . $strOutput);
+            throw new Xinc_Exception_ModificationSet(
+                'SVN get log failed',
+                0
+            );
         }
     }
 
-    protected function getModifiedFiles(
+
+    /**
+     * Gets the modified files between two revisions from svn and puts this info
+     * into the ModificationSet_Result.
+     *
+     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
+     *  Hash ids from and set modified files.
+     *
+     * @return void
+     * @throw Xinc_Exception_ModificationSet
+     */
+    private function getModifiedFiles(
         Xinc_Plugin_Repos_ModificationSet_Result $result
     ) {
         $arStatus = $this->svn->status->run(
@@ -236,69 +239,46 @@ die('M');
 
         $result->setBasePath($arStatus['TARGET']['PATH']);
 
-        foreach ($arStatus['TARGET']['ENTRY'] as $entry) {
-            $strFileName = $entry['PATH'];
-            $author = null;
-            if (isset($entry['REPOS-STATUS'])) {
-                $strReposStatus = $entry['REPOS-STATUS']['ITEM'];
-            } else {
-                $strReposStatus = '';
-            }
-            switch ($strReposStatus) {
-                case 'modified':
-                    $result->addUpdatedResource($strFileName, $author);
-                    break;
-                case 'deleted':
-                    $result->addDeletedResource($strFileName, $author);
-                    break;
-                case 'added':
-                    $result->addNewResource($strFileName, $author);
-                    break;
-                case 'conflict':
-                    $result->addConflictResource($strFileName, $author);
-                    break;
+        if (isset($arStatus['TARGET']['ENTRY'])
+            && is_array($arStatus['TARGET']['ENTRY'])
+        ) {
+            foreach ($arStatus['TARGET']['ENTRY'] as $entry) {
+                $strFileName = $entry['PATH'];
+                $author = null;
+                if (isset($entry['REPOS-STATUS'])) {
+                    $strReposStatus = $entry['REPOS-STATUS']['ITEM'];
+                } else {
+                    $strReposStatus = '';
+                }
+                switch ($strReposStatus) {
+                    case 'modified':
+                        $result->addUpdatedResource($strFileName, $author);
+                        break;
+                    case 'deleted':
+                        $result->addDeletedResource($strFileName, $author);
+                        break;
+                    case 'added':
+                        $result->addNewResource($strFileName, $author);
+                        break;
+                    case 'conflict':
+                        $result->addConflictResource($strFileName, $author);
+                        break;
+                }
             }
         }
     }
 
-    private function update(
-        Xinc_Build_Interface $build, $dir,
-        Xinc_Plugin_Repos_ModificationSet_Result $set,
-        $username, $password
-    ) {
-        $credentials = '';
-        if ($username != null) { 
-            $credentials .= ' --username ' . $username; 
-        }
-        if ($password != null) { 
-            $credentials .= ' --password ' . $password; 
-        }
-        exec($this->_svnPath . ' update ' . $credentials . ' ' . $dir, $output, $result);
-        if ($result == 0) {
-            $build->getProperties()->set('svn.revision', $set->getRemoteRevision());
-            $build->info('Update of SVN working copy succeeded.');
-        } else {
-            $strOutput = join('', $output);
-            if ($username != null || $password != null) {
-                $strOutput = $this->_maskOutput($strOutput, array($username, $password));
-            }
-            $build->error('Update of SVN working copy failed: ' . $strOutput);
+    private function update()
+    {
+        $arUpdate = $this->svn->update->run(
+            array($this->task->getDirectory()),
+            array('r' => $result->getRemoteRevision())
+        );
+
+        if (false === $arUpdate) {
+            $build->error('Update of SVN working copy failed');
             $set->setStatus(Xinc_Plugin_Repos_ModificationSet_AbstractTask::ERROR);
         }
-    }
-
-    /**
-     * Masks certain string elements with **** and returns the string
-     *
-     * @param string $inputStr
-     * @param array $maskElements
-     *
-     * @return string
-     */
-    private function _maskOutput($inputStr, array $maskElements)
-    {
-        $outputStr = str_replace($maskElements, '****', $inputStr);
-        return $outputStr;
     }
 
     /**
