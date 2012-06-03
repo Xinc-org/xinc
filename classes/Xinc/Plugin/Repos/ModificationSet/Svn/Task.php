@@ -8,6 +8,7 @@ declare(encoding = 'utf-8');
  * @category  Development
  * @package   Xinc.Plugin.Repos.ModificationSet.Svn
  * @author    Arno Schneider <username@example.org>
+ * @author    Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
@@ -111,7 +112,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
     /**
      * Sets the username for the svn commands
      *
-     * @param string
+     * @param string $strUsername Username for svn.
+     *
+     * @return void
      */
     public function setUsername($strUsername)
     {
@@ -131,7 +134,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
     /**
      * Sets the password for the svn commands
      *
-     * @param string
+     * @param string $strPassword Password for svn
+     *
+     * @return void
      */
     public function setPassword($strPassword)
     {
@@ -198,9 +203,10 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
             );
         }
         if (!isset($this->_directory)) {
-            throw new Xinc_Exception_MalformedConfig('Element modificationSet/svn'
-                                                    . ' - required attribute '
-                                                    . '\'directory\' is not set');
+            throw new Xinc_Exception_MalformedConfig(
+                'Element modificationSet/svn - required attribute \'directory\''
+                . ' is not set'
+            );
         }
 
         $file = $this->_directory;
