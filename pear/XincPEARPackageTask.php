@@ -140,7 +140,7 @@ class XincPEARPackageTask extends MatchingTask
         $package->addPackageDepWithChannel('required', 'phing', 'pear.phing.info', '2.4.0');
         $package->addPackageDepWithChannel('required', 'Base', 'components.ez.no', '1.4.1');
         $package->addPackageDepWithChannel('required', 'Graph', 'components.ez.no', '1.2.1');
-        $package->addPackageDepWithChannel('optional', 'VersionControl_SVN', 'pear.php.net', '0.4.0');
+        $package->addPackageDepWithChannel('optional', 'VersionControl_SVN', 'pear.php.net', '0.5.0');
         $package->addPackageDepWithChannel('optional', 'VersionControl_Git', 'pear.php.net', '0.4.4');
         $package->addPackageDepWithChannel('optional', 'Mail', 'pear.php.net', '1.2.0');
         $package->addPackageDepWithChannel('optional', 'PHPUnit', 'pear.phpunit.de', '3.5.0');
