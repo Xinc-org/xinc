@@ -269,6 +269,7 @@ class XincPEARPackageTask extends MatchingTask
                 'examples'  => 'data',
                 'resources' => 'data',
                 'etc'       => 'data',
+                'scripts'   => 'data',
                 'web'       => 'data',
                 'tests'     => 'test',
             ),
@@ -338,6 +339,7 @@ class XincPEARPackageTask extends MatchingTask
         $package->addIgnoreToRelease('bin/xinc.bat');
         $package->addIgnoreToRelease('bin/xinc.php');
         $package->addIgnoreToRelease('etc/init.d/xinc.bat');
+        $package->addIgnoreToRelease('scripts/winserv.exe');
         $package->addIgnoreToRelease('scripts/xinc-uninstall.bat');
     }
 
