@@ -266,7 +266,7 @@ class XincPEARPackageTask extends MatchingTask
             'dir_roles' => array(
                 'bin'       => 'script',
                 'templates' => 'data',
-                'examples'  => 'doc',
+                'examples'  => 'data',
                 'resources' => 'data',
                 'etc'       => 'data',
                 'web'       => 'data',
