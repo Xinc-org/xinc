@@ -25,9 +25,6 @@
         <fileset dir="${phingpkg.home}/data" id="data">
             <include name="**"/>
         </fileset>
-        <fileset dir="${phingpkg.home}" id="docs">
-            <include name="examples/**"/>
-        </fileset>
         <fileset dir="${phingpkg.home}" id="etc">
             <include name="etc/**"/>
         </fileset>
@@ -102,7 +99,6 @@
         <copy todir="${build.src.dir}/">
             <fileset refid="web"/>
             <fileset refid="data"/>
-            <fileset refid="docs"/>
             <fileset refid="etc"/>
             <fileset refid="misc"/>
         </copy>
@@ -138,7 +134,6 @@
             <fileset refid="classes"/>
             <fileset refid="web"/>
             <fileset refid="data"/>
-            <fileset refid="docs"/>
             <fileset refid="etc"/>
             <fileset refid="misc"/>
             <fileset refid="scripts"/>
