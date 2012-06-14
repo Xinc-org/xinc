@@ -124,7 +124,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                 $this->getModifiedFiles($result);
                 $this->getChangeLog($result);
                 if ($this->task->getUpdate()) {
-                    $this->update();
+                    $this->update($result);
                 }
                 $result->setStatus(
                     Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
@@ -271,11 +271,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
     /**
      * Updates local svn to the remoteRevision for this test.
      *
+     * @param Xinc_Plugin_Repos_ModificationSet_Result $result The Result to get
+     *  Hash ids from and set modified files.
+     *
      * @return void
      * @throw Xinc_Exception_ModificationSet
      */
-    protected function update()
-    {
+    protected function update(
+        Xinc_Plugin_Repos_ModificationSet_Result $result
+    ) {
         $arUpdate = $this->svn->update->run(
             array($this->task->getDirectory()),
             array('r' => $result->getRemoteRevision())
