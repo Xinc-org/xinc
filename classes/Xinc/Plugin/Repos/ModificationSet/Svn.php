@@ -98,8 +98,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                 array(
                     'fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_ASSOC,
                     // @TODO VersionControl_SVN doesn't work as documented.
-                    'path'      => $task->getDirectory(),
-                    'url'       => $task->getRepository(),
+                    // 'path'      => $task->getDirectory(),
+                    // 'url'       => $task->getRepository(),
                     'username'  => $task->getUsername(),
                     'password'  => $task->getPassword(),
                 )
@@ -107,7 +107,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
 
             $strRemoteVersion = $this->getRemoteVersion();
             $strLocalVersion = $this->getLocalVersion();
-        } catch(Exception $e) {
+        } catch(VersionControl_SVN_Exception $e) {
             $build->error('Test of Subversion failed: ' . $e->getMessage());
             $build->setStatus(Xinc_Build_Interface::FAILED);
             $result->setStatus(
@@ -130,8 +130,9 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                     Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
                 );
             } catch(Exception $e) {
+                var_dump($e->getMessage());
                 $build->error('Processing SVN failed: ' . $e->getMessage());
-                $result>setStatus(
+                $result->setStatus(
                     Xinc_Plugin_Repos_ModificationSet_AbstractTask::FAILED
                 );
             }
@@ -177,7 +178,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      */
     protected function getRevisionFromXML(array $arXml)
     {
-        return $arXml[0]['REVISION'];
+        return $arXml['entry'][0]['revision'];
     }
 
     /**
@@ -201,13 +202,14 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
             )
         );
 
-        if (false !== $arLog) {
-            foreach ($arLog as $arEntry) {
+        if (isset($arLog['logentry'])) {
+            foreach ($arLog['logentry'] as $arEntry) {
+                var_dump($arEntry);
                 $result->addLogMessage(
-                    $arEntry['REVISION'],
-                    strtotime($arEntry['DATE']),
-                    $arEntry['AUTHOR'],
-                    $arEntry['MSG']
+                    $arEntry['revision'],
+                    strtotime($arEntry['date']),
+                    $arEntry['author'],
+                    $arEntry['msg']
                 );
             }
         } else {
@@ -236,17 +238,16 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
             array($this->task->getDirectory()),
             array('u' => true)
         );
+        $arTarget = $arStatus['target'][0];
 
-        $result->setBasePath($arStatus['TARGET']['PATH']);
+        $result->setBasePath($arTarget['path']);
 
-        if (isset($arStatus['TARGET']['ENTRY'])
-            && is_array($arStatus['TARGET']['ENTRY'])
-        ) {
-            foreach ($arStatus['TARGET']['ENTRY'] as $entry) {
-                $strFileName = $entry['PATH'];
+        if (isset($arTarget['entry'])) {
+            foreach ($arTarget['entry'] as $entry) {
+                $strFileName = $entry['path'];
                 $author = null;
-                if (isset($entry['REPOS-STATUS'])) {
-                    $strReposStatus = $entry['REPOS-STATUS']['ITEM'];
+                if (isset($entry['repos-status'])) {
+                    $strReposStatus = $entry['repos-status']['item'];
                 } else {
                     $strReposStatus = '';
                 }
