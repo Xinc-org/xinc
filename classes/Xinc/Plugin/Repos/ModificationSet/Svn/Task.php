@@ -38,7 +38,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      *
      * @var string
      */
-    private $strDirectory = '.';
+    private $strDirectory = '';
 
     /**
      * @var boolean Update repository if change detected.
@@ -202,14 +202,14 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
                 . 'You need to install it to use this task. '
             );
         }
-        if (!isset($this->_directory)) {
+        if (!isset($this->strDirectory)) {
             throw new Xinc_Exception_MalformedConfig(
                 'Element modificationSet/svn - required attribute \'directory\''
                 . ' is not set'
             );
         }
 
-        $file = $this->_directory;
+        $file = $this->strDirectory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
 
         if (!file_exists($file) && !file_exists($file2)) {
@@ -217,8 +217,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
                 'Directory ' . $file2 . ' does not exist'
             );
             return false;
-        } else if (file_exists($file2)) {
-            $this->_directory = $file2;
+        } elseif (file_exists($file2)) {
+            $this->strDirectory = $file2;
         }
         return true;
     }
