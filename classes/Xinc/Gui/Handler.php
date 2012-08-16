@@ -225,7 +225,6 @@ class Xinc_Gui_Handler
             /**
              * Try Api Handler
              */
-            
             header('HTTP/1.0 404 Not Found');
             die;
         }
@@ -233,8 +232,7 @@ class Xinc_Gui_Handler
          * Start session
          */
         session_start();
-        if (!session_is_registered('Xinc_Gui_Handler')) {
-           
+        if (!isset($_SESSION['Xinc_Gui_Handler'])) {
             $_SESSION['Xinc_Gui_Handler'] = 1;
             /**
              * Trigger the session_start event on the widget
