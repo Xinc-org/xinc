@@ -40,7 +40,7 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
     
     public function __construct()
     {
-        $svnPath = Xinc_Ini::get('path', 'svn');
+        $svnPath = Xinc_Ini::getInstance()->get('path', 'svn');
         if (empty($svnPath)) {
             $svnPath = 'svn';
         }
