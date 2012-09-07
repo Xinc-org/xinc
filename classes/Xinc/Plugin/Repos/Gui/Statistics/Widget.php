@@ -228,7 +228,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
                                                               true,
                                                               '/statistics/?project=' . $project->getName(), null,
                                                               'Statistics - ' . $project->getName(),
-                                                              true, true, true,'100%');
+                                                              true, true, false,'100%');
         return $statisticsMenu;
     }
 
