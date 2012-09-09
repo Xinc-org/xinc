@@ -12,7 +12,7 @@ initTree = function(){
         enableDD:false,
         containerScroll: true, 
         loader: new Tree.TreeLoader({
-            dataUrl:'/api/artifacts/list/json/',
+            dataUrl:'./api/artifacts/list/json/',
                  baseParams: {lib:'yui', p: '{projectname}', buildtime: '{buildtime}'}
         })
     });
@@ -20,9 +20,9 @@ initTree = function(){
     tree.on('click',function(node) {
       if(node.leaf==true) {
           //if (node.id.lastIndexOf('.html')>0 || node.id.lastIndexOf('.txt')>0) {
-          	openMenuTab('/api/artifacts/get/json/{projectname}/{buildtime}/'+node.id,  node.id + ' - {projectname} - Artifact - {buildlabel}', '/api/artifacts/get/json/{projectname}/{buildtime}/'+node.id, null, true, true);
+          	openMenuTab('./api/artifacts/get/json/{projectname}/{buildtime}/'+node.id,  node.id + ' - {projectname} - Artifact - {buildlabel}', './api/artifacts/get/json/{projectname}/{buildtime}/'+node.id, null, true, true);
           //} else {
-      	//window.open('/api/artifacts/get/json/{projectname}/{buildtime}/'+node.id);
+      	//window.open('./api/artifacts/get/json/{projectname}/{buildtime}/'+node.id);
       	//}
       }
       return false;

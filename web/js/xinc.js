@@ -65,7 +65,6 @@ tab.on('close',function(p) {
 
 
 var c=Ext.getCmp('doc-body').add(tab);
-//tab.load({url: '/dashboard/detail?project='+name, scripts: true});
 c.show();
 return false;
 
@@ -87,7 +86,7 @@ tbar: [
 title: label + ' - ' +name,
 autoDestroy: true,
 plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
+autoLoad: {url: './dashboard/detail?project='+name, scripts: true,
 nocache: true,
     text: "Loading...",
     timeout: 30},
@@ -98,13 +97,12 @@ tab.on('close',function(p) {
  alert(p);
 });
 var c=Ext.getCmp('doc-body').add(tab);
-//tab.load({url: '/dashboard/detail?project='+name, scripts: true});
 c.show();
 return false;
 
 }
 
-Ext.BLANK_IMAGE_URL = '/extjs/resources/s.gif';
+Ext.BLANK_IMAGE_URL = './images/s.gif';
 
 
 ApiPanel = function() {
@@ -245,7 +243,7 @@ MainPanel = function(){
         items: {
             id:'widget-dashboard',
             title: 'Dashboard',
-            autoLoad: {url: '/dashboard/projects', callback: this.initSearch, scope: this, scripts: true, nocache:true, timeout:30},
+            autoLoad: {url: './dashboard/projects', callback: this.initSearch, scope: this, scripts: true, nocache:true, timeout:30},
             iconCls:'icon-dashboard',
             autoScroll: true,
             scripts: true
@@ -346,7 +344,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 	        '<tpl for=".">',
 	        '<div class="search-item">',
 	            '<a class="member" ext:cls="{cls}" ext:member="{member}" href="output/{cls}.html">',
-				'<img src="/extjs/resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
+				'<img src="./images/s.gif" class="item-icon icon-{type}"/>{member}',
 				'</a> ',
 				'<a class="cls" ext:cls="{cls}" href="output/{cls}.html">{cls}</a>',
 	            '<p>{doc}</p>',

@@ -47,7 +47,7 @@ class Xinc_Plugin_Repos_Gui_Documentation_Extension_Last
             . 'documentation-link.phtml'
         );
         $deliverableLinkTemplate = file_get_contents($deliverableLinkTemplateFile);
-        $getDeliverableUrl = '/api/documentation/get/file/' 
+        $getDeliverableUrl = './api/documentation/get/file/' 
                            . $build->getProject()->getName()
                            . '/' . $build->getBuildTime() . '/';
         $statusDir = Xinc_Gui_Handler::getInstance()->getStatusDir();

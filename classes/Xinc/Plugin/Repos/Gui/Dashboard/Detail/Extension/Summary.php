@@ -48,16 +48,16 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary
     {
         switch ($build->getStatus()) {
             case 1:
-                $image = '/images/passed.png';
+                $image = './images/passed.png';
                 break;
             case -1:
-                $image = '/images/stopped.png';
+                $image = './images/stopped.png';
                 break;
             case 0:
-                $image = '/images/failed.png';
+                $image = './images/failed.png';
                 break;
             default:
-                $image = '/images/stopped.png';
+                $image = './images/stopped.png';
                 break;
         }
 

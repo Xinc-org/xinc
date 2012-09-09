@@ -46,7 +46,7 @@ class Xinc_Plugin_Repos_Gui_Deliverable_Extension_Last
             . 'deliverable-link.phtml'
         );
         $deliverableLinkTemplate = file_get_contents($deliverableLinkTemplateFile);
-        $getDeliverableUrl = '/api/deliverable/get/download/' 
+        $getDeliverableUrl = './api/deliverable/get/download/' 
                            . $build->getProject()->getName()
                            . '/' . $build->getBuildTime() . '/';
         $deliverableLinks = array();

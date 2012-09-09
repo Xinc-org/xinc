@@ -1,4 +1,5 @@
 <?php
+
 global $_NO_RUN,$_NO_RUN_REASON;;
 
 require_once 'Xinc/Ini.php';

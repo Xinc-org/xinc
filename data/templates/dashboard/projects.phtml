@@ -3,17 +3,16 @@
 var projects = [];
 var projectBuilds = [];
 </script>
-<link rel="stylesheet" type="text/css" href="/extjs/resources/css/ext-all.css" />
+
 <div id="welcome">
     <div class="col-last">
         <div class="res-block">
             <div class="res-block-inner">
                 <h3>Icon Legend</h3>
                 <ul id="legend" style="list-style:none;margin-left:0;">
-                    <li><img src="/images/passed.png" class="item-icon icon">Build passed</li>
-                    <li><img src="/images/failed.png" class="item-icon icon">Build failed</li>
-                    <li><img src="/images/stopped.png" class="item-icon icon">Build stopped</li>
-                   
+                    <li><img src="./images/passed.png" class="item-icon icon">Build passed</li>
+                    <li><img src="./images/failed.png" class="item-icon icon">Build failed</li>
+                    <li><img src="./images/stopped.png" class="item-icon icon">Build stopped</li>
                 </ul>
             </div>
         </div>
@@ -22,7 +21,6 @@ var projectBuilds = [];
     <div id="projects"  class="body-wrap">
     <h2>Projects</h2>
         <table cellspacing="0" class="member-table">
-    
        <?php
 
 while ($this->builds->hasNext()) {
@@ -38,8 +36,8 @@ while ($this->builds->hasNext()) {
             Xinc_Timezone::set(Xinc_Gui_Handler::getInstance()->getSystemTimezone());
         }
     }
-    $icon=$build->getStatus() == 1?'/images/passed.png':
-                                           ($build->getStatus() == -1 ?'/images/stopped.png':'images/failed.png');
+    $icon=$build->getStatus() == 1?'./images/passed.png':
+                                           ($build->getStatus() == -1 ?'./images/stopped.png':'./images/failed.png');
     $text=$build->getStatus() == 1   ?'success':
                                            ($build->getStatus() == -1 ?'stopped':'failed');
 $detailUrl=<<<EOJ
@@ -102,7 +100,7 @@ $xincTimezone = Xinc_Gui_Handler::getInstance()->getConfigDirective('timezone');
 var loaded=false;
 function refreshMainPanel()
 {
-Ext.getCmp('widget-dashboard').load({url: '/dashboard/projects', scripts: true, nocache:true, timeout:30});
+Ext.getCmp('widget-dashboard').load({url: './dashboard/projects', scripts: true, nocache:true, timeout:30});
 loaded=true;
 }
 if (!loaded) {

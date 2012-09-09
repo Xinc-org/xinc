@@ -181,12 +181,13 @@ class Xinc_Gui_Handler
     {
         return isset($this->_config[$name])?$this->_config[$name]:null;
     }
+
     /**
      * Called from the index.php to generate outpout
      * based on the Request / Widget which is triggered
      *
      */
-    
+
     /**
      * @return string pathname of the query
      */
@@ -202,16 +203,17 @@ class Xinc_Gui_Handler
             $path = $_SERVER['REQUEST_URI'];
             $path = str_replace('?' . $_SERVER['QUERY_STRING'], '', $path);
         }
+        $path = str_replace(dirname($_SERVER['PHP_SELF']), '', $path);
         return $path;
     }
-    
+
     public function view()
     {
         /**
          * Determine called Pathname
          */
         $path  = $this->_getRequestPath();
-        
+
         if (strpos($path, $this->_apiHandler->getBasePath())===0) {
             $this->_apiHandler->processCall($path);
             return;

@@ -143,7 +143,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
             'widget-dashboard',
             'Dashboard', 
             true,
-            '/dashboard/projects',
+            './dashboard/projects',
             'icon-dashboard',
             'Dashboard',
             true,

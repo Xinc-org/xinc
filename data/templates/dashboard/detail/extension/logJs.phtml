@@ -40,7 +40,7 @@ logxml = function(){
 	// create the Data Store
     var store = new Ext.data.Store({
        proxy: new Ext.data.HttpProxy({
-            url: '/api/logmessages/get/json/?p={projectname}&buildtime={buildtime}&',
+            url: './api/logmessages/get/json/?p={projectname}&buildtime={buildtime}&',
             extraParams: {p:'{projectname}',buildtime:'{buildtime}'}
         }),
 

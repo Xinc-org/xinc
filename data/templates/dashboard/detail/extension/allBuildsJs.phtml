@@ -8,7 +8,7 @@ allbuilds = function(){
     // create the Data Store
     var store = new Ext.data.Store({
        proxy: new Ext.data.HttpProxy({
-            url: '/api/builds/get/json/?p={projectname}&'
+            url: './api/builds/get/json/?p={projectname}&'
         }),
 
         // create reader that reads the Topic records
@@ -51,10 +51,10 @@ allbuilds = function(){
     	 	return '<img src="/images/failed.png" width="16" height="16"/>';
     	 	break;
     	 	case '1':
-    	 	return '<img src="/images/passed.png" width="16" height="16"/>';
+    	 	return '<img src="./images/passed.png" width="16" height="16"/>';
     	 	break;
     	 	case '-1':
-    	 		return '<img src="/images/stopped.png" width="16" height="16"/>';
+    	 		return '<img src="./images/stopped.png" width="16" height="16"/>';
     	 	break;
     	
     	}
