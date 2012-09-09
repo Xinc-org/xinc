@@ -42,7 +42,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Extension_Prominent
     public function getContent(Xinc_Build_Interface $build)
     {
         $projectName = $build->getProject()->getName();
-        $url = '/statistics/?project=' . $projectName;
+        $url = './statistics/?project=' . $projectName;
         $click = 'openMenuTab(\'statistics-'.$projectName.'\',\'Statistics - '.$projectName.'\',\''.$url.'\',null,false,true,\'100%\');';
         return '<a href="#" onclick="'.$click.'">Graphs</a>';
     }

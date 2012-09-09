@@ -155,7 +155,6 @@ class Xinc_Logger
         $this->_logQueue[] = new Xinc_Logger_Message($priority[1], $logTime, $msg);
         
         
-
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
         $timestr = '[' . date('Y-m-d H:i:s', $logTime) . '-' . Xinc_Timezone::get() . ']';

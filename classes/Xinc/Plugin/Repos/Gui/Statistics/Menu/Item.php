@@ -52,7 +52,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Menu_Item
         $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('statistics-' . $project->getName(),
                                                               'Statistics',
                                                               true,
-                                                              '/statistics/?project=' . $project->getName(), null,
+                                                              './statistics/?project=' . $project->getName(), null,
                                                               'Statistics - ' . $project->getName(),
                                                               true, true, true, '100%');
         return $statisticsMenu;

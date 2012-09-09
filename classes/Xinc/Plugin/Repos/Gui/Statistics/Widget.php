@@ -65,6 +65,8 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
             $this->_projectName = $_REQUEST['project'];
         }
         $url = $_SERVER['REDIRECT_URL'];
+        $url = str_replace(dirname($_SERVER['PHP_SELF']), '', $url);
+
         switch($url) {
             //case '/statistics':
             //case '/statistics/':
@@ -226,7 +228,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('statistics-' . $project->getName(),
                                                               'Statistics',
                                                               true,
-                                                              '/statistics/?project=' . $project->getName(), null,
+                                                              './statistics/?project=' . $project->getName(), null,
                                                               'Statistics - ' . $project->getName(),
                                                               true, true, false,'100%');
         return $statisticsMenu;

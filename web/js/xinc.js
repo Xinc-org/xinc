@@ -36,7 +36,7 @@ tab.on('close',function(p) {
  alert(p);
 });
 } else {
-var tab=new Ext.ux.ManagedIframePanel({
+var tab=new Ext.ux.ManagedIFrame.Panel({
 id: id,
 autoScroll: true,
 autoShow: true,
