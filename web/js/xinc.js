@@ -1,7 +1,5 @@
 function openMenuTab(id, title, url, iconClass, scripts, framed, height){
 var isExternal = url.substring(0, 7) == "http://";
-//alert(isExternal);
-
 
 if(height == null) {
  height='100%';
@@ -14,55 +12,52 @@ return;
 }
 if(!isExternal && !framed) {
 var tab=new Ext.Panel({
-id: id,
-autoScroll: true,
-tabTip: title,
-title: title,
-tbar: [
-				title
-	            ],
-autoDestroy: true,
-plugins: new Ext.ux.TabCloseMenu(),
-iconCls: iconClass,
-autoLoad: {url: url, scripts: scripts,
-nocache: true,
+  id: id,
+  autoScroll: true,
+  tabTip: title,
+  title: title,
+  tbar: [
+    title
+  ],
+  autoDestroy: true,
+  plugins: new Ext.ux.TabCloseMenu(),
+  iconCls: iconClass,
+  autoLoad: {
+    url: url,
+    scripts: scripts,
+    nocache: true,
     text: "Loading...",
     timeout: 30,
-    frame: true},
-closable:true
+    frame: true
+  },
+  closable:true
 });
 tab.on('close',function(p) {
  p.destroy();
- alert(p);
 });
 } else {
 var tab=new Ext.ux.ManagedIFrame.Panel({
-id: id,
-autoScroll: true,
-autoShow: true,
-title: title,
-tbar: [
-				title
-	            ],
-tabTip: title,
-autoDestroy: true,
-plugins: new Ext.ux.TabCloseMenu(),
-type:'iframepanel',
-defaultSrc : url,
-iframeStyle : {overflow:'auto', height: height},
-//body: new IFrameComp({ id: id, url: url }),
-//body: new Ext.ux.ManagedIFrame({ src:url, frameBorder: 0, cls:'x-panel-body',width: '500px', height: '300px', id:'iframe'+id}),
-closable:true
+  id: id,
+  autoScroll: true,
+  autoShow: true,
+  title: title,
+  tbar: [
+    title
+  ],
+  tabTip: title,
+  autoDestroy: true,
+  plugins: new Ext.ux.TabCloseMenu(),
+  type:'iframepanel',
+  defaultSrc : url,
+  iframeStyle : {overflow:'auto', height: height},
+  closable:true
 });
 tab.tabTip=title;
 tab.qtip=title;
 tab.on('close',function(p) {
  p.destroy();
- alert(p);
 });
 }
-
-
 
 var c=Ext.getCmp('doc-body').add(tab);
 c.show();
@@ -94,7 +89,6 @@ closable:true
 });
 tab.on('close',function(p) {
  p.destroy();
- alert(p);
 });
 var c=Ext.getCmp('doc-body').add(tab);
 c.show();
@@ -102,7 +96,7 @@ return false;
 
 }
 
-Ext.BLANK_IMAGE_URL = './images/s.gif';
+Ext.BLANK_IMAGE_URL = './extjs/resources/images/default/s.gif';
 
 
 ApiPanel = function() {
@@ -286,19 +280,16 @@ Ext.extend(MainPanel, Ext.TabPanel, {
                 var member = Ext.fly(target).getAttributeNS('ext', 'member');
                 this.loadClass(target.href, cls, member);
             }else if(target.className == 'inner-link'){
-                //this.getActiveTab().scrollToSection(target.href.split('#')[1]);
                 loadProject = target.href.split('#')[1];
                 openTab(loadProject, projects[loadProject][0], projects[loadProject][1])
             }else if(target.className=='external'){
-            
                 if (target.href.lastIndexOf('.html') > 0) {
                    openMenuTab(target.href, target.href, target.href, null, true, true);
                 } else {
                    window.open(target.href);
                 }
             } else {
-            
-            	if (target.href.lastIndexOf('.html') > 0) {
+                if (target.href.lastIndexOf('.html') > 0) {
                    openMenuTab(target.href, target.href, target.href, null, true, true);
                    return false;
                 }
@@ -344,7 +335,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
 	        '<tpl for=".">',
 	        '<div class="search-item">',
 	            '<a class="member" ext:cls="{cls}" ext:member="{member}" href="output/{cls}.html">',
-				'<img src="./images/s.gif" class="item-icon icon-{type}"/>{member}',
+				'<img src="./extjs/resources/images/default/s.gif" class="item-icon icon-{type}"/>{member}',
 				'</a> ',
 				'<a class="cls" ext:cls="{cls}" href="output/{cls}.html">{cls}</a>',
 	            '<p>{doc}</p>',
