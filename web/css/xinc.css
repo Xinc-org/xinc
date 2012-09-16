@@ -56,17 +56,19 @@ html, body {
     text-align:left;
 }
 
+#loading .loading-indicator,
 #doc-body .loading-indicator {
     font:bold 13px  Tahoma, Verdana, Arial, Helvetica, sans-serif;
     position:absolute;
     top:35%;
     left:43%;
     color:#444;
-    background-image:url(../extjs/resources/images/default/shared/large-loading.gif);
+    background-image:url(../extjs/resources/themes/images/default/shared/large-loading.gif);
     background-repeat: no-repeat;
     background-position:left 5px;
     padding:10px 10px 10px 38px;
     text-align:left;
+    height:auto;
 }
 a#welcome-link{
     background:#fff url(docs.gif) no-repeat 0px 0px;
@@ -96,15 +98,6 @@ a#help-forums{
 }
 #loading img {
     margin-bottom:5px;
-}
-#loading .loading-indicator{
-    background:white;
-    color:#555;
-    font:bold 13px tahoma,arial,helvetica;
-    padding:10px;
-    margin:0;
-    text-align:center;
-    height:auto;
 }
 #api-tree a span {
     font-family:verdana,arial,tahoma,sans-serif;
