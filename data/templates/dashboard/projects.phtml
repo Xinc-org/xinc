@@ -41,7 +41,7 @@ while ($this->builds->hasNext()) {
     $text=$build->getStatus() == 1   ?'success':
                                            ($build->getStatus() == -1 ?'stopped':'failed');
 $detailUrl=<<<EOJ
-openTab('{$build->getProject()->getName()}','{$build->getBuildTime()}', '{$build->getLabel()}');
+appXinc.addTabBuild('{$build->getProject()->getName()}','{$build->getBuildTime()}', '{$build->getLabel()}');return true;
 EOJ;
 ?>
  <tr class="method-row">

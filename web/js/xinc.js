@@ -29,7 +29,7 @@ Ext.require([
 */
 
 Ext.onReady(function(){
-    var app = new Ext.app.Xinc();
+    appXinc = new Ext.app.Xinc();
     Ext.get('loading').fadeOut({remove:true});
 });
 
@@ -97,27 +97,65 @@ Ext.define('Ext.app.Xinc', {
                         autoScroll: true,
                         border: false,
                     }]
-                },{
-                    id: 'options2',
-                    xtype: 'tabpanel',
-                    region: 'center',
-                    activeGroup: 0,
-                    items: [{
-                        id:'widget-dashboard',
-                        title: 'Dashboard',
-                        autoLoad: {
-                            url: './dashboard/projects',
-                            scope: this,
-                            nocache:true,
-                            timeout:30000
-                        },
-                        iconCls:'icon-dashboard',
-                        autoScroll: true,
-                        closable: true,
-                    }]
-                }]
+                }, this.createTabContainer()
+                ]
             }]
         });
         this.callParent(arguments);
+    },
+
+    createTabContainer: function() {
+        this.tabContainer = Ext.createWidget('tabpanel', {
+            id: 'options2',
+            xtype: 'tabpanel',
+            region: 'center',
+            activeGroup: 0,
+            items: [{
+                id:'widget-dashboard',
+                title: 'Dashboard',
+                loader: {
+                    autoLoad: true,
+                    url: './dashboard/projects',
+                    scope: this,
+                    nocache:true,
+                    loadMask: true,
+                    timeout:30000
+                },
+                iconCls:'icon-dashboard',
+                autoScroll: true,
+                closable: false,
+            }]
+        });
+
+        return this.tabContainer;
+    },
+
+    addTabBuild: function(name, build, label) {
+        var tab=Ext.getCmp('project-'+name +'-'+build);
+        if(tab) {
+            tab.show();
+            return;
+        }
+
+        var title= name + ' - ' + label;
+        this.tabContainer.add({
+            id: 'project-'+name+'-'+build,
+            autoScroll: true,
+            tbar: [
+                title
+            ],
+            title: label + ' - ' +name,
+            autoDestroy: true,
+            closable: true,
+            loader: {
+                autoLoad: true,
+                url: './dashboard/detail?project=' + name,
+                scope: this,
+                scripts: true,
+                nocache: true,
+                loadMask: true,
+                timeout: 30000
+            },
+        }).show();
     }
 });

@@ -3,35 +3,33 @@
 <script type="text/javascript">
 initTree = function(){
    
-   var Tree = Ext.tree;
+    var Tree = Ext.tree;
+
+    var store = Ext.create('Ext.data.TreeStore', {
+        autoLoad: {
+            url:'./api/artifacts/list/json/',
+            baseParams: {lib:'yui', p: '{projectname}', buildtime: '{buildtime}'}
+        }
+    });
     
-    var tree = new Tree.TreePanel({
+    var tree = new Ext.tree.Panel({
+        store: store,
         el:'tree-div-{projectname}-{buildtime}',
         autoScroll:true,
         animate:true,
         enableDD:false,
-        containerScroll: true, 
-        loader: new Tree.TreeLoader({
-            dataUrl:'./api/artifacts/list/json/',
-                 baseParams: {lib:'yui', p: '{projectname}', buildtime: '{buildtime}'}
-        })
+        containerScroll: true
     });
     
     tree.on('click',function(node) {
-      if(node.leaf==true) {
-          //if (node.id.lastIndexOf('.html')>0 || node.id.lastIndexOf('.txt')>0) {
-          	openMenuTab('./api/artifacts/get/json/{projectname}/{buildtime}/'+node.id,  node.id + ' - {projectname} - Artifact - {buildlabel}', './api/artifacts/get/json/{projectname}/{buildtime}/'+node.id, null, true, true);
-          //} else {
-      	//window.open('./api/artifacts/get/json/{projectname}/{buildtime}/'+node.id);
-      	//}
-      }
-      return false;
-    
-    }
-    );
+        if(node.leaf==true) {
+            openMenuTab('./api/artifacts/get/json/{projectname}/{buildtime}/'+node.id,  node.id + ' - {projectname} - Artifact - {buildlabel}', './api/artifacts/get/json/{projectname}/{buildtime}/'+node.id, null, true, true);
+        }
+        return false;
+    });
 
     // set the root node
-    var root = new Tree.AsyncTreeNode({
+    /*var root = new Tree.AsyncTreeNode({
         text: 'Artifacts',
         draggable:false,
         id:'source'
@@ -40,12 +38,7 @@ initTree = function(){
 
     // render the tree
     tree.render();
-    root.expand();
-   
-            
-            
-           
-        
+    root.expand();*/
 };
 
 

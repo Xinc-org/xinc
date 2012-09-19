@@ -26,7 +26,7 @@ allbuilds = function(){
             ]
         })
     });
-    store.setDefaultSort('buildtimeRaw', 'desc');
+    //store.setDefaultSort('buildtimeRaw', 'desc');
 
     // pluggable renders
     function buildDetails(value, p, record) {
@@ -46,101 +46,50 @@ allbuilds = function(){
                 value, record.data.forumtitle, record.id, record.data.forumid);
     }
     function statusRenderer(value, p, r){
-    	switch(value){
-    	 	case '0':
-    	 	return '<img src="/images/failed.png" width="16" height="16"/>';
-    	 	break;
-    	 	case '1':
-    	 	return '<img src="./images/passed.png" width="16" height="16"/>';
-    	 	break;
-    	 	case '-1':
-    	 		return '<img src="./images/stopped.png" width="16" height="16"/>';
-    	 	break;
-    	
-    	}
+        switch(value){
+            case '0':
+            return '<img src="/images/failed.png" width="16" height="16"/>';
+            break;
+            case '1':
+            return '<img src="./images/passed.png" width="16" height="16"/>';
+            break;
+            case '-1':
+                return '<img src="./images/stopped.png" width="16" height="16"/>';
+            break;
+
+        }
     }
     function renderLast(value, p, r){
         return String.format('{0}<br/>by {1}', value.dateFormat('M j, Y, g:i a'), r.data['lastposter']);
     }
 
-    // the column model has information about grid columns
-    // dataIndex maps the column to the specific data field in
-    // the data store
-    var cm = new Ext.grid.ColumnModel([
-    
-        {
-           id: 'logo',
-           header:'',
-           dataIndex:'status',
-           width: 20,
-           renderer: statusRenderer,
-           sortable:false
-        },
-        {
-           id: 'details', // id assigned so we can apply custom css (e.g. .x-grid-col-topic b { color:#333 })
-           header: "Label",
-           dataIndex: 'label',
-           width: 105,
-           align: 'left',
-           renderer: buildDetails
-           
-        },{
-           header: "Timestamp",
-           dataIndex: 'buildtime',
-           width: 160,
-           hidden: false
-           /**,
-           renderer: buildTime*/
-        }]);
-
-    // by default columns are sortable
-    cm.defaultSortable = true;
-
     var grid = new Ext.grid.GridPanel({
+        columns: [
+            {
+                id: 'logo',
+                header:'',
+                dataIndex:'status',
+                width: 20,
+                renderer: statusRenderer,
+                sortable:false
+            },
+            {
+                id: 'details', // id assigned so we can apply custom css (e.g. .x-grid-col-topic b { color:#333 })
+                header: "Label",
+                dataIndex: 'label',
+                width: 105,
+                align: 'left',
+                renderer: buildDetails
+
+            },{
+                header: "Timestamp",
+                dataIndex: 'buildtime',
+                width: 160,
+                hidden: false,
+                renderer: buildTime
+            }
+        ],
         el:'allbuilds-{projectname}-{buildtime}',
-        width:290,
-        height:300,
-        store: store,
-        cm: cm,
-        trackMouseOver:false,
-        sm: new Ext.grid.RowSelectionModel({selectRow:Ext.emptyFn}),
-        loadMask: true,
-        viewConfig: {
-            forceFit:true,
-            enableRowBody:true,
-            showStatus:true
-            /**,
-            getRowClass : function(record, rowIndex, p, store){
-                if(this.showStatus){
-                
-                    if (record.data.status == 1 ) {
-                      return 'build-successful-css';
-                    } else if (record.data.status == 0 ) {
-                    return 'build-failed-css';
-                    } else if (record.data.status == -1 ) {
-                    return 'build-stopped-css';
-                    }
-                    
-                    
-                }
-                return 'x-grid3-row-collapsed';
-            }*/
-        },
-        bbar: new Ext.PagingToolbar({
-            pageSize: 25,
-            store: store,
-            displayInfo: false,
-            displayMsg: '{0} - {1} of {2}',
-            emptyMsg: "No builds to display",
-            items:[
-              /**  '-', {
-                pressed: true,
-                enableToggle:true,
-                text: 'Show Preview',
-                cls: 'x-btn-text-icon details',
-                toggleHandler: toggleDetails
-            }*/]
-        })
     });
 
     // render it

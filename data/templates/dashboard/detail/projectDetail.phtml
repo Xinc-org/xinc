@@ -6,65 +6,6 @@
     zoom:1;
 }
 </style>
-<script type="text/javascript">
-function openTab(name,build,label){
-
-var tab=Ext.getCmp('project-'+name+'-'+build);
-var title= name + ' - ' + label;
-if(tab) {
-   tab.show();
-   return;
- 
-}
-var tab=new Ext.Panel({
-id: 'project-'+name+'-'+build,
-tbar: [
-				title
-	            ],
-autoScroll: true,
-title: name + ' - ' + label,
-autoDestroy: true,
-plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name, scripts: true,
-nocache: true,
-    text: "Loading...",
-    timeout: 30},
-closable:true
-});
-tab.on('close',function(p) {
- p.destroy();
- alert(p);
-});
-var c=Ext.getCmp('doc-body').add(tab);
-c.show();
-return false;
-
-}
-
-function openDetailTab(name,build, label){
-var tab=Ext.getCmp('project-'+name+'-'+build);
-if(tab) {
-   tab.show();
-   return;
-}
-var c=Ext.getCmp('doc-body').add(new Ext.Panel({
-id: 'project-'+name+'-'+build,
-autoScroll: true,
-autoDestroy: true,
-title: label + ' - ' + name,
-plugins: new Ext.ux.TabCloseMenu(),
-autoLoad: {url: '/dashboard/detail?project='+name+'&timestamp='+build, scripts: true,
-nocache: true,
-    text: "Loading...",
-    timeout: 30},
-closable:true
-}));
-c.show();
-return false;
-
-}
-
-</script>
 
 <div id="welcome">
     <!-- <div class="col">
