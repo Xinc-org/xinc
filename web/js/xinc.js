@@ -130,8 +130,8 @@ Ext.define('Ext.app.Xinc', {
         return this.tabContainer;
     },
 
-    addTabBuild: function(name, build, label) {
-        var tab=Ext.getCmp('project-'+name +'-'+build);
+    addTabBuild: function(name, timestamp, label) {
+        var tab=Ext.getCmp('project-'+name +'-'+timestamp);
         if(tab) {
             tab.show();
             return;
@@ -139,7 +139,7 @@ Ext.define('Ext.app.Xinc', {
 
         var title= name + ' - ' + label;
         this.tabContainer.add({
-            id: 'project-'+name+'-'+build,
+            id: 'project-'+name+'-'+timestamp,
             autoScroll: true,
             tbar: [
                 title
@@ -149,7 +149,7 @@ Ext.define('Ext.app.Xinc', {
             closable: true,
             loader: {
                 autoLoad: true,
-                url: './dashboard/detail?project=' + name,
+                url: './dashboard/detail?project=' + name + '&timestamp=' + timestamp,
                 scope: this,
                 scripts: true,
                 nocache: true,

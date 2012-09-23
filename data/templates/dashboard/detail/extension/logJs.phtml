@@ -1,82 +1,113 @@
-<style>
-.x-grid3-col-message { white-space:normal;}
-</style>
-<div id="log-grid-{projectname}-{buildtime}">
+<div id="log-grid-{projectname}-{buildtime}"></div>
 
-</div>
 <script type="text/javascript">
-//Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-logxml = function(){
-    
-	function formatDate(value, p, record) {
-    return String.format(
-                '<b>{0}</b>',
-                value.dateFormat('Y-m-d H:i:s'));
-    }
-   
-    // example of custom renderer function
-    function change(val){
-        if(val > 0){
-            return '<span style="color:green;">' + val + '</span>';
-        }else if(val < 0){
-            return '<span style="color:red;">' + val + '</span>';
+
+logxml = function() {
+
+    function formatRow(value, p, record) {
+        switch (record.get('priority')) {
+            case 'info':
+                return '<span style="color:green;">' + value + '</span>';
+            case 'debug':
+                return '<span style="color:blue;">' + value + '</span>';
+            case 'error':
+                return '<span style="color:red;">' + value + '</span>';
+            default:
+                return value;
         }
-        return val;
     }
 
-    // example of custom renderer function
-    function pctChange(val){
-        if(val > 0){
-            return '<span style="color:green;">' + val + '%</span>';
-        }else if(val < 0){
-            return '<span style="color:red;">' + val + '%</span>';
-        }
-        return val;
+    function formatDateRow(value, p, record) {
+        value = Ext.util.Format.date(value, 'Y-m-d H:i:s');
+        return formatRow(value, p, record);
     }
 
-
-
-
-	// create the Data Store
-    var store = new Ext.data.Store({
-       proxy: new Ext.data.HttpProxy({
-            url: './api/logmessages/get/json/?p={projectname}&buildtime={buildtime}&',
-            extraParams: {p:'{projectname}',buildtime:'{buildtime}'}
-        }),
-
-        // create reader that reads the Topic records
-        reader: new Ext.data.JsonReader({
-        	root: 'logmessages',
-        	totalProperty: 'totalmessages',
-            fields: [
-                 {name: 'id', type: 'int', dataIndex:'id'},
-           		{name: 'date', type: 'date', dateFormat: 'timestamp', dataIndex:'date'},
-           		{name: 'stringdate', dataIndex:'stringdate'},
-           {name:'priority', dataIndex:'priority'},
-           {name:'message',dataIndex:'message'}
-               
-            ]
-        })
+    Ext.define('logmessageModel', {
+        extend: 'Ext.data.Model',
+        fields: [{
+            name: 'id',
+            type: 'int',
+            dataIndex:'id'
+        }, {
+            name: 'date',
+            type: 'date',
+            dateFormat: 'timestamp',
+            dataIndex:'date'
+        }, {
+            name: 'stringdate',
+            dataIndex: 'stringdate'
+        }, {
+            name: 'priority',
+            dataIndex: 'priority'
+        }, {
+            name: 'message',
+            dataIndex: 'message'
+        }]
     });
-    //store.setDefaultSort('id', 'desc');
+
+    // create the Data Store
+    var store = new Ext.data.JsonStore({
+       proxy: new Ext.data.HttpProxy({
+            url: './api/logmessages/get/json/',
+            type: 'ajax',
+            extraParams: {
+                p: '{projectname}',
+                buildtime: '{buildtime}'
+            },
+
+            reader: {
+                type: 'json',
+                root: 'logmessages',
+                idProperty: 'id',
+                totalProperty: 'totalmessages',
+            }
+        }),
+        model: 'logmessageModel',
+        sorters: [{
+            property : 'id',
+            direction: 'DESC'
+        }]
+    });
 
     // create the Grid
-    var grid = new Ext.grid.GridPanel({
+    var grid = new Ext.grid.Panel({
         store: store,
-        columns: [
-            {id:'id',header: "ID", width: 40, sortable: true, dataIndex: 'id'},
-            /**{header: "Date", width: 140, sortable: false, dataIndex: 'date',renderer:formatDate},*/
-            {header: "Date", width: 140, sortable: false, dataIndex: 'stringdate'},
-            {header: "Prio", width: 40, sortable: true, dataIndex: 'priority'},
-            {header: "Message", dataIndex: 'message', id:'message', autoScroll:true }
-        ],
+        columns: [{
+            id: 'id',
+            header: "ID",
+            width: 40,
+            sortable: true,
+            dataIndex: 'id',
+            renderer: formatRow
+        }, {
+            header: "Date",
+            width: 140,
+            sortable: false,
+            dataIndex: 'date',
+            renderer: formatDateRow
+        }, {
+            header: "Prio",
+            width: 40,
+            sortable: true,
+            dataIndex: 'priority',
+            filter: {
+                type: 'list',
+                options: ['debug', 'info', 'error']
+            },
+            renderer: formatRow
+        }, {
+            header: "Message",
+            dataIndex: 'message',
+            flex: 1,
+            autoScroll: true,
+            renderer: formatRow
+        }],
         stripeRows: true,
-        autoExpandColumn: 'message',
         bufferResize: true,
-        height:350,
+        height: 350,
         loadMask: true,
-        width:600,
-        title:false,
+        width: 600,
+        title: false,
         autoScroll: true,
         bbar: new Ext.PagingToolbar({
             pageSize: 25,
@@ -84,27 +115,18 @@ logxml = function(){
             displayInfo: false,
             displayMsg: '{0} - {1} of {2}',
             emptyMsg: "No logmessages to display",
-            items:[
-              /**  '-', {
-                pressed: true,
-                enableToggle:true,
-                text: 'Show Preview',
-                cls: 'x-btn-text-icon details',
-                toggleHandler: toggleDetails
-            }*/]
         })
     });
 
+    store.load({
+        params: {
+            start: 0,
+            limit: 25,
+            p: '{projectname}',
+            buildtime:'{buildtime}'
+        }
+    });
     grid.render('log-grid-{projectname}-{buildtime}');
-        store.load({params:{start:0, limit:25, p: '{projectname}', buildtime:'{buildtime}'}});
-
-    /**grid.getSelectionModel().selectFirstRow();*/
-    
-       function toggleDetails(btn, pressed){
-        var view = grid.getView();
-        view.showPreview = pressed;
-        view.refresh();
-    }
 };
 logxml();
 </script>

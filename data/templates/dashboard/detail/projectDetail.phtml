@@ -1,39 +1,22 @@
-<style>
-#welcome {
-    position:relative;
-    top:0;
-    left: 0;
-    zoom:1;
-}
-</style>
-
 <div id="welcome">
-    <!-- <div class="col">
-        <div id="search">
-        </div>
-    </div>-->
     <div class="col-last-wide">
-              <?php
+        <?php
+            foreach ($this->getTabs('BUILD_SELECTOR') as $tab) {
+                echo $tab->generate($this->build, dirname(__FILE__) . '/rightBlock.phtml');
+            }
 
-foreach ($this->getTabs('BUILD_SELECTOR') as $tab) {
-    echo $tab->generate($this->build, dirname(__FILE__) . '/rightBlock.phtml');
-}
-
-?>      
+        ?>
     </div>
-    <!-- -->
     <div id="test" class="col-wide">
-     <div id="build-details-{projectname}"  class="body-wrap">
-    
-    <?php
-   foreach ($this->getTabs('BUILD_DETAILS') as $tab) {
-    $content = $tab->generate($this->build, dirname(__FILE__) . '/leftBlock.phtml');
-    if ($content !== false) echo $content;
-}
-?>
- </div>
-</div>
-<!-- </div>-->
+        <div id="build-details-{projectname}"  class="body-wrap">
+            <?php
+                foreach ($this->getTabs('BUILD_DETAILS') as $tab) {
+                    $content = $tab->generate($this->build, dirname(__FILE__) . '/leftBlock.phtml');
+                    if ($content !== false) echo $content;
+                }
+            ?>
+        </div>
+    </div>
 </div>
 
 
