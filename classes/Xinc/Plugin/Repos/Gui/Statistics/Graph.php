@@ -248,8 +248,8 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph
              //echo " filename: $fileName";
              $width = 375;
              $height = 180;
-             $graph->render( $width, $height, $fileName); 
-             $includeString = '<div style="position:relative;padding-left:10px;float:left" class="none"><h3>'.$this->getTitle().'</h3><iframe src="./graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe></div>';
+             $graph->render( $width, $height, $fileName);
+             $includeString = '<div style="position:relative;padding-left:10px;float:left" class="none"><h3>'.$this->getTitle().'</h3><iframe src="./statistics/graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe></div>';
              return $includeString;
         } catch (Exception $e) {
             //var_dump($e);

@@ -262,6 +262,7 @@ class Xinc_Gui_Handler
     private function _handleException(Exception $e)
     {
         echo "An unknown error occurred. Please contact the server administrator.";
+        echo $e->getMessage();
     }
    
 }

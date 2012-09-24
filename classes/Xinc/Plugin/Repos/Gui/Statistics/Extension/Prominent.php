@@ -36,14 +36,14 @@ class Xinc_Plugin_Repos_Gui_Statistics_Extension_Prominent
 {
     public function getTitle()
     {
-        return 'Statistics<sup><span style="color:red">NEW</span></sup>';
+        return 'Statistics';
     }
 
     public function getContent(Xinc_Build_Interface $build)
     {
         $projectName = $build->getProject()->getName();
         $url = './statistics/?project=' . $projectName;
-        $click = 'openMenuTab(\'statistics-'.$projectName.'\',\'Statistics - '.$projectName.'\',\''.$url.'\',null,false,true,\'100%\');';
+        $click = 'appXinc.addNewTab(\'statistics-'.$projectName.'\',\'Statistics - '.$projectName.'\',\''.$url.'\');';
         return '<a href="#" onclick="'.$click.'">Graphs</a>';
     }
 
