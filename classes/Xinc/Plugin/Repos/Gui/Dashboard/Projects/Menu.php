@@ -84,20 +84,18 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu extends Xinc_Plugin_Repos_Gu
                 $children[] = $item->generate();
             }
 
-            $item = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('project-' . $build->getProject()->getName()
-                                                        . '-' . $build->getBuildTime(),
-                                                        $build->getProject()->getName(),
-                                                        false,
-                                                        '/dashboard/detail?project='
-                                                        . $build->getProject()->getName()
-                                                        . '&timestamp=' . $build->getBuildTime(),
-                                                        null,
-                                                        $build->getLabel(). ' - ' . $build->getProject()->getName(),
-                                                        true,
-                                                        count($children)>0 ? false: true,
-                                                        false,
-                                                        'auto',
-                                                        $children);
+            $item = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item(
+                'project-' . $build->getProject()->getName() . '-' . $build->getBuildTime(),
+                $build->getLabel() . ' - ' . $build->getProject()->getName(),
+                './dashboard/detail?project=' . $build->getProject()->getName()
+                . '&timestamp=' . $build->getBuildTime(),
+                $build->getProject()->getName(),
+                '',
+                false,
+                count($children)>0 ? false: true,
+                $children
+            );
+
             $projects[] = $item->generate();
         }
         return implode(',', $projects);

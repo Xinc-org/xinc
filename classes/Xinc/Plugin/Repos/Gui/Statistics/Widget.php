@@ -225,12 +225,15 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     {
         $numberOfGraphs = count($this->_extensions['STATISTIC_GRAPH']);
         $graphHeight = 350;
-        $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('statistics-' . $project->getName(),
-                                                              'Statistics',
-                                                              true,
-                                                              './statistics/?project=' . $project->getName(), null,
-                                                              'Statistics - ' . $project->getName(),
-                                                              true, true, true, '100%');
+        $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item(
+            'statistics-' . $project->getName(),
+            'Statistics',
+            './statistics/?project=' . $project->getName(),
+            'Statistics - ' . $project->getName(),
+            '',
+            true,
+            false
+        );
         return $statisticsMenu;
     }
 

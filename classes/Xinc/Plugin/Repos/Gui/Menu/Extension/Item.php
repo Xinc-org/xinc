@@ -34,76 +34,65 @@ class Xinc_Plugin_Repos_Gui_Menu_Extension_Item
     implements Xinc_Gui_Widget_Extension_Interface
 {
     const TEMPLATE = '{"id":"%s",
+                       "name":"%s",
+                       "url":"%s",
                        "text":"%s",
+                       "iconCls":"%s",
                        "singleClickExpand":%s,
-                       "url":%s, "iconCls":"%s",
-                       "title":"%s","scripts":%s,
                        "leaf": %s,
-                       "iframe":%s,
-                       "height":"%s",
                        "children":[%s]}';
 
-    private $_id;
+    private $id;
 
-    private $_text;
+    private $strName;
 
-    private $_singleClickExpand;
+    private $strUrl;
 
-    private $_url;
+    private $strText;
 
-    private $_iconCls;
+    private $bSingleClickExpand;
 
-    private $_title;
+    private $bLeaf;
 
-    private $_scripts;
-
-    private $_leaf;
-
-    private $_frame;
-
-    private $_height;
-
-    private $_children;
+    private $arChildren;
 
     public function __construct(
-        $id, $text, $singleClickExpand=true, $url=null, $iconCls=null, $title='',
-        $scripts=false, $leaf=true, $frame=false, $height='auto', $children=array()
+        $id, $strName, $strUrl, $strText, $strIconClass = '', $bSingleClickExpand=true,
+        $bLeaf=true, $arChildren=array()
     ) {
-        $this->_id = $id;
-        $this->_text = $text;
-        $this->_singleClickExpand = $singleClickExpand;
-        $this->_url = $url;
-        $this->_iconCls = $iconCls;
-        $this->_title = $title;
-        $this->_scripts = $scripts;
-        $this->_leaf = $leaf;
-        $this->_frame = $frame;
-        $this->_height = $height;
-        $this->_children = $children;
+        $this->id = $id;
+        $this->strName = $strName;
+        $this->strUrl = $strUrl;
+        $this->strText = $strText;
+        $this->strIconClass = $strIconClass;
+        $this->bSingleClickExpand = $bSingleClickExpand;
+        $this->bLeaf = $bLeaf;
+        $this->arChildren = $arChildren;
     }
 
     public function generate()
     {
-        $result = call_user_func_array('sprintf', array(self::TEMPLATE, 
-                                       $this->_id, 
-                                       $this->_text,
-                                       $this->_singleClickExpand ? 'true':'false',
-                                       $this->_url != null ? "\"$this->_url\"": "null",
-                                       $this->_iconCls,
-                                       $this->_title,
-                                       $this->_scripts ? 'true':'false',
-                                       $this->_leaf ? 'true':'false',
-                                       $this->_frame ? 'true':'false',
-                                       $this->_height,
-                                       $this->_generateChildren()
-                                       ));
+        $result = call_user_func_array(
+            'sprintf',
+            array(
+                self::TEMPLATE,
+                $this->id,
+                $this->strName,
+                $this->strUrl,
+                $this->strText,
+                $this->strIconClass,
+                $this->bSingleClickExpand ? 'true':'false',
+                $this->bLeaf ? 'true':'false',
+                $this->_generateChildren()
+            )
+        );
 
         return $result;
     }
 
     protected function _generateChildren()
     {
-        return implode(',', $this->_children);
+        return implode(',', $this->arChildren);
     }
 
     public function getExtensionPoint()

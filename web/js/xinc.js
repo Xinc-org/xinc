@@ -41,7 +41,23 @@ var store = Ext.create('Ext.data.TreeStore', {
         property: 'text',
         direction: 'ASC'
     }],
-    root: MenuItems,    
+    fields: [{
+        name: 'id',
+        type: 'string'
+    }, {
+        name: 'name',
+        type: 'string'
+    }, {
+        name: 'url',
+        type: 'string'
+    }, {
+        name: 'text',
+        type: 'string'
+    }, {
+        name: 'leaf',
+        type: 'string'
+    }],
+    root: MenuItems
 });
 
 Ext.define('Ext.app.Xinc', {
@@ -90,7 +106,16 @@ Ext.define('Ext.app.Xinc', {
                             collapsible: false,
                             autoScroll: true,
                             resizeable: true,
-                            forceFit: true
+                            forceFit: true,
+                            listeners: {
+                                beforeselect: function(treemodel, model) {
+                                    if (model.data.url != null) {
+                                        appXinc.addNewTab(model.data.id, model.data.name, model.data.url);
+                                        return false;
+                                    }
+                                    return model.isLeaf();
+                                }
+                            }
                         })
                     },{
                         title:'Settings',

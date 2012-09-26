@@ -49,12 +49,15 @@ class Xinc_Plugin_Repos_Gui_Statistics_Menu_Item
         //$this->_extensions = $this->_widget->getExtensions();
         $numberOfGraphs = 3;
         $graphHeight = 250;
-        $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item('statistics-' . $project->getName(),
-                                                              'Statistics',
-                                                              true,
-                                                              './statistics/?project=' . $project->getName(), null,
-                                                              'Statistics - ' . $project->getName(),
-                                                              true, true, true, '100%');
+        $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item(
+            'statistics-' . $project->getName(),
+            'Statistics - ' . $project->getName(),
+            './statistics/?project=' . $project->getName(),
+            'Statistics',
+            '',
+            true,
+            false
+        );
         return $statisticsMenu;
     }
 }

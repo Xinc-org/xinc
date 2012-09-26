@@ -142,12 +142,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
         $menuItem = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item(
             'widget-dashboard',
             'Dashboard', 
-            true,
             './dashboard/projects',
-            'icon-dashboard',
             'Dashboard',
-            true,
-            true
+            'icon-dashboard'
         );
         return $menuItem;
     }
@@ -158,12 +155,8 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
             $this->projectMenuItem = new Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu(
                 'projects',
                 'Projects',
-                true,
-                null,
-                null,
-                'Projects',
-                true,
-                false
+                '',
+                'Projects'
             );
             foreach ($this->_extensions['PROJECT_MENU_ITEM'] as $extension) {
                 $this->projectMenuItem->registerSubExtension($extension);
@@ -172,10 +165,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget implements Xinc_Gui_Widget_Interfac
             $this->projectMenuItem = new Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu(
                 'projects',
                 'Projects',
-                true,
-                null,
-                null,
+                '',
                 'Projects',
+                '',
                 true,
                 false
             );
