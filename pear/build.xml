@@ -12,7 +12,7 @@
 
         <!-- some default properties -->
         <property name="notes" override="true">This is the latest release of Xinc.</property>
-        <property name="state" value="beta" override="true"/>
+        <property name="state" value="stable" override="true"/>
 
         <taskdef name="pear-package" classname="XincPEARPackageTask" classpath="."/>
 
