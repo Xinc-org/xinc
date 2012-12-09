@@ -53,7 +53,7 @@ class XincPEARPackageTask extends MatchingTask
     private $version;
 
     /** @var string Version state for this build. */
-    private $state = 'beta';
+    private $state = 'stable';
 
     /** @var string . */
     private $notes;
