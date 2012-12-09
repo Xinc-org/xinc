@@ -121,7 +121,7 @@ class Xinc_Plugin_Repos_Api_Documentation implements Xinc_Api_Module_Interface
         $buildTime = $params['buildtime'];
         $file = $params['file'];*/
 
-        $query = urldecode($_SERVER['REQUEST_URI']);
+        $query = urldecode($_SERVER['REDIRECT_URI']);
 
         preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
         if (count($matches)!=8) {
