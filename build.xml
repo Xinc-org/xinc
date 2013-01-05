@@ -24,10 +24,6 @@
 
 	<!-- everything above this point is "contract" stuff -->
 
-	<target name="deploy">
-		<phing phingfile="build-deploy.xml" target="deploy" />
-
-	</target>
 	<target name="pear">
 		<!-- Need to include xinc.properties in xinc build script, to have the same pkg.version available there -->
 		  
@@ -83,8 +79,5 @@
 		<exec command="phpdoc -d ${project.basedir}/classes -t ${project.basedir}/doc -o HTML:Smarty:PHP -p on"/>
 		
 	</target>
-	<!--<target name="test">
-		<phing phingfile="build-test.xml" target="test" />
-	</target> -->
 
 </project>
