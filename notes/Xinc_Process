@@ -1,9 +1,0 @@
-1. parse system.xml
-1a. registerPlugins
-1b. registerEngines
-2. fork for each config-file
-2a. parse config-file
-2b. call engine::generateBuilds
-2c. register Builds in BuildQueue with Engine Name
-3. trigger build
-3a. fork
