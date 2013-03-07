@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<project name="Build Xinc" basedir="." default="build">
+
+    <property file="xinc.properties" />
+
+    <target name="build" depends="update, prepare, tarball, pear">
+    </target>
+
+   <target name="config">
+       <echo message="Config for: ${pkg.name} Build: ${xinc.build.number} ..." />
+       <property name="xincversion" value="${pkg.name}-${xinc.build.number}" />
+       <property name="build.dir.temp" value="${project.basedir}/build/temp" />
+       <property name="build.dir.base" value="${project.basedir}/build/version/${xincversion}" />
+       <property name="build.dir.packages" value="${build.dir.base}/packages" />
+       <property name="build.dir.docs" value="${build.dir.base}/docs" />
+   </target>
+   
+   <target name="update">
+        <echo message="svn update..." />
+        <!--<exec command='svn update' />-->
+    </target>
+    
+    <target name="prepare" depends="config,cleanup">
+        <echo message="prepare..." />
+        <mkdir dir="${build.dir.temp}" />
+        <mkdir dir="${build.dir.base}" />
+        <mkdir dir="${build.dir.packages}" />
+        <mkdir dir="${build.dir.docs}" />
+    </target>
+    
+    <target name="cleanup" depends="config">
+        <echo message="cleanup..." />
+        <delete dir="${build.dir.base}" quiet="true" />
+        <delete dir="${build.dir.temp}" quiet="true"/>
+    </target>
+    
+    <!-- write code to execute on successful build results -->
+    <target name="success">
+        <echo message="wohoo, build process worked..." />
+    </target>
+
+    <!-- write code to execute on a failed build result -->
+    <target name="failed">
+        <echo message="doh, build process failed..." />
+    </target>
+
+    <!-- everything above this point is "contract" stuff -->
+
+    <target name="pear" depends="config">
+        <echo message="PEAR Packaging..." />
+        
+        <phing phingfile="build-pear.xml" dir="build">
+            <property name="version" value="${pkg.version}"/>
+            <property name="state" value="${pkg.stability}"/>
+        </phing>
+
+    </target>
+
+    <target name="tarball" depends="config">
+        <echo message="TAR Packaging..." />
+
+        <phing phingfile="build-tarball.xml" dir="build">
+            <property name="version" value="${pkg.version}"/>
+            <property name="state" value="${pkg.stability}"/>
+        </phing>
+   
+    </target>
+
+    <target name="doc">
+        <echo message="phpdoc..." />
+        <exec command="phpdoc -d ${project.basedir}/src -t ${build.dir.docs} -o HTML:Smarty:PHP -p on"/>
+    </target>
+
+</project>

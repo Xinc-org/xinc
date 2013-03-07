@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<project name="Build PEAR - Xinc" basedir="." default="build">
+    
+    <target name="build" depends="prepare,copy-data,package-xml,tar"/>
+    
+    <target name="prepare">
+        <property name="build.base.dir" value="../"/>
+        <property name="pkgname" value="xinc-${version}"/>
+    </target>
+    
+    <target name="package-xml">
+        <pearpkg2 name="Xinc" dir="${build.base.dir}">
+            <option name="outputdirectory" value="../"/>
+            <option name="packagefile" value="build/temp/package2.xml"/>
+            <option name="packagedirectory" value="../"/>
+            <option name="baseinstalldir" value="/"/>
+            <option name="channel" value="${pkg.channel}"/>
+            <option name="summary" value="Xinc - Continuous Integration Server"/>
+            <option name="description">
+                Xinc is a continuous integration server written in PHP 5. It has
+                built-in support for Subversion and Phing (and therefore PHPUnit),
+                and can be easily extended to work with alternative version control
+                or build tools.
+            </option>
+            <option name="apiversion" value="${pkg.version}"/>
+            <option name="apistability" value="${pkg.stability}"/>
+            <option name="releaseversion" value="${pkg.version}"/>
+            <option name="releasestability" value="${pkg.stability}"/>
+            <option name="license" value="LGPL"/>
+            <option name="uri" value="http://www.gnu.org/licenses/lgpl.html"/>
+            <option name="phpdep" value="5.2.7"/>
+            <option name="pearinstallerdep" value="1.4.6"/>
+            <option name="packagetype" value="php"/>
+            <option name="notes" value="${pkg.relnotes}"/>
+            <mapping name="maintainers">
+                <element>
+                    <element key="handle" value="arnoschn"/>
+                    <element key="name" value="Arno Schneider"/>
+                    <element key="email" value="arnoschn@gmail.com"/>
+                    <element key="role" value="lead"/>
+                </element>
+                <element>
+                    <element key="handle" value="opi"/>
+                    <element key="name" value="Alexander Opitz"/>
+                    <element key="email" value="opitz.alexander@gmail.com"/>
+                    <element key="role" value="lead"/>
+                </element>
+            </mapping>
+            <fileset dir="${build.dir.temp}">
+                <include name="${xincversion}/**" />
+            </fileset>
+        </pearpkg2>
+    </target>
+    
+    <target name="copy-data">
+        <echo message="copy data..." />
+    </target>
+
+    <target name="tar">
+        <echo message="packaging..." />
+
+        <tar destFile="${build.dir.packages}/${xincversion}.tgz" basedir="${build.dir.temp}/${xincversion}" compression="gzip" />
+
+        <echo message="cleantemp..." />
+        <delete dir="${build.dir.temp}" quiet="true"/>
+        <mkdir dir="${build.dir.temp}" />
+    </target>
+    
+</project>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="Build PEAR - Xinc Common" basedir="." default="build">
+    <import file="../../build/build-pear.xml" />
+    
+    <target name="copy-data" depends="build_pear___xinc.copy-data">
+        <copy todir="${build.dir.temp}/${xincversion}">
+            <fileset dir="${build.base.dir}/src">
+                <include name="**/**"/>
+            </fileset>
+            <fileset dir="${build.base.dir}">
+                <include name="scripts/**"/>
+                <include name="README.txt"/>
+            </fileset>
+        </copy> 
+    </target>
+
+</project>
