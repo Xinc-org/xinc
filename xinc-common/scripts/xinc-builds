@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!@PHP_BIN@
 <?php
 declare(encoding = 'utf-8');
 /**

@@ -1,7 +1,53 @@
 <?xml version="1.0"?>
 <project name="Build PEAR - Xinc Common" basedir="." default="build">
     <import file="../../build/build-pear.xml" />
-    
+
+   <target name="pear.package.options">
+        <mapping id="maintainers">
+            <element>
+                <element key="handle" value="arnoschn"/>
+                <element key="name" value="Arno Schneider"/>
+                <element key="email" value="arnoschn@gmail.com"/>
+                <element key="role" value="lead"/>
+            </element>
+            <element>
+                <element key="handle" value="opi"/>
+                <element key="name" value="Alexander Opitz"/>
+                <element key="email" value="opitz.alexander@gmail.com"/>
+                <element key="role" value="lead"/>
+            </element>
+        </mapping>
+        <mapping id="extdeps">
+            <element>
+                <element key="name" value="xsl"/>
+            </element>
+            <element>
+                <element key="name" value="xml"/>
+            </element>
+        </mapping>
+        <mapping id="deps" />
+        <mapping id="replacements">
+            <element>
+                <element key="path" value="scripts/xinc-builds" />
+                <element key="type" value="pear-config" />
+                <element key="from" value="@PHP_BIN@" />
+                <element key="to" value="php_bin" />
+            </element>
+            <element>
+                <element key="path" value="scripts/xinc-settings" />
+                <element key="type" value="pear-config" />
+                <element key="from" value="@PHP_BIN@" />
+                <element key="to" value="php_bin" />
+            </element>
+            <element>
+                <element key="path" value="Xinc.php" />
+                <element key="type" value="package-info" />
+                <element key="from" value="@VERSION@" />
+                <element key="to" value="version" />
+            </element>
+        </mapping>
+    </target>
+   
     <target name="copy-data" depends="build_pear___xinc.copy-data">
         <copy todir="${build.dir.temp}/${xincversion}">
             <fileset dir="${build.base.dir}/src">
