@@ -15,7 +15,7 @@
     <target name="tar">
         <echo message="packaging..." />
 
-        <tar destFile="${build.dir.packages}/${xincversion}.tar.gz" basedir="${build.dir.temp}/${xincversion}" compression="gzip" />
+        <tar destFile="${build.dir.packages}/${xincversion}.tar.gz" basedir="${build.dir.temp}/" compression="gzip" />
 
         <echo message="cleantemp..." />
         <delete dir="${build.dir.temp}" quiet="true"/>

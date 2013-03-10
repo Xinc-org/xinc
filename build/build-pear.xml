@@ -9,10 +9,11 @@
     </target>
     
     <target name="package-xml">
-        <pearpkg2 name="Xinc" dir="${build.base.dir}">
-            <option name="outputdirectory" value="../"/>
-            <option name="packagefile" value="build/temp/package2.xml"/>
-            <option name="packagedirectory" value="../"/>
+        <echo message="build package.xml..." />
+        <pearpkg2 name="Xinc" dir="${build.dir.temp}/">
+            <option name="outputdirectory" value="./temp/"/>
+            <option name="packagefile" value="package.xml"/>
+            <option name="packagedirectory" value="./temp/${xincversion}/"/>
             <option name="baseinstalldir" value="/"/>
             <option name="channel" value="${pkg.channel}"/>
             <option name="summary" value="Xinc - Continuous Integration Server"/>
@@ -27,7 +28,6 @@
             <option name="releaseversion" value="${pkg.version}"/>
             <option name="releasestability" value="${pkg.stability}"/>
             <option name="license" value="LGPL"/>
-            <option name="uri" value="http://www.gnu.org/licenses/lgpl.html"/>
             <option name="phpdep" value="5.2.7"/>
             <option name="pearinstallerdep" value="1.4.6"/>
             <option name="packagetype" value="php"/>
@@ -46,10 +46,19 @@
                     <element key="role" value="lead"/>
                 </element>
             </mapping>
-            <fileset dir="${build.dir.temp}">
-                <include name="${xincversion}/**" />
+            <mapping name="extdeps">
+                <element>
+                    <element key="name" value="xsl"/>
+                </element>
+                <element>
+                    <element key="name" value="xml"/>
+                </element>
+            </mapping>
+            <fileset dir="${build.dir.temp}/${xincversion}">
+                <include name="**/**" />
             </fileset>
         </pearpkg2>
+        <!--  -->
     </target>
     
     <target name="copy-data">
@@ -59,7 +68,7 @@
     <target name="tar">
         <echo message="packaging..." />
 
-        <tar destFile="${build.dir.packages}/${xincversion}.tgz" basedir="${build.dir.temp}/${xincversion}" compression="gzip" />
+        <tar destFile="${build.dir.packages}/${xincversion}.tgz" basedir="${build.dir.temp}/" compression="gzip" />
 
         <echo message="cleantemp..." />
         <delete dir="${build.dir.temp}" quiet="true"/>

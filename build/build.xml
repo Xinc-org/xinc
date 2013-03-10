@@ -3,12 +3,12 @@
 
     <property file="xinc.properties" />
 
-    <target name="build" depends="update, prepare, tarball, pear">
+    <target name="build" depends="update, prepare, pear">
     </target>
 
    <target name="config">
        <echo message="Config for: ${pkg.name} Build: ${xinc.build.number} ..." />
-       <property name="xincversion" value="${pkg.name}-${xinc.build.number}" />
+       <property name="xincversion" value="${pkg.name}" />
        <property name="build.dir.temp" value="${project.basedir}/build/temp" />
        <property name="build.dir.base" value="${project.basedir}/build/version/${xincversion}" />
        <property name="build.dir.packages" value="${build.dir.base}/packages" />
