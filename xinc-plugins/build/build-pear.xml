@@ -18,7 +18,14 @@
             </element>
         </mapping>
         <mapping id="extdeps" />
-        <mapping id="deps" />
+        <mapping id="deps">
+            <element>
+                <element key="name" value="Xinc" />
+                <element key="channel" value="pear.elektrischeslicht.de" />
+                <element key="version" value="2.3alpha1" />
+                <element key="max" value="2.3alpha1" />
+            </element>
+        </mapping>
         <mapping id="replacements" />
         <mapping id="installas" />
     </target>
