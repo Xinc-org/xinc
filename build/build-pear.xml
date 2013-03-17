@@ -106,7 +106,7 @@
             <option name="summary" value="${pkg.summary}" />
 
             <option name="phpdep" value="5.2.7" />
-            <option name="pearinstallerdep" value="1.4.6" />
+            <option name="pearinstallerdep" value="1.9.4" />
             <option name="packagetype" value="php" />
 
             <mapping name="maintainers" refid="maintainers" />
