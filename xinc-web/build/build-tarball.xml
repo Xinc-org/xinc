@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Build Tarball - Xinc Common" basedir="." default="build">
+<project name="Build Tarball - Xinc Web" basedir="." default="build">
     <import file="../../build/build-tarball.xml" />
 
     <target name="copy-data" depends="build_tarball___xinc.copy-data">

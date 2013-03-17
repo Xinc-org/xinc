@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Build PEAR - Xinc Common" basedir="." default="build">
+<project name="Build PEAR - Xinc Web" basedir="." default="build">
     <import file="../../build/build-pear.xml" />
 
    <target name="pear.package.options">
