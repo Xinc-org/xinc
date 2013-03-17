@@ -46,6 +46,16 @@
                 <element key="to" value="version" />
             </element>
         </mapping>
+        <mapping id="installas">
+            <element>
+                <element key="path" value="scripts/xinc-builds" />
+                <element key="as" value="xinc-builds" />
+            </element>
+            <element>
+                <element key="path" value="scripts/xinc-settings" />
+                <element key="as" value="xinc-settings" />
+            </element>
+        </mapping>
     </target>
 
     <target name="copy-data" depends="build_pear___xinc.copy-data">

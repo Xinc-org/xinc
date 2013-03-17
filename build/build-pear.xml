@@ -36,7 +36,25 @@
                     }
                 }
                 $this->pkg->setOptions($arOptions);
+
                 parent::setVersion2Options();
+
+                $newmaps = array();
+                foreach ($this->mappings as $map) {
+                    switch ($map->getName()) {
+                    case 'installas':
+                        foreach($map->getValue() as $installas) {
+                            $this->pkg->addInstallAs(
+                                $installas['path'],
+                                $installas['as']
+                            );
+                        }
+                    break;
+                    default:
+                        $newmaps[] = map;
+                    }
+                }
+                $this->mappings = $newmaps;
             }
         }
         ]]>
@@ -113,6 +131,7 @@
             <mapping name="extdeps" refid="extdeps" />
             <mapping name="deps" refid="deps" />
             <mapping name="replacements" refid="replacements" />
+            <mapping name="installas" refid="installas" />
 
             <fileset dir="${build.dir.temp}/${xincversion}">
                 <include name="**/**" />

@@ -34,6 +34,12 @@
                 <element key="to" value="php_bin" />
             </element>
         </mapping>
+        <mapping id="installas">
+            <element>
+                <element key="path" value="scripts/xinc" />
+                <element key="as" value="xinc" />
+            </element>
+        </mapping>
     </target>
 
     <target name="copy-data" depends="build_pear___xinc.copy-data">

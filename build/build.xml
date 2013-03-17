@@ -3,7 +3,7 @@
 
     <property file="xinc.properties" />
 
-    <target name="build" depends="update,prepare,pear,doc">
+    <target name="build" depends="update,prepare,pear,tarball,doc">
     </target>
 
     <target name="config">
