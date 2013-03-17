@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <project name="Build Tarball - Xinc" basedir="." default="build">
-    
-    <target name="build" depends="prepare,copy-data,tar"/>
-    
+
+    <target name="build" depends="prepare,copy-data,tar" />
+
     <target name="prepare">
-        <property name="build.base.dir" value="../"/>
-        <property name="pkgname" value="xinc-${version}"/>
+        <property name="build.base.dir" value="../" />
+        <property name="pkgname" value="xinc-${version}" />
     </target>
-    
+
     <target name="copy-data">
         <echo message="copy data..." />
     </target>
@@ -18,10 +18,7 @@
         <tar destFile="${build.dir.packages}/${xincversion}.tar.gz" basedir="${build.dir.temp}/" compression="gzip" />
 
         <echo message="cleantemp..." />
-        <delete dir="${build.dir.temp}" quiet="true"/>
+        <delete dir="${build.dir.temp}" quiet="true" />
         <mkdir dir="${build.dir.temp}" />
-
     </target>
-    
 </project>
-   

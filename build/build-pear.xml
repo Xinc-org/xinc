@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <project name="Build PEAR - Xinc" basedir="." default="build">
-    
-    <target name="build" depends="prepare,copy-data,package-xml,tar"/>
-    
+
+    <target name="build" depends="prepare,copy-data,package-xml,tar" />
+
     <target name="prepare">
-        <property name="build.base.dir" value="../"/>
-        <property name="pkgname" value="xinc-${version}"/>
+        <property name="build.base.dir" value="../" />
+        <property name="pkgname" value="xinc-${version}" />
     </target>
 
     <target name="pear.package.addtaskref">
@@ -18,7 +18,7 @@
                 $this->mappings[] = $e;
                 return $e;
             }
-            
+
             function createMapping2() {
                 $e = new PearPackageMapping();
                 $this->mappings[] = $e;
@@ -30,10 +30,10 @@
                 foreach ($this->options as $option) {
                     if ('baseinstalldir' === $option->getName()) {
                         $arOptions['baseinstalldir'] = $option->getValue();
-                    }                            
+                    }
                     if ('packagedirectory' === $option->getName()) {
                         $arOptions['packagedirectory'] = $option->getValue();
-                    }                            
+                    }
                 }
                 $this->pkg->setOptions($arOptions);
                 parent::setVersion2Options();
@@ -69,7 +69,7 @@
                     return $this->elements;
                 }
             }
-            
+
             public function getValue() {
                 $value = array();
                 foreach($this->getElements() as $k => $el) {
@@ -82,32 +82,32 @@
                 return $value;
             }
         }
-        
+
         ]]>
         </adhoc-type>
     </target>
 
     <target name="package-xml" depends="pear.package.addtaskref, pear.package.options">
         <echo message="build package.xml..." />
-        <pearpkg2advanced name="${pkg.name}" dir="${build.dir.temp}/">
-            <option name="outputdirectory" value="./temp/"/>
-            <option name="packagefile" value="package2.xml"/>
-            <option name="packagedirectory" value="./temp/${xincversion}/"/>
-            <option name="baseinstalldir" value="/"/>
+        <pearpkg2advanced name="${pkg.name}" dir="${build.dir.temp} /">
+            <option name="outputdirectory" value="./temp/" />
+            <option name="packagefile" value="package2.xml" />
+            <option name="packagedirectory" value="./temp/${xincversion}/" />
+            <option name="baseinstalldir" value="/" />
 
-            <option name="apistability" value="${pkg.stability}"/>
-            <option name="apiversion" value="${pkg.version}"/>
-            <option name="channel" value="${pkg.channel}"/>
-            <option name="description" value="${pkg.description}"/>
-            <option name="license" value="${pkg.license}"/>
-            <option name="notes" value="${pkg.relnotes}"/>
-            <option name="releasestability" value="${pkg.stability}"/>
-            <option name="releaseversion" value="${pkg.version}"/>
-            <option name="summary" value="${pkg.summary}"/>
+            <option name="apistability" value="${pkg.stability}" />
+            <option name="apiversion" value="${pkg.version}" />
+            <option name="channel" value="${pkg.channel}" />
+            <option name="description" value="${pkg.description}" />
+            <option name="license" value="${pkg.license}" />
+            <option name="notes" value="${pkg.relnotes}" />
+            <option name="releasestability" value="${pkg.stability}" />
+            <option name="releaseversion" value="${pkg.version}" />
+            <option name="summary" value="${pkg.summary}" />
 
-            <option name="phpdep" value="5.2.7"/>
-            <option name="pearinstallerdep" value="1.4.6"/>
-            <option name="packagetype" value="php"/>
+            <option name="phpdep" value="5.2.7" />
+            <option name="pearinstallerdep" value="1.4.6" />
+            <option name="packagetype" value="php" />
 
             <mapping name="maintainers" refid="maintainers" />
             <mapping name="extdeps" refid="extdeps" />
@@ -119,7 +119,7 @@
             </fileset>
         </pearpkg2advanced>
     </target>
-    
+
     <target name="copy-data">
         <echo message="copy data..." />
     </target>
@@ -130,8 +130,7 @@
         <tar destFile="${build.dir.packages}/${xincversion}.tgz" basedir="${build.dir.temp}/" compression="gzip" />
 
         <echo message="cleantemp..." />
-        <delete dir="${build.dir.temp}" quiet="true"/>
+        <delete dir="${build.dir.temp}" quiet="true" />
         <mkdir dir="${build.dir.temp}" />
     </target>
-    
 </project>
