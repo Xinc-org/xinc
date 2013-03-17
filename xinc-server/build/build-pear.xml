@@ -20,29 +20,18 @@
         <mapping id="extdeps" />
         <mapping id="deps">
             <element>
-                <element key="name" value="xinc" />
-                <element key="version" value="2.3.0alpha1" />
-                <element key="max" value="2.3.0alpha1" />
+                <element key="name" value="Xinc" />
+                <element key="channel" value="xinc" />
+                <element key="version" value="2.3alpha1" />
+                <element key="max" value="2.3alpha1" />
             </element>
         </mapping>
         <mapping id="replacements">
             <element>
-                <element key="path" value="scripts/xinc-builds" />
+                <element key="path" value="scripts/xinc" />
                 <element key="type" value="pear-config" />
                 <element key="from" value="@PHP_BIN@" />
                 <element key="to" value="php_bin" />
-            </element>
-            <element>
-                <element key="path" value="scripts/xinc-settings" />
-                <element key="type" value="pear-config" />
-                <element key="from" value="@PHP_BIN@" />
-                <element key="to" value="php_bin" />
-            </element>
-            <element>
-                <element key="path" value="Xinc.php" />
-                <element key="type" value="package-info" />
-                <element key="from" value="@VERSION@" />
-                <element key="to" value="version" />
             </element>
         </mapping>
     </target>
