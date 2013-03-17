@@ -109,7 +109,7 @@
         <echo message="build package.xml..." />
         <pearpkg2advanced name="${pkg.name}" dir="${build.dir.temp} /">
             <option name="outputdirectory" value="./temp/" />
-            <option name="packagefile" value="package2.xml" />
+            <option name="packagefile" value="package.xml" />
             <option name="packagedirectory" value="./temp/${xincversion}/" />
             <option name="baseinstalldir" value="/" />
 
