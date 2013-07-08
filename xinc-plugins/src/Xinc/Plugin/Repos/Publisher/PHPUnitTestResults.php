@@ -178,7 +178,7 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults extends Xinc_Plugin_Base
         $errorCount = 0;
         $timeTaken = 0;
 
-        $xml = new SimpleXMLElement();
+        $xml = new SimpleXMLElement($strContent);
         $testSuites = $xml->xpath("//testsuite");
 
         foreach ($testSuites as $name => $suite) {
