@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * Api to get log messages for a build

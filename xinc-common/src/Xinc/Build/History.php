@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * Build History retrieves the buildtimes of a project

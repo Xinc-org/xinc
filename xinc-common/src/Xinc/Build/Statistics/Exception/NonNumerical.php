@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * Exception, statistic property is not numerical

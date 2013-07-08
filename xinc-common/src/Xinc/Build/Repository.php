@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * Build Repository provides helper methods to load builds of a project

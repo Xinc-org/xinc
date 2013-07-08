@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * Iterator over an array of elements

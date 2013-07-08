@@ -10,4 +10,4 @@ RewriteEngine on
   RewriteCond %{REQUEST_FILENAME} !-f
   
     # no, so we redirect to our front web controller
-  RewriteRule ^(.*)$ handler.php [QSA,L]
+  RewriteRule ^(.*)$ /handler.php [QSA,L]

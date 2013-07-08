@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * AllBuilds Widget Extension, registers the allbuilds view in the project details

@@ -1,5 +1,4 @@
 <?php
-declare(encoding = 'utf-8');
 /**
  * Xinc - Continuous Integration.
  * Exception, engine is invalid. Does not implement Xinc_Engine_Interface
