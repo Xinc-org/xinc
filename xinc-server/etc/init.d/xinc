@@ -6,7 +6,8 @@
 # author David Ellis
 # author Gavin Foster
 # author Arno Schneider
-# version 2.0
+# author Alexander Opitz
+# version 2.3
 # copyright 2007 David Ellis, One Degree Square
 # license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
 # 	This file is part of Xinc.
@@ -27,8 +28,8 @@
 
 ### BEGIN CHKCONFIG INFO ###
 # chkconfig:   2345 86 14
-# description: Xinc - continous integration server
-# pidfile:     @STATUSDIR@/xinc.pid
+# description: Xinc - Continous Integration Server
+# pidfile:     /var/log/xinc.pid
 ### END CHKCONFIG INFO ###
 ### BEGIN INIT INFO
 # Provides:          xinc
@@ -39,78 +40,76 @@
 # Short-Description: Start/stop xinc continous integration server
 ### END INIT INFO
 
-
-CONFIG=@ETC@/system.xml
-PROJECTS=@ETC@/conf.d/*.xml
-LOG=@LOG@/xinc.log
-STATUS=@STATUSDIR@
-DATADIR=@DATADIR@
-PIDFILE=@STATUSDIR@/xinc.pid
-SHUTDOWN_FILE=@STATUSDIR@/.shutdown
- 
-DAEMON=@BIN_DIR@/xinc
 NAME=xinc
+DESC="Xinc - Continuous Integration JobControl Server"
+
+PIDFILE=/var/run/$NAME.pid
+DAEMON=/usr/bin/$NAME
+
+CONFIG=/etc/$NAME/system.xml
+PROJECTS=/etc/$NAME/conf.d/*.xml
+LOG=/var/log/$NAME.log
+STATUS=/var/xinc/status
+DATADIR=/var/xinc/projects
+SHUTDOWN_FILE=/var/xinc/status/.shutdown
+
 # send log output to text-log-file
 # logfile is going to be used for build-based logging only
 OPTIONS="-f $CONFIG -p $DATADIR -s $STATUS -w $DATADIR -l $LOG $PROJECTS"
-DESC="Xinc - Continuous Integration for PHP"
-
-# create the /etc/xinc/status directory if not exists
-
-logline="echo"
 
 # default daemon behaviour if no helper scripts are defined
 start_daemon=""
 start_daemon_end="&"
 start_daemon_options=""
-stop_daemon="killall xinc;"
+
+stop_daemon="killall $NAME;"
 stop_daemon_end="rm $PIDFILE"
 stop_daemon_options=""
+
+logbegin="echo -n"
+logend=`printf "echo .\n"`
+
 
 restart_daemon="touch $SHUTDOWN_FILE";
 restart_daemon_wait="sleep 1s"
 
-logend2=""
 if [ ! -r "$STATUS" ]; then
     mkdir $STATUS
 fi
-#. /etc/rc.d/init.d/functions
-#if [ -r /lib/lsb/init-functions ]; then
-# . /lib/lsb/init-functions
-# #logbegin="log_begin_msg"
-# #logend="log_end_msg"
-# logbegin="echo -n"
-# logend=`printf "echo .\n"`
-#
-#else
- logbegin="echo -n"
- logend=`printf "echo .\n"`
-#fi
+
+if [ -r /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+    logbegin="log_begin_msg"
+    logend="log_end_msg"
+
+    start_daemon="start_daemon"
+    start_daemon_options="--pidfile $PIDFILE"
+    start_daemon_end="&"
+
+    stop_daemon="killproc $DAEMON"
+    stop_daemon_options=""
+    stop_daemon_end=""
+fi;
 
 if [ -r /etc/init.d/functions ]; then
     . /etc/init.d/functions
-    logline="echo"
     logbegin="echo -n"
     logend="echo"
-    
+
     start_daemon="daemon"
     start_daemon_options="--pidfile $PIDFILE"
     start_daemon_end="&"
-    
+
     stop_daemon="killproc -p $PIDFILE"
     stop_daemon_options=""
     stop_daemon_end=""
-    
-
-    
 fi;
 
 if [ -r /etc/rc.d/init.d/functions ]; then
     . /etc/rc.d/init.d/functions
-    logline="echo"
     logbegin="echo -n"
     logend="echo"
-    PIDFILE=/var/run/xinc.pid
+
     start_daemon="daemon"
     start_daemon_options=""
     start_daemon_end="&"
@@ -118,52 +117,49 @@ if [ -r /etc/rc.d/init.d/functions ]; then
     stop_daemon="killproc $DAEMON"
     stop_daemon_options=""
     stop_daemon_end=""
-    
-    OPTIONS="--pid-file=/var/run/xinc.pid $OPTIONS"
+
+    OPTIONS="--pid-file=/var/run/$NAME.pid $OPTIONS"
 fi;
 
-
-
 if [ -x /sbin/start-stop-daemon ]; then
-  start_daemon="start-stop-daemon"
-  DAEMON="$DAEMON --"
-  start_daemon_options=" --pidfile $PIDFILE --start --background --exec" 
-  start_daemon_end=""
-  
-  stop_daemon="start-stop-daemon"
-  stop_daemon_options="--pidfile $PIDFILE --stop --quiet --name $NAME"
-  stop_daemon_end=""
+    start_daemon="start-stop-daemon"
+    DAEMON="$DAEMON --"
+    start_daemon_options=" --pidfile $PIDFILE --start --background --exec" 
+    start_daemon_end=""
+
+    stop_daemon="start-stop-daemon"
+    stop_daemon_options="--pidfile $PIDFILE --stop --quiet --name $NAME"
+    stop_daemon_end=""
 fi
 
 restart_xinc() {
 
+    if [ $1 ]; then
+        sleep $1
+    fi
 
-	if [ $1 ]; then
-	   sleep $1
-	fi
-	
-	$logbegin "Restarting $DESC"
-	$restart_daemon
-	$restart_daemon_wait
-	if [ -r $PIDFILE ]; then
-		read pid < "$PIDFILE"
-		ps -p "$pid" > /dev/null 2>&1
-		retval=$?
-		while [ $retval -eq 0 ]; do
-			$restart_daemon_wait
-			echo -n "."
-			ps -p "$pid" > /dev/null 2>&1
-			retval=$?
-		done
-	fi
-	$logend
-	start_xinc
+    $logbegin "Restarting $DESC"
+    $restart_daemon
+    $restart_daemon_wait
+    if [ -r $PIDFILE ]; then
+        read pid < "$PIDFILE"
+        ps -p "$pid" > /dev/null 2>&1
+        retval=$?
+        while [ $retval -eq 0 ]; do
+            $restart_daemon_wait
+            echo -n "."
+            ps -p "$pid" > /dev/null 2>&1
+            retval=$?
+        done
+    fi
+    $logend
+    start_xinc
 
 }
 
 start_xinc() {
     $logbegin "Starting $DESC"
-    
+
     if [ -r $PIDFILE ]; then
       read pid < "$PIDFILE"
       TEST=`ps -o pid --no-heading -p $pid`
@@ -184,67 +180,57 @@ start_xinc() {
 
 stop_xinc() {
     $logbegin "Stopping $DESC"
-    #$logbegin $stop_daemon $stop_daemon_options $stop_daemon_end
-    #$stop_daemon $stop_daemon_options $stop_daemon_end
-    #$logend
-    #rm -f $PIDFILE
     $restart_daemon
-	$restart_daemon_wait
-	if [ -r $PIDFILE ]; then
-		read pid < "$PIDFILE"
-		ps -p "$pid" > /dev/null 2>&1
-		retval=$?
-		while [ $retval -eq 0 ]; do
-			$restart_daemon_wait
-			echo -n "."
-			ps -p "$pid" > /dev/null 2>&1
-			retval=$?
-		done
-	fi
-	$logend
-	if [ -f $SHUTDOWN_FILE ]; then
-	  rm -f $SHUTDOWN_FILE
-	fi;
+    $restart_daemon_wait
+    if [ -r $PIDFILE ]; then
+        read pid < "$PIDFILE"
+        ps -p "$pid" > /dev/null 2>&1
+        retval=$?
+        while [ $retval -eq 0 ]; do
+            $restart_daemon_wait
+            echo -n "."
+            ps -p "$pid" > /dev/null 2>&1
+            retval=$?
+        done
+    fi
+    $logend
+    if [ -f $SHUTDOWN_FILE ]; then
+        rm -f $SHUTDOWN_FILE
+    fi;
 
 }
 
 case "$1" in
-  start)
-
-	start_xinc
-	;;
-  stop)
-	stop_xinc
-	;;
-  restart|force-reload)
-	#$logline "Restarting $DESC"
-	#if stop_xinc; then
-	#	start_xinc
-	#fi
-	#$logend
-	restart_xinc $2
-	;;
-  status)
-	echo -n "Status of $DESC: "
-	if [ ! -r "$PIDFILE" ]; then
-		echo "$NAME is not running."
-		exit 3
-	fi
-	read pid < "$PIDFILE"
-	ps -p "$pid" > /dev/null 2>&1
-	if [ $? -eq 0 ]; then
-		echo "$NAME is running."
-		exit 0
-	else
-		echo "$NAME is not running but $PIDFILE exists."
-		exit 1
-	fi
-	;;
-  *)
-	N=/etc/init.d/${0##*/}
-	echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
-	exit 1
-	;;
+    start)
+        start_xinc
+    ;;
+    stop)
+        stop_xinc
+    ;;
+    restart|force-reload)
+        restart_xinc $2
+    ;;
+    status)
+        echo -n "Status of $DESC: "
+        if [ ! -r "$PIDFILE" ]; then
+            echo "$NAME is not running."
+            exit 3
+        fi
+        read pid < "$PIDFILE"
+        ps -p "$pid" > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            echo "$NAME is running."
+            exit 0
+        else
+            echo "$NAME is not running but $PIDFILE exists."
+            exit 1
+        fi
+    ;;
+    *)
+        N=/etc/init.d/${0##*/}
+        echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+        exit 1
+    ;;
 esac
 
 exit 0
