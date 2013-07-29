@@ -23,7 +23,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Widget/Interface.php';
@@ -40,69 +40,63 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 {
     protected $_plugin;
 
-    private $_extensions = array();
+    private $extensions = array();
 
     public $scripts = '';
 
-    private $_projectName;
+    private $projectName;
 
-    private $_tmpDir = '/tmp/';
+    private $tmpDir = '/tmp/';
 
     public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->_plugin = $plugin;
         try {
-            $this->_tmpDir = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc');
+            $this->tmpDir = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc');
         } catch (Exception $e) {
-            $this->_tmpDir = '/tmp/';
+            $this->tmpDir = '/tmp/';
         }
     }
 
     public function handleEvent($eventId)
     {
         if (isset($_REQUEST['project'])) {
-            $this->_projectName = $_REQUEST['project'];
+            $this->projectName = $_REQUEST['project'];
         }
-        $url = $_SERVER['REDIRECT_URL'];
-        $url = str_replace(dirname($_SERVER['PHP_SELF']), '', $url);
 
-        switch($url) {
-            //case '/statistics':
-            //case '/statistics/':
-            //    $src='/statistics/graph/?project=' . $_REQUEST['project'];
-            //    include 'templates/iframe.html';
-            //    break;
-            case '/statistics/graph':
+        // TODO Cleanup this
+        $path = $_SERVER['REDIRECT_URL'];
+        $path = preg_replace('#^' . dirname($_SERVER['PHP_SELF']) . '#', '', $path);
+        $path = '/' . ltrim($path, '/');
+
+        switch($path) {
             case '/statistics/graph/':
                 $graphName = $_REQUEST['name'];
                 header('Content-Type: image/svg+xml');
                 header('Content-Disposition: inline; filename=' . $graphName);
-                $content=$this->_loadGraph($graphName);
+                $content = $this->loadGraph($graphName);
                 header('Content-Length: ' . strlen($content));
                 echo $content;
                 break;
-            case '/statistics':
             case '/statistics/':
             default:
                 ob_start();
                 include Xinc_Data_Repository::getInstance()->get(
-                        'templates' . DIRECTORY_SEPARATOR
-                        . 'statistics' . DIRECTORY_SEPARATOR
-                        . 'graphbase.phtml'
+                    'templates' . DIRECTORY_SEPARATOR
+                    . 'statistics' . DIRECTORY_SEPARATOR
+                    . 'graphbase.phtml'
                 );
                 ob_end_flush();
                 break;
         }
-        //
     }
 
-    protected function _loadGraph($name)
+    protected function loadGraph($name)
     {
-        $dir = $this->_tmpDir . DIRECTORY_SEPARATOR;
+        $dir = $this->tmpDir . DIRECTORY_SEPARATOR;
         $name = basename($name);
-        $fileName = 'graph_' . $this->_projectName . '_' . $name;
+        $fileName = 'graph_' . $this->projectName . '_' . $name;
         $file = $dir . $fileName;
-        //echo $file;
         if (file_exists($file) && realpath($file) == $file) {
             return file_get_contents($file);
         } else {
@@ -112,11 +106,11 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     public function getGraphFileName($name)
     {
-        $dir = $this->_tmpDir . DIRECTORY_SEPARATOR;
+        $dir = $this->tmpDir . DIRECTORY_SEPARATOR;
         $fileName = basename($name);
-        $fileName = 'graph_' . $this->_projectName.'_'.$fileName;
+        $fileName = 'graph_' . $this->projectName . '_' . $fileName;
         $fileName = $dir . $fileName;
-        //echo "Getting graphname: $fileName<br/>";
+
         return $fileName;
     }
 
@@ -129,12 +123,12 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     {
         $project = new Xinc_Project();
 
-        $project->setName($this->_projectName);
+        $project->setName($this->projectName);
         $contents = array();
 
         $lastBuildTime = Xinc_Build_History::getLastBuildTime($project);
 
-        $cacheFile = $this->_tmpDir . DIRECTORY_SEPARATOR . 'xinc_statistics_' . $this->_projectName;
+        $cacheFile = $this->tmpDir . DIRECTORY_SEPARATOR . 'xinc_statistics_' . $this->projectName;
 
         if (file_exists($cacheFile) && filemtime($cacheFile) == $lastBuildTime) {
             // we have a cached version
@@ -145,27 +139,27 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
                 $baseBuildData = array();
                 if (file_exists($cacheFile)) {
                     $cachedLastBuildTime = filemtime($cacheFile);
-                    $historyBuilds = $this->_getHistoryBuildsByTimestamp($project, $cachedLastBuildTime+1);
+                    $historyBuilds = $this->getHistoryBuildsByTimestamp($project, $cachedLastBuildTime + 1);
                 } else {
-                    $historyBuilds = $this->_getHistoryBuilds($project, 0);
+                    $historyBuilds = $this->getHistoryBuilds($project, 0);
                 }
             } catch (Exception $e1) {
                 $historyBuilds = array();
             }
-            if (isset($this->_extensions['STATISTIC_GRAPH'])) {
-                $i=0;
-                foreach ($this->_extensions['STATISTIC_GRAPH'] as $extension) {
+            if (isset($this->extensions['STATISTIC_GRAPH'])) {
+                $i = 0;
+                foreach ($this->extensions['STATISTIC_GRAPH'] as $extension) {
                     if ($extension instanceof Xinc_Plugin_Repos_Gui_Statistics_Graph) {
-                        $baseBuildData = $this->_loadGraphData($project, $extension->getId());
+                        $baseBuildData = $this->loadGraphData($project, $extension->getId());
                         if (!is_array($baseBuildData)) {
                             $baseBuildData = array();
                         }
                         $data = $extension->buildDataSet($project, $historyBuilds, $baseBuildData);
-                        $this->_storeGraphData($project, $extension->getId(), $data);
+                        $this->storeGraphData($project, $extension->getId(), $data);
                         $contents[] = $extension->generate($data, array('#1c4a7e','#bb5b3d'));
                         $i++;
                         if ($i % 2 == 0) {
-                            $contents[]="<br/>";
+                            $contents[] = '<br/>';
                         }
                     }
                 }
@@ -177,16 +171,16 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         return $contents;
     }
 
-    private function _storeGraphData(Xinc_Project $project, $id, $data)
+    private function storeGraphData(Xinc_Project $project, $id, $data)
     {
         //$fileName = $this->getGraphFileName($id);
-        $fileName = $this->_tmpDir . DIRECTORY_SEPARATOR . 'graph_data_' . $project->getName().'_'.$id.'.ser';
+        $fileName = $this->tmpDir . DIRECTORY_SEPARATOR . 'graph_data_' . $project->getName() . '_' . $id . '.ser';
         file_put_contents($fileName, serialize($data));
     }
 
-    private function _loadGraphData(Xinc_Project $project, $id)
+    private function loadGraphData(Xinc_Project $project, $id)
     {
-        $fileName = $this->_tmpDir . DIRECTORY_SEPARATOR . 'graph_data_' . $project->getName().'_'.$id.'.ser';
+        $fileName = $this->tmpDir . DIRECTORY_SEPARATOR . 'graph_data_' . $project->getName() . '_' . $id . '.ser';
         //$fileName = $this->getGraphFileName($id);
         $data = @unserialize(file_get_contents($fileName));
         return $data;
@@ -194,17 +188,17 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     public function getProjectName()
     {
-        return $this->_projectName;
+        return $this->projectName;
     }
 
-    private function _getHistoryBuilds(Xinc_Project $project, $start, $limit=null)
+    private function getHistoryBuilds(Xinc_Project $project, $start, $limit = null)
     {
         $buildHistoryArr = Xinc_Build_History::getFromTo($project, $start, $limit, false);
 
         return $buildHistoryArr;
     }
 
-    private function _getHistoryBuildsByTimestamp(Xinc_Project $project, $timestamp, $limit=null)
+    private function getHistoryBuildsByTimestamp(Xinc_Project $project, $timestamp, $limit = null)
     {
         $buildHistoryArr = Xinc_Build_History::getFromToTimestamp($project, $timestamp, $limit, false);
 
@@ -222,7 +216,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     public function generateStatisticsMenu(Xinc_Project $project)
     {
-        $numberOfGraphs = count($this->_extensions['STATISTIC_GRAPH']);
+        $numberOfGraphs = count($this->extensions['STATISTIC_GRAPH']);
         $graphHeight = 350;
         $statisticsMenu = new Xinc_Plugin_Repos_Gui_Menu_Extension_Item(
             'statistics-' . $project->getName(),
@@ -238,14 +232,14 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     public function registerExtension($extensionPoint, $extension)
     {
-        if (!isset($this->_extensions[$extensionPoint])) {
-            $this->_extensions[$extensionPoint] = array();
+        if (!isset($this->extensions[$extensionPoint])) {
+            $this->extensions[$extensionPoint] = array();
         }
         switch ($extensionPoint) {
             case 'STATISTIC_GRAPH':
                 if ($extension instanceof Xinc_Plugin_Repos_Gui_Statistics_Graph) {
                     $extension->setWidget($this);
-                    $this->_extensions[$extensionPoint][] = $extension;
+                    $this->extensions[$extensionPoint][] = $extension;
                 }
                 break;
         }
@@ -253,7 +247,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     public function getExtensions()
     {
-        return $this->_extensions;
+        return $this->extensions;
     }
 
     public function getExtensionPoints()
