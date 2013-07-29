@@ -25,7 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Widget/Exception/NotFound.php';
@@ -45,22 +45,22 @@ class Xinc_Gui_Widget_Repository
     /**
      * @var Xinc_Gui_Widget_Repository
      */
-    private static $_instance;
+    private static $instance;
 
     /**
      * @var Xinc_Gui_Widget_Interface[]
      */
-    private $_definedWidgets = array();
-    
-    private $_widgetClasses = array();
+    private $definedWidgets = array();
+
+    private $widgetClasses = array();
 
     /**
      * Contains all the registered widgets
      *
      * @var Xinc_Gui_Widget_Interface[]
      */
-    private $_widgets = array();
-    
+    private $widgets = array();
+
     /**
      * Return an instance of the Widget Repository
      *
@@ -68,12 +68,12 @@ class Xinc_Gui_Widget_Repository
      */
     public static function getInstance()
     {
-        if (!Xinc_Gui_Widget_Repository::$_instance) {
-            Xinc_Gui_Widget_Repository::$_instance = new Xinc_Gui_Widget_Repository();
+        if (!Xinc_Gui_Widget_Repository::$instance) {
+            Xinc_Gui_Widget_Repository::$instance = new Xinc_Gui_Widget_Repository();
         }
-        return Xinc_Gui_Widget_Repository::$_instance;
+        return Xinc_Gui_Widget_Repository::$instance;
     }
-    
+
     /**
      * Register a widget with the Repository
      *
@@ -93,16 +93,15 @@ class Xinc_Gui_Widget_Repository
         if (!is_array($paths)) {
             $paths = array();
         }
-        
+
         foreach ($paths as $path) {
             /**
              * register the widget for the specified pathname
              */
-            $this->_definedWidgets[$path] = $widget;
+            $this->definedWidgets[$path] = $widget;
         }
-        $this->_widgets[] = $widget;
-        $this->_widgetClasses[get_class($widget)] = $widget;
-        
+        $this->widgets[] = $widget;
+        $this->widgetClasses[get_class($widget)] = $widget;
     }
 
     /**
@@ -115,11 +114,12 @@ class Xinc_Gui_Widget_Repository
      */
     public function &getWidgetByClassName($name)
     {
-        if (isset($this->_widgetClasses[$name])) {
-            return $this->_widgetClasses[$name];
+        if (isset($this->widgetClasses[$name])) {
+            return $this->widgetClasses[$name];
         }
         throw new Xinc_Gui_Widget_Exception_NotFound($name);
     }
+
     /**
      * Determines the Widget that should be used
      * for the specified Http-Request by the Pathname that 
@@ -128,30 +128,28 @@ class Xinc_Gui_Widget_Repository
      * @param String $path Pathname of the HTTP-Request
      *
      * @return Xinc_Gui_Widget_Interface
-     */    
+     */
     public function &getWidgetForPath($path)
     {
         Xinc_Logger::getInstance()->info('Getting widget for path: ' . $path);
         $widget = null;
-        if (!isset($this->_definedWidgets[$path])) {
+        if (!isset($this->definedWidgets[$path])) {
             // find the largest match
             $largest = 0;
-            foreach ($this->_definedWidgets as $pathReg => $widgetItem) {
-                
-                if (($match = strstr($path, $pathReg)) !== false && strpos($path, $pathReg)==0) {
-                    if (strlen($pathReg)>$largest) {
-                        
+            foreach ($this->definedWidgets as $pathReg => $widgetItem) {
+                if (($match = strstr($path, $pathReg)) !== false && strpos($path, $pathReg) == 0) {
+                    if (strlen($pathReg) > $largest) {
                         $largest = strlen($pathReg);
                         $widget = $widgetItem;
                     }
                 }
             }
         } else {
-            $widget = $this->_definedWidgets[$path];
+            $widget = $this->definedWidgets[$path];
         }
         return $widget;
     }
-    
+
     /**
      * Returns all the registered Widgets
      *
@@ -159,6 +157,6 @@ class Xinc_Gui_Widget_Repository
      */
     public function getWidgets()
     {
-        return $this->_widgets;
+        return $this->widgets;
     }
 }
