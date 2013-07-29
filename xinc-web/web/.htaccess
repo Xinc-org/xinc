@@ -1,13 +1,15 @@
-RewriteEngine on
- # we skip all files with .something
- # RewriteCond %{REQUEST_URI} \..+$
- # RewriteCond %{REQUEST_URI} !\.html$
- # RewriteRule .* - [L]
+<FilesMatch "\.(js|css)$">
+  <IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresDefault "access plus 7 days"
+  </IfModule>
+  FileETag MTime Size
+</FilesMatch>
 
-  # we check if the .html version is here (caching)
- # RewriteRule ^$ index.html [QSA]
- # RewriteRule ^([^.]+)$ $1.html [QSA]
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # RewriteBase /xinc-web/web
+  RewriteBase /
   RewriteCond %{REQUEST_FILENAME} !-f
-  
-    # no, so we redirect to our front web controller
-  RewriteRule ^(.*)$ /handler.php [QSA,L]
+  RewriteRule ^(.*)$ handler.php [QSA,L]
+</IfModule>
