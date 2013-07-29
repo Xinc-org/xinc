@@ -24,7 +24,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Event.php';
@@ -38,59 +38,49 @@ require_once 'Xinc/Timezone.php';
 
 class Xinc_Gui_Handler
 {
-    
-    /**
-     * Plugin Parser: is used to load all the plugins and
-     * the registered Widgets
-     *
-     * @var Xinc_Plugin_Parser
-     */
-    private $_pluginParser;
-    
     /**
      * Directory of the project-status files generated
      * by the Xinc-Process
      *
      * @var string
      */
-    private $_statusDir;
-    
+    private $statusDir;
+
     /**
      * @var Xinc_Gui_Handler
      */
-    private static $_instance;
-    
+    private static $instance;
+
     /**
      *
      * @var Xinc_Api_Handler
      */
-    private $_apiHandler;
-    
-    private $_systemTimezone;
-    
-    private $_config = array();
-    
+    private $apiHandler;
+
+    private $systemTimezone;
+
+    private $config = array();
+
     /**
      * Constructor: parses plugins and sets status dir
      *
      * @param string $pluginFile
      * @param string $statusDir
      */
-    public function __construct($configFile,$statusDir)
+    public function __construct($configFile, $statusDir)
     {
-        $statusDir = realpath($statusDir);
-        $this->_systemTimezone = Xinc_Timezone::get();
-        $this->_statusDir = $statusDir;
+        $this->systemTimezone = Xinc_Timezone::get();
+        $this->statusDir = realpath($statusDir);
         $this->setSystemConfigFile($configFile);
-        
-        self::$_instance = &$this;
-        
-        $this->_apiHandler = Xinc_Api_Handler::getInstance();
+
+        self::$instance = &$this;
+
+        $this->apiHandler = Xinc_Api_Handler::getInstance();
     }
-    
+
     public function getSystemTimezone()
     {
-        return $this->_systemTimezone;
+        return $this->systemTimezone;
     }
 
     /**
@@ -100,7 +90,7 @@ class Xinc_Gui_Handler
      */
     public function getInstance()
     {
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -110,7 +100,7 @@ class Xinc_Gui_Handler
      */
     public function getStatusDir()
     {
-        return $this->_statusDir;
+        return $this->statusDir;
     }
 
     /**
@@ -126,45 +116,39 @@ class Xinc_Gui_Handler
         try {
             //Xinc_Config::parse($fileName);
             $configFile = Xinc_Config_File::load($fileName);
-            
-            $this->_configParser = new Xinc_Config_Parser($configFile);
-            
-            $plugins = $this->_configParser->getPlugins();
-            
-            $this->_pluginParser = new Xinc_Plugin_Parser();
-            
-            $this->_pluginParser->parse($plugins);
-            
+
+            $configParser = new Xinc_Config_Parser($configFile);
+            $plugins = $configParser->getPlugins();
+
+            $pluginParser = new Xinc_Plugin_Parser();
+            $pluginParser->parse($plugins);
+
             $widgets = Xinc_Gui_Widget_Repository::getInstance()->getWidgets();
-            
+
             foreach ($widgets as $path => $widget) {
                 Xinc_Logger::getInstance()->debug('Calling init on: ' . get_class($widget));
                 $widget->init();
             }
             Xinc_Logger::getInstance()->debug('INIT calls done.');
-            $configSettings = $this->_configParser->getConfigSettings();
+            $configSettings = $configParser->getConfigSettings();
             while ($configSettings->hasNext()) {
                 $setting = $configSettings->next();
                 $attributes = $setting->attributes();
-                $name = (string)$attributes->name;
-                $value = (string)$attributes->value;
+                $name = (string) $attributes->name;
+                $value = (string) $attributes->value;
                 if ($name == 'loglevel' && Xinc_Logger::getInstance()->logLevelSet()) {
                     $value = Xinc_Logger::getInstance()->getLogLevel();
                 }
-                $this->_setConfigDirective($name, $value);
+                $this->setConfigDirective($name, $value);
             }
-            
-        } catch(Exception $e) {
-            
-            Xinc_Logger::getInstance()->error('error parsing system:'
-                                             . $e->getMessage());
-                
+        } catch (Exception $e) {
+            Xinc_Logger::getInstance()->error('error parsing system:' . $e->getMessage());
         }
     }
 
-    private function _setConfigDirective($name, $value)
+    private function setConfigDirective($name, $value)
     {
-        $this->_config[$name] = $value;
+        $this->config[$name] = $value;
         switch ($name) {
             case 'loglevel':
                 Xinc_Logger::getInstance()->setLogLevel($value);
@@ -178,7 +162,7 @@ class Xinc_Gui_Handler
 
     public function getConfigDirective($name)
     {
-        return isset($this->_config[$name])?$this->_config[$name]:null;
+        return isset($this->config[$name]) ? $this->config[$name] : null;
     }
 
     /**
@@ -190,19 +174,22 @@ class Xinc_Gui_Handler
     /**
      * @return string pathname of the query
      */
-    protected function _getRequestPath()
+    protected function getRequestPath()
     {
         $path = null;
         if (isset($_SERVER['REDIRECT_URL'])) {
-           $path = $_SERVER['REDIRECT_URL'];
-        } else if (isset($_SERVER['REQUEST_URI']) && isset($_SERVER['QUERY_STRING'])) {
+            $path = $_SERVER['REDIRECT_URL'];
+        } elseif (isset($_SERVER['REQUEST_URI']) && isset($_SERVER['QUERY_STRING'])) {
             /**
              * Get rid of query string, to just have the path
              */
             $path = $_SERVER['REQUEST_URI'];
             $path = str_replace('?' . $_SERVER['QUERY_STRING'], '', $path);
         }
-        $path = str_replace(dirname($_SERVER['PHP_SELF']), '', $path);
+
+        $path = preg_replace('#^' . dirname($_SERVER['PHP_SELF']) . '#', '', $path);
+        $path = '/' . ltrim($path, '/');
+
         return $path;
     }
 
@@ -211,18 +198,19 @@ class Xinc_Gui_Handler
         /**
          * Determine called Pathname
          */
-        $path  = $this->_getRequestPath();
+        $path  = $this->getRequestPath();
 
-        if (strpos($path, $this->_apiHandler->getBasePath())===0) {
-            $this->_apiHandler->processCall($path);
+        if (strpos($path, $this->apiHandler->getBasePath()) === 0) {
+            $this->apiHandler->processCall($path);
             return;
         }
+
         /**
          * Get the Widget to use for this Request from the Widget-Repository
          */
         $widget = Xinc_Gui_Widget_Repository::getInstance()->getWidgetForPath($path);
-        
-        if (!$widget instanceof Xinc_Gui_Widget_Interface ) {
+
+        if (!$widget instanceof Xinc_Gui_Widget_Interface) {
             /**
              * Try Api Handler
              */
@@ -240,6 +228,7 @@ class Xinc_Gui_Handler
              */
             $widget->handleEvent(Xinc_Gui_Event::SESSION_START);
         }
+
         /**
          * trigger the page-load event
          */
@@ -249,19 +238,19 @@ class Xinc_Gui_Handler
             if ($widget->hasExceptionHandler()) {
                 $widget->handleException($e);
             } else {
-                $this->_handleException($e);
+                $this->handleException($e);
             }
         }
-        
     }
-   
+
     /**
      * @param Exception $e
+     *
+     * @return void
      */
-    private function _handleException(Exception $e)
+    private function handleException(Exception $e)
     {
-        echo "An unknown error occurred. Please contact the server administrator.";
+        echo 'An unknown error occurred. Please contact the server administrator.';
         echo $e->getMessage();
     }
-   
 }
