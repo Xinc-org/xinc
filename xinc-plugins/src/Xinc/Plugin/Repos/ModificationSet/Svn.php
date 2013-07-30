@@ -177,6 +177,11 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
      */
     protected function getRevisionFromXML(array $arXml)
     {
+        if (isset($arXml['entry'][0]['commit']['revision'])) {
+            // Latest commit in this directory path
+            return $arXml['entry'][0]['commit']['revision'];
+        }
+        // Latest commit in the whole repository
         return $arXml['entry'][0]['revision'];
     }
 
@@ -200,10 +205,8 @@ class Xinc_Plugin_Repos_ModificationSet_Svn
                     . ':' . $result->getRemoteRevision()
             )
         );
-
         if (isset($arLog['logentry'])) {
             foreach ($arLog['logentry'] as $arEntry) {
-                var_dump($arEntry);
                 $result->addLogMessage(
                     $arEntry['revision'],
                     strtotime($arEntry['date']),
