@@ -34,7 +34,7 @@ require_once 'Xinc/Plugin/Repos/Gui/PhpUnitTestResults/Widget.php';
 class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults extends Xinc_Plugin_Base
 {
     const TESTRESULTS_DIR = 'testresults';
-   
+
     public function validate()
     {
         return true;
@@ -129,7 +129,7 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults extends Xinc_Plugin_Base
         );
         return $res;
     }
-    
+
     /**
      * Generates statistsics and saves them into the build.
      *
@@ -158,7 +158,7 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults extends Xinc_Plugin_Base
             }
         } catch (Exception $e) {
             Xinc_Logger::getInstance()->error(
-                'Could not parse phpunit xml: ' . $e->getTraceAsString()
+                'Could not parse phpunit xml: ' . $e->getMessage() . "\n" . 'Trace: ' . $e->getTraceAsString()
             );
         }
     }
@@ -188,8 +188,6 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults extends Xinc_Plugin_Base
             $errorCount += $attributes['errors'];
             $timeTaken += (float)$attributes['time'];
         }
-
-
 
         $arStats = array(
             'numberOfTests' => $testSuiteCount,

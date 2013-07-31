@@ -32,29 +32,31 @@ require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task
     extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-   
-    private $_file;
-    
+    /**
+     * @var string $file Name of the file.
+     */
+    private $file;
+
     public function setFile($file)
     {
-        $this->_file = $file;
+        $this->file = $file;
     }
-    
+
     public function getName()
     {
         return 'phpUnitTestResults';
     }
     public function validateTask()
     {
-        if (!isset($this->_file)) {
+        if (!isset($this->file)) {
             return false;
         }
-       
+
         return true;
     }
 
     public function publish(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->registerResults($build, $this->_file);
+        return $this->_plugin->registerResults($build, $this->file);
     }
 }
