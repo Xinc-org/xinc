@@ -29,6 +29,7 @@
 
 require_once 'Xinc/Iterator.php';
 require_once 'Xinc/Plugin/Exception.php';
+require_once 'Xinc/Plugin/Interface.php';
 
 class Xinc_Plugin_Iterator extends Xinc_Iterator
 {
@@ -45,7 +46,6 @@ class Xinc_Plugin_Iterator extends Xinc_Iterator
             if (!$xmlElement instanceof Xinc_Plugin_Interface) {
                 throw new Xinc_Plugin_Exception();
             }
-            
         }
         parent::__construct($array);
     }

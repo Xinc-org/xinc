@@ -46,15 +46,13 @@ class Xinc_Plugin_Parser
      */
     public static function parse(Xinc_Config_Element_Iterator $iterator)
     {
-        
         while ($iterator->hasNext()) {
             try {
-                self::_loadPlugin($iterator->next());
+                self::loadPlugin($iterator->next());
             } catch (Exception $e) {
-                Xinc_Logger::getInstance()->error('Plugins: ' .$e->getMessage());
+                Xinc_Logger::getInstance()->error('Plugins: ' . $e->getMessage());
             }
         }
-  
     }
 
     /**
@@ -67,29 +65,28 @@ class Xinc_Plugin_Parser
      * @throws Xinc_Plugin_Exception_Invalid
      * @throws Xinc_Plugin_Task_Exception
      */
-    private static function _loadPlugin(SimpleXMLElement $pluginXml)
+    private static function loadPlugin(SimpleXMLElement $pluginXml)
     {
         $plugins = array();
 
         $attributes = $pluginXml->attributes();
 
         Xinc_Logger::getInstance()->info(
-            'Registering plugin: ' . $attributes->classname
-            . ' from file ' . $attributes->filename
+            'Registering plugin: ' . $attributes->classname . ' from file ' . $attributes->filename
         );
 
-        $res = @include_once((string)$attributes->filename);
+        $res = @include_once((string) $attributes->filename);
 
-        if (!$res && !class_exists((string)$attributes->classname)) {
+        if (!$res && !class_exists((string) $attributes->classname)) {
             throw new Xinc_Plugin_Exception_FileNotFound(
-                (string)$attributes->classname,
-                (string)$attributes->filename
+                (string) $attributes->classname,
+                (string) $attributes->filename
             );
         }
-        if (!class_exists((string)$attributes->classname)) {
+        if (!class_exists((string) $attributes->classname)) {
             throw new Xinc_Plugin_Exception_ClassNotFound(
-                (string)$attributes->classname,
-                (string)$attributes->filename
+                (string) $attributes->classname,
+                (string) $attributes->filename
             );
         }
 
@@ -98,7 +95,7 @@ class Xinc_Plugin_Parser
         $plugin = new $classname;
 
         if (!$plugin instanceof Xinc_Plugin_Interface) {
-            throw new Xinc_Plugin_Exception_Invalid((string)$attributes->classname);
+            throw new Xinc_Plugin_Exception_Invalid((string) $attributes->classname);
         }
 
         Xinc_Plugin_Repository::getInstance()->registerPlugin($plugin);

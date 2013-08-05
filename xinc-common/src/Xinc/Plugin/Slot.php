@@ -37,22 +37,21 @@ class Xinc_Plugin_Slot
     /**
      * Plugin is loaded when Xinc Daemon starts running
      * and listens globally on all events (across projects)
-     */ 
-    const GLOBAL_LISTENER = 1; 
-    
+     */
+    const GLOBAL_LISTENER = 1;
+
     /**
      * Plugin is run in any slot (listeners)
      */
-    const PROJECT_LISTENER = 2; 
-    
+    const PROJECT_LISTENER = 2;
+
     /**
      * Project is initialized when starting up Xinc daemon
      */
     const PROJECT_INIT = 3;
-    
-    
+
     const PROJECT_SET_VALUES = 4;
-    
+
     const INIT_PROCESS = 5;
 
     /**
@@ -68,7 +67,7 @@ class Xinc_Plugin_Slot
     /**
      * Publishers
      */
-    const POST_PROCESS = 30; 
-    
+    const POST_PROCESS = 30;
+
     const SUBTASK = 40;
 }
