@@ -75,7 +75,7 @@ class Xinc_Plugin_Parser
             'Registering plugin: ' . $attributes->classname . ' from file ' . $attributes->filename
         );
 
-        $res = @include_once((string) $attributes->filename);
+        $res = include_once((string) $attributes->filename);
 
         if (!$res && !class_exists((string) $attributes->classname)) {
             throw new Xinc_Plugin_Exception_FileNotFound(
