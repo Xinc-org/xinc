@@ -27,10 +27,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 
-class Xinc_Plugin_Repos_Property_SetTask
-    extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Abstract
 {
     private $_lastPair = array();
 
@@ -39,11 +38,11 @@ class Xinc_Plugin_Repos_Property_SetTask
      * @var string
      */
     private $_name;
-    
+
     private $_if;
 
     private $_file;
-    
+
     /**
      *  Holding all the property value pairs
      *
@@ -161,7 +160,6 @@ class Xinc_Plugin_Repos_Property_SetTask
             }
         } else {
             $build->debug('Setting property "${' . $this->_name . '}" to "' . $this->_value . '"');
-            
             $build->getProperties()->set($this->_name, $this->_value);
             $build->setStatus(Xinc_Build_Interface::PASSED);
         }

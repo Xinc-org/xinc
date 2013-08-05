@@ -26,17 +26,17 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Email/Task.php';
 
-class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Publisher_Email extends Xinc_Plugin_Abstract
 {
     private $_defaultFrom = 'xinc@localhost';
-    
+
     private function _sendPearMail($from, $to, $subject, $message)
     {
         require_once 'Xinc/Ini.php';
-        
+
         try {
             $smtpSettings = Xinc_Ini::getInstance()->get('email_smtp');
         } catch (Exception $e) {
@@ -49,11 +49,11 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
         }
         $recipients = split(',', $to);
         $headers = array();
-        
+
         if (isset($smtpSettings['localhost'])) {
             $from = str_replace('@localhost', '@' . $smtpSettings['localhost'], $from);
         }
-        
+
         $headers['From'] = $from;
         $headers['Subject'] = $subject;
         $res = $mailer->send($recipients, $headers, $message);
@@ -63,10 +63,9 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
             return false;
         }
     }
-    
+
     public function validate()
     {
-        
         return true;
     }
     public function getTaskDefinitions()
@@ -86,13 +85,11 @@ class Xinc_Plugin_Repos_Publisher_Email  extends Xinc_Plugin_Base
                       ."\nFrom: " . $from);
 
         /** send the email */
-        
         @include_once 'Mail.php';
-        
+
         if (class_exists('Mail')) {
             return $this->_sendPearMail($from, $to, $subject, $message);
         } else {
-            
             $res = mail($to, $subject, $message, "From: $from\r\n");
             if ($res) {
                 $project->info('Email sent successfully');

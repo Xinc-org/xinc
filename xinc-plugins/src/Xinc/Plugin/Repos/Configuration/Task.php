@@ -26,9 +26,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 
-class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_Configuration_Task extends Xinc_Plugin_Task_Abstract
 {
     /**
      * Returns the slot of this task inside a build.

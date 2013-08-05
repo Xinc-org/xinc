@@ -23,14 +23,14 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Widget.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail.php';
 
-class Xinc_Plugin_Repos_Gui_Dashboard  extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Gui_Dashboard  extends Xinc_Plugin_Abstract
 {
     public function validate()
     {
@@ -39,7 +39,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard  extends Xinc_Plugin_Base
 
     public function getGuiWidgets()
     {
-        return array(new Xinc_Plugin_Repos_Gui_Dashboard_Widget($this),
-                     new Xinc_Plugin_Repos_Gui_Dashboard_Detail($this));
+        return array(
+            new Xinc_Plugin_Repos_Gui_Dashboard_Widget($this),
+            new Xinc_Plugin_Repos_Gui_Dashboard_Detail($this),
+        );
     }
 }

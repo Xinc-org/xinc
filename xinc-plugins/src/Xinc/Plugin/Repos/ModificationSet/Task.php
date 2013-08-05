@@ -26,11 +26,11 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Slot.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Interface.php';
 
-class Xinc_Plugin_Repos_ModificationSet_Task
-    extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Abstract
 {
     /**
      * Validates if a task can run by checking configs, directries and so on.

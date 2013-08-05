@@ -27,12 +27,12 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Ini.php';
 require_once 'Xinc/Plugin/Repos/Builder/Phing/Task.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Phing/Task.php';
 
-class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Abstract
 {
     public function __construct()
     {
@@ -42,24 +42,24 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
     {
         $res = @include_once('phing/Phing.php');
         if ($res) {
-            if (!class_exists('phing')) {
-                Xinc_Logger::getInstance()->error('Required Phing-Class not found');
-                return false;
+            if (class_exists('phing')) {
+                return true;
             }
+            Xinc_Logger::getInstance()->error('Required Phing-Class not found');
         } else {
             Xinc_Logger::getInstance()->error(
-                'Could not include necessary files. '
-                . 'You may need to adopt your classpath to include Phing'
+                'Could not include necessary files. You may need to adopt your classpath to include Phing'
             );
-             return false;
         }
-        return true;
+        return false;
     }
 
     public function getTaskDefinitions()
     {
-        return array(new Xinc_Plugin_Repos_Builder_Phing_Task($this),
-                     new Xinc_Plugin_Repos_Publisher_Phing_Task($this));
+        return array(
+            new Xinc_Plugin_Repos_Builder_Phing_Task($this),
+            new Xinc_Plugin_Repos_Publisher_Phing_Task($this),
+        );
     }
 
     /**
@@ -80,7 +80,7 @@ class Xinc_Plugin_Repos_Phing  extends Xinc_Plugin_Base
         //$phing = new Phing();
         $logLevel = Xinc_Logger::getInstance()->getLogLevel();
         $arguments = array();
-        
+
         switch ($logLevel) {
             case Xinc_Logger::LOG_LEVEL_VERBOSE :
                 $arguments[] = '-verbose';

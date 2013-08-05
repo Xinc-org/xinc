@@ -28,12 +28,12 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Property/SetTask.php';
 require_once 'Xinc/Plugin/Repos/Property/SubstituteTask.php';
 require_once 'Xinc/Build/Interface.php';
 
-class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Abstract
 {
     /**
      * loads properties from a property file
@@ -80,7 +80,6 @@ class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Base
                     } else {
                         $trimNextLine = false;
                     }
-                    
                 }
             }
             foreach ($arr as $key => $value) {
@@ -99,7 +98,9 @@ class Xinc_Plugin_Repos_Property extends Xinc_Plugin_Base
 
     public function getTaskDefinitions()
     {
-        return array(new Xinc_Plugin_Repos_Property_SetTask($this),
-                     new Xinc_Plugin_Repos_Property_SubstituteTask($this));
+        return array(
+            new Xinc_Plugin_Repos_Property_SetTask($this),
+            new Xinc_Plugin_Repos_Property_SubstituteTask($this),
+        );
     }
 }

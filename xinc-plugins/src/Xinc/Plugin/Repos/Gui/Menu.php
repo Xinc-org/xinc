@@ -24,13 +24,13 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Widget.php';
 
-class Xinc_Plugin_Repos_Gui_Menu  extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Gui_Menu  extends Xinc_Plugin_Abstract
 {
     public function validate()
     {

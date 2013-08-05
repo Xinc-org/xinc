@@ -26,14 +26,14 @@
  * @link      http://xincplus.sourceforge.net
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/BuildAlways/Task.php';
 
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/ModificationSet.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 
-class Xinc_Plugin_Repos_ModificationSet_BuildAlways extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_ModificationSet_BuildAlways extends Xinc_Plugin_Abstract
 {
     public function getTaskDefinitions()
     {

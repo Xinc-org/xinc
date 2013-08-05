@@ -27,19 +27,19 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Gui/Artifacts/Widget.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Artifacts/Task.php';
 
-class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Abstract
 {
     const ARTIFACTS_DIR = 'artifacts';
-    
+
     public function validate()
     {
         return true;
     }
-    
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_Publisher_Artifacts_Task($this));
@@ -53,7 +53,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
     {
         return array(new Xinc_Plugin_Repos_Gui_Artifacts_Widget($this));
     }
-    
+
     public function getArtifactsDir(Xinc_Build_Interface $build)
     {
         $statusDir = Xinc::getInstance()->getStatusDir();
@@ -74,16 +74,13 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
     public function registerArtifact(Xinc_Build_Interface $build, $sourceFile)
     {
         $sourceFile = realpath($sourceFile);
-        
+
         $statusDir = Xinc::getInstance()->getStatusDir();
-        
         $projectDir = Xinc::getInstance()->getProjectDir();
-        
-        
         $subDir = $build->getStatusSubDir();
         $fullDir = self::getArtifactsDir($build);
         $targetFile = $fullDir . DIRECTORY_SEPARATOR . basename($sourceFile);
-        
+
         /**
          * Verify that the source is in the projectdir
          */
@@ -99,7 +96,7 @@ class Xinc_Plugin_Repos_Artifacts extends Xinc_Plugin_Base
             $build->error('-- ' . $sourceFile . ' is not within project dir. Security Problem.');
             return false;
         }
-        
+
         if (!file_exists($fullDir)) {
             mkdir($fullDir, 0755, true);
         }

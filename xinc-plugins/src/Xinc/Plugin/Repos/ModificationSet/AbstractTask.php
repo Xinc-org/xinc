@@ -26,10 +26,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 
-abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask
-    extends Xinc_Plugin_Task_Base
+abstract class Xinc_Plugin_Repos_ModificationSet_AbstractTask extends Xinc_Plugin_Task_Abstract
 {
     const STOPPED = -1;
 

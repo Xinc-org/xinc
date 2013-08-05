@@ -26,21 +26,18 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Publisher/OnFailure/Task.php';
 
-class Xinc_Plugin_Repos_Publisher_OnFailure extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Publisher_OnFailure extends Xinc_Plugin_Abstract
 {
-    
-   
     public function validate()
     {
-       
         return true;
     }
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Plugin_Repos_Publisher_OnFailure_Task($this));
     }
-    
 }

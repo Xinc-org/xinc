@@ -26,16 +26,14 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 require_once 'Xinc/Build/Scheduler/Interface.php';
 
-class Xinc_Plugin_Repos_Schedule_Task
-    extends Xinc_Plugin_Task_Base
-    implements Xinc_Build_Scheduler_Interface
+class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Abstract implements Xinc_Build_Scheduler_Interface
 {
 
     private $_interval;
-    
+
     /**
      * Enter description here...
      *
@@ -58,27 +56,25 @@ class Xinc_Plugin_Repos_Schedule_Task
     {
         $this->_interval = $interval;
     }
-    
+
     public function getInterval()
     {
         return $this->_interval;
     }
-    
+
     public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
-        
     }
-    
+
     public function setLastBuildTime($time)
     {
-        
     }
-    
+
     public function init(Xinc_Build_Interface $build)
     {
         $build->setScheduler($this);
     }
-    
+
     public function getNextBuildTime(Xinc_Build_Interface $build)
     {
         if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
@@ -86,7 +82,7 @@ class Xinc_Plugin_Repos_Schedule_Task
         }
         //var_dump($build);
         $lastBuild = $build->getLastBuild()->getBuildTime();
-        
+
         if ($lastBuild != null ) {
             $nextBuild = $this->getInterval() + $lastBuild;
             /**
@@ -94,7 +90,6 @@ class Xinc_Plugin_Repos_Schedule_Task
              */
             //echo time(). ' - ' . $lastBuild .'='.(time()-$lastBuild)."\n";
             if ($nextBuild + $this->getInterval() < time()) {
-                
                 $nextBuild = time();
             }
         } else {

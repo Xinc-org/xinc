@@ -27,10 +27,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 
-class Xinc_Plugin_Repos_Publisher_Task
-    extends Xinc_Plugin_Task_Base
+class Xinc_Plugin_Repos_Publisher_Task extends Xinc_Plugin_Task_Abstract
 {
     /**
      * Validates if a task can run by checking configs, directries and so on.
@@ -56,7 +55,7 @@ class Xinc_Plugin_Repos_Publisher_Task
     {
         return 'publishers';
     }
-    
+
     /**
      * Returns the slot of this task inside a build.
      *
@@ -71,7 +70,7 @@ class Xinc_Plugin_Repos_Publisher_Task
     public function process(Xinc_Build_Interface $build)
     {
         $build->info('Processing publishers');
-        
+
         foreach ($this->arSubtasks as $task) {
             $task->publish($build);
         }

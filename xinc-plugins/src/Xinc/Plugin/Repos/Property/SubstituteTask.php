@@ -27,12 +27,10 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 require_once 'Xinc/Plugin/Task/Setter/Interface.php';
 
-class Xinc_Plugin_Repos_Property_SubstituteTask
-    extends Xinc_Plugin_Task_Base
-    implements Xinc_Plugin_Task_Setter_Interface
+class Xinc_Plugin_Repos_Property_SubstituteTask extends Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Setter_Interface
 {
     /**
      * Validates if a task can run by checking configs, directries and so on.

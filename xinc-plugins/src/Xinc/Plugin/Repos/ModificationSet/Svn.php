@@ -30,13 +30,12 @@
 require_once 'Xinc/Exception/ModificationSet.php';
 require_once 'Xinc/Ini.php';
 require_once 'Xinc/Logger.php';
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Result.php';
 require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
 
-class Xinc_Plugin_Repos_ModificationSet_Svn
-    extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
 {
     /**
      * @var string Path to project.

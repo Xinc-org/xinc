@@ -26,12 +26,12 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Publisher/Deliverable/Task.php';
 require_once 'Xinc/Plugin/Repos/Gui/Deliverable/Widget.php';
 require_once 'Xinc/Plugin/Repos/Api/Deliverable.php';
 
-class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
+class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Abstract
 {
     const DELIVERABLE_DIR = 'deliverable';
 
@@ -83,14 +83,12 @@ class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
         $sourceFile = realpath($sourceFile);
         $alias = basename($alias);
         $statusDir = Xinc::getInstance()->getStatusDir();
-        
+
         $projectDir = Xinc::getInstance()->getProjectDir();
-        
-        
         $subDir = $build->getStatusSubDir();
         $fullDir = self::getDeliverableDir($build);
         $targetFile = $fullDir . DIRECTORY_SEPARATOR . basename($sourceFile);
-        
+
         /**
          * Verify that the source is in the projectdir
          */
@@ -106,7 +104,7 @@ class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
             $build->error('-- ' . $sourceFile . ' is not within project dir. Security Problem.');
             return false;
         }
-        
+
         if (!file_exists($fullDir)) {
             mkdir($fullDir, 0755, true);
         }
@@ -118,7 +116,6 @@ class Xinc_Plugin_Repos_Deliverable extends Xinc_Plugin_Base
         } else {
             $res = copy($sourceFile, $targetFile);
             if ($res) {
-                
                 chmod($targetFile, 0755);
                 $status = 'OK';
                 $deliverables = $build->getInternalProperties()->get('deliverables');

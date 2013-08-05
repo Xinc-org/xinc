@@ -23,12 +23,12 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Base.php';
+require_once 'Xinc/Plugin/Task/Abstract.php';
 
-abstract class Xinc_Plugin_Repos_Configuration_AbstractTask extends Xinc_Plugin_Task_Base
+abstract class Xinc_Plugin_Repos_Configuration_AbstractTask extends Xinc_Plugin_Task_Abstract
 {
     public abstract function configure(Xinc_Build $build);
 
