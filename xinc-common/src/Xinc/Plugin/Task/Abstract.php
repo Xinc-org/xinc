@@ -26,28 +26,35 @@
  * @link      http://code.google.com/p/xinc/
  */
 
+require_once 'Xinc/Build/Interface.php';
 require_once 'Xinc/Plugin/Task/Interface.php';
-require_once 'Xinc/Build/Tasks/Iterator.php';
+require_once 'Xinc/Plugin/Interface.php';
 
-abstract class Xinc_Plugin_Task_Base
-    implements Xinc_Plugin_Task_Interface
+abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
 {
     /**
      * @var array Subtasks for this task
      */
     protected $arSubtasks = array();
 
-    protected $_plugin;
-    protected $_xml;
-    
     /**
-     * Constructor, stores a reference to the plugin for
-     * usage of functionality
+     * @var Xinc_Plugin_Interface
+     */
+    protected $plugin;
+
+    /**
+     * @var SimpleXMLElement
+     */
+    protected $xml;
+
+    /**
+     * Constructor, stores a reference to the plugin for usage of functionality
      *
      * @param Xinc_Plugin_Interface $plugin
      */
-    public function __construct(Xinc_Plugin_Interface $plugin){
-        $this->_plugin = $plugin;
+    public function __construct(Xinc_Plugin_Interface $plugin)
+    {
+        $this->plugin = $plugin;
     }
 
     public function init(Xinc_Build_Interface $build)
@@ -84,11 +91,11 @@ abstract class Xinc_Plugin_Task_Base
 
     public function getXml()
     {
-        return $this->_xml;
+        return $this->xml;
     }
 
     public function setXml(SimpleXMLElement $element)
     {
-        $this->_xml = $element;
+        $this->xml = $element;
     }
 }

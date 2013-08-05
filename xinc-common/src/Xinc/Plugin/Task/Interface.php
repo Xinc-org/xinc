@@ -26,8 +26,8 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Slot.php';
-require_once 'Xinc/Plugin/Task/Processor/Interface.php';
+require_once 'Xinc/Build/Interface.php';
+require_once 'Xinc/Plugin/Interface.php';
 
 interface Xinc_Plugin_Task_Interface
 {
