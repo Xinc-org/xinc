@@ -46,52 +46,33 @@ require_once 'Xinc/Timezone.php';
 
 class Xinc
 {
-    const VERSION='@VERSION@';
+    const VERSION = '@VERSION@';
 
     const DEFAULT_PROJECT_DIR = 'projects';
     const DEFAULT_STATUS_DIR = 'status';
 
-    /**
-     * Registry holds all the projects that the
-     * Xinc instance is currently holding
-     *
-     * @var Xinc_Project_Registry
-     */
-    private static $_projectRegistry;
+    public $buildActive = false;
 
     /**
-     * Registry holds all configured Xinc Engines
+     * Default sleepy time in seconds
      *
-     * @var Xinc_Engine_Registry
+     * @var integer
      */
-    private static $_engineRegistry;
-
-    private $_defaultSleep = 30;
-
-    public $buildActive=false;
+    private $defaultSleep = 30;
 
     /**
      * Registry holding all scheduled builds
      *
      * @var Xinc_Build_Queue_Interface
      */
-    private static $_buildQueue;
-
+    private static $buildQueue;
 
     /**
-     * parses the generic <configuration/>
-     * element of each xinc config file
-     * and sets the overriding configuratio
-     * for the specific engine
+     * The actually running build
      *
-     * @var Xinc_Config_Parser
+     * @var Xinc_Build_Interface
      */
-    private $_configParser;
-
-    private static $_currentBuild;
-
-    private $_pluginParser;
-    private $_engineParser;
+    private static $currentBuild;
 
     /**
      * Current working directory
@@ -99,71 +80,80 @@ class Xinc
      *
      * @var string
      */
-    private $_workingDir;
+    private $workingDir;
 
     /**
      * Directory holding the projects
      *
      * @var string
      */
-    private $_projectDir;
+    private $projectDir;
 
     /**
+     * The directory to drop xml status files
+     *
+     * @var string
+     */
+    private $statusDir;
+
+    /**
+     * The file with the pid marker
+     *
+     * @var string
+     */
+    private $pidFile;
+
+    /**
+     * Instance of this object.
      *
      * @var Xinc
      */
-    private static $_instance;
+    private static $instance;
 
-
-    private static $_systemTimezone;
+    /**
+     * Timezone of system
+     *
+     * @var Xinc_Timezone
+     */
+    private static $systemTimezone;
 
     /**
      * Short command line arguments.
      * @var string
      */
-    private static $_shortOptions = 'f:p:w:l:s:v:h:o';
+    private static $shortOptions = 'f:p:w:l:s:v:h:o';
 
     /**
      * Long command line arguments.
      * @var array
      */
-    private static $_longOptions = array(
-                                         'config-file=',
-                                         'project-dir=',
-                                         'working-dir=',
-                                         'log-file=',
-                                         'status-dir=',
-                                         'verbose=',
-                                         'help',
-                                         'version',
-                                         'once',
-                                         'pid-file='
-                                    );
-
-
-
-    /**
-     * The directory to drop xml status files
-     * @var string
-     */
-    private $_statusDir;
-
-    private $_pidFile;
+    private static $longOptions = array(
+        'config-file=',
+        'project-dir=',
+        'working-dir=',
+        'log-file=',
+        'status-dir=',
+        'verbose=',
+        'help',
+        'version',
+        'once',
+        'pid-file=',
+    );
 
     /**
      * Holding the config settings
      *
      * @var array
      */
-    private $_config = array();
+    private $config = array();
 
     /**
      * Constructor
      */
     private function __construct()
     {
-        //self::$_instance = &$this;
-        self::$_buildQueue = new Xinc_Build_Queue();
+        //self::$instance = &$this;
+        self::$buildQueue = new Xinc_Build_Queue();
     }
 
     /**
@@ -171,16 +161,16 @@ class Xinc
      */
     public static function getInstance()
     {
-        //if (!isset(self::$_instance)) {
+        //if (!isset(self::$instance)) {
         //    self::main();
         //}
 
-        return self::$_instance;
+        return self::$instance;
     }
 
     public function getSystemTimezone()
     {
-        return self::$_systemTimezone;
+        return self::$systemTimezone;
     }
 
     /**
@@ -189,41 +179,42 @@ class Xinc
      * @param string $fileName
      * @throws Xinc_Exception_MalformedConfig
      */
-    function setSystemConfigFile($fileName)
+    private function setSystemConfigFile($fileName)
     {
-        $fileName = realpath($fileName);
-        $configFile = Xinc_Config_File::load($fileName);
+        $realFileName = realpath($fileName);
+        if (false === $realFileName) {
+            throw new Xinc_Exception_MalformedConfig('System config file: ' . $fileName . ' not found.');
+        }
+        $configFile = Xinc_Config_File::load($realFileName);
 
-        $this->_configParser = new Xinc_Config_Parser($configFile);
+        $configParser = new Xinc_Config_Parser($configFile);
 
-        $plugins = $this->_configParser->getPlugins();
+        $plugins = $configParser->getPlugins();
+        $engines = $configParser->getEngines();
+        $configSettings = $configParser->getConfigSettings();
 
-        $this->_pluginParser = new Xinc_Plugin_Parser();
+        $pluginParser = new Xinc_Plugin_Parser();
+        $pluginParser->parse($plugins);
 
-        $this->_pluginParser->parse($plugins);
+        $this->engineParser = new Xinc_Engine_Parser();
+        $this->engineParser->parse($engines);
 
-        $engines = $this->_configParser->getEngines();
-        $this->_engineParser = new Xinc_Engine_Parser();
-
-        $this->_engineParser->parse($engines);
-
-        $configSettings = $this->_configParser->getConfigSettings();
         while ($configSettings->hasNext()) {
             $setting = $configSettings->next();
             $attributes = $setting->attributes();
-            $name = (string)$attributes->name;
-            $value = (string)$attributes->value;
+            $name = (string) $attributes->name;
+            $value = (string) $attributes->value;
             if ($name == 'loglevel' && Xinc_Logger::getInstance()->logLevelSet()) {
                 $value = Xinc_Logger::getInstance()->getLogLevel();
             }
-            self::getInstance()->_setConfigDirective($name, $value);
+            self::getInstance()->setConfigDirective($name, $value);
         }
     }
 
 
-    private function _setConfigDirective($name, $value)
+    private function setConfigDirective($name, $value)
     {
-        $this->_config[$name] = $value;
+        $this->config[$name] = $value;
         switch ($name) {
             case 'loglevel':
                 Xinc_Logger::getInstance()->setLogLevel($value);
@@ -237,8 +228,8 @@ class Xinc
 
     public function restoreConfigDirectives()
     {
-        foreach ($this->_config as $name => $value) {
-            $this->_setConfigDirective($name, $value);
+        foreach ($this->config as $name => $value) {
+            $this->setConfigDirective($name, $value);
         }
         /**
          * restore timezone, if system.xml does not configure one
@@ -250,12 +241,12 @@ class Xinc
 
     public function getConfigDirective($name)
     {
-        return isset($this->_config[$name])?$this->_config[$name]:null;
+        return isset($this->config[$name]) ? $this->config[$name] : null;
     }
 
     public function setPidFile($pidFile)
     {
-        $this->_pidFile = $pidFile;
+        $this->pidFile = $pidFile;
     }
 
     /**
@@ -265,10 +256,10 @@ class Xinc
      *
      * @throws Xinc_Exception_IO
      */
-    function setStatusDir($strStatusDir)
+    public function setStatusDir($strStatusDir)
     {
         Xinc_Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
-        $this->_statusDir = $this->checkDirectory($strStatusDir);
+        $this->statusDir = $this->checkDirectory($strStatusDir);
     }
 
 
@@ -285,25 +276,21 @@ class Xinc
     {
         if (!is_dir($strDirectory)) {
             Xinc_Logger::getInstance()->verbose(
-                'Directory "' . $strDirectory .'" does not exist. Trying to create'
+                'Directory "' . $strDirectory . '" does not exist. Trying to create'
             );
             $bCreated = @mkdir($strDirectory, 0755, true);
             if (!$bCreated) {
                 $arError = error_get_last();
                 Xinc_Logger::getInstance()->verbose(
-                    'Directory "' . $strDirectory .'" could not be created.'
+                    'Directory "' . $strDirectory . '" could not be created.'
                 );
-                throw new Xinc_Exception_IO(
-                    $strDirectory, null, $arError['message']
-                );
+                throw new Xinc_Exception_IO($strDirectory, null, $arError['message']);
             }
         } elseif (!is_writeable($strDirectory)) {
             Xinc_Logger::getInstance()->verbose(
-                'Directory "' . $strDirectory .'" is not writeable.'
+                'Directory "' . $strDirectory . '" is not writeable.'
             );
-            throw new Xinc_Exception_IO(
-                $strDirectory, null, null, Xinc_Exception_IO::FAILURE_NOT_WRITEABLE
-            );
+            throw new Xinc_Exception_IO($strDirectory, null, null, Xinc_Exception_IO::FAILURE_NOT_WRITEABLE);
         }
 
         return realpath($strDirectory);
@@ -316,7 +303,7 @@ class Xinc
      */
     public function getStatusDir()
     {
-        return $this->_statusDir;
+        return $this->statusDir;
     }
 
 
@@ -331,14 +318,14 @@ class Xinc
         /**
          * trigger the build queue to be populated
          */
-        $nextBuildTime = Xinc::$_buildQueue->getNextBuildTime();
+        $nextBuildTime = Xinc::$buildQueue->getNextBuildTime();
 
-        while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
+        while (($nextBuild = Xinc::$buildQueue->getNextBuild()) !== null) {
             $nextBuild->build();
         }
     }
 
-    private function _isProcessRunning($pid)
+    private function isProcessRunning($pid)
     {
         if (isset($_SERVER['SystemRoot']) && DIRECTORY_SEPARATOR != '/') {
             /**
@@ -347,10 +334,10 @@ class Xinc
             return false;
         } else {
             exec('ps --no-heading -p ' . $pid, $out, $res);
-            if ($res!=0) {
+            if ($res != 0) {
                 return false;
             } else {
-                if (count($out)>0) {
+                if (count($out) > 0) {
                     return true;
                 } else {
                     return false;
@@ -370,41 +357,44 @@ class Xinc
         /**
          * write pid file
          */
-        if (file_exists($this->_pidFile)) {
-            $oldPid = file_get_contents($this->_pidFile);
-            if ($this->_isProcessRunning($oldPid)) {
-                Xinc_Logger::getInstance()->error('Xinc Instance with PID '.$pid.' still running. Check pidfile '.$this->_pidFile.'. Shutting down.');
+        if (file_exists($this->pidFile)) {
+            $oldPid = file_get_contents($this->pidFile);
+            if ($this->isProcessRunning($oldPid)) {
+                Xinc_Logger::getInstance()->error(
+                    'Xinc Instance with PID ' . $pid . ' still running. Check pidfile '
+                    . $this->pidFile . '. Shutting down.'
+                );
                 exit(-1);
             } else {
                 Xinc_Logger::getInstance()->error('Cleaning up old pidFile.');
             }
         }
-        file_put_contents($this->_pidFile, getmypid());
+        file_put_contents($this->pidFile, getmypid());
         while (true) {
-            declare(ticks=2);
+            declare(ticks = 2);
             $now = time();
-            $nextBuildTime = Xinc::$_buildQueue->getNextBuildTime();
+            $nextBuildTime = Xinc::$buildQueue->getNextBuildTime();
             Xinc_Timezone::reset();
             Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
 
             if ($nextBuildTime != null) {
                 $sleep = $nextBuildTime - $now;
             } else {
-                $sleep = $this->_defaultSleep;
+                $sleep = $this->defaultSleep;
             }
             if ($sleep > 0) {
-                $this->buildActive=false;
+                $this->buildActive = false;
                 Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
                 $start = time() + microtime(true);
-                while(((time()+microtime(true)) - $start)<=$sleep) {
+                while (((time() + microtime(true)) - $start) <= $sleep) {
                     usleep(10000);
                     /**
                      * Check for forceonly builds here
                      */
                 }
             }
-            while (($nextBuild = Xinc::$_buildQueue->getNextBuild()) !== null) {
-                $this->buildActive=true;
+            while (($nextBuild = Xinc::$buildQueue->getNextBuild()) !== null) {
+                $this->buildActive = true;
                 $nextBuild->build();
             }
         }
@@ -420,7 +410,7 @@ class Xinc
     public function setWorkingDir($strWorkingDir)
     {
         Xinc_Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
-        $this->_workingDir = $this->checkDirectory($strWorkingDir);
+        $this->workingDir = $this->checkDirectory($strWorkingDir);
     }
 
     /**
@@ -433,7 +423,7 @@ class Xinc
     public function setProjectDir($strProjectDir)
     {
         Xinc_Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
-        $this->_projectDir = $this->checkDirectory($strProjectDir);
+        $this->projectDir = $this->checkDirectory($strProjectDir);
     }
 
     /**
@@ -442,7 +432,7 @@ class Xinc
      */
     public function getProjectDir()
     {
-        return $this->_projectDir;
+        return $this->projectDir;
     }
 
     /**
@@ -451,12 +441,12 @@ class Xinc
      */
     public function getWorkingDir()
     {
-        return $this->_workingDir;
+        return $this->workingDir;
     }
 
     public function getShortOptions()
     {
-        return self::$_shortOptions;
+        return self::$shortOptions;
     }
 
     /**
@@ -466,7 +456,7 @@ class Xinc
      */
     public function getLongOptions()
     {
-        return self::$_longOptions;
+        return self::$longOptions;
     }
 
     /**
@@ -475,12 +465,11 @@ class Xinc
     protected function start($daemon)
     {
         if ($daemon) {
-            $res=register_tick_function(array(&$this, 'checkShutdown'));
-            Xinc_Logger::getInstance()->info('Registering shutdown function: ' . ($res?'OK':'NOK'));
+            $res = register_tick_function(array(&$this, 'checkShutdown'));
+            Xinc_Logger::getInstance()->info('Registering shutdown function: ' . ($res ? 'OK' : 'NOK'));
             $this->processBuildsDaemon();
         } else {
-            Xinc_Logger::getInstance()->info('Run-once mode '
-                                            . '(project interval is negative)');
+            Xinc_Logger::getInstance()->info('Run-once mode (project interval is negative)');
             //Xinc_Logger::getInstance()->flush();
             $this->processBuildsRunOnce();
         }
@@ -494,7 +483,7 @@ class Xinc
      */
     public static function main($args = '')
     {
-        self::$_systemTimezone = Xinc_Timezone::get();
+        self::$systemTimezone = Xinc_Timezone::get();
         try {
             /**
              * Set up the logging
@@ -512,17 +501,17 @@ class Xinc
             $logger->info('- Log Level:          ' . $logger->getLogLevel());
             $logger->info('- Daemon:             ' . ($arguments['daemon'] ? 'yes' : 'no'));
             $logger->info('- PID File:           ' . $arguments['pidFile']);
-            self::$_instance = new Xinc();
+            self::$instance = new Xinc();
 
-            self::$_instance->setWorkingDir($arguments['workingDir']);
+            self::$instance->setWorkingDir($arguments['workingDir']);
 
-            self::$_instance->setProjectDir($arguments['projectDir']);
+            self::$instance->setProjectDir($arguments['projectDir']);
 
-            self::$_instance->setStatusDir($arguments['statusDir']);
+            self::$instance->setStatusDir($arguments['statusDir']);
 
-            self::$_instance->setPidFile($arguments['pidFile']);
+            self::$instance->setPidFile($arguments['pidFile']);
 
-            self::$_instance->setSystemConfigFile($arguments['configFile']);
+            self::$instance->setSystemConfigFile($arguments['configFile']);
 
             // get the project config files
             if (isset($arguments['projectFiles'])) {
@@ -530,7 +519,7 @@ class Xinc
                  * pre-process projectFiles
                  */
                 $merge = array();
-                for ($i = 0; $i<count($arguments['projectFiles']); $i++) {
+                for ($i = 0; $i < count($arguments['projectFiles']); $i++) {
                     $projectFile = $arguments['projectFiles'][$i];
                     if (!file_exists($projectFile) && strstr($projectFile, '*')) {
                         // we are probably under windows and the command line does not
@@ -555,10 +544,10 @@ class Xinc
 
                 foreach ($arguments['projectFiles'] as $projectFile) {
                     $logger->info('Loading Project-File: ' . $projectFile);
-                    self::$_instance->_addProjectFile($projectFile);
+                    self::$instance->addProjectFile($projectFile);
                 }
             }
-            self::$_instance->start($arguments['daemon']);
+            self::$instance->start($arguments['daemon']);
         } catch (Xinc_Config_Exception_Getopt $e) {
             $logger->error('Handling Arguments: ' . $e->getMessage(), STDERR);
         } catch (Xinc_Build_Status_Exception_NoDirectory $statusNoDir) {
@@ -581,14 +570,14 @@ class Xinc
         } catch (Exception $e) {
             // we need to catch everything here
             $logger->error(
-                'Xinc stopped due to an uncaught exception: ' 
+                'Xinc stopped due to an uncaught exception: '
                 . $e->getMessage() . ' in File : ' . $e->getFile() . ' on line '
                 . $e->getLine() . $e->getTraceAsString(),
                 STDERR
             );
         }
 
-        self::$_instance->shutDown();
+        self::$instance->shutDown();
     }
 
     /**
@@ -597,7 +586,7 @@ class Xinc
      * @return array The array of parsed arguments.
      * @throws Xinc_Config_Exception_GetOpt
      */
-    public static function handleArguments($commandLine = null) 
+    public static function handleArguments($commandLine = null)
     {
         if ($commandLine != null) {
             if (!is_array($commandLine) && is_string($commandLine)) {
@@ -609,27 +598,27 @@ class Xinc
                 $commandLine = trim($commandLine);
                 for ($i = 0; $i < strlen($commandLine); $i++) {
                     if ($waitForDelimiter != null) {
-                        if ($commandLine{$i} == $waitForDelimiter && $commandLine{$i-1} != '\\') {
+                        if ($commandLine{$i} == $waitForDelimiter && $commandLine{$i - 1} != '\\') {
                             $newArgument = true;
                             $waitForDelimiter = false;
                             continue;
                         }
-                    } else if ($commandLine{$i} == ' ' && $commandLine{$i+1} == ' ') {
+                    } elseif ($commandLine{$i} == ' ' && $commandLine{$i + 1} == ' ') {
                         // skip multiple spaces
                         continue;
-                    } else if ($commandLine{$i} == ' ' &&
-                               $commandLine{$i-1} != '\\' &&
-                               !in_array($commandLine{$i+1}, $validDelimiters)) {
+                    } elseif ($commandLine{$i} == ' ' && $commandLine{$i - 1} != '\\'
+                        && !in_array($commandLine{$i + 1}, $validDelimiters)
+                    ) {
                         // Allow \ for escaping of spaces in path names
                         $newArgument = true;
-                    } else if ($commandLine{$i} == ' ' &&
-                               $commandLine{$i-1} != '\\' &&
-                               in_array($commandLine{$i+1}, $validDelimiters)) {
+                    } elseif ($commandLine{$i} == ' ' && $commandLine{$i - 1} != '\\'
+                        && in_array($commandLine{$i + 1}, $validDelimiters)
+                    ) {
                         $newArgument = true;
-                        $waitForDelimiter = $commandLine{$i+1};
+                        $waitForDelimiter = $commandLine{$i + 1};
                         // move ahead, since we dont want the delimiter to be part of the param
                         $i++;
-                    } else if ($i + 1 >= strlen($commandLine)) {
+                    } elseif ($i + 1 >= strlen($commandLine)) {
                         $argument .= $commandLine{$i};
                         $newArgument = true;
                     }
@@ -644,23 +633,24 @@ class Xinc
                 $commandLine = $args;
             }
         } else {
-            $commandLine = $_SERVER['argv']; 
+            $commandLine = $_SERVER['argv'];
         }
+
         /**
          * setting default values
          */
         $workingDir = dirname($_SERVER['argv'][0]);
-        $arguments = array('daemon'       => true,
-                           'configFile'   => $workingDir . DIRECTORY_SEPARATOR . 'system.xml',
-                           'logLevel'     => Xinc_Logger::DEFAULT_LOG_LEVEL,
-                           'logFile'      => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
-                           'workingDir'   => $workingDir,
-                           'projectDir'   => $workingDir . DIRECTORY_SEPARATOR
-                                             . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR,
-                           'statusDir'    => $workingDir . DIRECTORY_SEPARATOR
-                                             . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR);
-      
-        $options = Xinc_Config_Getopt::getopt($commandLine, self::$_shortOptions, self::$_longOptions);
+        $arguments = array(
+            'daemon'       => true,
+            'configFile'   => $workingDir . DIRECTORY_SEPARATOR . 'system.xml',
+            'logLevel'     => Xinc_Logger::DEFAULT_LOG_LEVEL,
+            'logFile'      => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
+            'workingDir'   => $workingDir,
+            'projectDir'   => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR,
+            'statusDir'    => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR,
+        );
+
+        $options = Xinc_Config_Getopt::getopt($commandLine, self::$shortOptions, self::$longOptions);
         //echo 'Determined options: ' . var_export($options, true) . "\n";
         if (isset($options[1])) {
             $arguments['projectFiles'] = $options[1];
@@ -714,7 +704,7 @@ class Xinc
                     self::printVersion();
                     exit;
                     break;
-                case '--help': 
+                case '--help':
                     self::showHelp();
                     exit;
             }
@@ -731,7 +721,7 @@ class Xinc
      *
      * @param string $fileName
      */
-    private function _addProjectFile($fileName)
+    private function addProjectFile($fileName)
     {
         try {
             $config = new Xinc_Project_Config($fileName);
@@ -741,31 +731,39 @@ class Xinc
 
             $builds = $engine->parseProjects($config->getProjects());
 
-            Xinc::$_buildQueue->addBuilds($builds);
+            Xinc::$buildQueue->addBuilds($builds);
 
         } catch (Xinc_Project_Config_Exception_FileNotFound $notFound) {
             Xinc_Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
         } catch (Xinc_Project_Config_Exception_InvalidEntry $invalid) {
             Xinc_Logger::getInstance()->error('Project Config File has an invalid entry: ' . $invalid->getMessage());
         } catch (Xinc_Engine_Exception_NotFound $engineNotFound) {
-            Xinc_Logger::getInstance()->error('Project Config File references an unknown Engine: ' 
-                                             . $engineNotFound->getMessage());
+            Xinc_Logger::getInstance()->error(
+                'Project Config File references an unknown Engine: ' . $engineNotFound->getMessage()
+            );
         }
     }
 
-    public static function &getCurrentBuild()
+    /**
+     * Returns current running build
+     *
+     * @return Xinc_Build_Interface
+     */
+    public static function getCurrentBuild()
     {
-        return self::$_currentBuild;
+        return self::$currentBuild;
     }
 
     /**
      * Sets the build that is currently being processed
      *
      * @param Xinc_Build_Interface $build
+     *
+     * @return void
      */
-    public static function setCurrentBuild(Xinc_Build_Interface &$build)
+    public static function setCurrentBuild(Xinc_Build_Interface $build)
     {
-        self::$_currentBuild = $build;
+        self::$currentBuild = $build;
     }
 
     /**
@@ -808,17 +806,17 @@ class Xinc
     }
 
     /**
-     * shutsdown the xinc instance and cleans up pidfile etc
+     * Shutsdown the xinc instance and cleans up pidfile etc.
      *
      * @param boolean $exit
      */
-    private function shutDown($exit=false)
+    private function shutDown($exit = false)
     {
         $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
         if (file_exists($file)) {
             unlink($file);
         }
-        $pidFile = $this->_pidFile;
+        $pidFile = $this->pidFile;
         if (file_exists($pidFile)) {
                 unlink($pidFile);
         }
@@ -834,18 +832,18 @@ class Xinc
      */
     public static function showHelp()
     {
-        echo "Usage: xinc [switches] [project-file-1 [project-file-2 ...]]\n\n";
+        echo 'Usage: xinc [switches] [project-file-1 [project-file-2 ...]]' . "\n\n";
 
-        echo "  -f --config-file=<file>   The config file to use.\n" .
-             "  -p --project-dir=<dir>    The project directory.\n" .
-             "  -w --working-dir=<dir>    The working directory.\n" .
-             "  -l --log-file=<file>      The log file to use.\n" . 
-             "  -v --verbose=<level>      The level of information to log (default 2).\n" . 
-             "  -s --status-dir=<dir>     The status directory to use.\n" . 
-             "  -o --once                 Run once and exit.\n" .
-             "  --pid-file=<file>         The directory to put the PID file" .
-             "  --version                 Prints the version of Xinc.\n" .
-             "  -h --help                 Prints this help message.\n";
+        echo '  -f --config-file=<file>   The config file to use.' . "\n"
+            . '  -p --project-dir=<dir>    The project directory.' . "\n"
+            . '  -w --working-dir=<dir>    The working directory.' . "\n"
+            . '  -l --log-file=<file>      The log file to use.' . "\n"
+            . '  -v --verbose=<level>      The level of information to log (default 2).' . "\n"
+            . '  -s --status-dir=<dir>     The status directory to use.' . "\n"
+            . '  -o --once                 Run once and exit.' . "\n"
+            . '  --pid-file=<file>         The directory to put the PID file' . "\n"
+            . '  --version                 Prints the version of Xinc.' . "\n"
+            . '  -h --help                 Prints this help message.' . "\n";
     }
 
     /**
@@ -854,7 +852,7 @@ class Xinc
      */
     public static function printVersion()
     {
-        echo "Xinc version " . self::getVersion() . "\n";
+        echo 'Xinc version ' . self::getVersion() . "\n";
     }
 
     /**
