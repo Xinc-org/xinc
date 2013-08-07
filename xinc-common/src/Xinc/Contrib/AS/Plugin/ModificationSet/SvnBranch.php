@@ -22,24 +22,19 @@
  *    along with Xinc, write to the Free Software
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-require_once 'Xinc/Plugin/Base.php';
-require_once 'Xinc/Contrib/AS/Plugin/ModificationSet/SvnBranch/Task.php';
 
+require_once 'Xinc/Contrib/AS/Plugin/ModificationSet/SvnBranch/Task.php';
 require_once 'Xinc/Contrib/Warko/Plugin/ModificationSet/SvnTag.php';
 
 class Xinc_Contrib_AS_Plugin_ModificationSet_SvnBranch extends Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
 {
-    
     protected function _getSvnSubDir()
     {
         return 'branches';
     }
-    
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Contrib_AS_Plugin_ModificationSet_SvnBranch_Task($this));
     }
-
-
-
 }

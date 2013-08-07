@@ -7,8 +7,8 @@
  *
  * @category  Development
  * @package   Xinc.Api
- * @author    Arno Schneider <username@example.org>
- * @copyright 2007 Arno Schneider, Barcelona
+ * @author    Alexander Opitz <opitz.alexander@gmail.com>
+ * @copyright 2013 Alexander Opitz, Leipzig
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
  *            Xinc is free software; you can redistribute it and/or modify
@@ -27,11 +27,18 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Api/Response/Object.php';
 require_once 'Xinc/Plugin/Interface.php';
+require_once 'Xinc/Api/Module/Interface.php';
 
-interface Xinc_Api_Module_Interface
+abstract class Xinc_Api_Module_Abstract implements Xinc_Api_Module_Interface
 {
+    /**
+     * The bundled plugin
+     *
+     * @var Xinc_Plugin_Interface
+     */
+    protected $plugin;
+
     /**
      * Constructor for the Module
      * 
@@ -42,34 +49,8 @@ interface Xinc_Api_Module_Interface
      *
      * @param Xinc_Plugin_Interface $plugin
      */
-    public function __construct(Xinc_Plugin_Interface $plugin);
-
-    /**
-     * The Xinc_Api_Handler passes the called methodName and
-     * the parameters to the api module
-     *
-     * @param String $methodName
-     * @param array $params
-     */
-    public function processCall($methodName, $params = array());
-
-    /**
-     * returns the Methods of this Api Module
-     * 
-     * getName() returns 'mymodule';
-     * getMethod() returns array('get', 'set');
-     * Api can handle: 
-     *   http://mydomain.com/api/mymodule/get/
-     *     AND
-     *   http://mydomain.com/api/mymodule/set/
-     *
-     */
-    public function getMethods();
-
-    /**
-     * get the name of the module as it should be used in api calls
-     * 
-     * @return String
-     */
-    public function getName();
+    public function __construct(Xinc_Plugin_Interface $plugin)
+    {
+        $this->plugin = $plugin;
+    }
 }

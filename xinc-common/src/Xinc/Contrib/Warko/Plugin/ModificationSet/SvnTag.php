@@ -28,15 +28,14 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Base.php';
+require_once 'Xinc/Plugin/Abstract.php';
 require_once 'Xinc/Contrib/Warko/Plugin/ModificationSet/SvnTag/Task.php';
 require_once 'Xinc/Ini.php';
 
-class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
-    extends Xinc_Plugin_Base
+class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag extends Xinc_Plugin_Abstract
 {
     private $_svnPath;
-    
+
     public function __construct()
     {
         $svnPath = Xinc_Ini::getInstance()->get('path', 'svn');
@@ -45,12 +44,12 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
         }
         $this->_svnPath = $svnPath;
     }
-    
+
     protected function _getSvnSubDir()
     {
         return 'tags';
     }
-    
+
     public function getTaskDefinitions()
     {
         return array(new Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task($this));
@@ -73,7 +72,7 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
         $output = '';
         $result = 9;
         exec($this->_svnPath . ' info', $output, $result);
-        
+
         $found =false;
         if ($result == 0) {
             $localSet = implode("\n", $output);
@@ -108,7 +107,6 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
                         }
                         // switch to the latest release
                         if ($switch) {
-                            
                             exec($this->_svnPath . ' switch ' . $url . '/' . $this->_getSvnSubDir()
                                 . '/' . $tagName, $switchOut, $switchRes);
                             if ($switchRes != 0) {
@@ -317,5 +315,4 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
         }
 
     }
-
 }

@@ -8,6 +8,7 @@
  * @category  Development
  * @package   Xinc.Data
  * @author    Arno Schneider <username@example.org>
+ * @author    Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
@@ -24,22 +25,17 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'PEAR/Config.php';
 
 class Xinc_Data_Repository
 {
+    private static $instance;
 
-    private static $_instance;
-    
-    private $_defaultEngine;
+    private $baseDir;
 
-    private $_engines = array();
-    
-    private $_baseDir;
-    
     /**
      * Constructor for the data repository
      */
@@ -48,9 +44,9 @@ class Xinc_Data_Repository
         $pearDataDir = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc';
         $customInstallDataDir = dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'data';
         if (is_dir($pearDataDir)) {
-            $this->_baseDir = $pearDataDir;
+            $this->baseDir = $pearDataDir;
         } else if (is_dir($customInstallDataDir)) {
-            $this->_baseDir = $customInstallDataDir;
+            $this->baseDir = $customInstallDataDir;
         }
     }
 
@@ -61,10 +57,10 @@ class Xinc_Data_Repository
      */
     public static function getInstance()
     {
-        if (!Xinc_Data_Repository::$_instance) {
-            Xinc_Data_Repository::$_instance = new Xinc_Data_Repository();
+        if (!Xinc_Data_Repository::$instance) {
+            Xinc_Data_Repository::$instance = new Xinc_Data_Repository();
         }
-        return Xinc_Data_Repository::$_instance;
+        return Xinc_Data_Repository::$instance;
     }
 
     /**
@@ -76,6 +72,30 @@ class Xinc_Data_Repository
      */
     public function get($fileName)
     {
-        return $this->_baseDir . DIRECTORY_SEPARATOR . $fileName;
+        return $this->baseDir . DIRECTORY_SEPARATOR . $fileName;
+    }
+
+    /**
+     * Calculates the absolute pathname of a file
+     *
+     * @param string $fileName
+     *
+     * @return string
+     */
+    public function getWeb($fileName)
+    {
+        return $this->baseDir . 'Web' . DIRECTORY_SEPARATOR . $fileName;
+    }
+
+    /**
+     * Calculates the absolute pathname of a file
+     *
+     * @param string $fileName
+     *
+     * @return string
+     */
+    public function getPlugins($fileName)
+    {
+        return $this->baseDir . 'Plugins' . DIRECTORY_SEPARATOR . $fileName;
     }
 }
