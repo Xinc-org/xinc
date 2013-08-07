@@ -26,7 +26,7 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
@@ -36,12 +36,8 @@ require_once 'Xinc/Data/Repository.php';
 require_once 'Xinc/Build/History.php';
 require_once 'Xinc/Build/Repository.php';
 
-class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Statistics_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $extensions = array();
-
     public $scripts = '';
 
     private $projectName;
@@ -50,7 +46,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
 
     public function __construct(Xinc_Plugin_Interface $plugin)
     {
-        $this->_plugin = $plugin;
+        parent::__construct($plugin);
         try {
             $this->tmpDir = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc');
         } catch (Exception $e) {
@@ -81,7 +77,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
             case '/statistics/':
             default:
                 ob_start();
-                include Xinc_Data_Repository::getInstance()->get(
+                include Xinc_Data_Repository::getInstance()->getWeb(
                     'templates' . DIRECTORY_SEPARATOR
                     . 'statistics' . DIRECTORY_SEPARATOR
                     . 'graphbase.phtml'
@@ -233,6 +229,7 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
     public function registerExtension($extensionPoint, $extension)
     {
         if (!isset($this->extensions[$extensionPoint])) {
+            // @TODO If not set, then empty array?
             $this->extensions[$extensionPoint] = array();
         }
         switch ($extensionPoint) {
@@ -245,22 +242,8 @@ class Xinc_Plugin_Repos_Gui_Statistics_Widget implements Xinc_Gui_Widget_Interfa
         }
     }
 
-    public function getExtensions()
-    {
-        return $this->extensions;
-    }
-
     public function getExtensionPoints()
     {
         return array('STATISTIC_GRAPH');
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

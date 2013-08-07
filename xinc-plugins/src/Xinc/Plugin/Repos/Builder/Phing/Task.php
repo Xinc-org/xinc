@@ -23,7 +23,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Plugin/Repos/Builder/AbstractTask.php';
@@ -139,7 +139,7 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
             $ifProp = $build->getProperties()->get($this->_if);
             if ($ifProp === true) {
                 $build->info('--' . $this->_if . ' == true --> building');
-                return $this->_plugin->build(
+                return $this->plugin->build(
                     $build,
                     $this->_buildFile,
                     $this->_target,
@@ -151,7 +151,7 @@ class Xinc_Plugin_Repos_Builder_Phing_Task extends Xinc_Plugin_Repos_Builder_Abs
                return true;
             }
         } else {
-           return $this->_plugin->build(
+           return $this->plugin->build(
                 $build,
                 $this->_buildFile,
                 $this->_target,

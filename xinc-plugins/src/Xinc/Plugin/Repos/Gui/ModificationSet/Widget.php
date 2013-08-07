@@ -23,37 +23,15 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Extension/Summary.php';
 require_once 'Xinc/Plugin/Repos/Gui/ModificationSet/Extension/ChangeLog.php';
 
-class Xinc_Plugin_Repos_Gui_ModificationSet_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_ModificationSet_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $_extensions = array();
-
-    public $scripts = '';
-
-    private $_projectName;
-
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
-    public function handleEvent($eventId)
-    {
-    }
-
-    public function getPaths()
-    {
-        return array();
-    }
-
     public function init()
     {
         try {
@@ -70,32 +48,5 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Widget implements Xinc_Gui_Widget_In
         } catch (Exception $e) {
             echo "Could not init on " . __FILE__ . "<br>";
         }
-    }
-
-    public function registerExtension($extensionPoint, $extension)
-    {
-        if (!isset($this->_extensions[$extensionPoint])) {
-            $this->_extensions[$extensionPoint] = array();
-        }
-        $this->_extensions[$extensionPoint][] = $extension;
-    }
-
-    public function getExtensions()
-    {
-        return $this->_extensions;
-    }
-
-    public function getExtensionPoints()
-    {
-        return array();
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

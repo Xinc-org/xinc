@@ -45,7 +45,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Extension_Summary
                 return false;
             }
 
-            $templateFile = Xinc_Data_Repository::getInstance()->get(
+            $templateFile = Xinc_Data_Repository::getInstance()->getWeb(
                 'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
                 . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
                 . 'modifications.phtml'

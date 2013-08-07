@@ -42,7 +42,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Extension_ChangeLog
     {
         $changeSet = $build->getProperties()->get('changeset');
         if ($changeSet instanceof Xinc_Plugin_Repos_ModificationSet_Result ) {
-            $logMessageTemplateFile = Xinc_Data_Repository::getInstance()->get(
+            $logMessageTemplateFile = Xinc_Data_Repository::getInstance()->getWeb(
                 'templates' . DIRECTORY_SEPARATOR  . 'dashboard' . DIRECTORY_SEPARATOR
                 . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
                 . 'modification_log_row.phtml'
@@ -86,7 +86,7 @@ class Xinc_Plugin_Repos_Gui_ModificationSet_Extension_ChangeLog
                                            $logMessageTemplateContent);
                 $logMessagesArr[] = $logContent;
             }
-            $templateFile = Xinc_Data_Repository::getInstance()->get(
+            $templateFile = Xinc_Data_Repository::getInstance()->getWeb(
                 'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
                 . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
                 . 'modification_log.phtml'

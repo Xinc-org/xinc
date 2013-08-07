@@ -40,7 +40,7 @@ class Xinc_Plugin_Repos_Gui_Documentation_Extension_Last
 
     public function getContent(Xinc_Build_Interface $build)
     {
-        $deliverableLinkTemplateFile = Xinc_Data_Repository::getInstance()->get(
+        $deliverableLinkTemplateFile = Xinc_Data_Repository::getInstance()->getWeb(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
             . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
             . 'documentation-link.phtml'

@@ -24,34 +24,19 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
-require_once 'Xinc/Build/Iterator.php';
-require_once 'Xinc/Project.php';
-require_once 'Xinc/Build.php';
-
+require_once 'Xinc/Gui/Widget/Abstract.php';
+require_once 'Xinc/Gui/Widget/Repository.php';
 require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Menu.php';
+require_once 'Xinc/Plugin/Repos/Gui/Menu/Extension/Item.php';
 
-class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Menu_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
     const TEMPLATE = 'MenuItems={"id":"xinc","text":"Menu","singleClickExpand":true, "children":[%s]};';
 
     private $_menu = array();
-
-    private $_extensions = array();
-
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
-    public function handleEvent($eventId)
-    {
-    }
 
     public function getPaths()
     {
@@ -80,35 +65,12 @@ class Xinc_Plugin_Repos_Gui_Menu_Widget implements Xinc_Gui_Widget_Interface
             } 
         }
 
-        $menuStr = call_user_func_array('sprintf',
-                                        array(self::TEMPLATE,implode(",", $menuItems)));
+        $menuStr = call_user_func_array('sprintf', array(self::TEMPLATE,implode(",", $menuItems)));
         return $menuStr;
-    }
-
-    public function registerExtension($extensionPoint, $extension)
-    {
-        if (!isset($this->_extensions[$extensionPoint])) {
-            $this->_extensions[$extensionPoint] = array();
-        }
-        $this->_extensions[$extensionPoint][] = $extension;
-    }
-
-    public function getExtensions()
-    {
-        return $this->_extensions;
     }
 
     public function getExtensionPoints()
     {
         return array('MAIN_MENU_ITEMS');
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

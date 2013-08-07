@@ -152,7 +152,7 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph
 
     private function _getTemplateFileName($type = 'line')
     {
-        $base = Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR . 'statistics');
+        $base = Xinc_Data_Repository::getInstance()->getWeb('templates' . DIRECTORY_SEPARATOR . 'statistics');
         switch ($type) {
             case 'line':
             default:

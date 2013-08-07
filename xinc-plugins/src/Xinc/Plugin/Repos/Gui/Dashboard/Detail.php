@@ -26,7 +26,7 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Build/Iterator.php';
 
@@ -37,14 +37,8 @@ require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Log.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension/Builds.php';
 require_once 'Xinc/Build/History.php';
 
-class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Dashboard_Detail extends Xinc_Gui_Widget_Abstract
 {
-    public $menu;
-
-    protected $_plugin;
-
-    private $_extensions = array();
-
     private $_internalExtensions = array();
 
     public $projectName;
@@ -59,14 +53,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
 
     public $buildTimeStamp;
 
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
     private function _generateExternalExtensions()
     {
-        foreach ($this->_extensions['BUILD_DETAILS'] as $extension) { 
+        foreach ($this->extensions['BUILD_DETAILS'] as $extension) { 
             //$obj = call_user_func_array($extension, array($this->build));
             $this->_registerExtension('BUILD_DETAILS', $extension);
         }
@@ -88,7 +77,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
     private function _generateSummaryView()
     {
         $extension = new Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary();
-        foreach ($this->_extensions['BUILD_SUMMARY'] as $ext) {
+        foreach ($this->extensions['BUILD_SUMMARY'] as $ext) {
             $extension->registerDetailExtension($ext);
         }
         $this->_registerExtension('BUILD_DETAILS', $extension);
@@ -115,71 +104,57 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         $this->project = new Xinc_Project();
         $this->project->setName($this->projectName);
         switch ($eventId) {
-            case Xinc_Gui_Event::PAGE_LOAD: 
-                    $handler = Xinc_Gui_Handler::getInstance();
-                    $statusDir = $handler->getStatusDir();
+            case Xinc_Gui_Event::PAGE_LOAD:
+                $handler = Xinc_Gui_Handler::getInstance();
+                $statusDir = $handler->getStatusDir();
 
-                    if ($this->buildTimeStamp != null) {
-                        $fullStatusDir = Xinc_Build_History::getBuildDir(
-                            $this->project, $this->buildTimeStamp
-                        );
-                    } else {
-                        $fullStatusDir = Xinc_Build_History::getLastBuildDir($this->project);
-                        $this->buildTimeStamp = Xinc_Build_History::getLastBuildTime($this->project);
-                        
-                    }
-                    //$statusFile = $fullStatusDir . DIRECTORY_SEPARATOR . 'build.ser';
-                    $this->build = Xinc_Build::unserialize(
-                        $this->project, 
-                        $this->buildTimeStamp,
-                        Xinc_Gui_Handler::getInstance()->getStatusDir()
+                if ($this->buildTimeStamp != null) {
+                    $fullStatusDir = Xinc_Build_History::getBuildDir(
+                        $this->project, $this->buildTimeStamp
                     );
-                    $timezone = $this->build->getConfigDirective('timezone');
-                    if ($timezone !== null) {
-                        Xinc_Timezone::set($timezone);
-                    }
+                } else {
+                    $fullStatusDir = Xinc_Build_History::getLastBuildDir($this->project);
+                    $this->buildTimeStamp = Xinc_Build_History::getLastBuildTime($this->project);
+                }
+                //$statusFile = $fullStatusDir . DIRECTORY_SEPARATOR . 'build.ser';
+                $this->build = Xinc_Build::unserialize(
+                    $this->project, 
+                    $this->buildTimeStamp,
+                    Xinc_Gui_Handler::getInstance()->getStatusDir()
+                );
+                $timezone = $this->build->getConfigDirective('timezone');
+                if ($timezone !== null) {
+                    Xinc_Timezone::set($timezone);
+                }
 
-                    $detailDir = $fullStatusDir;
+                $detailDir = $fullStatusDir;
 
-                        /**$logXmlFile = $detailDir.DIRECTORY_SEPARATOR.'buildlog.xml';
-                        
-                        if (file_exists($logXmlFile)) {
-                            $this->logXml = new SimpleXMLElement(file_get_contents($logXmlFile));
-                            
-                        } else {
-                            $this->logXml = new SimpleXmlElement('<log/>');
-                        }*/
-                        
-                        
-                        /**
-                         * get History Builds
-                         */
-                        //$this->historyBuilds = $this->getHistoryBuilds($statusDir);
-                        
-                        /**
-                         * Generate the build selector on the right
-                         */
-                        $this->_generateBuildsView();
-                        /**
-                         * Overview info tab
-                         */
-                        $this->_generateSummaryView();
-                        /**
-                         * Generate the tab for the log messages
-                         */
-                        $this->_generateLogView();
-                        /**
-                         * Generate the external tabs that were registered through a hook
-                         */
-                        $this->_generateExternalExtensions();
-                        
-                        
-                        include Xinc_Data_Repository::getInstance()->get('templates' . DIRECTORY_SEPARATOR
-                                                                        . 'dashboard' . DIRECTORY_SEPARATOR
-                                                                        . 'detail' . DIRECTORY_SEPARATOR
-                                                                        . 'projectDetail.phtml');
-                    /**}*/
-                    
+                /**
+                    * get History Builds
+                    */
+                //$this->historyBuilds = $this->getHistoryBuilds($statusDir);
+
+                /**
+                    * Generate the build selector on the right
+                    */
+                $this->_generateBuildsView();
+                /**
+                    * Overview info tab
+                    */
+                $this->_generateSummaryView();
+                /**
+                    * Generate the tab for the log messages
+                    */
+                $this->_generateLogView();
+                /**
+                    * Generate the external tabs that were registered through a hook
+                    */
+                $this->_generateExternalExtensions();
+
+                include Xinc_Data_Repository::getInstance()->getWeb(
+                    'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
+                    . 'detail' . DIRECTORY_SEPARATOR . 'projectDetail.phtml'
+                );
                 break;
             default:
                 break;
@@ -200,10 +175,6 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         return array('/dashboard/detail', '/dashboard/detail/');
     }
 
-    public function init()
-    {
-    }
-
     private function _registerExtension($extensionPoint, $detail)
     {
         if (!isset($this->_internalExtensions[$extensionPoint])) {
@@ -212,25 +183,8 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail implements Xinc_Gui_Widget_Interfac
         $this->_internalExtensions[$extensionPoint][] = $detail;
     }
 
-    public function registerExtension($extensionPoint, $extension)
-    {
-        if (!isset($this->_extensions[$extensionPoint])) {
-            $this->_extensions[$extensionPoint] = array();
-        }
-        $this->_extensions[$extensionPoint][] = $extension;
-    }
-
     public function getExtensionPoints()
     {
         return array('BUILD_DETAILS', 'BUILD_SUMMARY');
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

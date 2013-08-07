@@ -23,10 +23,10 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
@@ -38,27 +38,10 @@ require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/BuildDuration.php';
 require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/BuildStatus.php';
 require_once 'Xinc/Plugin/Repos/Gui/Statistics/Graph/PhpUnitTestResults.php';
 
-class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Statistics_Build extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $_extensions = array();
-
     public $scripts = '';
 
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
-    public function handleEvent($eventId)
-    {
-    }
-
-    public function getPaths()
-    {
-        return array();
-    }
 
     public function getPhpUnitGraph()
     {
@@ -149,20 +132,6 @@ class Xinc_Plugin_Repos_Gui_Statistics_Build implements Xinc_Gui_Widget_Interfac
     }
 
     public function registerExtension($extensionPoint, $extension)
-    {
-    }
-
-    public function getExtensionPoints()
-    {
-        return array();
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
     {
     }
 }

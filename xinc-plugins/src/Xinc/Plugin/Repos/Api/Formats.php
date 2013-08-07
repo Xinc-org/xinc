@@ -24,30 +24,24 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Api/Module/Interface.php';
+require_once 'Xinc/Api/Module/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Api/Format/Json.php';
 require_once 'Xinc/Plugin/Repos/Api/Format/File.php';
 require_once 'Xinc/Plugin/Repos/Api/Format/Download.php';
 require_once 'Xinc/Api/Handler.php';
 
-class Xinc_Plugin_Repos_Api_Formats implements Xinc_Api_Module_Interface
+class Xinc_Plugin_Repos_Api_Formats extends Xinc_Api_Module_Abstract
 {
-    /**
-     *
-     * @var Xinc_Plugin_Interface
-     */
-    protected $_plugin;
-
     /**
      *
      * @param Xinc_Plugin_Interface $plugin
      */
     public function __construct(Xinc_Plugin_Interface $plugin)
     {
-        $this->_plugin = $plugin;
+        parent::__construct($plugin);
 
         Xinc_Api_Handler::getInstance()->registerResponseFormat(new Xinc_Plugin_Repos_Api_Format_Json());
         Xinc_Api_Handler::getInstance()->registerResponseFormat(new Xinc_Plugin_Repos_Api_Format_File());

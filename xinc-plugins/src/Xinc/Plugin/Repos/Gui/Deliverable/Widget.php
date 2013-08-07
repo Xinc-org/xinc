@@ -23,10 +23,10 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
@@ -35,30 +35,8 @@ require_once 'Xinc/Plugin/Repos/Gui/Artifacts/Extension/Dashboard.php';
 require_once 'Xinc/Plugin/Repos/Gui/Deliverable/Extension/Last.php';
 require_once 'Xinc/Data/Repository.php';
 
-class Xinc_Plugin_Repos_Gui_Deliverable_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Deliverable_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $_extensions = array();
-
-    public $projects = array();
-
-    public $builds;
-
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
-    public function handleEvent($eventId)
-    {
-    }
-
-    public function getPaths()
-    {
-        return array();
-    }
-
     public function init()
     {
         $detailWidget = Xinc_Gui_Widget_Repository::getInstance()
@@ -73,24 +51,5 @@ class Xinc_Plugin_Repos_Gui_Deliverable_Widget implements Xinc_Gui_Widget_Interf
             ->getWidgetByClassName('Xinc_Plugin_Repos_Gui_Dashboard_Widget');
 
         $dashboardWidget->registerExtension('PROJECT_FEATURE', $extension);
-    }
-
-    public function registerExtension($extensionPoint, $extension)
-    {
-        $this->_extensions[$extensionPoint] = $extension;
-    }
-
-    public function getExtensionPoints()
-    {
-        return array();
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

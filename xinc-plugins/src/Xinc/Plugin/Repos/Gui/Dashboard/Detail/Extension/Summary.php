@@ -60,7 +60,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary
                 break;
         }
 
-        $overviewTemplateFile = Xinc_Data_Repository::getInstance()->get(
+        $overviewTemplateFile = Xinc_Data_Repository::getInstance()->getWeb(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
             . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
             . 'overview.phtml'
@@ -85,7 +85,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension_Summary
 
     protected function _generateAllExtensions(Xinc_Build_Interface $build)
     {
-        $overviewTemplateFile = Xinc_Data_Repository::getInstance()->get(
+        $overviewTemplateFile = Xinc_Data_Repository::getInstance()->getWeb(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
             . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
             . 'overview-extension.phtml'

@@ -23,40 +23,21 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
-require_once 'Xinc/Build/Iterator.php';
-require_once 'Xinc/Project.php';
-require_once 'Xinc/Build.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Data/Repository.php';
 
-class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Index_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $_extensions = array();
-
-    public $projects = array();
-
-    public $menu;
-
-    public $builds;
-
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-        $this->builds = new Xinc_Build_Iterator();
-    }
-
     public function handleEvent($eventId)
     {
         switch ($eventId) {
-            case Xinc_Gui_Event::PAGE_LOAD: 
-                    // Build Main Menu
-                    //echo Xinc_Data_Repository::getInstance()->get('templates/index/index.html');
-                    include Xinc_Data_Repository::getInstance()->get('templates/index/index.phtml');
+            case Xinc_Gui_Event::PAGE_LOAD:
+                // Build Main Menu
+                include Xinc_Data_Repository::getInstance()->getWeb('templates/index/index.phtml');
+
                 break;
             default:
                 break;
@@ -65,12 +46,11 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
 
     public function getMenu()
     {
-        if (!isset($this->_extensions['MAIN_MENU'])) {
+        if (!isset($this->extensions['MAIN_MENU'])) {
             return;
         }
 
-        $obj = $this->_extensions['MAIN_MENU']->getMenuContent();
-        return $obj;
+        return $this->extensions['MAIN_MENU'][0]->getMenuContent();
     }
 
     public function getPaths()
@@ -78,26 +58,8 @@ class Xinc_Plugin_Repos_Gui_Index_Widget implements Xinc_Gui_Widget_Interface
         return array('/');
     }
 
-    public function init()
-    {
-    }
-
-    public function registerExtension($extensionPoint, $extension)
-    {
-        $this->_extensions[$extensionPoint] = $extension;
-    }
-
     public function getExtensionPoints()
     {
         return array('MAIN_MENU');
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

@@ -24,30 +24,14 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Api/Module/Interface.php';
+require_once 'Xinc/Api/Module/Abstract.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 
-class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
+class Xinc_Plugin_Repos_Api_LogMessages extends Xinc_Api_Module_Abstract
 {
-    /**
-     * Enter description here...
-     *
-     * @var Xinc_Plugin_Interface
-     */
-    protected $_plugin;
-
-    /**
-     *
-     * @param Xinc_Plugin_Interface $plugin
-     */
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
     /**
      *
      * @return string
@@ -196,7 +180,7 @@ class Xinc_Plugin_Repos_Api_LogMessages implements Xinc_Api_Module_Interface
                     $pos++;
                 }
                 fclose($fh);
-                //echo($xmlStr);
+                echo($xmlStr);
                 $logXml = new SimpleXMLElement($xmlStr);
             } else {
                 $logXml = new SimpleXmlElement('<log/>');

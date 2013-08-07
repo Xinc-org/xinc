@@ -23,32 +23,19 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
-require_once 'Xinc/Build/Iterator.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
+require_once 'Xinc/Gui/Widget/Repository.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
 require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 require_once 'Xinc/Plugin/Repos/Gui/PhpUnitTestResults/Extension/Dashboard.php';
 require_once 'Xinc/Data/Repository.php';
 
-class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $_extensions = array();
-
-    public $projects = array();
-
-    public $builds;
-
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
     public function mime_content_type2($fileName)
     {
         $contentType = null;
@@ -99,7 +86,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
             $sourceFile = $build->getInternalProperties()->get('phpunit.file');
 
             if ($sourceFile != null && file_exists($sourceFile) && class_exists('XSLTProcessor')) {
-                $xslFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'phpunit' . DIRECTORY_SEPARATOR . 'details.xsl';
+                $xslFile = Xinc_Data_Repository::getInstance()->getPlugins('resources' . DIRECTORY_SEPARATOR . 'phpunit' . DIRECTORY_SEPARATOR . 'details.xsl');
                 try {
                     $outputFileName = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc') . DIRECTORY_SEPARATOR . 'phpunit_details_' . $projectName . '_' . $buildTime;
                 } catch (Exception $e) {
@@ -139,7 +126,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
         $buildTimestamp = $build->getBuildTime();
         $buildLabel = $build->getLabel();
 
-        $templateFile = Xinc_Data_Repository::getInstance()->get(
+        $templateFile = Xinc_Data_Repository::getInstance()->getWeb(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
             . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
             .'phpunit-summary.phtml'
@@ -151,7 +138,7 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
         $sourceFile = $build->getInternalProperties()->get('phpunit.file');
 
         if ($sourceFile != null && file_exists($sourceFile) && class_exists('XSLTProcessor')) {
-            $xslFile = PEAR_Config::singleton()->get('data_dir') . DIRECTORY_SEPARATOR . 'Xinc' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'phpunit' . DIRECTORY_SEPARATOR . 'summary.xsl';
+            $xslFile = Xinc_Data_Repository::getInstance()->getPlugins('resources' . DIRECTORY_SEPARATOR . 'phpunit' . DIRECTORY_SEPARATOR . 'summary.xsl');
             try {
                 $outputFileName = Xinc_Ini::getInstance()->get('tmp_dir', 'xinc') . DIRECTORY_SEPARATOR . 'phpunit_summary_' . $projectName . '_' . $buildTimestamp;
             } catch (Exception $e) {
@@ -214,24 +201,5 @@ class Xinc_Plugin_Repos_Gui_PhpUnitTestResults_Widget implements Xinc_Gui_Widget
         $extension->setWidget($this);
 
         $detailWidget->registerExtension('BUILD_DETAILS', $extension);
-    }
-
-    public function registerExtension($extensionPoint, $extension)
-    {
-        $this->_extensions[$extensionPoint] = $extension;
-    }
-
-    public function getExtensionPoints()
-    {
-        return array();
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }

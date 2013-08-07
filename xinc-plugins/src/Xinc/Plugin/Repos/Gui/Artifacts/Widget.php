@@ -24,10 +24,10 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Gui/Widget/Interface.php';
+require_once 'Xinc/Gui/Widget/Abstract.php';
 require_once 'Xinc/Build/Iterator.php';
 require_once 'Xinc/Project.php';
 require_once 'Xinc/Build.php';
@@ -35,21 +35,8 @@ require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Detail/Extension.php';
 require_once 'Xinc/Plugin/Repos/Gui/Artifacts/Extension/Dashboard.php';
 require_once 'Xinc/Data/Repository.php';
 
-class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interface
+class Xinc_Plugin_Repos_Gui_Artifacts_Widget extends Xinc_Gui_Widget_Abstract
 {
-    protected $_plugin;
-
-    private $_extensions = array();
-
-    public $projects = array();
-
-    public $builds;
-
-    public function __construct(Xinc_Plugin_Interface $plugin)
-    {
-        $this->_plugin = $plugin;
-    }
-
     public function mime_content_type2($fileName)
     {
         $contentType = null;
@@ -126,7 +113,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $buildTimestamp = $build->getBuildTime();
         $buildLabel = $build->getLabel();
 
-        $templateFile = Xinc_Data_Repository::getInstance()->get(
+        $templateFile = Xinc_Data_Repository::getInstance()->getWeb(
             'templates' . DIRECTORY_SEPARATOR . 'dashboard' . DIRECTORY_SEPARATOR
             . 'detail' . DIRECTORY_SEPARATOR . 'extension' . DIRECTORY_SEPARATOR
             .'artifactsJs.phtml'
@@ -151,24 +138,5 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget implements Xinc_Gui_Widget_Interfac
         $extension->setWidget($this);
 
         $detailWidget->registerExtension('BUILD_DETAILS', $extension);
-    }
-
-    public function registerExtension($extensionPoint, $extension)
-    {
-        $this->_extensions[$extensionPoint] = $extension;
-    }
-
-    public function getExtensionPoints()
-    {
-        return array();
-    }
-
-    public function hasExceptionHandler()
-    {
-        return false;
-    }
-
-    public function handleException(Exception $e)
-    {
     }
 }
