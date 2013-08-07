@@ -30,8 +30,7 @@
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
-    extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     private $_directory = '.';
     protected $_prefix = '';
@@ -46,18 +45,24 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-       $res = $this->_plugin->checkModified($build, $this->_directory, $this->_prefix,
-                                            $this->_switch, $this->_tagNameProperty);
-       if ($res->isChanged() && !empty($this->_property)) {
-          // a modification in this tag has been detected
-          $build->getProperties()->set($this->_property, true);
-          $build->info("Property '".$this->_property."' set to TRUE");
-       } 
-       return $res;
+        $res = $this->plugin->checkModified(
+            $build,
+            $this->_directory,
+            $this->_prefix,
+            $this->_switch,
+            $this->_tagNameProperty
+        );
+        if ($res->isChanged() && !empty($this->_property)) {
+            // a modification in this tag has been detected
+            $build->getProperties()->set($this->_property, true);
+            $build->info('Property "' . $this->_property . '" set to TRUE');
+        }
+        return $res;
     }
 
-    public function getName(){
-         return "svntag";
+    public function getName()
+    {
+         return 'svntag';
     }
 
     public function setTagNameProperty($value)
@@ -93,21 +98,21 @@ class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
     public function validateTask()
     {
         if (!isset($this->_directory)) {
-            throw new Xinc_Exception_MalformedConfig('Element modificationSet/svntag'
-                                                    . ' - required attribute '
-                                                    . '\'directory\' is not set');
+            throw new Xinc_Exception_MalformedConfig(
+                'Element modificationSet/svntag - required attribute "directory" is not set'
+            );
         }
         if (!isset($this->_prefix)) {
-            throw new Xinc_Exception_MalformedConfig('Element modificationSet/svntag'
-                                                    . ' - required attribute '
-                                                    . '\'prefix\' is not set');
+            throw new Xinc_Exception_MalformedConfig(
+                'Element modificationSet/svntag - required attribute "prefix" is not set'
+            );
         }
         $file = $this->_directory;
         $file2 = Xinc::getInstance()->getWorkingDir() . DIRECTORY_SEPARATOR . $file;
         if (!file_exists($file) && !file_exists($file2)) {
-            Xinc_Logger::getInstance()->error('Directory '.$file2.' does not exist');
+            Xinc_Logger::getInstance()->error('Directory ' . $file2 . ' does not exist');
             return false;
-        } else if (file_exists($file2)) {
+        } elseif (file_exists($file2)) {
             $this->_directory = $file2;
         }
         return true;
