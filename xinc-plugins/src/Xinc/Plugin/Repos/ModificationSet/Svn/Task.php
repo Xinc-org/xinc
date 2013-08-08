@@ -43,7 +43,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
      *
      * @var boolean
      */
-    private $bUpdate = false;
+    private $doUpdate = false;
 
     /**
      * The remote repository to clone from.
@@ -55,6 +55,13 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     private $strUsername = null;
 
     private $strPassword = null;
+
+    /**
+     * Handles if trust-server-cert should be set or not.
+     *
+     * @var boolean
+     */
+    private $trustServerCert = false;
 
 
     /**
@@ -158,14 +165,13 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
     /**
      * Tells whether to update the working copy directly here or not
      *
-     * @param string $strUpdate "true" or "1" as string to set update otherwise
-     *  it is interpreted as false.
+     * @param string $strUpdate A string with a boolean representation.
      *
      * @return void
      */
     public function setUpdate($strUpdate)
     {
-        $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true : false;
+        $this->doUpdate = $this->string2boolean($strUpdate);
     }
 
     /**
@@ -173,9 +179,31 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_Modif
      *
      * @return boolean True if git repos should be updated.
      */
-    public function getUpdate()
+    public function doUpdate()
     {
-        return $this->bUpdate;
+        return $this->doUpdate;
+    }
+
+    /**
+     * Sets if the svn should set the trust-server-cert flag.
+     *
+     * @param string $trustServerCert A string with a boolean representation.
+     *
+     * @return void
+     */
+    public function setTrustServerCert($trustServerCert)
+    {
+        $this->trustServerCert = $this->string2boolean($trustServerCert);
+    }
+
+    /**
+     * Sets if the svn should set the trustServerCert flag.
+     *
+     * @return boolean True if trust-server-cert should be set otherwise false.
+     */
+    public function trustServerCert()
+    {
+        return $this->trustServerCert;
     }
 
     /**

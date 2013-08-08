@@ -98,4 +98,16 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
     {
         $this->xml = $element;
     }
+
+    /**
+     * Converts a string 'true', '1', 'yes' to a boolean true otherwise false.
+     *
+     * @param string $value The string to convert.
+     *
+     * @return boolean True if given value is 'true', '1' or 'yes' otherwise false
+     */
+    public static function string2boolean($value)
+    {
+        return in_array($value, array('true', '1', 'yes')) ? true : false;
+    }
 }

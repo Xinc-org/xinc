@@ -38,11 +38,6 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Svn/Task.php';
 class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
 {
     /**
-     * @var string Path to project.
-     */
-    private $strPath;
-
-    /**
      * @var VersionControl_SVN The svn object.
      */
     private $svn = null;
@@ -53,18 +48,6 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
     private $task = null;
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        try {
-            $this->strPath = Xinc_Ini::getInstance()->get('path', 'svn');
-        } catch (Exception $e) {
-            $this->strPath = 'svn';
-        }
-    }
-
-    /**
      * Returns definition of task.
      *
      * @return array Array of definition.
@@ -73,7 +56,6 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
     {
         return array(new Xinc_Plugin_Repos_ModificationSet_Svn_Task($this));
     }
-
 
     /**
      * Checks whether the Subversion project has been modified.
@@ -98,14 +80,15 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
                     // @TODO VersionControl_SVN doesn't work as documented.
                     // 'path'      => $task->getDirectory(),
                     // 'url'       => $task->getRepository(),
-                    'username'  => $task->getUsername(),
-                    'password'  => $task->getPassword(),
+                    'username' => $task->getUsername(),
+                    'password' => $task->getPassword(),
+                    'trustServerCert' => $task->trustServerCert(),
                 )
             );
 
             $strRemoteVersion = $this->getRemoteVersion();
             $strLocalVersion = $this->getLocalVersion();
-        } catch(VersionControl_SVN_Exception $e) {
+        } catch (VersionControl_SVN_Exception $e) {
             $build->error('Test of Subversion failed: ' . $e->getMessage());
             $build->setStatus(Xinc_Build_Interface::FAILED);
             $result->setStatus(
@@ -121,13 +104,13 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
             try {
                 $this->getModifiedFiles($result);
                 $this->getChangeLog($result);
-                if ($this->task->getUpdate()) {
+                if ($this->task->doUpdate()) {
                     $this->update($result);
                 }
                 $result->setStatus(
                     Xinc_Plugin_Repos_ModificationSet_AbstractTask::CHANGED
                 );
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 var_dump($e->getMessage());
                 $build->error('Processing SVN failed: ' . $e->getMessage());
                 $result->setStatus(
@@ -253,18 +236,18 @@ class Xinc_Plugin_Repos_ModificationSet_Svn extends Xinc_Plugin_Abstract
                     $strReposStatus = '';
                 }
                 switch ($strReposStatus) {
-                case 'modified':
-                    $result->addUpdatedResource($strFileName, $author);
-                    break;
-                case 'deleted':
-                    $result->addDeletedResource($strFileName, $author);
-                    break;
-                case 'added':
-                    $result->addNewResource($strFileName, $author);
-                    break;
-                case 'conflict':
-                    $result->addConflictResource($strFileName, $author);
-                    break;
+                    case 'modified':
+                        $result->addUpdatedResource($strFileName, $author);
+                        break;
+                    case 'deleted':
+                        $result->addDeletedResource($strFileName, $author);
+                        break;
+                    case 'added':
+                        $result->addNewResource($strFileName, $author);
+                        break;
+                    case 'conflict':
+                        $result->addConflictResource($strFileName, $author);
+                        break;
                 }
             }
         }
