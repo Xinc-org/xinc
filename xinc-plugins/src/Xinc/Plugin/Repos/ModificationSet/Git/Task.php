@@ -29,8 +29,7 @@
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Plugin_Repos_ModificationSet_Git_Task
-    extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Xinc_Plugin_Repos_ModificationSet_Git_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     /**
      * @var string Directory containing the Git project.
@@ -123,7 +122,7 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->checkModified($build, $this);
+        return $this->plugin->checkModified($build, $this);
     }
 
     /**
@@ -135,14 +134,12 @@ class Xinc_Plugin_Repos_ModificationSet_Git_Task
     {
         if (!class_exists('VersionControl_Git')) {
             throw new Xinc_Exception_MalformedConfig(
-                'PEAR::VersionControl_Git doesn\'t exists.'
-                . 'You need to install it to use this task. '
+                'PEAR::VersionControl_Git doesn\'t exists. You need to install it to use this task.'
             );
         }
         if (!isset($this->strDirectory)) {
             throw new Xinc_Exception_MalformedConfig(
-                'Element modificationSet/git - required attribute '
-                . '\'directory\' is not set'
+                'Element modificationSet/git - required attribute "directory" is not set.'
             );
         }
 

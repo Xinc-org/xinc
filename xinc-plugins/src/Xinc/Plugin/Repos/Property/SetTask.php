@@ -31,8 +31,6 @@ require_once 'Xinc/Plugin/Task/Abstract.php';
 
 class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Abstract
 {
-    private $_lastPair = array();
-
     /**
      *
      * @var string
@@ -152,7 +150,7 @@ class Xinc_Plugin_Repos_Property_SetTask extends Xinc_Plugin_Task_Abstract
         if (isset($this->_file)) {
             if (file_exists($this->_file)) {
                 $build->info('Reading property file: ' . $this->_file);
-                $this->_plugin->parsePropertyFile($build, $this->_file);
+                $this->plugin->parsePropertyFile($build, $this->_file);
             } else if (strstr($this->_file, '${')) {
                 // not substituted yet, will not use it
             } else {

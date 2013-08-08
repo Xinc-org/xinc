@@ -29,39 +29,31 @@
 
 require_once 'Xinc/Plugin/Repos/Publisher/Deliverable/Task.php';
 
-class Xinc_Plugin_Repos_Publisher_Documentation_Task
-    extends Xinc_Plugin_Repos_Publisher_Deliverable_Task
+class Xinc_Plugin_Repos_Publisher_Documentation_Task extends Xinc_Plugin_Repos_Publisher_Deliverable_Task
 {
+    private $index;
 
-    
-    private $_index;
-    
     public function getName()
     {
         return 'documentation';
     }
-   
+
     public function setIndex($index)
     {
-        $this->_index = $index;
+        $this->index = $index;
     }
 
-    
     public function validateTask()
     {
-        
-        if (!isset($this->_file) || !isset($this->_index) || !isset($this->_alias)) {
-            
+        if (!isset($this->fileName) || !isset($this->index) || !isset($this->alias)) {
             Xinc_Logger::getInstance()->error('File  and Index must be specified for documentation publisher.');
             return false;
         }
         return true;
     }
-    
-
 
     public function publish(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->registerDocumentation($build, $this->_file, $this->_alias, $this->_index);
+        return $this->plugin->registerDocumentation($build, $this->fileName, $this->alias, $this->index);
     }
 }

@@ -29,58 +29,55 @@
 
 require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Publisher_Phing_Task
-    extends Xinc_Plugin_Repos_Publisher_AbstractTask
+class Xinc_Plugin_Repos_Publisher_Phing_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-    private $_buildFile = 'build.xml';
-    private $_target;
-    private $_workingDir = null;
-    
-    private $_params = null;
-    
+    private $buildFile = 'build.xml';
+    private $target;
+    private $workingDir = null;
+
+    private $params = null;
+
     public function getName()
     {
         return 'phingPublisher';
     }
-    
+
     public function setBuildFile($file)
     {
-        $this->_buildFile = (string) $file;
+        $this->buildFile = (string) $file;
     }
+
     public function setTarget($target)
     {
-        $this->_target = (string) $target;
+        $this->target = (string) $target;
     }
-    
+
     public function setParams($params)
     {
-        $this->_params = $params;
+        $this->params = (string) $params;
     }
-    
+
     public function setWorkingDir($workingDir)
     {
-        $this->_workingDir = $workingDir;
+        $this->workingDir = (string) $workingDir;
     }
+
     /**
-     * Validate if all information the task needs to run
-     * properly have been set
+     * Validate if all information the task needs to run properly have been set
      *
-     * @return boolean
+     * @return boolean True if task can be started otherwise false.
      */
     public function validateTask()
     {
         // validate if buildfile exists
         // try in working dir
-        $workingdir = Xinc::getInstance()->getWorkingDir();
-        $file2 = $workingdir . DIRECTORY_SEPARATOR . $this->_buildFile;
-        $file = $this->_buildFile;
-        
-        if (!file_exists($file) && !file_exists($file2)) {
-            
-            Xinc_Logger::getInstance()->error('Build-File '.$file.' does not exist');
+        $buildFileWorking = $this->workingDir . DIRECTORY_SEPARATOR . $this->buildFile;
+
+        if (!file_exists($this->buildFile) && !file_exists($buildFileWorking)) {
+            Xinc_Logger::getInstance()->error('Build-File ' . $this->buildFile . ' does not exist');
             return false;
-        } else if (file_exists($file2)) {
-            $this->_buildFile = $file2;
+        } elseif (file_exists($buildFileWorking)) {
+            $this->buildFile = $buildFileWorking;
         }
         return true;
     }
@@ -94,6 +91,6 @@ class Xinc_Plugin_Repos_Publisher_Phing_Task
      */
     public function publish(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->build($build, $this->_buildFile, $this->_target, $this->_params, $this->_workingDir);
+        return $this->plugin->build($build, $this->buildFile, $this->target, $this->params, $this->workingDir);
     }
 }

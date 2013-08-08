@@ -29,8 +29,7 @@
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Plugin_Repos_ModificationSet_Svn_Task
-    extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Xinc_Plugin_Repos_ModificationSet_Svn_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     /**
      * Directory containing the Subversion project.
@@ -40,12 +39,16 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
     private $strDirectory = '';
 
     /**
-     * @var boolean Update repository if change detected.
+     * Update repository if change detected.
+     *
+     * @var boolean
      */
     private $bUpdate = false;
 
     /**
-     * @var string The remote repository to clone from.
+     * The remote repository to clone from.
+     *
+     * @var string
      */
     private $strRepository = '';
 
@@ -73,7 +76,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function setDirectory($strDirectory)
     {
-        $this->strDirectory = (string)$strDirectory;
+        $this->strDirectory = (string) $strDirectory;
     }
 
     /**
@@ -95,7 +98,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function setRepository($strRepository)
     {
-        $this->strRepository = (string)$strRepository;
+        $this->strRepository = (string) $strRepository;
     }
 
     /**
@@ -117,7 +120,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function setUsername($strUsername)
     {
-        $this->strUsername = (string)$strUsername;
+        $this->strUsername = (string) $strUsername;
     }
 
     /**
@@ -139,7 +142,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function setPassword($strPassword)
     {
-        $this->strPassword = (string)$strPassword;
+        $this->strPassword = (string) $strPassword;
     }
 
     /**
@@ -162,7 +165,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function setUpdate($strUpdate)
     {
-        $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true:false;
+        $this->bUpdate = in_array($strUpdate, array('true', '1')) ? true : false;
     }
 
     /**
@@ -184,7 +187,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->checkModified($build, $this);
+        return $this->plugin->checkModified($build, $this);
     }
 
 
@@ -197,14 +200,12 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
     {
         if (!class_exists('VersionControl_SVN')) {
             throw new Xinc_Exception_MalformedConfig(
-                'PEAR::VersionControl_SVN doesn\'t exists.'
-                . 'You need to install it to use this task. '
+                'PEAR::VersionControl_SVN doesn\'t exists. You need to install it to use this task.'
             );
         }
         if (!isset($this->strDirectory)) {
             throw new Xinc_Exception_MalformedConfig(
-                'Element modificationSet/svn - required attribute \'directory\''
-                . ' is not set'
+                'Element modificationSet/svn - required attribute "directory" is not set.'
             );
         }
 
@@ -213,7 +214,7 @@ class Xinc_Plugin_Repos_ModificationSet_Svn_Task
 
         if (!file_exists($file) && !file_exists($file2)) {
             Xinc_Logger::getInstance()->error(
-                'Directory ' . $file2 . ' does not exist'
+                'Directory ' . $file2 . ' does not exist.'
             );
             return false;
         } elseif (file_exists($file2)) {

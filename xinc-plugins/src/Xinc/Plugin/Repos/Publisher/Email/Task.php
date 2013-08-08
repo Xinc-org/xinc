@@ -29,19 +29,18 @@
 
 require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Publisher_Email_Task
-    extends Xinc_Plugin_Repos_Publisher_AbstractTask
+class Xinc_Plugin_Repos_Publisher_Email_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-   
     private $_to;
     private $_from;
     private $_subject;
     private $_message;
+
     public function getName()
     {
         return 'email';
     }
-    
+
     /**
      * Set the email address to send to
      *
@@ -69,7 +68,7 @@ class Xinc_Plugin_Repos_Publisher_Email_Task
     {
         $this->_subject = (string)$subject;
     }
-    
+
     /**
      * Set the message of the email
      *
@@ -79,28 +78,30 @@ class Xinc_Plugin_Repos_Publisher_Email_Task
     {
         $this->_message = (string)$message;
     }
-    
+
     public function validateTask()
     {
-        
         if (!isset($this->_to)) {
-              throw new Xinc_Exception_MalformedConfig('Element publisher/email - required attribute '
-                                                      .'\'to\' is not set');
+              throw new Xinc_Exception_MalformedConfig(
+                'Element publisher/email - required attribute "to" is not set'
+            );
         }
         if (!isset($this->_subject)) {
-            throw new Xinc_Exception_MalformedConfig('Element publisher/email - required attribute '
-                                                    .'\'subject\' is not set');
+            throw new Xinc_Exception_MalformedConfig(
+                'Element publisher/email - required attribute "subject" is not set'
+            );
         }
         if (!isset($this->_message)) {
-            throw new Xinc_Exception_MalformedConfig('Element publisher/email - required attribute '
-                                                    .'\'message\' is not set');
+            throw new Xinc_Exception_MalformedConfig(
+                'Element publisher/email - required attribute "message" is not set'
+            );
         }
         return true;
     }
-    
+
     public function publish(Xinc_Build_Interface $build)
     {
         $statusBefore = $build->getStatus();
-        $res = $this->_plugin->email($build->getProject(), $this->_to, $this->_subject, $this->_message, $this->_from);
+        $res = $this->plugin->email($build->getProject(), $this->_to, $this->_subject, $this->_message, $this->_from);
     }
 }

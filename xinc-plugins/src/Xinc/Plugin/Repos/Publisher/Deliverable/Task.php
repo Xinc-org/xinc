@@ -29,33 +29,34 @@
 
 require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Publisher_Deliverable_Task
-    extends Xinc_Plugin_Repos_Publisher_AbstractTask
+class Xinc_Plugin_Repos_Publisher_Deliverable_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-    protected $_file;
-    
-    protected $_alias;
-    
-    
+    /**
+     * Name of the file to deliver.
+     *
+     * @var string
+     */
+    protected $fileName;
+
+    protected $alias;
+
     public function getName()
     {
         return 'deliverable';
     }
-    public function setFile($file)
+    public function setFile($fileName)
     {
-        $this->_file = $file;
+        $this->fileName = $fileName;
     }
-    
+
     public function setAlias($alias)
     {
-        $this->_alias = $alias;
+        $this->alias = $alias;
     }
-    
+
     public function validateTask()
     {
-        
-        if (!isset($this->_file)) {
-            
+        if (!isset($this->fileName)) {
             Xinc_Logger::getInstance()->error('File must be specified for deliverable publisher.');
             return false;
         }
@@ -64,6 +65,6 @@ class Xinc_Plugin_Repos_Publisher_Deliverable_Task
 
     public function publish(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->registerDeliverable($build, $this->_file, $this->_alias);
+        return $this->plugin->registerDeliverable($build, $this->fileName, $this->alias);
     }
 }

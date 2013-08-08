@@ -28,8 +28,7 @@
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task
-    extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     /**
      * Returns name of task.
@@ -48,7 +47,7 @@ class Xinc_Plugin_Repos_ModificationSet_BuildAlways_Task
      */
     public function checkModified(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->checkModified();
+        return $this->plugin->checkModified();
     }
 
     /**

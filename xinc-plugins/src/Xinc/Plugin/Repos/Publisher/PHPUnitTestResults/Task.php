@@ -29,8 +29,7 @@
 
 require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task
-    extends Xinc_Plugin_Repos_Publisher_AbstractTask
+class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
     /**
      * @var string $file Name of the file.
@@ -57,6 +56,6 @@ class Xinc_Plugin_Repos_Publisher_PHPUnitTestResults_Task
 
     public function publish(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->registerResults($build, $this->file);
+        return $this->plugin->registerResults($build, $this->file);
     }
 }

@@ -29,25 +29,28 @@
 
 require_once 'Xinc/Plugin/Repos/Publisher/AbstractTask.php';
 
-class Xinc_Plugin_Repos_Publisher_Artifacts_Task
-    extends Xinc_Plugin_Repos_Publisher_AbstractTask
+class Xinc_Plugin_Repos_Publisher_Artifacts_Task extends Xinc_Plugin_Repos_Publisher_AbstractTask
 {
-    private $_file;
-    private $_target = 'build';
+    /**
+     * Name of the artifact file.
+     *
+     * @var string
+     */
+    private $fileName;
+
     public function getName()
     {
         return 'artifactspublisher';
     }
-    public function setFile($file)
+
+    public function setFile($fileName)
     {
-        $this->_file = $file;
+        $this->fileName = (string) $fileName;
     }
-    
+
     public function validateTask()
     {
-        
-        if (!isset($this->_file)) {
-            
+        if (!isset($this->fileName)) {
             Xinc_Logger::getInstance()->error('File must be specified for artifactspublisher.');
             return false;
         }
@@ -56,6 +59,6 @@ class Xinc_Plugin_Repos_Publisher_Artifacts_Task
 
     public function publish(Xinc_Build_Interface $build)
     {
-        return $this->_plugin->registerArtifact($build, $this->_file);
+        return $this->plugin->registerArtifact($build, $this->fileName);
     }
 }
