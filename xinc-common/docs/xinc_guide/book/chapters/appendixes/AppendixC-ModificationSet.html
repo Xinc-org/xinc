@@ -88,11 +88,18 @@ The above example will check the local working copy "/var/xinc/projects/ProjectN
     <tr>
       <td>directory</td>
       <td>String</td>
-      <td>Directory of the local SVN Working Copy</td>
+      <td>Directory of the local SVN working copy</td>
       <td>n/a</td>
       <td>Yes</td>
     </tr>
-     <tr>
+    <tr>
+      <td>repository</td>
+      <td>String</td>
+      <td>The remote repository to check/update from</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
       <td>username</td>
       <td>String</td>
       <td>Username for the remote subversion repository</td>
@@ -110,6 +117,13 @@ The above example will check the local working copy "/var/xinc/projects/ProjectN
       <td>update</td>
       <td>boolean</td>
       <td>Determines whether the local working copy should be updated if a change is detected or not.</td>
+      <td>false</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>trustServerCert</td>
+      <td>boolean</td>
+      <td>Determines whether the trust-server-cert parameter on svn command should be used or not.</td>
       <td>false</td>
       <td>No</td>
     </tr>
@@ -159,7 +173,7 @@ The above example will check the local working copy "/var/xinc/projects/ProjectN
      <tr>
       <td>repository</td>
       <td>String</td>
-      <td>The remote repository to clone from.</td>
+      <td>The remote repository to clone/update from.</td>
       <td>n/a</td>
       <td>No</td>
     </tr>
