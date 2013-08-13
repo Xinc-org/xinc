@@ -24,7 +24,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 interface Xinc_Engine_Interface
@@ -43,7 +43,7 @@ interface Xinc_Engine_Interface
      * @param Xinc_Build_Interface $build
      */
     public function build(Xinc_Build_Interface &$build);
-    
+
     /**
      * Parses Project-Xml and returns
      *
@@ -52,28 +52,26 @@ interface Xinc_Engine_Interface
      * @return Xinc_Build_Iterator
      */
     public function parseProjects(Xinc_Project_Iterator $projects);
-    
+
     /**
-     * returns the interval in seconds in which
-     * the engine checks for new builds
+     * returns the interval in seconds in which the engine checks for new builds
      *
      * @return integer
      */
     public function getHeartBeat();
-    
+
     /**
-     * Set the interal in which the engine checks
-     * for modified builds, necessary builds etc
+     * Set the interval in which the engine checks for modified builds, necessary builds etc
      *
-     * @param unknown_type $seconds
-     * 
+     * @param string $seconds
+     *
      * @see <xinc engine="name" heartbeat="10"/>
      */
     public function setHeartBeat($seconds);
-    
+
     /**
      * Validate if the engine can run properly on this system
-     * 
+     *
      * @return boolean True if engine can run properly otherwise false.
      */
     public function validate();

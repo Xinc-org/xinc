@@ -28,24 +28,25 @@
 
 require_once 'Xinc/Build/Interface.php';
 require_once 'Xinc/Plugin/Interface.php';
+require_once 'Xinc/Plugin/Task/Interface.php';
 
 interface Xinc_Plugin_Task_Interface
 {
     /**
      * Constructor
+     *
+     * @param Xinc_Plugin_Interface $plugin The plugin of this task.
      */
     public function __construct(Xinc_Plugin_Interface $plugin);
-    public function init(Xinc_Build_Interface $build);
-    public function process(Xinc_Build_Interface $build);
 
     /**
-     * Support for subtasks, empty by default.
+     * Initialize the task
      *
-     * @param Xinc_Plugin_Task_Interface $task Task to register
+     * @param Xinc_Build_Interface $build Build to initialize this task for.
      *
      * @return void
      */
-    public function registerTask(Xinc_Plugin_Task_Interface $task);
+    public function init(Xinc_Build_Interface $build);
 
     /**
      * Validates if a task can run by checking configs, directries and so on.
@@ -53,6 +54,15 @@ interface Xinc_Plugin_Task_Interface
      * @return boolean Is true if task can run.
      */
     public function validate();
+
+    /**
+     * Process the task
+     *
+     * @param Xinc_Build_Interface $build Build to process this task for.
+     *
+     * @return void
+     */
+    public function process(Xinc_Build_Interface $build);
 
     /**
      * Returns name of task.
@@ -68,7 +78,23 @@ interface Xinc_Plugin_Task_Interface
      * @see Xinc/Plugin/Slot.php for available slots
      */
     public function getPluginSlot();
+
+    /**
+     * Support for subtasks, empty by default.
+     *
+     * @param Xinc_Plugin_Task_Interface $task Task to register
+     *
+     * @return void
+     */
+    public function registerTask(Xinc_Plugin_Task_Interface $task);
+
+    /**
+     * Gets registered subtask for this task.
+     *
+     * @return Xinc_Build_Tasks_Iterator
+     */
     public function getTasks();
+
     public function getXml();
     public function setXml(SimpleXMLElement $element);
 }

@@ -24,7 +24,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Build/Interface.php';
@@ -41,107 +41,101 @@ require_once 'Xinc/Timezone.php';
 
 class Xinc_Build implements Xinc_Build_Interface
 {
-    
     /**
      * Are we queued?
      *
      * @var boolean
      */
     private $_isQueued=false;
-    
+
     /**
      * @var Xinc_Engine_Interface
      */
     private $_engine;
-    
+
     /**
      * @var Xinc_Project
      */
     private $_project;
-    
+
     /**
      * @var Xinc_Build_Properties
      */
     private $_properties;
-    
+
     /**
      * @var Xinc_Build_Properties
      */
     private $_internalProperties;
-    
+
     /**
-     *
      * @var Xinc_Build_Statistics
      */
     private $_statistics;
-    
+
     /**
-     * 
-     *
      * @var integer
      */
     private $_buildTimestamp;
-    
+
     /**
-     * 
-     *
      * @var integer
      */
     private $_nextBuildTimestamp;
-    
+
     /**
      * Build status, as defined in Xinc_Build_Interface
      *
      * @var integer
      */
     private $_status;
-    
+
     /**
      *
      * @var Xinc_Build_Interface
      */
     private $_lastBuild;
-    
+
     /**
      * The build no of this build
      *
      * @var integer
      */
     private $_no;
-    
+
     /**
      * The label for this build
      *
      * @var string
      */
     private $_label;
-    
+
     /**
      * Contains tasks that need to be executed for each Process Step
      *
      * @var Xinc_Build_Tasks_Registry
      */
     private $_taskRegistry;
-    
+
     /**
      * Build scheduler
      *
      * @var Xinc_Build_Scheduler_Interface
      */
     private $_scheduler;
-    
+
     /**
      * @var Xinc_Build_Labeler_Interface
      */
     private $_labeler;
-    
+
     /**
      * Holding config values for this build
      *
      * @var array
      */
     private $_config = array();
-    
+
     /**
      * sets the project, engine
      * and timestamp for the build

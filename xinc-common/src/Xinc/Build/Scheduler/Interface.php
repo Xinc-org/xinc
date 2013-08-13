@@ -28,6 +28,8 @@
  * @link      http://xincplus.sourceforge.net
  */
 
+require_once 'Xinc/Build/Interface.php';
+
 interface Xinc_Build_Scheduler_Interface
 {
     /**

@@ -31,56 +31,88 @@ require_once 'Xinc/Build/Scheduler/Interface.php';
 
 class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Abstract implements Xinc_Build_Scheduler_Interface
 {
-
-    private $_interval;
+    /**
+     * @var integer Task Slot INIT_PROCESS
+     */
+    protected $pluginSlot = Xinc_Plugin_Slot::INIT_PROCESS;
 
     /**
-     * Enter description here...
-     *
-     * @var Xinc_Build_Interface
+     * @var string Name of the task
      */
-    private $_build;
+    protected $name = 'schedule';
 
-    public function process(Xinc_Build_Interface $build)
-    {
-        /**if (!isset($this->_project)) {
-            $build->setScheduler($this);
-            $this->_build = $build;
-            if (time() < $this->getNextBuildTime()) {
-                $this->_build->setStatus(Xinc_Build_Interface::STOPPED);
-            }
-        }*/
-    }
+    /**
+     * @var integer Number of seconds to wait, till next build initialisation.
+     */
+    private $interval;
 
+    /**
+     * Sets the interval in seconds.
+     *
+     * @param string The interval in seconds as numerical representation.
+     *
+     * @return void
+     */
     public function setInterval($interval)
     {
-        $this->_interval = $interval;
+        $this->interval = (int) $interval;
     }
 
+    /**
+     * Gets the interval in seconds.
+     *
+     * @return integer Interval in seconds.
+     */
     public function getInterval()
     {
-        return $this->_interval;
+        return $this->interval;
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
-    {
-    }
-
-    public function setLastBuildTime($time)
-    {
-    }
-
+    /**
+     * Initialize the task
+     *
+     * @param Xinc_Build_Interface $build Build to initialize this task for.
+     *
+     * @return void
+     */
     public function init(Xinc_Build_Interface $build)
     {
         $build->setScheduler($this);
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
+    public function validate()
+    {
+        return $this->interval > 0;
+    }
+
+    /**
+     * Process the task
+     *
+     * @param Xinc_Build_Interface $build Build to process this task for.
+     *
+     * @return void
+     */
+    public function process(Xinc_Build_Interface $build)
+    {
+    }
+
+    /**
+     * Calculates the next build timestamp.
+     *
+     * @param Xinc_Build_Interface $build
+     *
+     * @return integer next build timestamp
+     */
     public function getNextBuildTime(Xinc_Build_Interface $build)
     {
         if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
             return null;
         }
-        //var_dump($build);
         $lastBuild = $build->getLastBuild()->getBuildTime();
 
         if ($lastBuild != null ) {
@@ -88,7 +120,6 @@ class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Abstract implemen
             /**
              * Make sure that we dont rerun every build if the daemon was paused
              */
-            //echo time(). ' - ' . $lastBuild .'='.(time()-$lastBuild)."\n";
             if ($nextBuild + $this->getInterval() < time()) {
                 $nextBuild = time();
             }
@@ -96,26 +127,13 @@ class Xinc_Plugin_Repos_Schedule_Task extends Xinc_Plugin_Task_Abstract implemen
             // never ran, schedule for now
             $nextBuild = time();
         }
-        $build->debug('getNextBuildTime '
-                              . ': lastbuild: ' 
-                              . date('Y-m-d H:i:s', $lastBuild) 
-                              . ' nextbuild: ' 
-                              . date('Y-m-d H:i:s', $nextBuild).'');
+
+        $build->debug(
+            'getNextBuildTime:'
+            . ' lastbuild: ' . date('Y-m-d H:i:s', $lastBuild) 
+            . ' nextbuild: ' . date('Y-m-d H:i:s', $nextBuild)
+        );
+
         return $nextBuild;
-    }
-
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::INIT_PROCESS;
-    }
-
-    public function validate()
-    {
-        return $this->_interval > 0;
-    }
-
-    public function getName()
-    {
-        return 'schedule';
     }
 }

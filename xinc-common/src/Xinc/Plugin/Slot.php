@@ -52,6 +52,9 @@ class Xinc_Plugin_Slot
 
     const PROJECT_SET_VALUES = 4;
 
+    /**
+     * Initiatoren Scheduler, Cron, ...
+     */
     const INIT_PROCESS = 5;
 
     /**

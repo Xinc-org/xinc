@@ -36,8 +36,7 @@
 require_once 'Xinc/Plugin/Task/Abstract.php';
 require_once 'Xinc/Build/Scheduler/Interface.php';
 
-class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract
-    implements Xinc_Build_Scheduler_Interface
+class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract implements Xinc_Build_Scheduler_Interface
 {
     const PC_MINUTE=1;
     const PC_HOUR=2;
@@ -48,47 +47,86 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract
     const PC_COMMENT=8;
     const PC_CRONLINE=20;
 
-    private $_timer;
+    /**
+     * @var integer Task Slot INIT_PROCESS
+     */
+    protected $pluginSlot = Xinc_Plugin_Slot::INIT_PROCESS;
 
     /**
-     *
-     * @var Xinc_Build_Interface
+     * @var string Name of the task
      */
-    private $_build;
+    protected $name = 'cron';
 
-    private $_lastBuildTime;
+    /**
+     * Cron timer string.
+     *
+     * @var string
+     */
+    private $timer;
 
-    public function process(Xinc_Build_Interface $build)
-    {
-        /**if (!isset($this->_project)) {
-         $build->setScheduler($this);
-         $this->_build = $build;
-         if (time() < $this->getNextBuildTime()) {
-         $this->_build->setStatus(Xinc_Build_Interface::STOPPED);
-         }
-         }*/
-
-    }
-
+    /**
+     * Sets the cron timer string
+     *
+     * @param string $timer The cron timer string.
+     *
+     * @return void
+     */
     public function setTimer($timer)
     {
-        $this->_timer = $timer;
+        $this->timer = $timer;
     }
 
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
+    /**
+     * Gets the cron timer string
+     *
+     * @return string The cron timer string
+     */
+    public function getTimer()
     {
+        return $this->timer;
     }
 
-    public function setLastBuildTime($time)
-    {
-        $this->_lastBuildTime = $time;
-    }
-
+    /**
+     * Initialize the task
+     *
+     * @param Xinc_Build_Interface $build Build to initialize this task for.
+     *
+     * @return void
+     */
     public function init(Xinc_Build_Interface $build)
     {
         $build->setScheduler($this);
     }
 
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
+    public function validate()
+    {
+        $parts = preg_split('/\s+/', $this->timer);
+        return count($parts) === 5;
+    }
+
+    /**
+     * Process the task
+     *
+     * @param Xinc_Build_Interface $build Build to process this task for.
+     *
+     * @return void
+     */
+    public function process(Xinc_Build_Interface $build)
+    {
+    }
+
+    /**
+     * Calculates the next build timestamp.
+     *
+     * @param Xinc_Build_Interface $build
+     *
+     * @return integer next build timestamp
+     */
     public function getNextBuildTime(Xinc_Build_Interface $build)
     {
         if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
@@ -100,7 +138,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract
         if ($lastBuild == null ) {
             $lastBuild = 0;
         }
-        //$nextBuild = $this->getLastScheduledRunTime($this->_timer . ' test',$lastBuild);
+        //$nextBuild = $this->getLastScheduledRunTime($this->timer . ' test',$lastBuild);
         $nextBuild = $this->getTimeFromCron($lastBuild);
         $build->debug(
             'getNextBuildTime:'
@@ -110,35 +148,10 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract
         return $nextBuild;
     }
 
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::INIT_PROCESS;
-    }
-
-    public function validate()
-    {
-        $parts = preg_split('/\s+/', $this->_timer);
-        return count($parts)==5;
-    }
-
-    public function getName()
-    {
-        return 'cron';
-    }
-
-    public function lTrimZeros($number)
-    {
-        GLOBAL $debug;
-        while ($number[0]=='0') {
-            $number = substr($number,1);
-        }
-        return $number;
-    }
-
     public function incDate(&$dateArr, $amount, $unit, $increase=true)
     {
         if ($unit=="mday") {
-            $compareTime = mktime(null,null,null,$dateArr["mon"],1,date('Y'));
+            $compareTime = mktime(null, null, null, $dateArr["mon"], 1, date('Y'));
 
             $dateArr["hours"] = 0;
             $dateArr["minutes"] = 0;
@@ -201,11 +214,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract
                 } else {
                     $matches[6] = 1;
                 }
-                for (
-                    $j=$this->lTrimZeros($matches[2]);
-                    $j<=$this->lTrimZeros($matches[4]);
-                    $j+=$this->lTrimZeros($matches[6])
-                ) {
+                for ($j = ltrim($matches[2], '0'); $j <= ltrim($matches[4], '0'); $j += ltrim($matches[6], '0')) {
                     $targetArray[$j] = TRUE;
                 }
             }
@@ -214,7 +223,7 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract
 
     public function getTimeFromCron($last)
     {
-        if (preg_match("~^([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-7,/*]+|(-|/|Sun|Mon|Tue|Wed|Thu|Fri|Sat)+)\\s+([^#]*)\\s*(#.*)?$~i", $this->_timer . ' test', $job)) {
+        if (preg_match("~^([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-9,/*]+)\\s+([-0-7,/*]+|(-|/|Sun|Mon|Tue|Wed|Thu|Fri|Sat)+)\\s+([^#]*)\\s*(#.*)?$~i", $this->timer . ' test', $job)) {
             return $this->getLastScheduledRunTime($job, $last+60);
         } else {
             return false;

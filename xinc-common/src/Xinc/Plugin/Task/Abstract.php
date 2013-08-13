@@ -48,17 +48,58 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
     protected $xml;
 
     /**
+     * @var integer Task Slot INIT_PROCESS
+     */
+    protected $pluginSlot = null;
+
+    /**
+     * @var string Name of the task
+     */
+    protected $name = null;
+
+    /**
      * Constructor, stores a reference to the plugin for usage of functionality
      *
-     * @param Xinc_Plugin_Interface $plugin
+     * @param Xinc_Plugin_Interface $plugin The plugin of this task.
      */
     public function __construct(Xinc_Plugin_Interface $plugin)
     {
         $this->plugin = $plugin;
+        if (null === $this->name) {
+            $this->name = strtolower(get_class($this));
+        }
     }
 
+    /**
+     * Initialize the task
+     *
+     * @param Xinc_Build_Interface $build Build to initialize this task for.
+     *
+     * @return void
+     */
     public function init(Xinc_Build_Interface $build)
     {
+    }
+
+    /**
+     * Returns name of task by lowercasing class name.
+     *
+     * @return string Name of task.
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Returns the slot of this task inside a build.
+     *
+     * @return integer The slot number.
+     * @see Xinc/Plugin/Slot.php for available slots
+     */
+    public function getPluginSlot()
+    {
+        return $this->pluginSlot;
     }
 
     /**
@@ -75,15 +116,10 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
     }
 
     /**
-     * Returns name of task by lowercasing class name.
+     * Gets registered subtask for this task.
      *
-     * @return string Name of task.
+     * @return Xinc_Build_Tasks_Iterator
      */
-    public function getName()
-    {
-        return strtolower(get_class($this));
-    }
-
     public function getTasks()
     {
         return new Xinc_Build_Tasks_Iterator($this->arSubtasks);
