@@ -46,7 +46,7 @@ class Xinc_Build implements Xinc_Build_Interface
      *
      * @var boolean
      */
-    private $_isQueued=false;
+    private $_isQueued = false;
 
     /**
      * @var Xinc_Engine_Interface
@@ -144,17 +144,18 @@ class Xinc_Build implements Xinc_Build_Interface
      * @param Xinc_Project          $project
      * @param integer               $buildTimestamp
      */
-    public function __construct(Xinc_Engine_Interface &$engine,
-                                Xinc_Project &$project,
-                                $buildTimestamp = null
+    public function __construct(
+        Xinc_Engine_Interface &$engine,
+        Xinc_Project &$project,
+        $buildTimestamp = null
     ) {
         $this->_engine = $engine;
         $this->_project = $project;
-        
+
         if (Xinc_Project_Status::MISCONFIGURED == $this->_project->getStatus()) {
             $this->setStatus(Xinc_Build_Interface::MISCONFIGURED);
         }
-        
+
         $this->_buildTimestamp = $buildTimestamp;
         $this->_properties = new Xinc_Build_Properties();
         $this->_internalProperties = new Xinc_Build_Properties();
@@ -175,7 +176,7 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function &getLastBuild()
     {
-        if ($this->_lastBuild == null) { 
+        if ($this->_lastBuild == null) {
             $build = new Xinc_Build($this->getEngine(), $this->getProject());
             return $build;
         }
@@ -190,7 +191,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_properties;
     }
-    
+
     /**
      *
      * @return Xinc_Build_Properties
@@ -199,7 +200,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_internalProperties;
     }
-    
+
     /**
      * @return Xinc_Build_Statistics
      */
@@ -227,7 +228,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_buildTimestamp;
     }
-    
+
     /**
      * Returns the next build time (unix timestamp)
      * for this build
@@ -246,7 +247,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_project;
     }
-    
+
     /**
      * 
      * @return Xinc_Engine_Interface
@@ -255,7 +256,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_engine;
     }
-    
+
     public function setLastBuild()
     {
         /**
@@ -265,7 +266,7 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->_lastBuild = null;
         $this->_lastBuild = clone $this;
     }
-    
+
     /**
      * stores the build information
      *
@@ -278,41 +279,34 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         Xinc_Logger::getInstance()->flush();
         $this->setLastBuild();
-        
+
         if (!in_array($this->getStatus(), array(self::PASSED, self::FAILED, self::STOPPED))) {
             throw new Xinc_Build_Exception_NotRun();
-        } else if ($this->getBuildTime() == null) {
-            throw new Xinc_Build_Exception_Serialization($this->getProject(),
-                                                         $this->getBuildTime());
+        } elseif ($this->getBuildTime() == null) {
+            throw new Xinc_Build_Exception_Serialization($this->getProject(), $this->getBuildTime());
         }
         $statusDir = Xinc::getInstance()->getStatusDir();
-        
-        $buildHistoryFile = $statusDir . DIRECTORY_SEPARATOR 
-                          . $this->getProject()->getName() . '.history';
-        
+
+        $buildHistoryFile = $statusDir . DIRECTORY_SEPARATOR . $this->getProject()->getName() . '.history';
+
         $subDirectory = self::generateStatusSubDir($this->getProject()->getName(), $this->getBuildTime());
 
-        $fileName = $statusDir . DIRECTORY_SEPARATOR 
-                  . $subDirectory
-                  . DIRECTORY_SEPARATOR . 'build.ser';
-        $logfileName = $statusDir . DIRECTORY_SEPARATOR 
-                  . $subDirectory
-                  . DIRECTORY_SEPARATOR . 'buildlog.xml';
-        $lastBuildFileName = $statusDir . DIRECTORY_SEPARATOR . $this->getProject()->getName()
-                           . DIRECTORY_SEPARATOR . 'build.ser';
-        $lastLogFileName = $statusDir . DIRECTORY_SEPARATOR . $this->getProject()->getName()
-                           . DIRECTORY_SEPARATOR . 'buildlog.xml';
+        $fileName = $statusDir . DIRECTORY_SEPARATOR . $subDirectory . DIRECTORY_SEPARATOR . 'build.ser';
+        $logfileName = $statusDir . DIRECTORY_SEPARATOR . $subDirectory . DIRECTORY_SEPARATOR . 'buildlog.xml';
+        $lastBuildFileName
+            = $statusDir . DIRECTORY_SEPARATOR . $this->getProject()->getName() . DIRECTORY_SEPARATOR . 'build.ser';
+        $lastLogFileName
+            = $statusDir . DIRECTORY_SEPARATOR . $this->getProject()->getName() . DIRECTORY_SEPARATOR . 'buildlog.xml';
         if (!file_exists(dirname($fileName))) {
             mkdir(dirname($fileName), 0755, true);
         }
         $contents = serialize($this);
-        
+
         $written = file_put_contents($lastBuildFileName, $contents);
         if ($written == strlen($contents)) {
             $res = copy($lastBuildFileName, $fileName);
             if (!$res) {
-                throw new Xinc_Build_Exception_Serialization($this->getProject(),
-                                                             $this->getBuildTime());
+                throw new Xinc_Build_Exception_Serialization($this->getProject(), $this->getBuildTime());
             } else {
                 if (file_exists($lastLogFileName)) {
                     copy($lastLogFileName, $logfileName);
@@ -322,12 +316,10 @@ class Xinc_Build implements Xinc_Build_Interface
             }
             return true;
         } else {
-            throw new Xinc_Build_Exception_Serialization($this->getProject(),
-                                                         $this->getBuildTime());
+            throw new Xinc_Build_Exception_Serialization($this->getProject(), $this->getBuildTime());
         }
     }
 
-    
     /**
      * Unserialize a build by its project and buildtimestamp
      *
@@ -343,31 +335,27 @@ class Xinc_Build implements Xinc_Build_Interface
         if ($statusDir == null) {
             $statusDir = Xinc::getInstance()->getStatusDir();
         }
-        
+
         if ($buildTimestamp == null) {
             //$fileName = $statusDir . DIRECTORY_SEPARATOR . $project->getName()
             //          . DIRECTORY_SEPARATOR . 'build.ser';
             $fileName = Xinc_Build_History::getLastBuildFile($project);
         } else {
             //$subDirectory = self::generateStatusSubDir($project->getName(), $buildTimestamp);
-        
-        
             /**
              * @throws Xinc_Build_Exception_NotFound
              */
             $fileName = Xinc_Build_History::getBuildFile($project, $buildTimestamp);
         }
-        
+
         //Xinc_Build_Repository::getBuild($project, $buildTimestamp);
         if (!file_exists($fileName)) {
-            throw new Xinc_Build_Exception_NotFound($project,
-                                                    $buildTimestamp);
+            throw new Xinc_Build_Exception_NotFound($project, $buildTimestamp);
         } else {
             $serializedString = file_get_contents($fileName);
             $unserialized = @unserialize($serializedString);
             if (!$unserialized instanceof Xinc_Build) {
-                throw new Xinc_Build_Exception_Unserialization($project,
-                                                               $buildTimestamp);
+                throw new Xinc_Build_Exception_Unserialization($project, $buildTimestamp);
             } else {
                 /**
                  * compatibility with old Xinc_Build w/o statistics object
@@ -379,16 +367,15 @@ class Xinc_Build implements Xinc_Build_Interface
                     $unserialized->setConfigDirective('timezone', null);
                 }
                 if (!isset($unserialized->_internalProperties)) {
-                    if (method_exists($unserialized,'init')) {
+                    if (method_exists($unserialized, 'init')) {
                         $unserialized->init();
                     }
-                    
                 }
                 return $unserialized;
             }
         }
     }
-    
+
     /**
      * returns the status of this build
      *
@@ -397,7 +384,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_status;
     }
-    
+
     /**
      * Set the status of this build
      *
@@ -407,8 +394,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $this->_status = $status;
     }
-    
-    
+
     public function __sleep()
     {
         /**
@@ -428,13 +414,13 @@ class Xinc_Build implements Xinc_Build_Interface
             $this->_config['timezone'] = Xinc_Timezone::get();
             $this->_config['timezone.reporting'] = true;
         }
-        
-        return array('_no','_project', '_buildTimestamp',
-                     '_properties', '_status', '_lastBuild',
-                     '_labeler', '_engine', '_statistics', '_config',
-                     '_internalProperties');
+
+        return array(
+            '_no','_project', '_buildTimestamp', '_properties', '_status', '_lastBuild', '_labeler', '_engine',
+            '_statistics', '_config', '_internalProperties'
+        );
     }
-    
+
     public function init()
     {
         $this->_internalProperties = new Xinc_Build_Properties();
@@ -451,7 +437,7 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->getProperties()->set('build.number', $no);
         $this->_no = $no;
     }
-    
+
     /**
      * returns the build no for this build
      *
@@ -461,8 +447,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_no;
     }
-    
-    
+
     /**
      * returns the label of this build
      *
@@ -472,7 +457,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_labeler->getLabel($this);
     }
-    
+
     /**
      * returns the labeler of this build
      *
@@ -482,7 +467,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_labeler;
     }
-    
+
     /**
      *
      * @param Xinc_Build_Tasks_Registry $taskRegistry
@@ -503,7 +488,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $this->_scheduler = $scheduler;
     }
-    
+
     /**
      *
      * @return Xinc_Build_Scheduler_Interface
@@ -531,7 +516,6 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $tasks = $this->getTaskRegistry()->getTasksForSlot($slot);
         while ($tasks->hasNext()) {
-            
             $task = $tasks->next();
             Xinc_Logger::getInstance()->info('Processing task: ' . $task->getName());
             try {
@@ -544,7 +528,6 @@ class Xinc_Build implements Xinc_Build_Interface
              * The Post-Process continues on failure
              */
             if ($slot != Xinc_Plugin_Slot::POST_PROCESS) {
-                
                 if ($this->getStatus() != Xinc_Build_Interface::PASSED) {
                     $tasks->rewind();
                     break;
@@ -553,7 +536,7 @@ class Xinc_Build implements Xinc_Build_Interface
         }
         $tasks->rewind();
     }
-    
+
     /**
      * Logs a message of priority info
      *
@@ -561,10 +544,7 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function info($message)
     {
-        Xinc_Logger::getInstance()->info('[build] ' 
-                                        . $this->getProject()->getName() 
-                                        . ': '.$message);
-            
+        Xinc_Logger::getInstance()->info('[build] ' . $this->getProject()->getName() . ': ' . $message);
     }
 
     /**
@@ -574,12 +554,9 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function warn($message)
     {
-        Xinc_Logger::getInstance()->warn('[build] ' 
-                                        . $this->getProject()->getName() 
-                                        . ': '.$message);
-            
+        Xinc_Logger::getInstance()->warn('[build] ' . $this->getProject()->getName() . ': ' . $message);
     }
-    
+
     /**
      * Logs a message of priority verbose
      *
@@ -587,10 +564,7 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function verbose($message)
     {
-        Xinc_Logger::getInstance()->verbose('[build] ' 
-                                        . $this->getProject()->getName() 
-                                        . ': '.$message);
-            
+        Xinc_Logger::getInstance()->verbose('[build] ' . $this->getProject()->getName() . ': ' . $message);
     }
 
     /**
@@ -600,10 +574,7 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function debug($message)
     {
-        Xinc_Logger::getInstance()->debug('[build] ' 
-                                         . $this->getProject()->getName() 
-                                         . ': '.$message);
-            
+        Xinc_Logger::getInstance()->debug('[build] ' . $this->getProject()->getName() . ': ' . $message);
     }
 
     /**
@@ -613,29 +584,23 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function error($message)
     {
-        Xinc_Logger::getInstance()->error('[build] ' 
-                                         . $this->getProject()->getName()
-                                         . ': '.$message);
-            
+        Xinc_Logger::getInstance()->error('[build] ' . $this->getProject()->getName() . ': ' . $message);
     }
-    
+
     public function build()
     {
         Xinc_Logger::getInstance()->setBuildLogFile(null);
         Xinc_Logger::getInstance()->emptyLogQueue();
         Xinc::setCurrentBuild($this);
-        
-        $buildLogFile = Xinc::getInstance()->getStatusDir() 
-                        . DIRECTORY_SEPARATOR 
-                        . $this->getProject()->getName()
-                        . DIRECTORY_SEPARATOR
-                        . 'buildlog.xml';
+
+        $buildLogFile = Xinc::getInstance()->getStatusDir() . DIRECTORY_SEPARATOR . $this->getProject()->getName()
+            . DIRECTORY_SEPARATOR . 'buildlog.xml';
         if (file_exists($buildLogFile)) {
             self::info('Removing old logfile "' . $buildLogFile . '" with size: ' . filesize($buildLogFile));
             unlink($buildLogFile);
         }
         Xinc_Logger::getInstance()->setBuildLogFile($buildLogFile);
-        
+
         $this->getEngine()->build($this);
         //Xinc_Logger::getInstance()->flush();
         Xinc_Logger::getInstance()->setBuildLogFile(null);
@@ -643,41 +608,37 @@ class Xinc_Build implements Xinc_Build_Interface
         if (Xinc_Build_Interface::STOPPED != $this->getStatus()) {
             $this->setStatus(Xinc_Build_Interface::INITIALIZED);
         }
-        
     }
-    
+
     public function updateTasks()
     {
         $this->_setters = Xinc_Plugin_Repository::getInstance()->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
-        
+
         $this->getProperties()->set('project.name', $this->getProject()->getName());
         $this->getProperties()->set('build.number', $this->getNumber());
         $this->getProperties()->set('build.label', $this->getLabel());
-        
-        
+
         $builtinProps = Xinc::getInstance()->getBuiltinProperties();
-        
+
         foreach ($builtinProps as $prop => $value) {
             $this->getProperties()->set($prop, $value);
         }
-        
+
         $tasks = $this->getTaskRegistry()->getTasks();
-        
+
         while ($tasks->hasNext()) {
-            
             $task = $tasks->next();
-            
-            $this->_updateTask($task);
+            $this->updateTask($task);
         }
     }
-    
+
     public static function generateStatusSubDir($projectName, $buildTime)
     {
         $oldTimeZone = ini_get('date.timezone');
         if (Xinc_Timezone::getIniTimezone() == null) {
             ini_set('date.timezone', 'UTC');
         }
-        $yearMonthDay = date("Ymd", $buildTime);
+        $yearMonthDay = date('Ymd', $buildTime);
         $subDirectory = $projectName;
         $subDirectory .= DIRECTORY_SEPARATOR;
         $subDirectory .= $yearMonthDay . DIRECTORY_SEPARATOR . $buildTime;
@@ -686,44 +647,41 @@ class Xinc_Build implements Xinc_Build_Interface
         }
         return $subDirectory;
     }
-    
+
     public function getStatusSubDir()
     {
         $subDirectory = self::generateStatusSubDir($this->getProject()->getName(), $this->getBuildTime());
         return $subDirectory;
     }
 
-    private function _updateTask(Xinc_Plugin_Task_Interface &$task)
+    private function updateTask(Xinc_Plugin_Task_Interface &$task)
     {
         $element = $task->getXml();
         foreach ($element->attributes() as $name => $value) {
-            $setter = 'set'.$name;
-            
+            $setter = 'set' . $name;
             /**
              * Call PROJECT_SET_VALUES plugins
              */
             while ($this->_setters->hasNext()) {
                 $setterObj = $this->_setters->next();
                 $value = $setterObj->set($this, $value);
-                
             }
             $this->_setters->rewind();
-            $task->$setter((string)$value, $this);
-            
+            $task->$setter((string) $value, $this);
         }
-        
+
         $subtasks = $task->getTasks();
-        
+
         while ($subtasks->hasNext()) {
-            $this->_updateTask($subtasks->next());
+            $this->updateTask($subtasks->next());
         }
     }
-    
+
     public function enqueue()
     {
         $this->_isQueued = true;
     }
-    
+
     /**
      * check if build is in queue mode
      *
@@ -732,7 +690,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         return $this->_isQueued;
     }
-    
+
     /**
      * remove build from queue mode
      *
@@ -741,7 +699,7 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $this->_isQueued = false;
     }
-    
+
     /**
      * Sets custom config value for the current build
      *
@@ -761,9 +719,9 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function getConfigDirective($name)
     {
-        return isset($this->_config[$name])?$this->_config[$name]:null;
+        return isset($this->_config[$name]) ? $this->_config[$name] : null;
     }
-    
+
     public function resetConfigDirective()
     {
         $this->_config = array();
