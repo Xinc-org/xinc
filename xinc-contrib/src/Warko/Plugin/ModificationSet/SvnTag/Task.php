@@ -30,7 +30,7 @@
 
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
 
-class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
+class Warko_Plugin_ModificationSet_SvnTag_Task extends Xinc_Plugin_Repos_ModificationSet_AbstractTask
 {
     private $_directory = '.';
     protected $_prefix = '';

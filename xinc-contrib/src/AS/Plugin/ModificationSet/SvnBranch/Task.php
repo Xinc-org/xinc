@@ -23,15 +23,14 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 require_once 'Xinc/Plugin/Repos/ModificationSet/AbstractTask.php';
-require_once 'Xinc/Contrib/Warko/Plugin/ModificationSet/SvnTag/Task.php';
+require_once 'Warko/Plugin/ModificationSet/SvnTag/Task.php';
 
-class Xinc_Contrib_AS_Plugin_ModificationSet_SvnBranch_Task extends Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag_Task
+class AS_Plugin_ModificationSet_SvnBranch_Task extends Warko_Plugin_ModificationSet_SvnTag_Task
 {
-   
     public function getName(){
          return "svnbranch";
     }
-    
+
     public function setBranchNameProperty($value)
     {
         $this->_tagNameProperty = $value;

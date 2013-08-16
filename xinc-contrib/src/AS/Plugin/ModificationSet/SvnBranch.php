@@ -23,10 +23,10 @@
  *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-require_once 'Xinc/Contrib/AS/Plugin/ModificationSet/SvnBranch/Task.php';
-require_once 'Xinc/Contrib/Warko/Plugin/ModificationSet/SvnTag.php';
+require_once 'AS/Plugin/ModificationSet/SvnBranch/Task.php';
+require_once 'Warko/Plugin/ModificationSet/SvnTag.php';
 
-class Xinc_Contrib_AS_Plugin_ModificationSet_SvnBranch extends Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag
+class AS_Plugin_ModificationSet_SvnBranch extends Warko_Plugin_ModificationSet_SvnTag
 {
     protected function _getSvnSubDir()
     {

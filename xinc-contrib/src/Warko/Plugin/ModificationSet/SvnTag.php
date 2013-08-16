@@ -29,10 +29,10 @@
  */
 
 require_once 'Xinc/Plugin/Abstract.php';
-require_once 'Xinc/Contrib/Warko/Plugin/ModificationSet/SvnTag/Task.php';
+require_once 'Warko/Plugin/ModificationSet/SvnTag/Task.php';
 require_once 'Xinc/Ini.php';
 
-class Xinc_Contrib_Warko_Plugin_ModificationSet_SvnTag extends Xinc_Plugin_Abstract
+class Warko_Plugin_ModificationSet_SvnTag extends Xinc_Plugin_Abstract
 {
     private $_svnPath;
 
