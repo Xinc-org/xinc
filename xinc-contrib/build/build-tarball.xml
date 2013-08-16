@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<project name="Build Tarball - Xinc Contrib" basedir="." default="build">
+    <import file="../../build/build-tarball.xml" />
+
+    <target name="copy-data" depends="build_tarball___xinc.copy-data">
+        <copy todir="${build.dir.temp}/${xincversion}">
+            <fileset dir="${build.base.dir}">
+                <include name="src/*/**" />
+            </fileset>
+        </copy>
+    </target>
+</project>
