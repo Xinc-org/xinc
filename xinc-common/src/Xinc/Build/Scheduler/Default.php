@@ -24,7 +24,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Build/Scheduler/Interface.php';
@@ -32,8 +32,7 @@ require_once 'Xinc/Build/Scheduler/Interface.php';
 class Xinc_Build_Scheduler_Default implements Xinc_Build_Scheduler_Interface
 {
 
- 
-    private $_nextBuildTime = null;
+    private $nextBuildTime = null;
 
     /**
      * Calculates the next build timestamp
@@ -46,10 +45,10 @@ class Xinc_Build_Scheduler_Default implements Xinc_Build_Scheduler_Interface
         if ($build->getLastBuild()->getBuildTime() == null
             && $build->getStatus() !== Xinc_Build_Interface::STOPPED
         ) {
-            if (!isset($this->_nextBuildTime)) {
-                $this->_nextBuildTime = time();
+            if (!isset($this->nextBuildTime)) {
+                $this->nextBuildTime = time();
             }
-            return $this->_nextBuildTime;
+            return $this->nextBuildTime;
         } else {
             return null;
         }

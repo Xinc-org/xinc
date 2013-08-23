@@ -42,7 +42,7 @@ interface Xinc_Engine_Interface
      *
      * @param Xinc_Build_Interface $build
      */
-    public function build(Xinc_Build_Interface &$build);
+    public function build(Xinc_Build_Interface $build);
 
     /**
      * Parses Project-Xml and returns

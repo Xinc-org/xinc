@@ -54,11 +54,11 @@ class Xinc
     public $buildActive = false;
 
     /**
-     * Default sleepy time in seconds
+     * Default sleepy time in microseconds
      *
      * @var integer
      */
-    private $defaultSleep = 30;
+    private $defaultSleep = 100000;
 
     /**
      * Registry holding all scheduled builds
@@ -380,18 +380,10 @@ class Xinc
             if ($nextBuildTime != null) {
                 $sleep = $nextBuildTime - $now;
             } else {
-                $sleep = $this->defaultSleep;
+                $sleep = 1;
             }
             if ($sleep > 0) {
-                $this->buildActive = false;
-                Xinc_Logger::getInstance()->info('Sleeping: ' . $sleep . ' seconds');
-                $start = time() + microtime(true);
-                while (((time() + microtime(true)) - $start) <= $sleep) {
-                    usleep(10000);
-                    /**
-                     * Check for forceonly builds here
-                     */
-                }
+                usleep($this->defaultSleep);
             }
             while (($nextBuild = Xinc::$buildQueue->getNextBuild()) !== null) {
                 $this->buildActive = true;

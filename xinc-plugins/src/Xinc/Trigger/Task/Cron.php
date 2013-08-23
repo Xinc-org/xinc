@@ -11,32 +11,33 @@
  *
  * PHP version 5
  *
- * @category  Development
- * @package   Xinc.Plugin.Repos.Cron
- * @author    Arno Schneider <username@example.org>
- * @copyright 2007 Arno Schneider, Barcelona
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *            This file is part of Xinc.
- *            Xinc is free software; you can redistribute it and/or modify
- *            it under the terms of the GNU Lesser General Public License as
- *            published by the Free Software Foundation; either version 2.1 of
- *            the License, or (at your option) any later version.
+ * @category   Development
+ * @package    Xinc.Plugin
+ * @subpackage Trigger
+ * @author     Arno Schneider <username@example.org>
+ * @copyright  2007 Arno Schneider, Barcelona
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *             This file is part of Xinc.
+ *             Xinc is free software; you can redistribute it and/or modify
+ *             it under the terms of the GNU Lesser General Public License as
+ *             published by the Free Software Foundation; either version 2.1 of
+ *             the License, or (at your option) any later version.
  *
- *            Xinc is distributed in the hope that it will be useful,
- *            but WITHOUT ANY WARRANTY; without even the implied warranty of
- *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *            GNU Lesser General Public License for more details.
+ *             Xinc is distributed in the hope that it will be useful,
+ *             but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *             GNU Lesser General Public License for more details.
  *
- *            You should have received a copy of the GNU Lesser General Public
- *            License along with Xinc, write to the Free Software Foundation,
- *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://code.google.com/p/xinc/
+ *             You should have received a copy of the GNU Lesser General Public
+ *             License along with Xinc, write to the Free Software Foundation,
+ *             Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link       http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Abstract.php';
+require_once 'Xinc/Trigger/Task/AbstractTask.php';
 require_once 'Xinc/Build/Scheduler/Interface.php';
 
-class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract implements Xinc_Build_Scheduler_Interface
+class Xinc_Trigger_Task_Cron extends Xinc_Trigger_Task_AbstractTask
 {
     const PC_MINUTE=1;
     const PC_HOUR=2;
@@ -87,18 +88,6 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract implements X
     }
 
     /**
-     * Initialize the task
-     *
-     * @param Xinc_Build_Interface $build Build to initialize this task for.
-     *
-     * @return void
-     */
-    public function init(Xinc_Build_Interface $build)
-    {
-        $build->setScheduler($this);
-    }
-
-    /**
      * Validates if a task can run by checking configs, directries and so on.
      *
      * @return boolean Is true if task can run.
@@ -110,24 +99,13 @@ class Xinc_Plugin_Repos_Cron_Task extends Xinc_Plugin_Task_Abstract implements X
     }
 
     /**
-     * Process the task
-     *
-     * @param Xinc_Build_Interface $build Build to process this task for.
-     *
-     * @return void
-     */
-    public function process(Xinc_Build_Interface $build)
-    {
-    }
-
-    /**
      * Calculates the next build timestamp.
      *
      * @param Xinc_Build_Interface $build
      *
      * @return integer next build timestamp
      */
-    public function getNextBuildTime(Xinc_Build_Interface $build)
+    public function getNextTime(Xinc_Build_Interface $build)
     {
         if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
             return null;

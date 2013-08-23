@@ -48,7 +48,7 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
     protected $xml;
 
     /**
-     * @var integer Task Slot INIT_PROCESS
+     * @var integer Task Slot see Xinc_Plugin_Slot
      */
     protected $pluginSlot = null;
 
@@ -56,6 +56,11 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
      * @var string Name of the task
      */
     protected $name = null;
+
+    /**
+     * @var string Name of class from which subtask must be an instanceof.
+     */
+    protected $subtaskInstance = null;
 
     /**
      * Constructor, stores a reference to the plugin for usage of functionality
@@ -79,6 +84,21 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
      */
     public function init(Xinc_Build_Interface $build)
     {
+    }
+
+    /**
+     * Validates if a task can run by checking configs, directries and so on.
+     *
+     * @return boolean Is true if task can run.
+     */
+    public function validate()
+    {
+        foreach ($this->arSubtasks as $task) {
+            if (!$task->validate()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -112,6 +132,9 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
     public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
         Xinc_Logger::getInstance()->debug('Registering Task: ' . get_class($task));
+        if (null !== $this->subtaskInstance && ! $task instanceof $this->subtaskInstance) {
+            throw new Exception('Subtask must be an instance of: ' . $this->subtaskInstance);
+        }
         $this->arSubtasks[] = $task;
     }
 

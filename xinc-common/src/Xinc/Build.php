@@ -61,7 +61,7 @@ class Xinc_Build implements Xinc_Build_Interface
     /**
      * @var Xinc_Build_Properties
      */
-    private $_properties;
+    private $properties;
 
     /**
      * @var Xinc_Build_Properties
@@ -94,7 +94,7 @@ class Xinc_Build implements Xinc_Build_Interface
      *
      * @var Xinc_Build_Interface
      */
-    private $_lastBuild;
+    private $lastBuild;
 
     /**
      * The build no of this build
@@ -118,11 +118,11 @@ class Xinc_Build implements Xinc_Build_Interface
     private $_taskRegistry;
 
     /**
-     * Build scheduler
+     * Build schedulers
      *
-     * @var Xinc_Build_Scheduler_Interface
+     * @var array of Xinc_Build_Scheduler_Interface
      */
-    private $_scheduler;
+    private $schedulers;
 
     /**
      * @var Xinc_Build_Labeler_Interface
@@ -135,6 +135,17 @@ class Xinc_Build implements Xinc_Build_Interface
      * @var array
      */
     private $_config = array();
+
+    // ONLY FOR Backward Compatibility will be removed later.
+    /**
+     * @var Xinc_Build_Properties
+     */
+    private $_properties;
+
+    /**
+     * @var Xinc_Build_Interface
+     */
+    private $_lastBuild;
 
     /**
      * sets the project, engine
@@ -157,11 +168,10 @@ class Xinc_Build implements Xinc_Build_Interface
         }
 
         $this->_buildTimestamp = $buildTimestamp;
-        $this->_properties = new Xinc_Build_Properties();
+        $this->properties = new Xinc_Build_Properties();
         $this->_internalProperties = new Xinc_Build_Properties();
         $this->_statistics = new Xinc_Build_Statistics();
         $this->setLabeler(new Xinc_Build_Labeler_Default());
-        $this->setScheduler(new Xinc_Build_Scheduler_Default());
     }
 
     public function setLabeler(Xinc_Build_Labeler_Interface &$labeler)
@@ -170,26 +180,26 @@ class Xinc_Build implements Xinc_Build_Interface
     }
 
     /**
-     * 
      * Returns the last build
+     *
      * @return Xinc_Build_Interface
      */
-    public function &getLastBuild()
+    public function getLastBuild()
     {
-        if ($this->_lastBuild == null) {
+        if ($this->lastBuild == null) {
             $build = new Xinc_Build($this->getEngine(), $this->getProject());
             return $build;
         }
-        return $this->_lastBuild;
+        return $this->lastBuild;
     }
 
     /**
      *
      * @return Xinc_Build_Properties
      */
-    public function &getProperties()
+    public function getProperties()
     {
-        return $this->_properties;
+        return $this->properties;
     }
 
     /**
@@ -236,11 +246,21 @@ class Xinc_Build implements Xinc_Build_Interface
      */
     public function getNextBuildTime()
     {
-        return $this->_scheduler->getNextBuildTime($this);
+        $timestampMerged = null;
+
+        // @var $scheduler Xinc_Build_Scheduler_Interface
+        foreach ($this->schedulers as $scheduler) {
+            $timestamp = $scheduler->getNextBuildTime($this);
+            if ($timestamp < $timestampMerged || $timestampMerged === null) {
+                $timestampMerged = $timestamp;
+            }
+        }
+
+        return $timestampMerged;
     }
 
     /**
-     * 
+     *
      * @return Xinc_Project
      */
     public function &getProject()
@@ -263,8 +283,8 @@ class Xinc_Build implements Xinc_Build_Interface
          * to prevent recursion, unset the reference to the lastBuild
          * and then clone
          */
-        $this->_lastBuild = null;
-        $this->_lastBuild = clone $this;
+        $this->lastBuild = null;
+        $this->lastBuild = clone $this;
     }
 
     /**
@@ -395,6 +415,16 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->_status = $status;
     }
 
+    public function __wakeup()
+    {
+        if (isset($this->_properties)) {
+            $this->properties = $this->_properties;
+        }
+        if (isset($this->_lastBuild)) {
+            $this->lastBuild = $this->_lastBuild;
+        }
+    }
+
     public function __sleep()
     {
         /**
@@ -416,7 +446,7 @@ class Xinc_Build implements Xinc_Build_Interface
         }
 
         return array(
-            '_no','_project', '_buildTimestamp', '_properties', '_status', '_lastBuild', '_labeler', '_engine',
+            '_no','_project', '_buildTimestamp', 'properties', '_status', 'lastBuild', '_labeler', '_engine',
             '_statistics', '_config', '_internalProperties'
         );
     }
@@ -484,18 +514,19 @@ class Xinc_Build implements Xinc_Build_Interface
      *
      * @param Xinc_Build_Scheduler_Interface $scheduler
      */
-    public function setScheduler(Xinc_Build_Scheduler_Interface &$scheduler)
+    public function addScheduler(Xinc_Build_Scheduler_Interface $scheduler)
     {
-        $this->_scheduler = $scheduler;
+        $this->schedulers[] = $scheduler;
     }
 
     /**
+     * Returns the availability of at least one scheduler.
      *
-     * @return Xinc_Build_Scheduler_Interface
+     * @return boolean True if a minimum of one scheduler is set.
      */
-    public function getScheduler()
+    public function haveScheduler()
     {
-        return $this->_scheduler;
+        return (count($this->schedulers) > 0);
     }
 
     /**

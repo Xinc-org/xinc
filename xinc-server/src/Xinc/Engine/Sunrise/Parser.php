@@ -26,7 +26,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Build.php';
@@ -42,12 +42,12 @@ class Xinc_Engine_Sunrise_Parser
      * @var Xinc_Iterator
      */
     private $_setters;
-    
+
     /**
      * @var Xinc_Engine_Sunrise
      */
     private $_engine;
-    
+
     /**
      *
      * @param Xinc_Engine_Sunrise $engine
@@ -71,9 +71,8 @@ class Xinc_Engine_Sunrise_Parser
         $builds = array();
         $this->_setters = Xinc_Plugin_Repository::getInstance()
             ->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
-        
+
         while ($projects->hasNext()) {
-            
             $project = $projects->next();
             $build = null;
             /**
@@ -96,62 +95,53 @@ class Xinc_Engine_Sunrise_Parser
             if (!$build instanceof Xinc_Build_Interface) {
                 $build = new Xinc_Build($this->_engine, $project);
             }
-            
+
             $build->getProperties()->set('project.name', $project->getName());
             $build->getProperties()->set('build.number', $build->getNumber());
             $build->getProperties()->set('build.label', $build->getLabel());
-            
-            
+
             $builtinProps = Xinc::getInstance()->getBuiltinProperties();
-            
+
             foreach ($builtinProps as $prop => $value) {
                 $build->getProperties()->set($prop, $value);
             }
-            
+
             $taskRegistry = new Xinc_Build_Tasks_Registry();
             $this->_parseTasks($build, $projectXml, $taskRegistry);
-            
-            
+
             $build->setTaskRegistry($taskRegistry);
-            
-            
             $build->process(Xinc_Plugin_Slot::PROJECT_INIT);
-            
-            
-            $scheduler = $build->getScheduler();
-            
-            if ($scheduler == null) {
+
+            if (!$build->haveScheduler()) {
                 // set default scheduler
                 $scheduler = new Xinc_Build_Scheduler_Default();
-                $build->setScheduler($scheduler);
+                $build->addScheduler($scheduler);
             }
-            
+
             $labeler = $build->getLabeler();
-            
+
             if ($labeler == null) {
                 // set default scheduler
                 $labeler = new Xinc_Build_Labeler_Default();
                 $build->setLabeler($labeler);
             }
-            
+
             $builds[] = $build;
         }
         return $builds;
     }
-    
+
     /**
      * Parses the task of a project-xml
      *
      * @param SimpleXmlElement $element
      * @param Xinc $project
      */
-    private function _parseTasks(Xinc_Build_Interface &$build, &$element,&$repository)
+    private function _parseTasks(Xinc_Build_Interface &$build, &$element, &$repository)
     {
-
         $project = $build->getProject();
-        
+
         foreach ($element->children() as $taskName => $task) {
-            
             try{
                 $taskObject = Xinc_Plugin_Repository::getInstance()->getTask($taskName, (string)$element);
                 $taskObject->init($build);
@@ -165,27 +155,22 @@ class Xinc_Engine_Sunrise_Parser
             }
             foreach ($task->attributes() as $name => $value) {
                 $setter = 'set'.$name;
-                
                 /**
                  * Call PROJECT_SET_VALUES plugins
                  */
                 while ($this->_setters->hasNext()) {
                     $setterObj = $this->_setters->next();
                     $value = $setterObj->set($build, $value);
-                    
                 }
                 $this->_setters->rewind();
                 $taskObject->$setter((string)$value, $build);
             }
 
-                
             $this->_parseTasks($build, $task, $taskObject);
-          
             $repository->registerTask($taskObject);
 
 
             if ( !$taskObject->validate() ) {
-
                 //throw new Xinc_Exception_MalformedConfig('Error validating '
                 //                                        .'config.xml for task: '
                 //                                        .$taskObject->getName());

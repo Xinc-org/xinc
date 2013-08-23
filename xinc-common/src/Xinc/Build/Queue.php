@@ -36,14 +36,14 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
     /**
      * @var Xinc_Build_Iterator
      */
-    private $_builds;
+    private $builds;
 
-    private $_lastBuild;
+    private $lastBuild;
 
     /**
      * @var array
      */
-    private $_queue=array();
+    private $queue = array();
 
     /**
      * constructor for build queue
@@ -51,7 +51,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
      */
     public function __construct()
     {
-        $this->_builds = new Xinc_Build_Iterator();
+        $this->builds = new Xinc_Build_Iterator();
     }
 
     /**
@@ -61,7 +61,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
      */
     public function addBuild(Xinc_Build_Interface $build)
     {
-        $this->_builds->add($build);
+        $this->builds->add($build);
     }
 
     /**
@@ -72,7 +72,7 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
     public function addBuilds(Xinc_Build_Iterator $builds)
     {
         while ($builds->hasNext()) {
-            $this->_builds->add($builds->next());
+            $this->builds->add($builds->next());
         }
     }
 
@@ -99,36 +99,30 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
          * Xinc_Build_Interface
          */
         $build = null;
-        while ($this->_builds->hasNext()) {
-            $build = $this->_builds->next();
+        while ($this->builds->hasNext()) {
+            $build = $this->builds->next();
             $this->_handleBuildConfig($build);
-            if ($build->getNextBuildTime() <= $nextBuildTime || $nextBuildTime === null) {
+            $buildTime = $build->getNextBuildTime();
+            if ($buildTime <= $nextBuildTime || $nextBuildTime === null) {
                 if ($build->getStatus() != Xinc_Build_Interface::STOPPED) {
-                    $buildTime = $build->getNextBuildTime();
-
-                    if ($buildTime !== null && !$build->isQueued()) {
-                        $nextBuildTime = $buildTime;
-                        /**
-                         * Need to write to queue here and have a FIFO
-                         * check before if not already in queue
-                         */
-                        //if (!in_array($build, $this->_queue)) {
-                            $this->_queue[] = $build;
-                            $build->enqueue();
-                        //}
-                    } else {
-                        /**
-                         * we need to check if a scheduled build has a lower build time
-                         * but we dont want to queue it again
-                         */
-                        $nextBuildTime = $buildTime;
+                    if ($buildTime !== null) {
+                        $this->addBuild2Queue($build);
                     }
+                    $nextBuildTime = $buildTime;
                 }
             }
         }
-        usort($this->_queue, array(&$this, 'sortQueue'));
-        $this->_builds->rewind();
+        $this->builds->rewind();
         return $nextBuildTime;
+    }
+
+    public function addBuild2Queue($build)
+    {
+        if (!$build->isQueued()) {
+            $this->queue[] = $build;
+            $build->enqueue();
+        }
+        usort($this->queue, array(&$this, 'sortQueue'));
     }
 
     /**
@@ -159,15 +153,11 @@ class Xinc_Build_Queue implements Xinc_Build_Queue_Interface
      */
     public function getNextBuild()
     {
-        //if (count($this->_queue)<1) {
-        //    $this->getNextBuildTime();
-        //}
-        usort($this->_queue, array(&$this, 'sortQueue'));
-        if (isset($this->_queue[0])) {
-            $this->_handleBuildConfig($this->_queue[0]);
-            if ($this->_queue[0]->getNextBuildTime() <= time()) {
-
-                $build = array_shift($this->_queue);
+        usort($this->queue, array(&$this, 'sortQueue'));
+        if (isset($this->queue[0])) {
+            $this->_handleBuildConfig($this->queue[0]);
+            if ($this->queue[0]->getNextBuildTime() <= time()) {
+                $build = array_shift($this->queue);
                 $build->dequeue();
                 return $build;
             }

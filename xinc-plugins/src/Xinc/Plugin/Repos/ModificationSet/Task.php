@@ -33,40 +33,27 @@ require_once 'Xinc/Plugin/Repos/ModificationSet/Interface.php';
 class Xinc_Plugin_Repos_ModificationSet_Task extends Xinc_Plugin_Task_Abstract
 {
     /**
-     * Validates if a task can run by checking configs, directries and so on.
-     *
-     * @return boolean Is true if task can run.
+     * @var integer Task Slot PRE_PROCESS
      */
-    public function validate()
-    {
-        foreach ($this->arSubtasks as $task) {
-            if (!$task instanceof Xinc_Plugin_Repos_ModificationSet_AbstractTask) {
-                return false;
-            }
-        }
-        return true;
-    }
+    protected $pluginSlot = Xinc_Plugin_Slot::PRE_PROCESS;
 
     /**
-     * Returns name of Task.
-     *
-     * @return string Name of task.
+     * @var string Name of the task
      */
-    public function getName()
-    {
-        return 'modificationset';
-    }
+    protected $name = 'modificationset';
 
     /**
-     * Returns the slot of this task inside a build.
-     *
-     * @return integer The slot number.
+     * @var string Name of class from which subtask must be an instanceof.
      */
-    public function getPluginSlot()
-    {
-        return Xinc_Plugin_Slot::PRE_PROCESS;
-    }
+    protected $subtaskInstance = 'Xinc_Plugin_Repos_ModificationSet_AbstractTask';
 
+    /**
+     * Process the task
+     *
+     * @param Xinc_Build_Interface $build Build to process this task for.
+     *
+     * @return void
+     */
     public function process(Xinc_Build_Interface $build)
     {
         foreach ($this->arSubtasks as $task) {
