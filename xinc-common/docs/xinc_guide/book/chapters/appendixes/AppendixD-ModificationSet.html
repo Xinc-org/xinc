@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<h1><a name="AppendixC"></a>Appendix C: ModificationSet</h1>
+<h1><a name="AppendixD"></a>Appendix D: ModificationSet</h1>
 
 <p>
 This appendix contains a reference of all modificationset tasks, i.e. all
@@ -22,7 +22,9 @@ tasks that can trigger a build to happen.
 </ul>
 <pre title="Example of how to use BuildalwaysTask">
 &lt;project name=&quot;ProjectName&quot;&gt;
-    &lt;<a href="AppendixB-CoreTasks.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;<a href="AppendixB-CoreTasks.html#TriggerTask">trigger</a>&gt;
+        &lt;<a href="AppendixC-Triggers.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;/trigger&gt;
 ...
     &lt;<a href="AppendixB-CoreTasks.html#ModificationSetTask">modificationset</a>&gt;
         &lt;buildalways/&gt;
@@ -62,7 +64,9 @@ If a revision difference between the local working copy and the remote repositor
 </ul>
 <pre title="Example of how to use SvnTask">
 &lt;project name=&quot;ProjectName&quot;&gt;
-    &lt;<a href="AppendixB-CoreTasks.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;<a href="AppendixB-CoreTasks.html#TriggerTask">trigger</a>&gt;
+        &lt;<a href="AppendixC-Triggers.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;/trigger&gt;
 ...
     &lt;<a href="AppendixB-CoreTasks.html#ModificationSetTask">modificationset</a>&gt;
         &lt;svn directory=&quot;/var/xinc/projects/ProjectName&quot; update=&quot;true&quot;/&gt;
@@ -140,7 +144,9 @@ If a revision difference between the local working copy and the remote repositor
 </ul>
 <pre title="Example of how to use GitTask">
 &lt;project name=&quot;ProjectName&quot;&gt;
-    &lt;<a href="AppendixB-CoreTasks.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;<a href="AppendixB-CoreTasks.html#TriggerTask">trigger</a>&gt;
+        &lt;<a href="AppendixC-Triggers.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;/trigger&gt;
 ...
     &lt;<a href="AppendixB-CoreTasks.html#ModificationSetTask">modificationset</a>&gt;
         &lt;git directory=&quot;/var/xinc/projects/ProjectName&quot; update=&quot;true&quot;/&gt;

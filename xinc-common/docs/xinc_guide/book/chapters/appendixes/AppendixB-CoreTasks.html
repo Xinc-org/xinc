@@ -37,8 +37,7 @@ tasks that are needed to build a basic project.
 <ul>
   <li>&lt;<a href="#ConfigurationTask">configuration</a>/&gt;</li>
   <li>&lt;<a href="#PropertyTask">property</a>/&gt;</li>
-  <li>&lt;<a href="#ScheduleTask">schedule</a>/&gt;</li>
-  <li>&lt;<a href="#CronTask">cron</a>/&gt;</li>
+  <li>&lt;<a href="#TriggerTask">trigger</a>/&gt;</li>
   <li>&lt;<a href="#ModificationSetTask">modificationset</a>/&gt;</li>
   <li>&lt;<a href="#BuildersTask">builders</a>/&gt;</li>
   <li>&lt;<a href="#PublishersTask">publishers</a>/&gt;</li>
@@ -195,11 +194,13 @@ tasks that are needed to build a basic project.
   </tbody>
 </table>
 <p>&nbsp;</p>
-<h2><a name="ScheduleTask"></a>&lt;schedule/&gt;</h2>
-<p> The Schedule Task sets the interval in which repository changes are looked up by the &lt;<a href="#ModificationSetTask">modificationset</a>/&gt;.</p>
-<pre title="Example of how to use ScheduleTask">
+<h2><a name="TriggerTask"></a>&lt;trigger/&gt;</h2>
+<p> The Triggers sets the intervals/timestamps or sensors in which a build should start and goes in next stage like &lt;<a href="#ModificationSetTask">modificationset</a>/&gt;.</p>
+<pre title="Example of how to use Triggers">
 &lt;<a href="#Project">project</a> name=&quot;ProjectName&quot;&gt;
-    &lt;schedule interval=&quot;300&quot;/&gt;
+    &lt;trigger&gt;
+        &lt;<a href="AppendixC-Triggers.html#ScheduleTask">schedule</a> interval=&quot;240&quot;/&gt;
+    &lt;/trigger&gt;
 ...
 &lt;/project&gt;
 </pre>
@@ -220,48 +221,15 @@ tasks that are needed to build a basic project.
   </thead>
   <tbody>
     <tr>
-      <td>interval</td>
-      <td>Integer</td>
-      <td>Number of seconds in which modifications should be detected</td>
-      <td>n/a</td>
-      <td>Yes</td>
+      <td colspan="5">None</td>
     </tr>
   </tbody>
 </table>
-<p>&nbsp;</p>
-<h2><a name="CronTask"></a>&lt;cron/&gt;</h2>
-<p> The Cron Task lets you specifiy a timer for monitoring repository by the &lt;<a href="#ModificationSetTask">modificationset</a>/&gt;.</p>
-<pre title="Example of how to use CronTask">
-&lt;<a href="#Project">project</a> name=&quot;ProjectName&quot;&gt;
-    &lt;cron timer=&quot;*/5 * * * *&quot;/&gt;
-...
-&lt;/project&gt;
-</pre>
-<h3>Parent Tags</h3>
+
+<h3>Supported Nested Tags</h3>
 <ul>
-  <li>&lt;<a href="#Project">project</a>/&gt;</li>
+  <li>See <a href="AppendixC-Triggers.html">Appendix C: Triggers</a></li>
 </ul>
-<h3>Parameters</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-      <th>Required</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>timer</td>
-      <td>String</td>
-      <td>Cron like configuration of timer</td>
-      <td>n/a</td>
-      <td>Yes</td>
-    </tr>
-  </tbody>
-</table>
 
 <p>&nbsp;</p>
 <h2><a name="ModificationSetTask"></a>&lt;modificationset/&gt;</h2>
@@ -269,7 +237,7 @@ tasks that are needed to build a basic project.
 <pre title="Example of how to use ModificationSetTask">
 &lt;<a href="#Project">project</a> name=&quot;ProjectName&quot;&gt;
     &lt;modificationset&gt;
-        &lt;<a href="AppendixC-ModificationSet.html#BuildAlways">buildalways</a>/&gt;
+        &lt;<a href="AppendixD-ModificationSet.html#BuildAlways">buildalways</a>/&gt;
     &lt;/modificationset&gt;
 ...
 &lt;/project&gt;
@@ -298,7 +266,7 @@ tasks that are needed to build a basic project.
 
 <h3>Supported Nested Tags</h3>
 <ul>
-  <li>See <a href="AppendixC-ModificationSet.html">Appendix C: ModificationSet</a></li>
+  <li>See <a href="AppendixD-ModificationSet.html">Appendix D: ModificationSet</a></li>
 </ul>
 
 <p>&nbsp;</p>
@@ -308,7 +276,7 @@ tasks that are needed to build a basic project.
 &lt;<a href="#Project">project</a> name=&quot;ProjectName&quot;&gt;
 ...
     &lt;builders&gt;
-        &lt;<a href="AppendixD-Builders.html#PhingbuilderTask">phingbuilder</a> buildfile=&quot;build.xml&quot; target=&quot;main&quot;/&gt;
+        &lt;<a href="AppendixE-Builders.html#PhingbuilderTask">phingbuilder</a> buildfile=&quot;build.xml&quot; target=&quot;main&quot;/&gt;
     &lt;/builders&gt;
 ...
 &lt;/project&gt;
@@ -337,7 +305,7 @@ tasks that are needed to build a basic project.
 
 <h3>Supported Nested Tags</h3>
 <ul>
-  <li>See <a href="AppendixD-Builders.html">Appendix D: Builders</a></li>
+  <li>See <a href="AppendixE-Builders.html">Appendix E: Builders</a></li>
 </ul>
 
 <p>&nbsp;</p>
@@ -347,7 +315,7 @@ tasks that are needed to build a basic project.
 &lt;<a href="#Project">project</a> name=&quot;ProjectName&quot;&gt;
 ...
     &lt;publishers&gt;
-        &lt;<a href="AppendixE-Publishers.html#PhingpublisherTask">phingpublisher</a> buildfile=&quot;build.xml&quot; target=&quot;main&quot;/&gt;
+        &lt;<a href="AppendixF-Publishers.html#PhingpublisherTask">phingpublisher</a> buildfile=&quot;build.xml&quot; target=&quot;main&quot;/&gt;
     &lt;/publishers&gt;
 ...
 &lt;/project&gt;
@@ -376,7 +344,7 @@ tasks that are needed to build a basic project.
 
 <h3>Supported Nested Tags</h3>
 <ul>
-  <li>See <a href="AppendixE-Publishers.html">Appendix E: Publishers</a></li>
+  <li>See <a href="AppendixF-Publishers.html">Appendix F: Publishers</a></li>
 </ul>
 </body>
 </html>
