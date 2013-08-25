@@ -71,9 +71,9 @@
 </table>
 <h3>Creating the Project Structure</h3>
 <ol>
-<li>$ mkdir /var/xinc/projects/MyFirstXincProject<i style="margin-left:30px">(creating the project directory)</i></li>
-<li>$ cd /var/xinc/projects/MyFirstXincProject<i style="margin-left:30px">(change workingdir to project dir)</i></li>
-<li>$ svn co svn://svn.example.com/trunk .<i style="margin-left:30px">(checking out a working copy from subversion repos)</i></li>
+    <li>$ mkdir /var/xinc/projects/MyFirstXincProject<i style="margin-left:30px">(creating the project directory)</i></li>
+    <li>$ cd /var/xinc/projects/MyFirstXincProject<i style="margin-left:30px">(change workingdir to project dir)</i></li>
+    <li>$ svn co svn://svn.example.com/trunk .<i style="margin-left:30px">(checking out a working copy from subversion repos)</i></li>
 </ol>
 
 <h3>Configuring the project in Xinc</h3>
@@ -83,39 +83,39 @@
 <strong>02</strong> &lt;xinc engine=&quot;Sunrise&quot;&gt;
 <strong>02</strong>     &lt;<a href="appendixes/AppendixB-CoreTasks.html#Project">project</a> name=&quot;MyFirstXincProject&quot;&gt;
 <strong>03</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#PropertyTask">property</a> name=&quot;dir&quot; value=&quot;${projectdir}/${project.name}&quot; /&gt;
-<strong>04</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#ScheduleTask">schedule</a> interval=&quot;240&quot; /&gt;
-<strong>05</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#ModificationSetTask">modificationset</a>&gt;
-<strong>06</strong>             &lt;<a href="appendixes/AppendixC-ModificationSet.html#SvnTask">svn</a> directory=&quot;${dir}&quot; update=&quot;true&quot; /&gt;
-<strong>07</strong>         &lt;/modificationset&gt;
-<strong>08</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#BuildersTask">builders</a>&gt;
-<strong>09</strong>             &lt;<a href="appendixes/AppendixD-Builders.html#PhingbuilderTask">phingbuilder</a> buildfile=&quot;${dir}/build.xml&quot; /&gt;
-<strong>10</strong>         &lt;/builders&gt;
-<strong>11</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#PublishersTask">publishers</a>&gt;
-<strong>12</strong>             &lt;<a href="appendixes/AppendixE-Publishers.html#OnfailureTask">onfailure</a>&gt;
-<strong>13</strong>                 &lt;<a href="appendixes/AppendixE-Publishers.html#EmailTask">email</a> to=&quot;you@email.com&quot; subject=&quot;Build failed&quot;
-<strong>14</strong>                     message=&quot;Build of project failed&quot; /&gt;
-<strong>15</strong>             &lt;/onfailure&gt;
-<strong>16</strong>             &lt;<a href="appendixes/AppendixE-Publishers.html#OnsuccessTask">onsuccess</a>&gt;
-<strong>17</strong>                 &lt;<a href="appendixes/AppendixE-Publishers.html#EmailTask">email</a> to=&quot;you@email.com&quot; subject=&quot;Build success&quot;
-<strong>18</strong>                     message=&quot;Build of project was successful&quot; /&gt;
-<strong>19</strong>             &lt;/onsuccess&gt;
-<strong>20</strong>         &lt;/publishers&gt;
-<strong>21</strong>     &lt;/project&gt;
-<strong>22</strong> &lt;/xinc&gt;
+<strong>04</strong>         &lt;<a href="AppendixB-CoreTasks.html#TriggerTask">trigger</a>&gt;
+<strong>05</strong>             &lt;<a href="appendixes/AppendixC-Triggerss.html#ScheduleTask">schedule</a> interval=&quot;240&quot; /&gt;
+<strong>06</strong>         &lt;/trigger&gt;
+<strong>07</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#ModificationSetTask">modificationset</a>&gt;
+<strong>08</strong>             &lt;<a href="appendixes/AppendixC-ModificationSet.html#SvnTask">svn</a> directory=&quot;${dir}&quot; update=&quot;true&quot; /&gt;
+<strong>09</strong>         &lt;/modificationset&gt;
+<strong>10</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#BuildersTask">builders</a>&gt;
+<strong>11</strong>             &lt;<a href="appendixes/AppendixD-Builders.html#PhingbuilderTask">phingbuilder</a> buildfile=&quot;${dir}/build.xml&quot; /&gt;
+<strong>12</strong>         &lt;/builders&gt;
+<strong>13</strong>         &lt;<a href="appendixes/AppendixB-CoreTasks.html#PublishersTask">publishers</a>&gt;
+<strong>14</strong>             &lt;<a href="appendixes/AppendixE-Publishers.html#OnfailureTask">onfailure</a>&gt;
+<strong>15</strong>                 &lt;<a href="appendixes/AppendixE-Publishers.html#EmailTask">email</a> to=&quot;you@email.com&quot; subject=&quot;Build failed&quot;
+<strong>16</strong>                     message=&quot;Build of project failed&quot; /&gt;
+<strong>17</strong>             &lt;/onfailure&gt;
+<strong>18</strong>             &lt;<a href="appendixes/AppendixE-Publishers.html#OnsuccessTask">onsuccess</a>&gt;
+<strong>19</strong>                 &lt;<a href="appendixes/AppendixE-Publishers.html#EmailTask">email</a> to=&quot;you@email.com&quot; subject=&quot;Build success&quot;
+<strong>20</strong>                     message=&quot;Build of project was successful&quot; /&gt;
+<strong>21</strong>             &lt;/onsuccess&gt;
+<strong>22</strong>         &lt;/publishers&gt;
+<strong>23</strong>     &lt;/project&gt;
+<strong>24</strong> &lt;/xinc&gt;
 </pre>
 
 <ul>
-<li><strong>Line 03:</strong><br/>Defines a property named "dir" which can be used in the whole configuration using "${dir}"</li>
-<li><strong>Line 04:</strong><br/>The schedule tells Xinc to check every 240 seconds for changes</li>
-<li><strong>Line 05-07:</strong><br/>Modificationset monitors the project for changes, in this case a SVN workingcopy, and determines whether a new build needs to be triggered</li>
-<li><strong>Line 08-10:</strong><br/>If a modification has been detected, the build scripts configured in the builders section are executed.<br/>In this case we have a <a href="http://phing.info" target="_new">Phing</a> builder calling the build.xml</li>
-<li><strong>Line 11-20:</strong><br/>Independent of the build result, whether the build was successful or not a set of publishing tasks is executed.</li>
-<li><strong>Line 12-15:</strong><br/>The onfailure task is only executed if the build failed, i.e. if the phingbuilder returned a failure.<br/>
+    <li><strong>Line 03:</strong><br/>Defines a property named "dir" which can be used in the whole configuration using "${dir}"</li>
+    <li><strong>Line 04-06:</strong><br/>The trigger schedule tells Xinc to check every 240 seconds for changes</li>
+    <li><strong>Line 07-09:</strong><br/>Modificationset monitors the project for changes, in this case a SVN workingcopy, and determines whether a new build needs to be triggered</li>
+    <li><strong>Line 10-12:</strong><br/>If a modification has been detected, the build scripts configured in the builders section are executed.<br/>In this case we have a <a href="http://phing.info" target="_new">Phing</a> builder calling the build.xml</li>
+    <li><strong>Line 13-22:</strong><br/>Independent of the build result, whether the build was successful or not a set of publishing tasks is executed.</li>
+    <li><strong>Line 14-17:</strong><br/>The onfailure task is only executed if the build failed, i.e. if the phingbuilder returned a failure.<br/>
 The contained email task element will send a message about the failed build to a configured email address.</li>
-<li><strong>Line 16-19:</strong><br/>The onsuccess task is only executed if the build is successful.<br/>
+    <li><strong>Line 18-21:</strong><br/>The onsuccess task is only executed if the build is successful.<br/>
 The contained email task element will send a message about the successful build to a configured email address.</li>
-
-
 </ul>
 
 <h4><a name="BuiltInProperties"></a>Built-in Properties</h4>
@@ -131,17 +131,18 @@ for a complete list</p>
 For the configuration of your own projects,<br/>
 please refer to:</p>
 <ul>
-<li><a href="appendixes/AppendixA-FactSheet.html">Appendix A: Fact Sheet</a></li>
-<li><a href="appendixes/AppendixB-CoreTasks.html">Appendix B: Core Tasks</a></li>
-<li><a href="appendixes/AppendixC-ModificationSet.html">Appendix C: ModificationSet</a></li>
-<li><a href="appendixes/AppendixD-Builders.html">Appendix D: Builders</a></li>
-<li><a href="appendixes/AppendixE-Publishers.html">Appendix E: Publishers</a></li>
+    <li><a href="appendixes/AppendixA-FactSheet.html">Appendix A: Fact Sheet</a></li>
+    <li><a href="appendixes/AppendixB-CoreTasks.html">Appendix B: Core Tasks</a></li>
+    <li><a href="appendixes/AppendixC-Triggers.html">Appendix C: Triggers</a></li>
+    <li><a href="appendixes/AppendixD-ModificationSet.html">Appendix D: ModificationSet</a></li>
+    <li><a href="appendixes/AppendixE-Builders.html">Appendix E: Builders</a></li>
+    <li><a href="appendixes/AppendixF-Publishers.html">Appendix F: Publishers</a></li>
 </ul>
 <p>
 If you have open questions, please submit them in:</p>
 <ul>
-<li><a href="http://groups.google.com/group/xinc-general">Xinc Google Group</a></li>
-<li><a href="http://xinc.googlecode.com">Google Code</a> as a bug-report / feature request</li>
+    <li><a href="http://groups.google.com/forum/#!forum/xinc-general">Xinc Google Group</a></li>
+    <li><a href="http://code.google.com/p/xinc/">Google Code</a> as a bug-report / feature request</li>
 </ul>
 
 </body>
