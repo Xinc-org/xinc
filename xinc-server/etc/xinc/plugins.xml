@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <plugins>
-	<plugin filename="Xinc/Plugin/Repos/ModificationSet.php" classname="Xinc_Plugin_Repos_ModificationSet"/>
-	<plugin filename="Xinc/Plugin/Repos/Configuration.php" classname="Xinc_Plugin_Repos_Configuration"/>
-	<plugin filename="Xinc/Plugin/Repos/ModificationSet/Svn.php" classname="Xinc_Plugin_Repos_ModificationSet_Svn"/>
-	<plugin filename="Xinc/Plugin/Repos/ModificationSet/Git.php" classname="Xinc_Plugin_Repos_ModificationSet_Git"/>
-	<plugin filename="Xinc/Plugin/Repos/ModificationSet/BuildAlways.php" classname="Xinc_Plugin_Repos_ModificationSet_BuildAlways"/>
-	<plugin filename="Xinc/Plugin/Repos/Schedule.php" classname="Xinc_Plugin_Repos_Schedule"/>
-	<plugin filename="Xinc/Plugin/Repos/Builder.php" classname="Xinc_Plugin_Repos_Builder"/>
-	<plugin filename="Xinc/Plugin/Repos/Phing.php" classname="Xinc_Plugin_Repos_Phing"/>
-	<plugin filename="Xinc/Plugin/Repos/Publisher.php" classname="Xinc_Plugin_Repos_Publisher"/>
-	<plugin filename="Xinc/Plugin/Repos/Publisher/OnSuccess.php" classname="Xinc_Plugin_Repos_Publisher_OnSuccess"/>
-	<plugin filename="Xinc/Plugin/Repos/Publisher/OnRecovery.php" classname="Xinc_Plugin_Repos_Publisher_OnRecovery"/>
-	<plugin filename="Xinc/Plugin/Repos/Publisher/OnFailure.php" classname="Xinc_Plugin_Repos_Publisher_OnFailure"/>
-	<plugin filename="Xinc/Plugin/Repos/Publisher/Email.php" classname="Xinc_Plugin_Repos_Publisher_Email"/>
-	<plugin filename="Xinc/Plugin/Repos/Gui/Dashboard.php" classname="Xinc_Plugin_Repos_Gui_Dashboard"/>
-	<plugin filename="Xinc/Plugin/Repos/Gui/Homepage.php" classname="Xinc_Plugin_Repos_Gui_Homepage"/>
+    <plugin filename="Xinc/Plugin/Repos/Configuration.php" classname="Xinc_Plugin_Repos_Configuration"/>
+    <plugin filename="Xinc/Trigger/Plugin.php" classname="Xinc_Trigger_Plugin"/>
+    <plugin filename="Xinc/Plugin/Repos/ModificationSet.php" classname="Xinc_Plugin_Repos_ModificationSet"/>
+    <plugin filename="Xinc/Plugin/Repos/ModificationSet/Svn.php" classname="Xinc_Plugin_Repos_ModificationSet_Svn"/>
+    <plugin filename="Xinc/Plugin/Repos/ModificationSet/Git.php" classname="Xinc_Plugin_Repos_ModificationSet_Git"/>
+    <plugin filename="Xinc/Plugin/Repos/ModificationSet/BuildAlways.php" classname="Xinc_Plugin_Repos_ModificationSet_BuildAlways"/>
+    <plugin filename="Xinc/Plugin/Repos/Builder.php" classname="Xinc_Plugin_Repos_Builder"/>
+    <plugin filename="Xinc/Plugin/Repos/Phing.php" classname="Xinc_Plugin_Repos_Phing"/>
+    <plugin filename="Xinc/Plugin/Repos/Publisher.php" classname="Xinc_Plugin_Repos_Publisher"/>
+    <plugin filename="Xinc/Plugin/Repos/Publisher/OnSuccess.php" classname="Xinc_Plugin_Repos_Publisher_OnSuccess"/>
+    <plugin filename="Xinc/Plugin/Repos/Publisher/OnRecovery.php" classname="Xinc_Plugin_Repos_Publisher_OnRecovery"/>
+    <plugin filename="Xinc/Plugin/Repos/Publisher/OnFailure.php" classname="Xinc_Plugin_Repos_Publisher_OnFailure"/>
+    <plugin filename="Xinc/Plugin/Repos/Publisher/Email.php" classname="Xinc_Plugin_Repos_Publisher_Email"/>
+    <plugin filename="Xinc/Plugin/Repos/Gui/Dashboard.php" classname="Xinc_Plugin_Repos_Gui_Dashboard"/>
+    <plugin filename="Xinc/Plugin/Repos/Gui/Homepage.php" classname="Xinc_Plugin_Repos_Gui_Homepage"/>
 </plugins>
 
 
