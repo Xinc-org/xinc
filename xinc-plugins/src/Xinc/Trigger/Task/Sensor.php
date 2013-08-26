@@ -46,7 +46,7 @@ class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
      *
      * @var string
      */
-    private $filename = null;
+    private $file = null;
 
     /**
      * Value to test inside the file.
@@ -62,9 +62,9 @@ class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
      *
      * @return void
      */
-    public function setFilename($filename)
+    public function setFile($file)
     {
-        $this->filename = $filename;
+        $this->file = $file;
     }
 
     /**
@@ -72,9 +72,9 @@ class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
      *
      * @return string The sensor filename string
      */
-    public function getFilename()
+    public function getFile()
     {
-        return $this->filename;
+        return $this->file;
     }
 
     /**
@@ -84,7 +84,7 @@ class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
      */
     public function validate()
     {
-        return ($this->filename !== null);
+        return ($this->file !== null);
     }
 
     /**
@@ -96,8 +96,8 @@ class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
      */
     public function getNextTime(Xinc_Build_Interface $build)
     {
-        if (file_exists($this->filename)) {
-            unlink($this->filename);
+        if (file_exists($this->file)) {
+            unlink($this->file);
             return time();
         }
         return null;
