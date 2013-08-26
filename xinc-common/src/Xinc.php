@@ -58,7 +58,7 @@ class Xinc
      *
      * @var integer
      */
-    private $defaultSleep = 100000;
+    private $defaultSleep = 200000;
 
     /**
      * Registry holding all scheduled builds
@@ -375,9 +375,9 @@ class Xinc
             $now = time();
             $nextBuildTime = Xinc::$buildQueue->getNextBuildTime();
             Xinc_Timezone::reset();
-            Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
 
             if ($nextBuildTime != null) {
+                Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
                 $sleep = $nextBuildTime - $now;
             } else {
                 $sleep = 1;
