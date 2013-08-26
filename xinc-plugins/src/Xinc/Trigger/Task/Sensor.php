@@ -58,7 +58,7 @@ class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
     /**
      * Sets the sensor filename string
      *
-     * @param string $timer The sensor filename string.
+     * @param string $file The sensor filename string.
      *
      * @return void
      */
