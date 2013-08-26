@@ -232,24 +232,23 @@ abstract class Xinc_Plugin_Repos_Gui_Statistics_Graph
             if (count($this->_colorScheme)>0) {
                 $graph->palette = new Xinc_Plugin_Repos_Gui_Statistics_Graph_Palette($this->_colorScheme);
             }
-            foreach ( $data as $key => $value )
-            {
-                 $graph->data[$key] = new ezcGraphArrayDataSet( $value );
-                 /**if (isset($this->_colorScheme[$key])) {
-                     $graph->data[$key]->color[0] = $this->_colorScheme[$key]; 
-                 } else if (isset($this->_colorScheme[$keyNo])) {
-                     $graph->data[$key]->color[0] = $this->_colorScheme[$keyNo]; 
-                 }
-                 $keyNo++;*/
-             } 
-             //echo "Writing id: " . $this->getId();
-             $fileName = $this->_widget->getGraphFileName($this->getId());
-             //echo " filename: $fileName";
-             $width = 375;
-             $height = 180;
-             $graph->render( $width, $height, $fileName);
-             $includeString = '<div style="position:relative;padding-left:10px;float:left" class="none"><h3>'.$this->getTitle().'</h3><iframe src="./statistics/graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe></div>';
-             return $includeString;
+            foreach ($data as $key => $value) {
+                if (count($value)) {
+                    $graph->data[$key] = new ezcGraphArrayDataSet( $value );
+                }
+            }
+            if (count($graph->data)) {
+                //echo "Writing id: " . $this->getId();
+                $fileName = $this->_widget->getGraphFileName($this->getId());
+                //echo " filename: $fileName";
+                $width = 375;
+                $height = 180;
+                $graph->render( $width, $height, $fileName);
+                $includeString = '<div style="position:relative;padding-left:10px;float:left" class="none"><h3>'.$this->getTitle().'</h3><iframe src="./statistics/graph/?project=' . $this->_widget->getProjectName() . '&name=' . $this->getId() . '" width="'.$width.'" height="'.$height.'" border="0" frameborder="0"></iframe></div>';
+            } else {
+                $includeString = '';
+            }
+            return $includeString;
         } catch (Exception $e) {
             //var_dump($e);
         }
