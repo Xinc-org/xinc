@@ -58,7 +58,7 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget extends Xinc_Gui_Widget_Abstract
         switch ($eventId) {
             case Xinc_Gui_Event::PAGE_LOAD: 
                 $query = urldecode($_SERVER['REQUEST_URI']);
-                $this->features = $this->_extensions['PROJECT_FEATURE'];
+                $this->features = $this->extensions['PROJECT_FEATURE'];
 
                 $handler = Xinc_Gui_Handler::getInstance();
                 $statusDir = $handler->getStatusDir();
@@ -87,9 +87,9 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget extends Xinc_Gui_Widget_Abstract
                             $this->projects[]=$project;
                         }
                         $this->menu = '';
-                        if (isset($this->_extensions['MAIN_MENU'])) {
-                            if (is_array($this->_extensions['MAIN_MENU'])) {
-                                foreach ($this->_extensions['MAIN_MENU'] as $extension) {
+                        if (isset($this->extensions['MAIN_MENU'])) {
+                            if (is_array($this->extensions['MAIN_MENU'])) {
+                                foreach ($this->extensions['MAIN_MENU'] as $extension) {
                                     $this->menu .= call_user_func_array($extension, array($this, 'Dashboard'));
                                 }
                             }
@@ -146,14 +146,14 @@ class Xinc_Plugin_Repos_Gui_Dashboard_Widget extends Xinc_Gui_Widget_Abstract
 
     public function generateProjectsMenuItem()
     {
-        if (isset($this->_extensions['PROJECT_MENU_ITEM'])) {
+        if (isset($this->extensions['PROJECT_MENU_ITEM'])) {
             $this->projectMenuItem = new Xinc_Plugin_Repos_Gui_Dashboard_Projects_Menu(
                 'projects',
                 'Projects',
                 '',
                 'Projects'
             );
-            foreach ($this->_extensions['PROJECT_MENU_ITEM'] as $extension) {
+            foreach ($this->extensions['PROJECT_MENU_ITEM'] as $extension) {
                 $this->projectMenuItem->registerSubExtension($extension);
             }
         } else {

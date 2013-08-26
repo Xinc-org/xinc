@@ -32,6 +32,7 @@ interface Xinc_Gui_Widget_Extension_Interface
     /**
      * Get the extension point for this widget extension
      *
+     * @return string
      */
     public function getExtensionPoint();
 }

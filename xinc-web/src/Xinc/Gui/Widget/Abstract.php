@@ -101,8 +101,7 @@ abstract class Xinc_Gui_Widget_Abstract implements Xinc_Gui_Widget_Interface
     }
 
     /**
-     * Is called after all widgets have
-     * been registered. This is the place where widgets need 
+     * Is called after all widgets have been registered. This is the place where widgets need
      * to register the hooks for another Widget
      *
      * @return void

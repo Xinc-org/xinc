@@ -112,7 +112,7 @@ class Xinc_Gui_Widget_Repository
      * @return Xinc_Gui_Widget_Interface or null
      * @throws Xinc_Gui_Widget_Exception_NotFound
      */
-    public function &getWidgetByClassName($name)
+    public function getWidgetByClassName($name)
     {
         if (isset($this->widgetClasses[$name])) {
             return $this->widgetClasses[$name];

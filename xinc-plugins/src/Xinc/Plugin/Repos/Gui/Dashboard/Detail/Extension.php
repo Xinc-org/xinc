@@ -31,6 +31,11 @@ require_once 'Xinc/Plugin/Repos/Gui/Dashboard/Extension.php';
 
 abstract class Xinc_Plugin_Repos_Gui_Dashboard_Detail_Extension extends Xinc_Plugin_Repos_Gui_Dashboard_Extension
 {
+    /**
+     * Get the extension point for this widget extension
+     *
+     * @return string
+     */
     public function getExtensionPoint()
     {
         return 'BUILD_DETAILS';
