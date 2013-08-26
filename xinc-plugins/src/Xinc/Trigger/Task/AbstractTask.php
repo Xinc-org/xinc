@@ -28,6 +28,7 @@
  */
 
 require_once 'Xinc/Plugin/Task/Abstract.php';
+require_once 'Xinc/Build/Scheduler/Interface.php';
 
 abstract class Xinc_Trigger_Task_AbstractTask extends Xinc_Plugin_Task_Abstract implements Xinc_Build_Scheduler_Interface
 {

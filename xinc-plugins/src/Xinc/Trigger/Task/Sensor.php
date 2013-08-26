@@ -28,7 +28,6 @@
  */
 
 require_once 'Xinc/Trigger/Task/AbstractTask.php';
-require_once 'Xinc/Build/Scheduler/Interface.php';
 
 class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
 {
