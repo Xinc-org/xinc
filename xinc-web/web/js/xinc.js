@@ -162,14 +162,14 @@ Ext.define('Ext.app.Xinc', {
             './dashboard/detail?project=' + name + '&timestamp=' + timestamp
         );
     },
-    
-    addNewTab: function(id, name, url) {
+
+    addNewTab: function(id, name, url, showHtml = true) {
         var tab=Ext.getCmp(id);
         if(tab) {
             tab.show();
             return tab;
         }
-        
+
         this.tabContainer.add({
             id: id,
             autoScroll: true,
@@ -183,7 +183,11 @@ Ext.define('Ext.app.Xinc', {
                 scripts: true,
                 nocache: true,
                 loadMask: true,
-                timeout: 30000
+                timeout: 30000,
+                renderer: (showHtml ? 'html' : function(loader, response, active)  {
+                    loader.getTarget().update('<pre>' + text + '</pre>');
+                    return true;
+                })
             },
         }).show();
         return tab;

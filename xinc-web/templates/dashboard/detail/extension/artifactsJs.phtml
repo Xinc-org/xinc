@@ -1,46 +1,49 @@
-<div id="tree-div-{projectname}-{buildtime}" style="overflow:auto; height:300px;xwidth:100%;border:1px solid #c3daf9;"></div>
+<div id="tree-div-{projectname}-{buildtime}" style="overflow:auto; width:100%;"></div>
 
 <script type="text/javascript">
 initTree = function(){
-   
-    var Tree = Ext.tree;
-
-    var store = Ext.create('Ext.data.TreeStore', {
-        autoLoad: {
+    var store = new Ext.data.TreeStore({
+        proxy: {
+            type: 'ajax',
             url:'./api/artifacts/list/json/',
-            baseParams: {lib:'yui', p: '{projectname}', buildtime: '{buildtime}'}
-        }
-    });
-    
-    var tree = new Ext.tree.Panel({
-        store: store,
-        el:'tree-div-{projectname}-{buildtime}',
-        autoScroll:true,
-        animate:true,
-        enableDD:false,
-        containerScroll: true
-    });
-    
-    tree.on('click',function(node) {
-        if(node.leaf==true) {
-            openMenuTab('./api/artifacts/get/json/{projectname}/{buildtime}/'+node.id,  node.id + ' - {projectname} - Artifact - {buildlabel}', './api/artifacts/get/json/{projectname}/{buildtime}/'+node.id, null, true, true);
-        }
-        return false;
+            extraParams: {lib:'yui', p: '{projectname}', buildtime: '{buildtime}'}
+        },
+        root: {
+            text: 'Artifacts',
+            id:'source',
+            draggable: false,
+            expanded: true
+        },
+        folderSort: true,
+        sorters: [{
+            property: 'text',
+            direction: 'ASC'
+        }]
     });
 
-    // set the root node
-    /*var root = new Tree.AsyncTreeNode({
-        text: 'Artifacts',
-        draggable:false,
-        id:'source'
+    var tree = new Ext.tree.Panel({
+        header: false,
+        store: store,
+        margin: '0 0 0 0',
+        width: '100%',
+        listeners: {
+            itemclick: function(view, record, item, index, e) {
+                if(record.get('leaf') == true) {
+                    var url = './api/artifacts/get/json/{projectname}/{buildtime}/' + record.get('id');
+                    if (url.lastIndexOf('.html') > 0) {
+                        appXinc.addNewTab(url, record.get('id') + ' - {projectname} - Artifact - {buildlabel}', url);
+                    } else {
+                        window.open(url);
+                    }
+                }
+                return false;
+            }
+        }
     });
-    tree.setRootNode(root);
 
     // render the tree
-    tree.render();
-    root.expand();*/
+    tree.render('tree-div-{projectname}-{buildtime}');
 };
-
 
 initTree();
 </script>

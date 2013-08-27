@@ -25,7 +25,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Gui/Widget/Extension/Interface.php';
@@ -38,13 +38,11 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Extension_Dashboard
      *
      * @var Xinc_Plugin_Repos_Gui_Artifacts_Widget
      */
-    private $_artifactsWidget;
-
-    private $_build;
+    private $widget;
 
     public function setWidget(Xinc_Plugin_Repos_Gui_Artifacts_Widget $widget)
     {
-        $this->_artifactsWidget = $widget;
+        $this->widget = $widget;
     }
 
     public function getTitle()
@@ -54,11 +52,6 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Extension_Dashboard
 
     public function getContent(Xinc_Build_Interface $build)
     {
-        return $this->_artifactsWidget->getArtifacts($build);
-    }
-
-    public function getExtensionPoint()
-    {
-        return 'BUILD_DETAILS';
+        return $this->widget->getArtifacts($build);
     }
 }

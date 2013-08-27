@@ -114,8 +114,7 @@ class Xinc_Plugin_Repos_Api_Artifacts extends Xinc_Api_Module_Abstract
 
         $query = urldecode($_SERVER['REQUEST_URI']);
 
-        preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
-
+        preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/([\w\-\.\/]+[^#?]+)/", $query, $matches);
         if (count($matches)!=8) {
             echo "Could not find artifact";
             die();

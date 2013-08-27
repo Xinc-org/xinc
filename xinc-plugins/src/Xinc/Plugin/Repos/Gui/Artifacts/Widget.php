@@ -81,13 +81,12 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget extends Xinc_Gui_Widget_Abstract
             /**
              * Replace multiple / slashes with just one
              */
-            $fileName = $statusDir.$file;
+            $fileName = $statusDir . $file;
             $fileName = preg_replace('/\\' . DIRECTORY_SEPARATOR . '+/', DIRECTORY_SEPARATOR, $fileName);
             $realfile = realpath($fileName);
             if ($realfile != $fileName) {
                 echo "Could not find artifact";
             } else if (file_exists($fileName)) {
-                //echo "here";
                 $contentType = $this->mime_content_type2($fileName);
                 if (!empty($contentType)) {
                     header("Content-Type: " . $contentType);
@@ -126,6 +125,7 @@ class Xinc_Plugin_Repos_Gui_Artifacts_Widget extends Xinc_Gui_Widget_Abstract
             array($projectName, $buildTimestamp, $buildLabel),
             $template
         );
+
         return $content;
     }
 
