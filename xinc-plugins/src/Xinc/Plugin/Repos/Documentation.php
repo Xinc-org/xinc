@@ -34,16 +34,6 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Abstract
 {
     const DOCUMENTATION_DIR = 'documentation';
 
-    public function validate()
-    {
-        return true;
-    }
-
-    public function getTaskDefinitions()
-    {
-        return array(new Xinc_Plugin_Repos_Publisher_Documentation_Task($this));
-    }
-
     /**
      *
      * @return array of Gui Widgets
@@ -53,9 +43,14 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Abstract
         return array(new Xinc_Plugin_Repos_Gui_Documentation_Widget($this));
     }
 
-    public function getApiModules()
+    /**
+     * Returns the defined tasks of the plugin
+     *
+     * @return Xinc_Plugin_Task[]
+     */
+    public function getTaskDefinitions()
     {
-        return array();
+        return array(new Xinc_Plugin_Repos_Publisher_Documentation_Task($this));
     }
 
     public function getDocumentationDir(Xinc_Build_Interface $build)
@@ -72,6 +67,8 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Abstract
      *
      * @param Xinc_Build_Interface $build
      * @param string $sourceFile
+     * @param string $alias
+     * @param string $index
      *
      * @return boolean
      */
@@ -133,7 +130,7 @@ class Xinc_Plugin_Repos_Documentation extends Xinc_Plugin_Abstract
             if (DIRECTORY_SEPARATOR == '\\') {
                 exec('xcopy /E /Y /I ' . escapeshellarg($sourceFile . '\*') . ' ' . escapeshellarg($targetDir), $out, $res1);
             } else {
-                exec('cp -Rf ' . escapeshellarg($sourceFile) . ' ' . escapeshellarg($targetDir), $out, $res1);
+                exec('cp -Rf ' . escapeshellarg($sourceFile) . '/. ' . escapeshellarg($targetDir), $out, $res1);
             }
             $res = false;
             if ($res1==0) {

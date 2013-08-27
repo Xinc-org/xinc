@@ -107,11 +107,11 @@ class Xinc_Plugin_Repos_Api_Documentation extends Xinc_Api_Module_Abstract
         $buildTime = $params['buildtime'];
         $file = $params['file'];*/
 
-        $query = urldecode($_SERVER['REDIRECT_URI']);
-
+        $query = urldecode($_SERVER['REQUEST_URI']);
         preg_match("/\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*?)\/(.*)/", $query, $matches);
+
         if (count($matches)!=8) {
-            echo "Could not find documentation";
+            echo "Could not find documentation 1";
             die();
         }
         $projectName = $matches[5];
@@ -149,12 +149,12 @@ class Xinc_Plugin_Repos_Api_Documentation extends Xinc_Api_Module_Abstract
             $fileName = preg_replace('/\\' . DIRECTORY_SEPARATOR . '+/', DIRECTORY_SEPARATOR, $fileName);
             $realfile = realpath($fileName);
             if ($realfile != $fileName) {
-                echo "Could not find documentation";
+                echo "Could not find documentation 2";
                 die();
             } else if (file_exists($fileName) && is_file($realfile)) {
                 return $this->_outputDoc($fileName);
             } else {
-                echo "Could not find documentation";
+                echo "Could not find documentation 3";
                 die();
             }
         } catch (Exception $e) {

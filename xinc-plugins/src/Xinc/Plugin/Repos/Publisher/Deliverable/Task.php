@@ -36,9 +36,9 @@ class Xinc_Plugin_Repos_Publisher_Deliverable_Task extends Xinc_Plugin_Repos_Pub
      *
      * @var string
      */
-    protected $fileName;
+    protected $fileName = null;
 
-    protected $alias;
+    protected $alias = null;
 
     public function getName()
     {
@@ -56,7 +56,7 @@ class Xinc_Plugin_Repos_Publisher_Deliverable_Task extends Xinc_Plugin_Repos_Pub
 
     public function validateTask()
     {
-        if (!isset($this->fileName)) {
+        if (null === $this->fileName) {
             Xinc_Logger::getInstance()->error('File must be specified for deliverable publisher.');
             return false;
         }

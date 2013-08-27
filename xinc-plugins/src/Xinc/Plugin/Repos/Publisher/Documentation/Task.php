@@ -31,7 +31,7 @@ require_once 'Xinc/Plugin/Repos/Publisher/Deliverable/Task.php';
 
 class Xinc_Plugin_Repos_Publisher_Documentation_Task extends Xinc_Plugin_Repos_Publisher_Deliverable_Task
 {
-    private $index;
+    private $index = null;
 
     public function getName()
     {
@@ -45,8 +45,8 @@ class Xinc_Plugin_Repos_Publisher_Documentation_Task extends Xinc_Plugin_Repos_P
 
     public function validateTask()
     {
-        if (!isset($this->fileName) || !isset($this->index) || !isset($this->alias)) {
-            Xinc_Logger::getInstance()->error('File  and Index must be specified for documentation publisher.');
+        if (null === $this->fileName || null === $this->index || null === $this->alias) {
+            Xinc_Logger::getInstance()->error('File, Index and Alias must be specified for documentation publisher.');
             return false;
         }
         return true;
