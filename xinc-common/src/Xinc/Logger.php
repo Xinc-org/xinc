@@ -26,7 +26,7 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
 require_once 'Xinc/Logger/Message.php';
@@ -40,7 +40,7 @@ class Xinc_Logger
      * @var Xinc_Logger
      */
     private static $_instance;
-    
+
     /**
      * Path to the log file.
      *
@@ -61,23 +61,23 @@ class Xinc_Logger
      * @var Xinc_Logger_Message[]
      */
     private $_logQueue;
-    
+
     /**
      * Maximum length of log queue (i.e. last $max items will be in the queue).
      *
      * @var integer
      */
     private $_max;
-    
+
     private $_logLevel = 2;
     const LOG_LEVEL_VERBOSE = 0;
     const LOG_LEVEL_DEBUG = 1;
     const LOG_LEVEL_INFO = 2;
     const LOG_LEVEL_WARN = 3;
     const LOG_LEVEL_ERROR = 4;
-    
+
     const DEFAULT_LOG_LEVEL = 2;
-    
+
     /**
      * Log levels
      *
@@ -85,12 +85,12 @@ class Xinc_Logger
     static $logLevelError = array(4, 'error');
     static $logLevelWarn = array(3, 'warn');
     static $logLevelDebug = array(1, 'debug');
-    
+
     static $logLevelInfo = array(2, 'info');
     static $logLevelVerbose = array(0, 'verbose');
-    
+
     private $_logLevelSet = false;
-    
+
     /**
      * Private singleton constructor.
      *
@@ -134,7 +134,7 @@ class Xinc_Logger
         }
         return Xinc_Logger::$_instance;
     }
-    
+
     /**
      * Add a new log message to the logger queue.
      *
@@ -148,12 +148,11 @@ class Xinc_Logger
         if ($priority[0] < $this->_logLevel && $fileHandle === null) {
             return;
         }
-        
+
         $logTime = time();
-        
+
         $this->_logQueue[] = new Xinc_Logger_Message($priority[1], $logTime, $msg);
-        
-        
+
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
         $timestr = '[' . date('Y-m-d H:i:s', $logTime) . '-' . Xinc_Timezone::get() . ']';
@@ -161,6 +160,7 @@ class Xinc_Logger
             $prioritystr .= ' ';
         }
         $message = ' ' . $prioritystr . '  ' . $timestr . ' ' . $msg."\n";
+
         if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) {
             if (defined('STDERR')) {
                 fputs(STDERR, $message);
@@ -168,6 +168,7 @@ class Xinc_Logger
                 echo '<!-- LogMessage: ' . $message . " -->\n";
             }
         }
+
         if ($this->_logFile != null) {
             if ($fileHandle !== null) {
                 fputs($fileHandle, $message);
@@ -177,14 +178,12 @@ class Xinc_Logger
         } else if ($fileHandle !== null) {
             fputs($fileHandle, $message);
         }
-        
+
         if (count($this->_logQueue)>$this->_max) {
-            
             $this->flush();
-            
         }
     }
-    
+
     /**
      * Log a message with priority 'error'.
      *
@@ -238,7 +237,7 @@ class Xinc_Logger
     public function verbose($msg, $fileHandle = null)
     {
         $this->log(self::$logLevelVerbose, $msg, $fileHandle = null);
-    }    
+    }
 
     /**
      * Empty the log queue
@@ -248,7 +247,7 @@ class Xinc_Logger
     {
         $this->_resetLogQueue();
     }
-    
+
     /**
      * Flush the log queue to the log file.
      *
@@ -266,19 +265,17 @@ class Xinc_Logger
             $messageString .= 'timestamp="' . $message->timestamp . '" ';
             $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp)
                            . '-' . Xinc_Timezone::get() . '"><![CDATA[';
-            //$messageString .= htmlentities(utf8_encode($message->message));
-            $messageString .= $message->message;
+            $messageString .= base64_encode($message->message);
             $messageString .= ']]></message>';
-            
+
             $messageElements[] = $messageString;
         }
-        
+
         $previousLogMessages = '';
-        
+
         $dirName = dirname($this->_buildLogFile);
         if (!file_exists($dirName)) {
             mkdir($dirName, 0755, true);
-            
         }
         if (file_exists($this->_buildLogFile)) {
             // copying to temporary file for later inclusion via fgets, less memory consuming
@@ -319,12 +316,12 @@ class Xinc_Logger
         }
         $this->_resetLogQueue();
     }
-    
+
     private function _resetLogQueue()
     {
         $this->_logQueue = array();
     }
-    
+
     /**
      * Set the path to the log file.
      *
@@ -334,24 +331,22 @@ class Xinc_Logger
     {
         $this->_buildLogFile = $logFile;
     }
-    
+
     /**
      * @param string $logFile
      * @throws Xinc_Logger_Exception_NonWriteable
      */
     public function setXincLogFile($logFile)
     {
-        
         $parentDir = dirname($logFile);
-        
+
         if (!is_writeable($logFile) && !is_writeable($parentDir)) {
             $this->error('Cannot open "' . $logFile . '" for writing', STDERR);
             throw new Xinc_Logger_Exception_NonWriteable($logFile);
-            
         }
         $this->_logFile = $logFile;
     }
-    
+
     public static function tearDown()
     {
         self::$_instance = null;

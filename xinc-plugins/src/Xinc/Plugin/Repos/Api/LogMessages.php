@@ -180,7 +180,6 @@ class Xinc_Plugin_Repos_Api_LogMessages extends Xinc_Api_Module_Abstract
                     $pos++;
                 }
                 fclose($fh);
-                echo($xmlStr);
                 $logXml = new SimpleXMLElement($xmlStr);
             } else {
                 $logXml = new SimpleXmlElement('<log/>');
@@ -194,11 +193,11 @@ class Xinc_Plugin_Repos_Api_LogMessages extends Xinc_Api_Module_Abstract
                 $attributes = $logEntry->attributes();
                 $logmessages[] = array(
                     'id'=>$id--,
-                    'date'=> (string)$attributes->timestamp,
-                    'stringdate'=> date('Y-m-d H:i:s', (int)$attributes->timestamp),
+                    'date'=> (string) $attributes->timestamp,
+                    'stringdate'=> date('Y-m-d H:i:s', (int) $attributes->timestamp),
                     'timezone' => Xinc_Timezone::get(),
-                    'priority'=>(string)$attributes->priority,
-                    'message'=>str_replace("\n", '\\n', addcslashes($logEntry, '"\''))
+                    'priority' => (string) $attributes->priority,
+                    'message' => base64_decode($logEntry),
                 );
             }
             /**
