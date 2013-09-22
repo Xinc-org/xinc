@@ -22,8 +22,8 @@
             <element>
                 <element key="name" value="Xinc" />
                 <element key="channel" value="pear.elektrischeslicht.de" />
-                <element key="version" value="2.3alpha1" />
-                <element key="max" value="2.3alpha1" />
+                <element key="version" value="2.3alpha3" />
+                <element key="max" value="2.3alpha3" />
             </element>
         </mapping>
         <mapping id="replacements" />
