@@ -11,6 +11,3 @@ www_ip = 127.0.0.1
 log_dir = /var/log
 
 [web]
-
-[googleanalytics]
-

@@ -48,12 +48,4 @@
         <div class="api-title">Xinc 2.3 - Continuous Integration Server for PHP</div>
         <?php } ?>
     </div>
-    <?php if (($trackerCode = Xinc_Ini::getInstance()->get('trackerCode', 'googleanalytics')) !== null) {?>
-    <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-    </script>
-    <script type="text/javascript">
-    _uacct = "<?php echo $trackerCode; ?>";
-    urchinTracker();
-    </script>
-    <?php } ?>
 </body></html>
