@@ -29,7 +29,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-interface Xinc_Build_Interface
+namespace Xinc\Interfaces;
+
+interface Build
 {
     const INITIALIZED = -2;
     const FAILED = 0;
@@ -76,7 +78,7 @@ interface Xinc_Build_Interface
      *
      * @return Xinc_Build_Properties
      */
-    public function &getInternalProperties();
+    public function getInternalProperties();
 
     /**
      * called before a new build is executed
@@ -99,29 +101,11 @@ interface Xinc_Build_Interface
     public function setBuildTime($buildTime);
 
     /**
-     * returns the timestamp of this build
-     * @return integer Timestamp of build (unixtimestamp)
-     */
-    public function getBuildTime();
-
-    /**
      * Returns the next build time (unix timestamp)
      * for this build
      *
      */
     public function getNextBuildTime();
-
-    /**
-     *
-     * @return Xinc_Project
-     */
-    public function &getProject();
-
-    /**
-     *
-     * @return Xinc_Engine_Interface
-     */
-    public function &getEngine();
 
     /**
      * stores the build information
@@ -133,63 +117,7 @@ interface Xinc_Build_Interface
      * loads the build information
      *
      */
-    public static function &unserialize(Xinc_Project &$project, $buildTimestamp = null, $statusDir = null);
-
-    /**
-     * returns the status of this build
-     *
-     */
-    public function getStatus();
-
-    /**
-     * Set the status of this build
-     *
-     * @param integer $status
-     */
-    public function setStatus($status);
-
-    /**
-     * Sets the sequence number for this build
-     *
-     * @param integer $no
-     */
-    public function setNumber($no);
-
-    /**
-     * returns the build no for this build
-     *
-     * @return integer
-     */
-    public function getNumber();
-
-    /**
-     * Sets the labeler that should be used for this build
-     *
-     * @param Xinc_Build_Labeler_Interface $labeler
-     */
-    public function setLabeler(Xinc_Build_Labeler_Interface &$labeler);
-
-    /**
-     *
-     * @return Xinc_Build_Labeler_Interface
-     */
-    public function getLabeler();
-
-    /**
-     * Sets a build scheduler,
-     * which calculates the next build time based
-     * on the configuration
-     *
-     * @param Xinc_Build_Scheduler_Interface $scheduler
-     */
-    public function addScheduler(Xinc_Build_Scheduler_Interface $scheduler);
-
-    /**
-     * Returns the availability of at least one scheduler.
-     *
-     * @return boolean True if a minimum of one scheduler is set.
-     */
-    public function haveScheduler();
+    public static function unserialize(Xinc_Project &$project, $buildTimestamp = null, $statusDir = null);
 
     /**
      * returns the label of this build
@@ -224,7 +152,7 @@ interface Xinc_Build_Interface
     public function build();
 
     /**
-     * Updates properties on tasks, after 
+     * Updates properties on tasks, after
      * a change in build status
      *
      */
@@ -243,28 +171,9 @@ interface Xinc_Build_Interface
      * @param string $message
      */
     public function info($message);
-
     public function error($message);
     public function warn($message);
     public function debug($message);
-
-    /**
-     * Put build into queue mode
-     *
-     */
-    public function enqueue();
-
-    /**
-     * check if build is in queue mode
-     *
-     */
-    public function isQueued();
-
-    /**
-     * remove build from queue mode
-     *
-     */
-    public function dequeue();
 
     /**
      * Sets custom config value for the current build

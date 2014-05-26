@@ -27,7 +27,6 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Build/Interface.php';
 require_once 'Xinc/Build/Properties.php';
 require_once 'Xinc/Build/Exception/NotRun.php';
 require_once 'Xinc/Build/Exception/NotFound.php';
@@ -39,114 +38,10 @@ require_once 'Xinc/Build/Statistics.php';
 require_once 'Xinc/Build/History.php';
 require_once 'Xinc/Timezone.php';
 
-class Xinc_Build implements Xinc_Build_Interface
+namespace Xinc;
+
+class Build implements \Xinc\Interfaces\Build
 {
-    /**
-     * Are we queued?
-     *
-     * @var boolean
-     */
-    private $_isQueued = false;
-
-    /**
-     * @var Xinc_Engine_Interface
-     */
-    private $_engine;
-
-    /**
-     * @var Xinc_Project
-     */
-    private $_project;
-
-    /**
-     * @var Xinc_Build_Properties
-     */
-    private $properties;
-
-    /**
-     * @var Xinc_Build_Properties
-     */
-    private $_internalProperties;
-
-    /**
-     * @var Xinc_Build_Statistics
-     */
-    private $_statistics;
-
-    /**
-     * @var integer
-     */
-    private $_buildTimestamp;
-
-    /**
-     * @var integer
-     */
-    private $_nextBuildTimestamp;
-
-    /**
-     * Build status, as defined in Xinc_Build_Interface
-     *
-     * @var integer
-     */
-    private $_status;
-
-    /**
-     *
-     * @var Xinc_Build_Interface
-     */
-    private $lastBuild;
-
-    /**
-     * The build no of this build
-     *
-     * @var integer
-     */
-    private $_no;
-
-    /**
-     * The label for this build
-     *
-     * @var string
-     */
-    private $_label;
-
-    /**
-     * Contains tasks that need to be executed for each Process Step
-     *
-     * @var Xinc_Build_Tasks_Registry
-     */
-    private $_taskRegistry;
-
-    /**
-     * Build schedulers
-     *
-     * @var array of Xinc_Build_Scheduler_Interface
-     */
-    private $schedulers;
-
-    /**
-     * @var Xinc_Build_Labeler_Interface
-     */
-    private $_labeler;
-
-    /**
-     * Holding config values for this build
-     *
-     * @var array
-     */
-    private $_config = array();
-
-    // ONLY FOR Backward Compatibility will be removed later.
-    /**
-     * @var Xinc_Build_Properties
-     */
-    private $_properties;
-
-    /**
-     * @var Xinc_Build_Interface
-     */
-    private $_lastBuild;
-
     /**
      * sets the project, engine
      * and timestamp for the build
@@ -164,7 +59,7 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->_project = $project;
 
         if (Xinc_Project_Status::MISCONFIGURED == $this->_project->getStatus()) {
-            $this->setStatus(Xinc_Build_Interface::MISCONFIGURED);
+            $this->setStatus(\Xinc\Interfaces\Build::MISCONFIGURED);
         }
 
         $this->_buildTimestamp = $buildTimestamp;
@@ -174,15 +69,10 @@ class Xinc_Build implements Xinc_Build_Interface
         $this->setLabeler(new Xinc_Build_Labeler_Default());
     }
 
-    public function setLabeler(Xinc_Build_Labeler_Interface &$labeler)
-    {
-        $this->_labeler = $labeler;
-    }
-
     /**
      * Returns the last build
      *
-     * @return Xinc_Build_Interface
+     * @return \Xinc\Interfaces\Build
      */
     public function getLastBuild()
     {
@@ -194,31 +84,6 @@ class Xinc_Build implements Xinc_Build_Interface
     }
 
     /**
-     *
-     * @return Xinc_Build_Properties
-     */
-    public function getProperties()
-    {
-        return $this->properties;
-    }
-
-    /**
-     *
-     * @return Xinc_Build_Properties
-     */
-    public function &getInternalProperties()
-    {
-        return $this->_internalProperties;
-    }
-
-    /**
-     * @return Xinc_Build_Statistics
-     */
-    public function &getStatistics()
-    {
-        return $this->_statistics;
-    }
-    /**
      * sets the build time for this build
      *
      * @param integer $buildTime unixtimestamp
@@ -227,16 +92,6 @@ class Xinc_Build implements Xinc_Build_Interface
     {
         $this->getProperties()->set('build.timestamp', $buildTime);
         $this->_buildTimestamp = $buildTime;
-    }
-
-    /**
-     * returns the timestamp of this build
-     *
-     * @return integer Timestamp of build (unixtimestamp)
-     */
-    public function getBuildTime()
-    {
-        return $this->_buildTimestamp;
     }
 
     /**
@@ -257,24 +112,6 @@ class Xinc_Build implements Xinc_Build_Interface
         }
 
         return $timestampMerged;
-    }
-
-    /**
-     *
-     * @return Xinc_Project
-     */
-    public function &getProject()
-    {
-        return $this->_project;
-    }
-
-    /**
-     * 
-     * @return Xinc_Engine_Interface
-     */
-    public function &getEngine()
-    {
-        return $this->_engine;
     }
 
     public function setLastBuild()
@@ -396,25 +233,6 @@ class Xinc_Build implements Xinc_Build_Interface
         }
     }
 
-    /**
-     * returns the status of this build
-     *
-     */
-    public function getStatus()
-    {
-        return $this->_status;
-    }
-
-    /**
-     * Set the status of this build
-     *
-     * @param integer $status
-     */
-    public function setStatus($status)
-    {
-        $this->_status = $status;
-    }
-
     public function __wakeup()
     {
         if (isset($this->_properties)) {
@@ -469,76 +287,6 @@ class Xinc_Build implements Xinc_Build_Interface
     }
 
     /**
-     * returns the build no for this build
-     *
-     * @return integer
-     */
-    public function getNumber()
-    {
-        return $this->_no;
-    }
-
-    /**
-     * returns the label of this build
-     *
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->_labeler->getLabel($this);
-    }
-
-    /**
-     * returns the labeler of this build
-     *
-     * @return Xinc_Build_Labeler
-     */
-    public function getLabeler()
-    {
-        return $this->_labeler;
-    }
-
-    /**
-     *
-     * @param Xinc_Build_Tasks_Registry $taskRegistry
-     */
-    public function setTaskRegistry(Xinc_Build_Tasks_Registry $taskRegistry)
-    {
-        $this->_taskRegistry = $taskRegistry;
-    }
-
-    /**
-     * Sets a build scheduler,
-     * which calculates the next build time based
-     * on the configuration
-     *
-     * @param Xinc_Build_Scheduler_Interface $scheduler
-     */
-    public function addScheduler(Xinc_Build_Scheduler_Interface $scheduler)
-    {
-        $this->schedulers[] = $scheduler;
-    }
-
-    /**
-     * Returns the availability of at least one scheduler.
-     *
-     * @return boolean True if a minimum of one scheduler is set.
-     */
-    public function haveScheduler()
-    {
-        return (count($this->schedulers) > 0);
-    }
-
-    /**
-     * @return Xinc_Build_Tasks_Registry
-     *
-     */
-    public function getTaskRegistry()
-    {
-        return $this->_taskRegistry;
-    }
-
-    /**
      * processes the tasks that are registered for the slot
      *
      * @param mixed $slot
@@ -559,7 +307,7 @@ class Xinc_Build implements Xinc_Build_Interface
              * The Post-Process continues on failure
              */
             if ($slot != Xinc_Plugin_Slot::POST_PROCESS) {
-                if ($this->getStatus() != Xinc_Build_Interface::PASSED) {
+                if ($this->getStatus() != \Xinc\Interfaces\Build::PASSED) {
                     $tasks->rewind();
                     break;
                 }
@@ -636,8 +384,8 @@ class Xinc_Build implements Xinc_Build_Interface
         //Xinc_Logger::getInstance()->flush();
         Xinc_Logger::getInstance()->setBuildLogFile(null);
 
-        if (Xinc_Build_Interface::STOPPED != $this->getStatus()) {
-            $this->setStatus(Xinc_Build_Interface::INITIALIZED);
+        if (\Xinc\Interfaces\Build::STOPPED != $this->getStatus()) {
+            $this->setStatus(\Xinc\Interfaces\Build::INITIALIZED);
         }
     }
 
@@ -706,29 +454,6 @@ class Xinc_Build implements Xinc_Build_Interface
         while ($subtasks->hasNext()) {
             $this->updateTask($subtasks->next());
         }
-    }
-
-    public function enqueue()
-    {
-        $this->_isQueued = true;
-    }
-
-    /**
-     * check if build is in queue mode
-     *
-     */
-    public function isQueued()
-    {
-        return $this->_isQueued;
-    }
-
-    /**
-     * remove build from queue mode
-     *
-     */
-    public function dequeue()
-    {
-        $this->_isQueued = false;
     }
 
     /**
