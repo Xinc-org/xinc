@@ -30,6 +30,8 @@
  * @link      http://code.google.com/p/xinc/
  */
 
+namespace Xinc\Server;
+
 require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/IO.php';
 require_once 'Xinc/Exception/MalformedConfig.php';
@@ -44,7 +46,7 @@ require_once 'Xinc/Build/Status/Exception/NoDirectory.php';
 require_once 'Xinc/Build/Status/Exception/NonWriteable.php';
 require_once 'Xinc/Timezone.php';
 
-class Xinc
+class Xinc extends \Core_Daemon
 {
     const VERSION = '@VERSION@';
 
@@ -150,22 +152,58 @@ class Xinc
     /**
      * Constructor
      */
-    private function __construct()
+    protected function __construct()
     {
-        //self::$instance = &$this;
-        self::$buildQueue = new Xinc_Build_Queue();
+//         self::$buildQueue = new Xinc_Build_Queue();
+    }
+
+    protected  $loop_interval = 1;
+
+    /**
+     * This is where you implement any once-per-execution setup code.
+     * @return void
+     *
+     * @throws \Exception
+     */
+    protected function setup()
+    {
+        $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
     }
 
     /**
-     * @return Xinc
+     * This is where you implement the tasks you want your daemon to perform.
+     * This method is called at the frequency defined by loop_interval.
+     *
+     * @return void
      */
-    public static function getInstance()
+    protected function execute()
     {
-        //if (!isset(self::$instance)) {
-        //    self::main();
-        //}
+    }
 
-        return self::$instance;
+    /**
+     * Dynamically build the file name for the log file. This simple algorithm
+     * will rotate the logs once per day and try to keep them in a central /var/log location.
+     * @return string
+     */
+    protected function log_file()
+    {
+    }
+
+
+    /**
+     * Shutsdown the xinc instance and cleans up pidfile etc.
+     *
+     * @param boolean $exit
+     */
+    protected function godown()
+    {
+        echo "\n";
+        echo 'Goodbye. Shutting down Xinc';
+        echo "\n";
+    }
+
+    public function log($message, $label = '', $indent = 0) {
+        echo $message;
     }
 
     public function getSystemTimezone()
@@ -308,7 +346,7 @@ class Xinc
 
 
     /**
-     * Processes the projects that have been configured 
+     * Processes the projects that have been configured
      * in the config-file and executes each project
      * if the scheduled time has expired
      *
@@ -347,7 +385,7 @@ class Xinc
     }
 
     /**
-     * Processes the projects that have been configured 
+     * Processes the projects that have been configured
      * in the config-file and executes each project
      * if the scheduled time has expired
      *
@@ -774,7 +812,7 @@ class Xinc
         return $properties;
     }
     /**
-     * Checks if a special shutdown file exists 
+     * Checks if a special shutdown file exists
      * and exits if it does
      *
      */
@@ -794,27 +832,6 @@ class Xinc
                 // delete the file
                 unlink($file);
             }
-        }
-    }
-
-    /**
-     * Shutsdown the xinc instance and cleans up pidfile etc.
-     *
-     * @param boolean $exit
-     */
-    private function shutDown($exit = false)
-    {
-        $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
-        if (file_exists($file)) {
-            unlink($file);
-        }
-        $pidFile = $this->pidFile;
-        if (file_exists($pidFile)) {
-                unlink($pidFile);
-        }
-        Xinc_Logger::getInstance()->info('Goodbye. Shutting down Xinc');
-        if ($exit) {
-            exit();
         }
     }
 
