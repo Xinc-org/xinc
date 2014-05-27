@@ -41,26 +41,18 @@ require_once 'Xinc/Config.php';
 require_once 'Xinc/Project/Config.php';
 require_once 'Xinc/Engine/Repository.php';
 require_once 'Xinc/Build/Queue.php';
-require_once 'Xinc/Config/Getopt.php';
 require_once 'Xinc/Build/Status/Exception/NoDirectory.php';
 require_once 'Xinc/Build/Status/Exception/NonWriteable.php';
 require_once 'Xinc/Timezone.php';
 
 class Xinc extends \Core_Daemon
 {
-    const VERSION = '@VERSION@';
+    const VERSION = '2.3.90';
 
     const DEFAULT_PROJECT_DIR = 'projects';
     const DEFAULT_STATUS_DIR = 'status';
 
     public $buildActive = false;
-
-    /**
-     * Default sleepy time in microseconds
-     *
-     * @var integer
-     */
-    private $defaultSleep = 200000;
 
     /**
      * Registry holding all scheduled builds
@@ -120,34 +112,13 @@ class Xinc extends \Core_Daemon
     private static $systemTimezone;
 
     /**
-     * Short command line arguments.
-     * @var string
-     */
-    private static $shortOptions = 'f:p:w:l:s:v:h:o';
-
-    /**
-     * Long command line arguments.
-     * @var array
-     */
-    private static $longOptions = array(
-        'config-file=',
-        'project-dir=',
-        'working-dir=',
-        'log-file=',
-        'status-dir=',
-        'verbose=',
-        'help',
-        'version',
-        'once',
-        'pid-file=',
-    );
-
-    /**
      * Holding the config settings
      *
      * @var array
      */
     private $config = array();
+
+    protected  $loop_interval = -1;
 
     /**
      * Constructor
@@ -155,9 +126,8 @@ class Xinc extends \Core_Daemon
     protected function __construct()
     {
 //         self::$buildQueue = new Xinc_Build_Queue();
+        parent::__construct();
     }
-
-    protected  $loop_interval = 1;
 
     /**
      * This is where you implement any once-per-execution setup code.
@@ -183,15 +153,15 @@ class Xinc extends \Core_Daemon
     /**
      * Dynamically build the file name for the log file. This simple algorithm
      * will rotate the logs once per day and try to keep them in a central /var/log location.
+     *
      * @return string
      */
     protected function log_file()
     {
     }
 
-
     /**
-     * Shutsdown the xinc instance and cleans up pidfile etc.
+     * Shutdown the xinc instance.
      *
      * @param boolean $exit
      */
@@ -202,8 +172,48 @@ class Xinc extends \Core_Daemon
         echo "\n";
     }
 
+    /**
+     * @TODO send to logger
+     */
     public function log($message, $label = '', $indent = 0) {
-        echo $message;
+        echo 'Message: ' . $message . "\n";
+    }
+
+    /**
+     * Handle command line arguments.
+     *
+     * @return void
+     */
+    protected function getopt()
+    {
+        $opts = getopt(
+            'f:p:w:l:v:s:o',
+            array(
+                'config-file:',
+                'project-dir:',
+                'working-dir:',
+                'log-file:',
+                'pid-file:', // not easy  in Core_Daemon
+                'verbose:', // not easy  in Core_Daemon
+                'status-dir:',
+                'once:',
+                'version',  // done
+                'help',  // done
+                'deamon',  // not easy  in Core_Daemon
+            )
+        );
+
+        if (isset($opts['version'])) {
+            $this->logVersion();
+            exit();
+        }
+
+        if (isset($opts['help'])) {
+            $this->show_help();
+            exit();
+        }
+
+        parent::getopt();
     }
 
     public function getSystemTimezone()
@@ -474,28 +484,12 @@ class Xinc extends \Core_Daemon
         return $this->workingDir;
     }
 
-    public function getShortOptions()
-    {
-        return self::$shortOptions;
-    }
-
-    /**
-     * Returns Long options of xinc parameters
-     *
-     * @return array
-     */
-    public function getLongOptions()
-    {
-        return self::$longOptions;
-    }
-
     /**
      * Starts the continuous loop.
      */
     protected function start($daemon)
     {
         if ($daemon) {
-            $res = register_tick_function(array(&$this, 'checkShutdown'));
             Xinc_Logger::getInstance()->info('Registering shutdown function: ' . ($res ? 'OK' : 'NOK'));
             $this->processBuildsDaemon();
         } else {
@@ -618,54 +612,6 @@ class Xinc extends \Core_Daemon
      */
     public static function handleArguments($commandLine = null)
     {
-        if ($commandLine != null) {
-            if (!is_array($commandLine) && is_string($commandLine)) {
-                $waitForDelimiter = null;
-                $validDelimiters = array('"', '"');
-                $argument = '';
-                $newArgument = false;
-                $args = array();
-                $commandLine = trim($commandLine);
-                for ($i = 0; $i < strlen($commandLine); $i++) {
-                    if ($waitForDelimiter != null) {
-                        if ($commandLine{$i} == $waitForDelimiter && $commandLine{$i - 1} != '\\') {
-                            $newArgument = true;
-                            $waitForDelimiter = false;
-                            continue;
-                        }
-                    } elseif ($commandLine{$i} == ' ' && $commandLine{$i + 1} == ' ') {
-                        // skip multiple spaces
-                        continue;
-                    } elseif ($commandLine{$i} == ' ' && $commandLine{$i - 1} != '\\'
-                        && !in_array($commandLine{$i + 1}, $validDelimiters)
-                    ) {
-                        // Allow \ for escaping of spaces in path names
-                        $newArgument = true;
-                    } elseif ($commandLine{$i} == ' ' && $commandLine{$i - 1} != '\\'
-                        && in_array($commandLine{$i + 1}, $validDelimiters)
-                    ) {
-                        $newArgument = true;
-                        $waitForDelimiter = $commandLine{$i + 1};
-                        // move ahead, since we dont want the delimiter to be part of the param
-                        $i++;
-                    } elseif ($i + 1 >= strlen($commandLine)) {
-                        $argument .= $commandLine{$i};
-                        $newArgument = true;
-                    }
-                    if ($newArgument) {
-                        $args[] = $argument;
-                        $newArgument = false;
-                        $argument = '';
-                    } else {
-                        $argument .= $commandLine{$i};
-                    }
-                }
-                $commandLine = $args;
-            }
-        } else {
-            $commandLine = $_SERVER['argv'];
-        }
-
         /**
          * setting default values
          */
@@ -680,7 +626,6 @@ class Xinc extends \Core_Daemon
             'statusDir'    => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR,
         );
 
-        $options = Xinc_Config_Getopt::getopt($commandLine, self::$shortOptions, self::$longOptions);
         //echo 'Determined options: ' . var_export($options, true) . "\n";
         if (isset($options[1])) {
             $arguments['projectFiles'] = $options[1];
@@ -727,20 +672,7 @@ class Xinc extends \Core_Daemon
                 case 'v':
                     $arguments['logLevel'] = $option[1];
                     break;
-                case '--pid-file':
-                    $arguments['pidFile'] = $option[1];
-                    break;
-                case '--version':
-                    self::printVersion();
-                    exit;
-                    break;
-                case '--help':
-                    self::showHelp();
-                    exit;
             }
-        }
-        if (!isset($arguments['pidFile'])) {
-            $arguments['pidFile'] = $arguments['statusDir'] . DIRECTORY_SEPARATOR . 'xinc.pid';
         }
         // Do some arguments.
         return $arguments;
@@ -839,7 +771,7 @@ class Xinc extends \Core_Daemon
      * prints help message, describing different parameters to run xinc
      *
      */
-    public static function showHelp()
+    protected function show_help()
     {
         echo 'Usage: xinc [switches] [project-file-1 [project-file-2 ...]]' . "\n\n";
 
@@ -850,18 +782,18 @@ class Xinc extends \Core_Daemon
             . '  -v --verbose=<level>      The level of information to log (default 2).' . "\n"
             . '  -s --status-dir=<dir>     The status directory to use.' . "\n"
             . '  -o --once                 Run once and exit.' . "\n"
-            . '  --pid-file=<file>         The directory to put the PID file' . "\n"
+            . '  -d --daemon               Daemon, detach and run in the background' . "\n"
+            . '  -p --pid-file=<file>      The directory to put the PID file' . "\n"
             . '  --version                 Prints the version of Xinc.' . "\n"
             . '  -h --help                 Prints this help message.' . "\n";
     }
 
     /**
      * Prints the version of xinc
-     *
      */
-    public static function printVersion()
+    public function logVersion()
     {
-        echo 'Xinc version ' . self::getVersion() . "\n";
+        $this->log('Xinc version ' . $this->getVersion());
     }
 
     /**
@@ -869,8 +801,8 @@ class Xinc extends \Core_Daemon
      *
      * @return string
      */
-    public static function getVersion()
+    public function getVersion()
     {
-        return self::VERSION;
+        return Xinc::VERSION;
     }
 }
