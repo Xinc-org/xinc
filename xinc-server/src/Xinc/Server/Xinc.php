@@ -187,21 +187,24 @@ class Xinc extends \Core_Daemon
     protected function getopt()
     {
         $opts = getopt(
-            'f:p:w:l:v:s:o',
+            'p:w:s:f:l:v:o',
             array(
-                'config-file:',
                 'project-dir:',
                 'working-dir:',
+                'status-dir:',
+                'config-file:',
                 'log-file:',
                 'pid-file:', // not easy  in Core_Daemon
                 'verbose:', // not easy  in Core_Daemon
-                'status-dir:',
-                'once:',
+                'once',  // done
                 'version',  // done
                 'help',  // done
                 'deamon',  // not easy  in Core_Daemon
+                '::',
             )
         );
+
+var_dump($opts);
 
         if (isset($opts['version'])) {
             $this->logVersion();
@@ -211,6 +214,10 @@ class Xinc extends \Core_Daemon
         if (isset($opts['help'])) {
             $this->show_help();
             exit();
+        }
+
+        if (isset($opts['once']) || isset($opts['o'])) {
+            $this->set('daemonized', false);
         }
 
         parent::getopt();
@@ -617,7 +624,6 @@ class Xinc extends \Core_Daemon
          */
         $workingDir = dirname($_SERVER['argv'][0]);
         $arguments = array(
-            'daemon'       => true,
             'configFile'   => $workingDir . DIRECTORY_SEPARATOR . 'system.xml',
             'logLevel'     => Xinc_Logger::DEFAULT_LOG_LEVEL,
             'logFile'      => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
@@ -646,11 +652,6 @@ class Xinc extends \Core_Daemon
                 case 'f':
                     $arguments['configFile'] = $option[1];
                     break;
-                case '--once':
-                case 'o':
-                    $arguments['daemon'] = false;
-                    break;
-
                 case '--project-dir':
                 case 'p':
                     $arguments['projectDir'] = $option[1];
