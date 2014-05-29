@@ -204,8 +204,6 @@ class Xinc extends \Core_Daemon
             )
         );
 
-var_dump($opts);
-
         if (isset($opts['version'])) {
             $this->logVersion();
             exit();
@@ -772,8 +770,12 @@ var_dump($opts);
      * prints help message, describing different parameters to run xinc
      *
      */
-    protected function show_help()
+    protected function show_help($msg = '')
     {
+        if ($msg) {
+            echo 'ERROR:' . "\n" . wordwrap($msg, 72, "\n ");
+        }
+
         echo 'Usage: xinc [switches] [project-file-1 [project-file-2 ...]]' . "\n\n";
 
         echo '  -f --config-file=<file>   The config file to use.' . "\n"
