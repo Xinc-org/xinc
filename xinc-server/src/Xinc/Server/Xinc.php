@@ -91,20 +91,6 @@ class Xinc extends \Core_Daemon
     private $statusDir;
 
     /**
-     * The file with the pid marker
-     *
-     * @var string
-     */
-    private $pidFile;
-
-    /**
-     * Instance of this object.
-     *
-     * @var Xinc
-     */
-    private static $instance;
-
-    /**
      * Timezone of system
      *
      * @var Xinc_Timezone
@@ -118,7 +104,7 @@ class Xinc extends \Core_Daemon
      */
     private $config = array();
 
-    protected  $loop_interval = -1;
+    protected $loop_interval = -1;
 
     /**
      * Constructor
@@ -186,13 +172,16 @@ class Xinc extends \Core_Daemon
      */
     protected function getopt()
     {
+        $workingDir = dirname($_SERVER['argv'][0]);
+
         $opts = getopt(
-            'p:w:s:f:l:v:o',
+            'r:w:s:f:j:l:v:o',
             array(
                 'project-dir:',
                 'working-dir:',
                 'status-dir:',
                 'config-file:',
+                'project-file:',
                 'log-file:',
                 'pid-file:', // not easy  in Core_Daemon
                 'verbose:', // not easy  in Core_Daemon
@@ -218,7 +207,50 @@ class Xinc extends \Core_Daemon
             $this->set('daemonized', false);
         }
 
+        $opts = $this->mergeOpts(
+            array(
+                'w' => 'working-dir',
+                'r' => 'project-dir',
+                's' => 'status-dir',
+                'f' => 'config-file',
+                'j' => 'project-file',
+                'l' => 'log-file',
+                'v' => 'verbose',
+            ),
+            array (
+                'working-dir' => $workingDir,
+                'project-dir' => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR,
+                'status-dir'  => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR,
+                'config-file' => $workingDir . DIRECTORY_SEPARATOR . 'system.xml',
+                'log-file'    => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
+                'verbose'     => 2, //Xinc_Logger::DEFAULT_LOG_LEVEL,
+            )
+        );
+
+        if (isset($opts['working-dir'])) {
+            $this->setWorkingDir($opts['working-dir']);
+        }
+
+        if (isset($opts['project-dir'])) {
+            $this->setProjectDir($opts['project-dir']);
+        }
+
+        if (isset($opts['status-dir'])) {
+            $this->setStatusDir($opts['status-dir']);
+        }
+
+        if (isset($opts['config-file'])) {
+            $this->setSystemConfigFile($opts['config-file']);
+        }
+
         parent::getopt();
+    }
+
+    protected function mergeOpts()
+    {
+        $merge = array();
+
+        return $merge;
     }
 
     public function getSystemTimezone()
@@ -297,11 +329,6 @@ class Xinc extends \Core_Daemon
         return isset($this->config[$name]) ? $this->config[$name] : null;
     }
 
-    public function setPidFile($pidFile)
-    {
-        $this->pidFile = $pidFile;
-    }
-
     /**
      * Set the directory in which to save project status files
      *
@@ -378,27 +405,6 @@ class Xinc extends \Core_Daemon
         }
     }
 
-    private function isProcessRunning($pid)
-    {
-        if (isset($_SERVER['SystemRoot']) && DIRECTORY_SEPARATOR != '/') {
-            /**
-             * winserv is handling that
-             */
-            return false;
-        } else {
-            exec('ps --no-heading -p ' . $pid, $out, $res);
-            if ($res != 0) {
-                return false;
-            } else {
-                if (count($out) > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
-
     /**
      * Processes the projects that have been configured
      * in the config-file and executes each project
@@ -407,22 +413,6 @@ class Xinc extends \Core_Daemon
      */
     public function processBuildsDaemon()
     {
-        /**
-         * write pid file
-         */
-        if (file_exists($this->pidFile)) {
-            $oldPid = file_get_contents($this->pidFile);
-            if ($this->isProcessRunning($oldPid)) {
-                Xinc_Logger::getInstance()->error(
-                    'Xinc Instance with PID ' . $pid . ' still running. Check pidfile '
-                    . $this->pidFile . '. Shutting down.'
-                );
-                exit(-1);
-            } else {
-                Xinc_Logger::getInstance()->error('Cleaning up old pidFile.');
-            }
-        }
-        file_put_contents($this->pidFile, getmypid());
         while (true) {
             declare(ticks = 2);
             $now = time();
@@ -529,18 +519,6 @@ class Xinc extends \Core_Daemon
             $logger->info('- System Config File: ' . $arguments['configFile']);
             $logger->info('- Log Level:          ' . $logger->getLogLevel());
             $logger->info('- Daemon:             ' . ($arguments['daemon'] ? 'yes' : 'no'));
-            $logger->info('- PID File:           ' . $arguments['pidFile']);
-            self::$instance = new Xinc();
-
-            self::$instance->setWorkingDir($arguments['workingDir']);
-
-            self::$instance->setProjectDir($arguments['projectDir']);
-
-            self::$instance->setStatusDir($arguments['statusDir']);
-
-            self::$instance->setPidFile($arguments['pidFile']);
-
-            self::$instance->setSystemConfigFile($arguments['configFile']);
 
             // get the project config files
             if (isset($arguments['projectFiles'])) {
@@ -610,74 +588,6 @@ class Xinc extends \Core_Daemon
     }
 
     /**
-     * Handles command line arguments.
-     *
-     * @return array The array of parsed arguments.
-     * @throws Xinc_Config_Exception_GetOpt
-     */
-    public static function handleArguments($commandLine = null)
-    {
-        /**
-         * setting default values
-         */
-        $workingDir = dirname($_SERVER['argv'][0]);
-        $arguments = array(
-            'configFile'   => $workingDir . DIRECTORY_SEPARATOR . 'system.xml',
-            'logLevel'     => Xinc_Logger::DEFAULT_LOG_LEVEL,
-            'logFile'      => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
-            'workingDir'   => $workingDir,
-            'projectDir'   => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR,
-            'statusDir'    => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR,
-        );
-
-        //echo 'Determined options: ' . var_export($options, true) . "\n";
-        if (isset($options[1])) {
-            $arguments['projectFiles'] = $options[1];
-        } else {
-            $arguments['projectFiles'] = array();
-        }
-        /**
-         * If no arguments are provided just show help and exit
-         * since we at least need a project file to run
-         */
-        if (count($options[0]) == 0) {
-            self::showHelp();
-            exit;
-        }
-        foreach ($options[0] as $option) {
-            switch ($option[0]) {
-                case '--config-file':
-                case 'f':
-                    $arguments['configFile'] = $option[1];
-                    break;
-                case '--project-dir':
-                case 'p':
-                    $arguments['projectDir'] = $option[1];
-                    break;
-                case '--working-dir':
-                case 'w':
-                    $arguments['workingDir'] = $option[1];
-                    break;
-                case '--log-file':
-                case 'l':
-                    $arguments['logFile'] = $option[1];
-                    break;
-
-                case '--status-dir':
-                case 's':
-                    $arguments['statusDir'] = $option[1];
-                    break;
-                case '--verbose':
-                case 'v':
-                    $arguments['logLevel'] = $option[1];
-                    break;
-            }
-        }
-        // Do some arguments.
-        return $arguments;
-    }
-
-    /**
      * Add a projectfile to the xinc processing
      *
      * @param string $fileName
@@ -742,29 +652,6 @@ class Xinc extends \Core_Daemon
 
         return $properties;
     }
-    /**
-     * Checks if a special shutdown file exists
-     * and exits if it does
-     *
-     */
-    public function checkShutdown()
-    {
-        $file = $this->getStatusDir() . DIRECTORY_SEPARATOR . '.shutdown';
-        if (file_exists($file) && $this->buildActive == false) {
-            Xinc_Logger::getInstance()->info('Preparing to shutdown');
-            $statInfo = stat($file);
-            $fileUid = $statInfo['uid'];
-            /**
-             * Only the user running xinc cann issue a shutdown
-             */
-            if ($fileUid == getmyuid()) {
-                $this->shutDown(true);
-            } else {
-                // delete the file
-                unlink($file);
-            }
-        }
-    }
 
     /**
      * prints help message, describing different parameters to run xinc
@@ -776,17 +663,18 @@ class Xinc extends \Core_Daemon
             echo 'ERROR:' . "\n" . wordwrap($msg, 72, "\n ");
         }
 
-        echo 'Usage: xinc [switches] [project-file-1 [project-file-2 ...]]' . "\n\n";
+        echo 'Usage: xinc [switches]' . "\n\n";
 
         echo '  -f --config-file=<file>   The config file to use.' . "\n"
-            . '  -p --project-dir=<dir>    The project directory.' . "\n"
-            . '  -w --working-dir=<dir>    The working directory.' . "\n"
+            . '  -j --project-file=<file>  The project file to use.' . "\n"
             . '  -l --log-file=<file>      The log file to use.' . "\n"
-            . '  -v --verbose=<level>      The level of information to log (default 2).' . "\n"
+            . '  -p --pid-file=<file>      The directory to put the PID file' . "\n"
+            . '  -r --project-dir=<dir>    The project directory.' . "\n"
             . '  -s --status-dir=<dir>     The status directory to use.' . "\n"
+            . '  -w --working-dir=<dir>    The working directory.' . "\n"
+            . '  -v --verbose=<level>      The level of information to log (default 2).' . "\n"
             . '  -o --once                 Run once and exit.' . "\n"
             . '  -d --daemon               Daemon, detach and run in the background' . "\n"
-            . '  -p --pid-file=<file>      The directory to put the PID file' . "\n"
             . '  --version                 Prints the version of Xinc.' . "\n"
             . '  -h --help                 Prints this help message.' . "\n";
     }
