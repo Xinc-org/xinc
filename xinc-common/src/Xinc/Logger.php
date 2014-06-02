@@ -29,10 +29,12 @@
  * @link      http://code.google.com/p/xinc/
  */
 
+namespace Xinc;
+
 require_once 'Xinc/Logger/Message.php';
 require_once 'Xinc/Logger/Exception/NonWriteable.php';
 
-class Xinc_Logger
+class Logger
 {
     /**
      * Singleton instance variable.
@@ -95,7 +97,7 @@ class Xinc_Logger
      * Private singleton constructor.
      *
      */
-    private function __construct() 
+    private function __construct()
     {
         $this->_logQueue = array();
         $this->_max = 50;
@@ -111,12 +113,12 @@ class Xinc_Logger
         $this->info("Setting loglevel to $level");
         $this->_logLevel = $level;
     }
-    
+
     public function logLevelSet()
     {
         return $this->_logLevelSet;
     }
-    
+
     public function getLogLevel()
     {
         return $this->_logLevel;
@@ -129,10 +131,10 @@ class Xinc_Logger
      */
     public static function getInstance()
     {
-        if (!Xinc_Logger::$_instance) {
-            Xinc_Logger::$_instance = new Xinc_Logger();
+        if (!Logger::$_instance) {
+            Logger::$_instance = new Logger();
         }
-        return Xinc_Logger::$_instance;
+        return Logger::$_instance;
     }
 
     /**
@@ -194,7 +196,7 @@ class Xinc_Logger
     {
         $this->log(self::$logLevelError, $msg, $fileHandle);
     }
-    
+
     /**
      * Log a message with priority 'warn'.
      *
@@ -205,7 +207,7 @@ class Xinc_Logger
     {
         $this->log(self::$logLevelWarn, $msg, $fileHandle = null);
     }
-    
+
     /**
      * Log a message with priority 'info'.
      *
@@ -216,7 +218,7 @@ class Xinc_Logger
     {
         $this->log(self::$logLevelInfo, $msg, $fileHandle = null);
     }
-    
+
     /**
      * Log a message with priority 'debug'.
      *
