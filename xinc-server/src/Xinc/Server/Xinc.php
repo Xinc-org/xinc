@@ -208,6 +208,7 @@ class Xinc extends \Core_Daemon
         }
 
         $opts = $this->mergeOpts(
+            $opts,
             array(
                 'w' => 'working-dir',
                 'r' => 'project-dir',
@@ -226,6 +227,8 @@ class Xinc extends \Core_Daemon
                 'verbose'     => 2, //Xinc_Logger::DEFAULT_LOG_LEVEL,
             )
         );
+
+        var_dump($opts);
 
         if (isset($opts['working-dir'])) {
             $this->setWorkingDir($opts['working-dir']);
@@ -246,9 +249,28 @@ class Xinc extends \Core_Daemon
         parent::getopt();
     }
 
-    protected function mergeOpts()
+    /**
+     * Merges the default config and the short/long arguments given by mapping together.
+     * TODO: It doesn't respect options which aren't in the mapping.
+     *
+     * @param array $opts The options after php getopt function call.
+     * @param array $mapping Mapping from short to long argument names.
+     * @param array $default The default values for some arguments.
+     *
+     * @return array Mapping of the long arguments to the given values.
+     */
+    protected function mergeOpts($opts, $mapping, $default)
     {
-        $merge = array();
+        $merge = $default;
+
+        foreach ($mapping as $keyShort => $keyLong) {
+            if (isset($opts[$keyShort])) {
+                $merge[$keyLong] = $opts[$keyShort];
+            }
+            if (isset($opts[$keyLong])) {
+                $merge[$keyLong] = $opts[$keyLong];
+            }
+        }
 
         return $merge;
     }
