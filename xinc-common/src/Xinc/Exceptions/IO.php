@@ -28,7 +28,9 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-class Xinc_Exception_IO extends Exception
+namespace Xinc\Exceptions;
+
+class IO extends Exception
 {
     const FAILURE_IO = 1;
     const FAILURE_NOT_WRITEABLE = 2;
@@ -60,9 +62,9 @@ class Xinc_Exception_IO extends Exception
     ) {
         $this->strResourceName = $strResourceName;
         $this->strResourcePath = $strResourcePath;
-        parent::__construct($this->getErrorMessage($strMessage, $nCode), $nCode, $previous);
+        parent::__construct($this->getErrorMessage($nCode, $strMessage), $nCode, $previous);
     }
-    
+
     /**
      * Returns the name of the failed resource.
      *
@@ -86,13 +88,13 @@ class Xinc_Exception_IO extends Exception
     /**
      * Builds and returns an error message for this exception.
      *
-     * @param string  $strMessage Exception message.
      * @param integer $nCode      Code of failure from this consts.
+     * @param string  $strMessage Exception message.
      *
      * @return string A message for this error.
      */
     protected function getErrorMessage(
-        $strMessage = null, $nCode
+        $nCode, $strMessage = null
     ) {
         $strReturn = 'Failure: ';
         if (null !== $this->strResourcePath) {
@@ -101,21 +103,21 @@ class Xinc_Exception_IO extends Exception
         $strReturn .= 'Name: "' . $this->strResourceName . '"';
         $strReturn .= ' Code: ';
         switch ($nCode) {
-        case self::FAILURE_IO:
-            $strReturn .= 'General IO Error';
-            break;
-        case self::FAILURE_NOT_WRITEABLE:
-            $strReturn .= 'not writeable';
-            break;
-        case self::FAILURE_NOT_READABLE:
-            $strReturn .= 'not readable';
-            break;
-        case self::FAILURE_NOT_FOUND:
-            $strReturn .= 'not found';
-            break;
-        default:
-            $strReturn .= (string) $nCode;
-            break;
+            case self::FAILURE_IO:
+                $strReturn .= 'General IO Error';
+                break;
+            case self::FAILURE_NOT_WRITEABLE:
+                $strReturn .= 'not writeable';
+                break;
+            case self::FAILURE_NOT_READABLE:
+                $strReturn .= 'not readable';
+                break;
+            case self::FAILURE_NOT_FOUND:
+                $strReturn .= 'not found';
+                break;
+            default:
+                $strReturn .= (string) $nCode;
+                break;
         }
         if (null !== $strMessage) {
             $strReturn .= ' with message: "' . $strMessage . '"';
