@@ -32,7 +32,6 @@
 
 namespace Xinc\Server;
 
-require_once 'Xinc/Logger.php';
 require_once 'Xinc/Exception/IO.php';
 require_once 'Xinc/Exception/MalformedConfig.php';
 require_once 'Xinc/Plugin/Parser.php';
@@ -228,8 +227,6 @@ class Xinc extends \Core_Daemon
             )
         );
 
-        var_dump($opts);
-
         if (isset($opts['working-dir'])) {
             $this->setWorkingDir($opts['working-dir']);
         }
@@ -275,9 +272,104 @@ class Xinc extends \Core_Daemon
         return $merge;
     }
 
-    public function getSystemTimezone()
+    /**
+     * Sets the working directory.
+     *
+     * @param string $strWorkingDir The working directory.
+     *
+     * @throws Xinc\Exceptions\IO
+     */
+    public function setWorkingDir($strWorkingDir)
     {
-        return self::$systemTimezone;
+        \Xinc\Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
+        $this->workingDir = $this->checkDirectory($strWorkingDir);
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getProjectDir()
+    {
+        return $this->projectDir;
+    }
+
+    /**
+     * Set the directory in which to project files lies.
+     *
+     * @param string $strProjectDir Directory of the project files.
+     *
+     * @throws Xinc\Exceptions\IO
+     */
+    public function setProjectDir($strProjectDir)
+    {
+        \Xinc\Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
+        $this->projectDir = $this->checkDirectory($strProjectDir);
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getWorkingDir()
+    {
+        return $this->workingDir;
+    }
+
+    /**
+     * Set the directory in which to save project status files
+     *
+     * @param string $strStatusDir Directory for the status files.
+     *
+     * @throws Xinc\Exceptions\IO
+     */
+    public function setStatusDir($strStatusDir)
+    {
+        \Xinc\Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
+        $this->statusDir = $this->checkDirectory($strStatusDir);
+    }
+
+    /**
+     * Returns the  Directory for the status files.
+     *
+     * @return string Directory for the status files.
+     */
+    public function getStatusDir()
+    {
+        return $this->statusDir;
+    }
+
+    /**
+     * Checks if the directory is available otherwise tries to create it.
+     * Returns the realpath of the directory afterwards.
+     *
+     * @param string $strDirectory Directory to check for.
+     *
+     * @return string The realpath of given directory.
+     * @throws Xinc\Exception\IO
+     */
+    protected function checkDirectory($strDirectory)
+    {
+        if (!is_dir($strDirectory)) {
+            \Xinc\Logger::getInstance()->verbose(
+                'Directory "' . $strDirectory . '" does not exist. Trying to create'
+            );
+            $bCreated = @mkdir($strDirectory, 0755, true);
+            if (!$bCreated) {
+                $arError = error_get_last();
+                \Xinc\Logger::getInstance()->verbose(
+                    'Directory "' . $strDirectory . '" could not be created.'
+                );
+                throw new \Xinc\Exceptions\IO($strDirectory, null, $arError['message']);
+            }
+        } elseif (!is_writeable($strDirectory)) {
+            \Xinc\Logger::getInstance()->verbose(
+                'Directory "' . $strDirectory . '" is not writeable.'
+            );
+            throw new \Xinc\Exceptions\IO($strDirectory, null, null, \Xinc\Exceptions\IO::FAILURE_NOT_WRITEABLE);
+        }
+
+        return realpath($strDirectory);
     }
 
     /**
@@ -290,7 +382,7 @@ class Xinc extends \Core_Daemon
     {
         $realFileName = realpath($fileName);
         if (false === $realFileName) {
-            throw new Xinc_Exception_MalformedConfig('System config file: ' . $fileName . ' not found.');
+            throw new \Xinc\Exceptions\MalformedConfig('System config file: ' . $fileName . ' not found.');
         }
         $configFile = Xinc_Config_File::load($realFileName);
 
@@ -318,6 +410,13 @@ class Xinc extends \Core_Daemon
         }
     }
 
+
+
+
+    public function getSystemTimezone()
+    {
+        return self::$systemTimezone;
+    }
 
     private function setConfigDirective($name, $value)
     {
@@ -349,63 +448,6 @@ class Xinc extends \Core_Daemon
     public function getConfigDirective($name)
     {
         return isset($this->config[$name]) ? $this->config[$name] : null;
-    }
-
-    /**
-     * Set the directory in which to save project status files
-     *
-     * @param string $strStatusDir Directory for the status files.
-     *
-     * @throws Xinc_Exception_IO
-     */
-    public function setStatusDir($strStatusDir)
-    {
-        Xinc_Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
-        $this->statusDir = $this->checkDirectory($strStatusDir);
-    }
-
-
-    /**
-     * Checks if the directory is available otherwise tries to create it.
-     * Returns the realpath of the directory afterwards.
-     *
-     * @param string $strDirectory Directory to check for.
-     *
-     * @return string The realpath of given directory.
-     * @throws Xinc_Exception_IO
-     */
-    protected function checkDirectory($strDirectory)
-    {
-        if (!is_dir($strDirectory)) {
-            Xinc_Logger::getInstance()->verbose(
-                'Directory "' . $strDirectory . '" does not exist. Trying to create'
-            );
-            $bCreated = @mkdir($strDirectory, 0755, true);
-            if (!$bCreated) {
-                $arError = error_get_last();
-                Xinc_Logger::getInstance()->verbose(
-                    'Directory "' . $strDirectory . '" could not be created.'
-                );
-                throw new Xinc_Exception_IO($strDirectory, null, $arError['message']);
-            }
-        } elseif (!is_writeable($strDirectory)) {
-            Xinc_Logger::getInstance()->verbose(
-                'Directory "' . $strDirectory . '" is not writeable.'
-            );
-            throw new Xinc_Exception_IO($strDirectory, null, null, Xinc_Exception_IO::FAILURE_NOT_WRITEABLE);
-        }
-
-        return realpath($strDirectory);
-    }
-
-    /**
-     * Returns the  Directory for the status files.
-     *
-     * @return string Directory for the status files.
-     */
-    public function getStatusDir()
-    {
-        return $this->statusDir;
     }
 
 
@@ -455,50 +497,6 @@ class Xinc extends \Core_Daemon
                 $nextBuild->build();
             }
         }
-    }
-
-    /**
-     * Sets the working directory.
-     *
-     * @param string $strWorkingDir The working directory.
-     *
-     * @throws Xinc_Exception_IO
-     */
-    public function setWorkingDir($strWorkingDir)
-    {
-        Xinc_Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
-        $this->workingDir = $this->checkDirectory($strWorkingDir);
-    }
-
-    /**
-     * Set the directory in which to project files lies.
-     *
-     * @param string $strProjectDir Directory of the project files.
-     *
-     * @throws Xinc_Exception_IO
-     */
-    public function setProjectDir($strProjectDir)
-    {
-        Xinc_Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
-        $this->projectDir = $this->checkDirectory($strProjectDir);
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getProjectDir()
-    {
-        return $this->projectDir;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getWorkingDir()
-    {
-        return $this->workingDir;
     }
 
     /**
