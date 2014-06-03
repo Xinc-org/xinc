@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Logger
+ * @package   Xinc.Core
  * @author    David Ellis <username@example.com>
  * @author    Gavin Foster <username@example.com>
  * @author    Arno Schneider <username@example.com>
@@ -29,17 +29,14 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-namespace Xinc;
-
-require_once 'Xinc/Logger/Message.php';
-require_once 'Xinc/Logger/Exception/NonWriteable.php';
+namespace Xinc\Core;
 
 class Logger
 {
     /**
      * Singleton instance variable.
      *
-     * @var Xinc_Logger
+     * @var Xinc\Core\Logger
      */
     private static $_instance;
 
