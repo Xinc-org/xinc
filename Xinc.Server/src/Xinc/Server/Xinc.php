@@ -33,8 +33,6 @@
 namespace Xinc\Server;
 
 require_once 'Xinc/Plugin/Parser.php';
-require_once 'Xinc/Config/Parser.php';
-require_once 'Xinc/Config.php';
 require_once 'Xinc/Project/Config.php';
 require_once 'Xinc/Engine/Repository.php';
 require_once 'Xinc/Build/Queue.php';
@@ -87,20 +85,6 @@ class Xinc extends \Core_Daemon
      */
     private $statusDir;
 
-    /**
-     * Timezone of system
-     *
-     * @var Xinc_Timezone
-     */
-    private static $systemTimezone;
-
-    /**
-     * Holding the config settings
-     *
-     * @var array
-     */
-    private $config = array();
-
     protected $loop_interval = -1;
 
     /**
@@ -136,10 +120,6 @@ class Xinc extends \Core_Daemon
 
         if (isset($this->opts['status-dir'])) {
             $this->setStatusDir($this->opts['status-dir']);
-        }
-
-        if (isset($this->opts['config-file'])) {
-            $this->setSystemConfigFile($this->opts['config-file']);
         }
 
         $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
@@ -194,12 +174,11 @@ class Xinc extends \Core_Daemon
         $workingDir = dirname($_SERVER['argv'][0]);
 
         $opts = getopt(
-            'r:w:s:f:j:l:v:o',
+            'r:w:s:f:l:v:o',
             array(
                 'project-dir:',
                 'working-dir:',
                 'status-dir:',
-                'config-file:',
                 'project-file:',
                 'log-file:',
                 'pid-file:', // not easy  in Core_Daemon
@@ -232,8 +211,7 @@ class Xinc extends \Core_Daemon
                 'w' => 'working-dir',
                 'r' => 'project-dir',
                 's' => 'status-dir',
-                'f' => 'config-file',
-                'j' => 'project-file',
+                'f' => 'project-file',
                 'l' => 'log-file',
                 'v' => 'verbose',
             ),
@@ -241,7 +219,6 @@ class Xinc extends \Core_Daemon
                 'working-dir' => $workingDir,
                 'project-dir' => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR,
                 'status-dir'  => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR,
-                'config-file' => $workingDir . DIRECTORY_SEPARATOR . 'system.xml',
                 'log-file'    => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
                 'verbose'     => 2, //Xinc_Logger::DEFAULT_LOG_LEVEL,
             )
@@ -378,83 +355,10 @@ class Xinc extends \Core_Daemon
         return realpath($strDirectory);
     }
 
-    /**
-     * Specify a config file to be parsed for project definitions.
-     *
-     * @param string $fileName
-     * @throws Xinc_Exception_MalformedConfig
-     */
-    private function setSystemConfigFile($fileName)
-    {
-        $realFileName = realpath($fileName);
-        if (false === $realFileName) {
-            throw new \Xinc\Core\Exception\MalformedConfigException('System config file: ' . $fileName . ' not found.');
-        }
-        $configFile = Xinc_Config_File::load($realFileName);
-
-        $configParser = new Xinc_Config_Parser($configFile);
-
-        $plugins = $configParser->getPlugins();
-        $engines = $configParser->getEngines();
-        $configSettings = $configParser->getConfigSettings();
-
-        $pluginParser = new Xinc_Plugin_Parser();
-        $pluginParser->parse($plugins);
-
-        $this->engineParser = new Xinc_Engine_Parser();
-        $this->engineParser->parse($engines);
-
-        while ($configSettings->hasNext()) {
-            $setting = $configSettings->next();
-            $attributes = $setting->attributes();
-            $name = (string) $attributes->name;
-            $value = (string) $attributes->value;
-            if ($name == 'loglevel' && Xinc_Logger::getInstance()->logLevelSet()) {
-                $value = Xinc_Logger::getInstance()->getLogLevel();
-            }
-            self::getInstance()->setConfigDirective($name, $value);
-        }
-    }
 
 
 
 
-    public function getSystemTimezone()
-    {
-        return self::$systemTimezone;
-    }
-
-    private function setConfigDirective($name, $value)
-    {
-        $this->config[$name] = $value;
-        switch ($name) {
-            case 'loglevel':
-                Xinc_Logger::getInstance()->setLogLevel($value);
-                break;
-            case 'timezone':
-                Xinc_Timezone::set($value);
-                break;
-            default:
-        }
-    }
-
-    public function restoreConfigDirectives()
-    {
-        foreach ($this->config as $name => $value) {
-            $this->setConfigDirective($name, $value);
-        }
-        /**
-         * restore timezone, if system.xml does not configure one
-         */
-        if ($this->getConfigDirective('timezone') === null) {
-            Xinc_Timezone::reset();
-        }
-    }
-
-    public function getConfigDirective($name)
-    {
-        return isset($this->config[$name]) ? $this->config[$name] : null;
-    }
 
 
     /**
@@ -542,7 +446,6 @@ class Xinc extends \Core_Daemon
             $logger->info('- Workingdir:         ' . $arguments['workingDir']);
             $logger->info('- Projectdir:         ' . $arguments['projectDir']);
             $logger->info('- Statusdir:          ' . $arguments['statusDir']);
-            $logger->info('- System Config File: ' . $arguments['configFile']);
             $logger->info('- Log Level:          ' . $logger->getLogLevel());
             $logger->info('- Daemon:             ' . ($arguments['daemon'] ? 'yes' : 'no'));
 
@@ -581,8 +484,6 @@ class Xinc extends \Core_Daemon
                 }
             }
             self::$instance->start($arguments['daemon']);
-        } catch (Xinc_Config_Exception_Getopt $e) {
-            $logger->error('Handling Arguments: ' . $e->getMessage(), STDERR);
         } catch (Xinc_Build_Status_Exception_NoDirectory $statusNoDir) {
             $logger->error(
                 'Xinc stopped: ' . 'Status Dir: "'
@@ -592,12 +493,6 @@ class Xinc extends \Core_Daemon
         } catch (Xinc_Exception_IO $ioException) {
             $logger->error(
                 'Xinc stopped: ' . $ioException->getMessage(),
-                STDERR
-            );
-        } catch (Xinc_Config_Exception_FileNotFound $configFileNotFound) {
-            $logger->error(
-                'Xinc stopped: ' . 'Config File "'
-                . $configFileNotFound->getFileName() . '" not found',
                 STDERR
             );
         } catch (Exception $e) {
@@ -691,8 +586,7 @@ class Xinc extends \Core_Daemon
 
         echo 'Usage: xinc [switches]' . "\n\n";
 
-        echo '  -f --config-file=<file>   The config file to use.' . "\n"
-            . '  -j --project-file=<file>  The project file to use.' . "\n"
+        echo '  -f --project-file=<file>  The project file to use.' . "\n"
             . '  -l --log-file=<file>      The log file to use.' . "\n"
             . '  -p --pid-file=<file>      The directory to put the PID file' . "\n"
             . '  -r --project-dir=<dir>    The project directory.' . "\n"
