@@ -2,7 +2,6 @@
 <?php
 
 require_once '../../../xinc-composer/vendor/autoload.php';
-require_once '../../xinc-common/src/Xinc/Logger.php';
 require_once 'Xinc/Server/Xinc.php';
 
 $instance = Xinc\Server\Xinc::getInstance();

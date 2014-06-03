@@ -281,7 +281,7 @@ class Xinc extends \Core_Daemon
      */
     public function setWorkingDir($strWorkingDir)
     {
-        \Xinc\Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
+        \Xinc\Core\Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
         $this->workingDir = $this->checkDirectory($strWorkingDir);
     }
 
@@ -303,7 +303,7 @@ class Xinc extends \Core_Daemon
      */
     public function setProjectDir($strProjectDir)
     {
-        \Xinc\Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
+        \Xinc\Core\Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
         $this->projectDir = $this->checkDirectory($strProjectDir);
     }
 
@@ -325,7 +325,7 @@ class Xinc extends \Core_Daemon
      */
     public function setStatusDir($strStatusDir)
     {
-        \Xinc\Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
+        \Xinc\Core\Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
         $this->statusDir = $this->checkDirectory($strStatusDir);
     }
 
@@ -351,19 +351,19 @@ class Xinc extends \Core_Daemon
     protected function checkDirectory($strDirectory)
     {
         if (!is_dir($strDirectory)) {
-            \Xinc\Logger::getInstance()->verbose(
+            \Xinc\Core\Logger::getInstance()->verbose(
                 'Directory "' . $strDirectory . '" does not exist. Trying to create'
             );
             $bCreated = @mkdir($strDirectory, 0755, true);
             if (!$bCreated) {
                 $arError = error_get_last();
-                \Xinc\Logger::getInstance()->verbose(
+                \Xinc\Core\Logger::getInstance()->verbose(
                     'Directory "' . $strDirectory . '" could not be created.'
                 );
                 throw new \Xinc\Exceptions\IO($strDirectory, null, $arError['message']);
             }
         } elseif (!is_writeable($strDirectory)) {
-            \Xinc\Logger::getInstance()->verbose(
+            \Xinc\Core\Logger::getInstance()->verbose(
                 'Directory "' . $strDirectory . '" is not writeable.'
             );
             throw new \Xinc\Exceptions\IO($strDirectory, null, null, \Xinc\Exceptions\IO::FAILURE_NOT_WRITEABLE);
