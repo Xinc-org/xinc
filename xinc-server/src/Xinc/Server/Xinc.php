@@ -104,6 +104,11 @@ class Xinc extends \Core_Daemon
     protected $loop_interval = -1;
 
     /**
+     * @var array Holding the merged cli parameters.
+     */
+    private $opts = array();
+
+    /**
      * Constructor
      */
     protected function __construct()
@@ -116,10 +121,27 @@ class Xinc extends \Core_Daemon
      * This is where you implement any once-per-execution setup code.
      * @return void
      *
+     * @throws Xinc\Core\Exception\IOException if setting dirs/files failed.
      * @throws \Exception
      */
     protected function setup()
     {
+        if (isset($this->opts['working-dir'])) {
+            $this->setWorkingDir($this->opts['working-dir']);
+        }
+
+        if (isset($this->opts['project-dir'])) {
+            $this->setProjectDir($this->opts['project-dir']);
+        }
+
+        if (isset($this->opts['status-dir'])) {
+            $this->setStatusDir($this->opts['status-dir']);
+        }
+
+        if (isset($this->opts['config-file'])) {
+            $this->setSystemConfigFile($this->opts['config-file']);
+        }
+
         $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
     }
 
@@ -204,7 +226,7 @@ class Xinc extends \Core_Daemon
             $this->set('daemonized', false);
         }
 
-        $opts = $this->mergeOpts(
+        $this->opts = $this->mergeOpts(
             $opts,
             array(
                 'w' => 'working-dir',
@@ -224,22 +246,6 @@ class Xinc extends \Core_Daemon
                 'verbose'     => 2, //Xinc_Logger::DEFAULT_LOG_LEVEL,
             )
         );
-
-        if (isset($opts['working-dir'])) {
-            $this->setWorkingDir($opts['working-dir']);
-        }
-
-        if (isset($opts['project-dir'])) {
-            $this->setProjectDir($opts['project-dir']);
-        }
-
-        if (isset($opts['status-dir'])) {
-            $this->setStatusDir($opts['status-dir']);
-        }
-
-        if (isset($opts['config-file'])) {
-            $this->setSystemConfigFile($opts['config-file']);
-        }
 
         parent::getopt();
     }
