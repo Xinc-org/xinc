@@ -32,8 +32,6 @@
 
 namespace Xinc\Server;
 
-require_once 'Xinc/Exception/IO.php';
-require_once 'Xinc/Exception/MalformedConfig.php';
 require_once 'Xinc/Plugin/Parser.php';
 require_once 'Xinc/Config/Parser.php';
 require_once 'Xinc/Config.php';
@@ -277,7 +275,7 @@ class Xinc extends \Core_Daemon
      *
      * @param string $strWorkingDir The working directory.
      *
-     * @throws Xinc\Exceptions\IO
+     * @throws Xinc\Core\Exception\IOException
      */
     public function setWorkingDir($strWorkingDir)
     {
@@ -299,7 +297,7 @@ class Xinc extends \Core_Daemon
      *
      * @param string $strProjectDir Directory of the project files.
      *
-     * @throws Xinc\Exceptions\IO
+     * @throws Xinc\Core\Exception\IOException
      */
     public function setProjectDir($strProjectDir)
     {
@@ -321,7 +319,7 @@ class Xinc extends \Core_Daemon
      *
      * @param string $strStatusDir Directory for the status files.
      *
-     * @throws Xinc\Exceptions\IO
+     * @throws Xinc\Core\Exception\IOException
      */
     public function setStatusDir($strStatusDir)
     {
@@ -346,7 +344,7 @@ class Xinc extends \Core_Daemon
      * @param string $strDirectory Directory to check for.
      *
      * @return string The realpath of given directory.
-     * @throws Xinc\Exception\IO
+     * @throws Xinc\Core\Exception\IOException
      */
     protected function checkDirectory($strDirectory)
     {
@@ -360,13 +358,15 @@ class Xinc extends \Core_Daemon
                 \Xinc\Core\Logger::getInstance()->verbose(
                     'Directory "' . $strDirectory . '" could not be created.'
                 );
-                throw new \Xinc\Exceptions\IO($strDirectory, null, $arError['message']);
+                throw new \Xinc\Core\Exception\IOException($strDirectory, null, $arError['message']);
             }
         } elseif (!is_writeable($strDirectory)) {
             \Xinc\Core\Logger::getInstance()->verbose(
                 'Directory "' . $strDirectory . '" is not writeable.'
             );
-            throw new \Xinc\Exceptions\IO($strDirectory, null, null, \Xinc\Exceptions\IO::FAILURE_NOT_WRITEABLE);
+            throw new \Xinc\Core\Exception\IOException(
+                $strDirectory, null, null, \Xinc\Core\Exception\IOException::FAILURE_NOT_WRITEABLE
+            );
         }
 
         return realpath($strDirectory);
@@ -382,7 +382,7 @@ class Xinc extends \Core_Daemon
     {
         $realFileName = realpath($fileName);
         if (false === $realFileName) {
-            throw new \Xinc\Exceptions\MalformedConfig('System config file: ' . $fileName . ' not found.');
+            throw new \Xinc\Core\Exception\MalformedConfigException('System config file: ' . $fileName . ' not found.');
         }
         $configFile = Xinc_Config_File::load($realFileName);
 

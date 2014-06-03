@@ -7,7 +7,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Engine.Exception
+ * @package   Xinc.Core
  * @author    David Ellis <username@example.org>
  * @author    Gavin Foster <username@example.org>
  * @copyright 2007 David Ellis, One Degree Square
@@ -29,8 +29,8 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Exceptions;
+namespace Xinc\Core\Exception;
 
-class MalformedConfig extends Exception
+class MalformedConfigException extends \Xinc\Core\Exception
 {
 }

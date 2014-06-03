@@ -124,7 +124,7 @@ class Logger
     /**
      * Singleton getInstance method.
      *
-     * @return Xinc_Logger
+     * @return Xinc\Core\Logger
      */
     public static function getInstance()
     {
@@ -150,7 +150,7 @@ class Logger
 
         $logTime = time();
 
-        $this->_logQueue[] = new Xinc_Logger_Message($priority[1], $logTime, $msg);
+        $this->_logQueue[] = new Logger\Message($priority[1], $logTime, $msg);
 
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
@@ -333,7 +333,7 @@ class Logger
 
     /**
      * @param string $logFile
-     * @throws Xinc_Logger_Exception_NonWriteable
+     * @throws Xinc\Core\Logger\Exception\NonWriteable
      */
     public function setXincLogFile($logFile)
     {
@@ -341,7 +341,7 @@ class Logger
 
         if (!is_writeable($logFile) && !is_writeable($parentDir)) {
             $this->error('Cannot open "' . $logFile . '" for writing', STDERR);
-            throw new Xinc_Logger_Exception_NonWriteable($logFile);
+            throw new Logger\Exception\NonWriteableException($logFile);
         }
         $this->_logFile = $logFile;
     }

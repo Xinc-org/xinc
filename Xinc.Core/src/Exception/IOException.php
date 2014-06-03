@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category   Development
- * @package    Xinc
+ * @package    Xinc.Core
  * @subpackage Exception
  * @author     Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright  2012 Alexander Opitz, Leipzig
@@ -28,9 +28,9 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Exceptions;
+namespace Xinc\Core\Exception;
 
-class IO extends Exception
+class IOException extends \Xinc\Core\Exception
 {
     const FAILURE_IO = 1;
     const FAILURE_NOT_WRITEABLE = 2;
