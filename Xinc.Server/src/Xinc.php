@@ -110,6 +110,19 @@ class Xinc extends \Core_Daemon
      */
     protected function setup()
     {
+        $logger = \Xinc\Core\Logger::getInstance();
+
+        $logger->setLogLevel($this->opts['verbose']);
+        $logger->setXincLogFile($this->opts['log-file']);
+
+        $logger->info('Starting up Xinc');
+        $logger->info('- Version:    ' . self::getVersion());
+        $logger->info('- Workingdir: ' . $this->opts['working-dir']);
+        $logger->info('- Projectdir: ' . $this->opts['project-dir']);
+        $logger->info('- Statusdir:  ' . $this->opts['status-dir']);
+        $logger->info('- Log Level:  ' . $this->opts['verbose']);
+        $logger->info('- Daemon:     ' . ($this->is('daemonized') ? 'yes' : 'no'));
+
         if (isset($this->opts['working-dir'])) {
             $this->setWorkingDir($this->opts['working-dir']);
         }
@@ -160,8 +173,15 @@ class Xinc extends \Core_Daemon
     /**
      * @TODO send to logger
      */
-    public function log($message, $label = '', $indent = 0) {
-        echo 'Message: ' . $message . "\n";
+    public function log($message, $label = '', $indent = 0)
+    {
+        if ($label !== '') {
+            $message = $label . ': ' . $message;
+        }
+        \Xinc\Core\Logger::getInstance()->info($message);
+        if ($this->is('stdout')) {
+            echo $message . "\n";
+        }
     }
 
     /**
@@ -437,17 +457,6 @@ class Xinc extends \Core_Daemon
             /**
              * Set up the logging
              */
-            $logger = Xinc_Logger::getInstance();
-            $arguments = Xinc::handleArguments($args);
-            $logger->setLogLevel($arguments['logLevel']);
-            $logger->setXincLogFile($arguments['logFile']);
-            $logger->info('Starting up Xinc');
-            $logger->info('- Version: ' . self::getVersion());
-            $logger->info('- Workingdir:         ' . $arguments['workingDir']);
-            $logger->info('- Projectdir:         ' . $arguments['projectDir']);
-            $logger->info('- Statusdir:          ' . $arguments['statusDir']);
-            $logger->info('- Log Level:          ' . $logger->getLogLevel());
-            $logger->info('- Daemon:             ' . ($arguments['daemon'] ? 'yes' : 'no'));
 
             // get the project config files
             if (isset($arguments['projectFiles'])) {

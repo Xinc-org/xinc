@@ -1,16 +1,14 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Logger messages are added to the Logger queue.
+ * Exception, logging file is not writeable
  *
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Logger
- * @author    David Ellis <username@example.org>
- * @author    Gavin Foster <username@example.org>
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
- * @copyright 2007 David Ellis, One Degree Square
+ * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
  *            Xinc is free software; you can redistribute it and/or modify
@@ -29,34 +27,17 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-class Xinc_Logger_Message
+namespace Xinc\Core\Logger\Exception;
+
+class NonWriteableException extends \Exception
 {
     /**
-     * @var string Priority of the message (e.g. 'info').
-     */
-    public $priority;
-
-    /**
-     * @var string Content of message.
-     */
-    public $message;
-
-    /**
-     * @var ? Timestamp of the message.
-     */
-    public $timestamp;
-
-    /**
-     * Constructor sets the priority and message content.
+     * Constructor, generates an Exception Message
      *
-     * @param string $strPriority Priority of the message.
-     * @param ?      $timestamp   Timestamp of the message.
-     * @param string $strContent  Content of the message.
+     * @param string $strFileName Name of file which isn't writeable.
      */
-    public function __construct($strPriority, $timestamp, $strContent)
+    public function __construct($strFileName)
     {
-        $this->priority = $strPriority;
-        $this->timestamp = $timestamp;
-        $this->message = $strContent;
+        parent::__construct('Log File ' . $strFileName . ' is not writeable');
     }
 }

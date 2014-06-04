@@ -154,7 +154,7 @@ class Logger
 
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
-        $timestr = '[' . date('Y-m-d H:i:s', $logTime) . '-' . Xinc_Timezone::get() . ']';
+        $timestr = '[' . date('Y-m-d H:i:s - T', $logTime) . ']';
         while (strlen($prioritystr) < 7) {
             $prioritystr .= ' ';
         }
@@ -262,8 +262,7 @@ class Logger
             $message = $this->_logQueue[$i];
             $messageString  = '<message priority="' . $message->priority . '" ';
             $messageString .= 'timestamp="' . $message->timestamp . '" ';
-            $messageString .= 'time="' . date('Y-m-d H:i:s', $message->timestamp)
-                           . '-' . Xinc_Timezone::get() . '"><![CDATA[';
+            $messageString .= 'time="' . date('Y-m-d H:i:s - T', $message->timestamp) . '"><![CDATA[';
             $messageString .= base64_encode($message->message);
             $messageString .= ']]></message>';
 

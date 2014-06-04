@@ -1,14 +1,16 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Exception, logging file is not writeable
+ * Logger messages are added to the Logger queue.
  *
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Logger.Exception
+ * @package   Xinc.Core
+ * @author    David Ellis <username@example.org>
+ * @author    Gavin Foster <username@example.org>
  * @author    Arno Schneider <username@example.org>
- * @copyright 2007 Arno Schneider, Barcelona
+ * @copyright 2007 David Ellis, One Degree Square
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
  *            Xinc is free software; you can redistribute it and/or modify
@@ -24,18 +26,39 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-class Xinc_Logger_Exception_NonWriteable extends Exception
+namespace Xinc\Core\Logger;
+
+class Message
 {
     /**
-     * Constructor, generates an Exception Message
-     *
-     * @param string $strFileName Name of file which isn't writeable.
+     * @var string Priority of the message (e.g. 'info').
      */
-    public function __construct($strFileName)
+    public $priority;
+
+    /**
+     * @var string Content of message.
+     */
+    public $message;
+
+    /**
+     * @var ? Timestamp of the message.
+     */
+    public $timestamp;
+
+    /**
+     * Constructor sets the priority and message content.
+     *
+     * @param string $strPriority Priority of the message.
+     * @param ?      $timestamp   Timestamp of the message.
+     * @param string $strContent  Content of the message.
+     */
+    public function __construct($strPriority, $timestamp, $strContent)
     {
-        parent::__construct('Log File ' . $strFileName . ' is not writeable');
+        $this->priority = $strPriority;
+        $this->timestamp = $timestamp;
+        $this->message = $strContent;
     }
 }
