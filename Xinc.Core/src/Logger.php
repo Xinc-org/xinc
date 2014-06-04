@@ -38,37 +38,36 @@ class Logger
      *
      * @var Xinc\Core\Logger
      */
-    private static $_instance;
+    private static $instance;
 
     /**
      * Path to the log file.
      *
      * @var string
      */
-    private $_logFile;
+    private $file;
 
     /**
      * Path to the log file.
      *
      * @var string
      */
-    private $_buildLogFile;
+    private $buildLogFile;
 
     /**
      * Queue of logger messages.
      *
-     * @var Xinc_Logger_Message[]
+     * @var Xinc\Core\Logger\Message[]
      */
-    private $_logQueue;
+    private $logQueue;
 
     /**
-     * Maximum length of log queue (i.e. last $max items will be in the queue).
-     *
-     * @var integer
+     * Maximum messages in queue
      */
-    private $_max;
+    private $max = 50;
 
-    private $_logLevel = 2;
+    private $logLevel = 2;
+
     const LOG_LEVEL_VERBOSE = 0;
     const LOG_LEVEL_DEBUG = 1;
     const LOG_LEVEL_INFO = 2;
@@ -79,16 +78,15 @@ class Logger
 
     /**
      * Log levels
-     *
      */
-    static $logLevelError = array(4, 'error');
-    static $logLevelWarn = array(3, 'warn');
-    static $logLevelDebug = array(1, 'debug');
+    static $logLevelError = array(self::LOG_LEVEL_ERROR, 'error');
+    static $logLevelWarn = array(self::LOG_LEVEL_WARN, 'warn');
+    static $logLevelInfo = array(self::LOG_LEVEL_INFO, 'info');
+    static $logLevelDebug = array(self::LOG_LEVEL_DEBUG, 'debug');
+    static $logLevelVerbose = array(self::LOG_LEVEL_VERBOSE, 'verbose');
 
-    static $logLevelInfo = array(2, 'info');
-    static $logLevelVerbose = array(0, 'verbose');
 
-    private $_logLevelSet = false;
+    private $logLevelSet = false;
 
     /**
      * Private singleton constructor.
@@ -96,29 +94,28 @@ class Logger
      */
     private function __construct()
     {
-        $this->_logQueue = array();
-        $this->_max = 50;
+        $this->logQueue = array();
     }
 
     public function setLogLevel($level)
     {
-        $this->_logLevelSet = true;
+        $this->logLevelSet = true;
         /**
          * setting to info, so the loglevel change gets written to the log
          */
-        $this->_logLevel = self::LOG_LEVEL_INFO;
+        $this->logLevel = self::LOG_LEVEL_INFO;
         $this->info("Setting loglevel to $level");
-        $this->_logLevel = $level;
+        $this->logLevel = $level;
     }
 
     public function logLevelSet()
     {
-        return $this->_logLevelSet;
+        return $this->logLevelSet;
     }
 
     public function getLogLevel()
     {
-        return $this->_logLevel;
+        return $this->logLevel;
     }
 
     /**
@@ -128,10 +125,10 @@ class Logger
      */
     public static function getInstance()
     {
-        if (!Logger::$_instance) {
-            Logger::$_instance = new Logger();
+        if (!Logger::$instance) {
+            Logger::$instance = new Logger();
         }
-        return Logger::$_instance;
+        return Logger::$instance;
     }
 
     /**
@@ -144,13 +141,13 @@ class Logger
     private function log($priority, $msg, $fileHandle = null)
     {
         /** @todo parse log level to display from a config */
-        if ($priority[0] < $this->_logLevel && $fileHandle === null) {
+        if ($priority[0] < $this->logLevel && $fileHandle === null) {
             return;
         }
 
         $logTime = time();
 
-        $this->_logQueue[] = new Logger\Message($priority[1], $logTime, $msg);
+        $this->logQueue[] = new Logger\Message($priority[1], $logTime, $msg);
 
         /** ensure the output messages line up vertically */
         $prioritystr = '[' . $priority[1] . ']';
@@ -160,7 +157,7 @@ class Logger
         }
         $message = ' ' . $prioritystr . '  ' . $timestr . ' ' . $msg."\n";
 
-        if ($this->_logLevel == self::LOG_LEVEL_VERBOSE) {
+        if ($this->logLevel == self::LOG_LEVEL_VERBOSE) {
             if (defined('STDERR')) {
                 fputs(STDERR, $message);
             } else {
@@ -168,17 +165,17 @@ class Logger
             }
         }
 
-        if ($this->_logFile != null) {
+        if ($this->file != null) {
             if ($fileHandle !== null) {
                 fputs($fileHandle, $message);
             } else {
-                error_log($message, 3, $this->_logFile);
+                error_log($message, 3, $this->file);
             }
         } else if ($fileHandle !== null) {
             fputs($fileHandle, $message);
         }
 
-        if (count($this->_logQueue)>$this->_max) {
+        if (count($this->logQueue) > $this->max) {
             $this->flush();
         }
     }
@@ -253,13 +250,13 @@ class Logger
      */
     public function flush()
     {
-        if ( null == $this->_buildLogFile) {
+        if ( null == $this->buildLogFile) {
             $this->_resetLogQueue();
             return;
         }
         $messageElements = array();
-        for ($i = count($this->_logQueue)-1; $i >= 0; $i--) {
-            $message = $this->_logQueue[$i];
+        for ($i = count($this->logQueue)-1; $i >= 0; $i--) {
+            $message = $this->logQueue[$i];
             $messageString  = '<message priority="' . $message->priority . '" ';
             $messageString .= 'timestamp="' . $message->timestamp . '" ';
             $messageString .= 'time="' . date('Y-m-d H:i:s - T', $message->timestamp) . '"><![CDATA[';
@@ -271,15 +268,15 @@ class Logger
 
         $previousLogMessages = '';
 
-        $dirName = dirname($this->_buildLogFile);
+        $dirName = dirname($this->buildLogFile);
         if (!file_exists($dirName)) {
             mkdir($dirName, 0755, true);
         }
-        if (file_exists($this->_buildLogFile)) {
+        if (file_exists($this->buildLogFile)) {
             // copying to temporary file for later inclusion via fgets, less memory consuming
-            copy($this->_buildLogFile, $this->_buildLogFile . '.temp');
+            copy($this->buildLogFile, $this->buildLogFile . '.temp');
         }
-        $fh = fopen($this->_buildLogFile, 'w+');
+        $fh = fopen($this->buildLogFile, 'w+');
         if (is_resource($fh)) {
             fputs($fh, '<?xml version="1.0"?>');
             fputs($fh, "\n");
@@ -287,8 +284,8 @@ class Logger
             fputs($fh, "\n");
             fputs($fh, implode("\n", $messageElements));
             fputs($fh, "\n");
-            if (file_exists($this->_buildLogFile . '.temp')) {
-                $fht = fopen($this->_buildLogFile . '.temp', 'r');
+            if (file_exists($this->buildLogFile . '.temp')) {
+                $fht = fopen($this->buildLogFile . '.temp', 'r');
                 if (is_resource($fht)) {
                     $lineCounter = 0;
                     while ($line = fgets($fht)) {
@@ -299,7 +296,7 @@ class Logger
                         $lineCounter++;
                     }
                     fclose($fht);
-                    unlink($this->_buildLogFile . '.temp');
+                    unlink($this->buildLogFile . '.temp');
                 } else {
                     self::error('Cannot include previous log messages');
                 }
@@ -308,16 +305,16 @@ class Logger
             }
             //fputs($fh, $previousLogMessages);
             fclose($fh);
-            //file_put_contents($this->_buildLogFile, $buildXml);
+            //file_put_contents($this->buildLogFile, $buildXml);
         } else {
-            self::error('Cannot open: ' . $this->_buildLogFile . ' for writing.');
+            self::error('Cannot open: ' . $this->buildLogFile . ' for writing.');
         }
         $this->_resetLogQueue();
     }
 
     private function _resetLogQueue()
     {
-        $this->_logQueue = array();
+        $this->logQueue = array();
     }
 
     /**
@@ -327,7 +324,7 @@ class Logger
      */
     public function setBuildLogFile($logFile)
     {
-        $this->_buildLogFile = $logFile;
+        $this->buildLogFile = $logFile;
     }
 
     /**
@@ -342,11 +339,11 @@ class Logger
             $this->error('Cannot open "' . $logFile . '" for writing', STDERR);
             throw new Logger\Exception\NonWriteableException($logFile);
         }
-        $this->_logFile = $logFile;
+        $this->file = $logFile;
     }
 
     public static function tearDown()
     {
-        self::$_instance = null;
+        self::$instance = null;
     }
 }
