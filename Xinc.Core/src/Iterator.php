@@ -24,10 +24,12 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-class Xinc_Iterator
+namespace Xinc\Core;
+
+class Iterator
 {
     /**
      * Internal array
@@ -41,7 +43,7 @@ class Xinc_Iterator
      *
      * @var integer
      */
-    private $_pointer = 0;
+    private $pointer = 0;
     
     /**
      * size of the array
@@ -64,21 +66,20 @@ class Xinc_Iterator
     
     public function hasNext()
     {
-        return $this->_pointer < $this->size;
+        return $this->pointer < $this->size;
     }
     
     public function rewind()
     {
-        $this->_pointer = 0;
+        $this->pointer = 0;
     }
 
     /**
-     *
      * @return Xinc_Build_Interface
      */
     public function &next()
     {
-        return $this->array[$this->_pointer++];
+        return $this->array[$this->pointer++];
     }
     
     public function count()

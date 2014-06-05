@@ -68,9 +68,9 @@ class File extends \SimpleXMLElement
             $array[] = $parent;
             
         }
-      
-        foreach ( $array as $path ) {
-            if (!in_array($path, self::$_allowedElements)) {
+
+        foreach ($array as $path) {
+            if (!in_array($path, self::$allowedElements)) {
                 throw new Exception\InvalidEntryException($path);
             }
         }

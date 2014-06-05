@@ -486,9 +486,9 @@ class Xinc extends \Core_Daemon
 
             Xinc::$buildQueue->addBuilds($builds);
 
-        } catch (Xinc_Project_Config_Exception_FileNotFound $notFound) {
+        } catch (\Xinc\Core\Project\Config\Exception\FileNotFoundException $notFound) {
             Xinc_Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
-        } catch (Xinc_Project_Config_Exception_InvalidEntry $invalid) {
+        } catch (\Xinc\Core\Project\Config\Exception\InvalidEntryException $invalid) {
             Xinc_Logger::getInstance()->error('Project Config File has an invalid entry: ' . $invalid->getMessage());
         } catch (Xinc_Engine_Exception_NotFound $engineNotFound) {
             Xinc_Logger::getInstance()->error(

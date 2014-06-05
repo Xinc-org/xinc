@@ -60,8 +60,8 @@ class Config
      */
     public function __construct($fileName)
     {
-        $configFile = \Xinc\Core\Project\Config\File::load($fileName);
-        $configParser = new \Xinc\Core\Project\Config\Parser($configFile);
+        $configFile = Config\File::load($fileName);
+        $configParser = new Config\Parser($configFile);
         
         $this->projectConfigs = $configParser->getProjects();
         $this->engineName = $configParser->getEngineName();
@@ -71,7 +71,7 @@ class Config
     private function generateProjects()
     {
         $projects = array();
-        
+
         while ($this->projectConfigs->hasNext()) {
             $projectConfig = $this->projectConfigs->next();
             
@@ -95,7 +95,7 @@ class Config
             $projects[] = $projectObject;
         }
         
-        $this->projects = new Xinc\Core\Project\Iterator($projects);
+        $this->projects = new Iterator($projects);
     }
     
     

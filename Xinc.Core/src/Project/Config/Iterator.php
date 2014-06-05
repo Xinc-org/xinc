@@ -2,52 +2,49 @@
 /**
  * Iterator over an array of SimpleXMLElement objects defining Projects
  * 
- * @package Xinc.Project
- * @author Arno Schneider
- * @version 2.0
+ * @package   Xinc.Core
+ * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://code.google.com/p/xinc/
+ */
 
-require_once 'Xinc/Iterator.php';
-require_once 'Xinc/Project/Config/Exception/InvalidElement.php';
-require_once 'Xinc/Project/Config/Exception/FileNotFound.php';
-require_once 'Xinc/Project/Config/Exception/InvalidEntry.php';
+namespace Xinc\Core\Project\Config;
 
-class Xinc_Project_Config_Iterator extends Xinc_Iterator
+class Iterator extends \Xinc\Core\Iterator
 {
   
     /**
      *
-     * @param array $array
-     * @throws Xinc_Project_Config_Exception_InvalidElement
+     * @param array $elements
+     *
+     * @throws Xinc\Core\Project\Config\Exception\InvalidElementException
      */
-    public function __construct(array $array)
+    public function __construct(array $elements)
     {
-        foreach ($array as $xmlElement) {
-            if (!$xmlElement instanceof Xinc_Project_Config_File ) {
-                throw new Xinc_Project_Config_Exception_InvalidElement();
+        foreach ($elements as $xmlElement) {
+            if (!$xmlElement instanceof File) {
+                throw new Exception\InvalidElementException();
             } /**else if ($name != 'project') {
                 throw new Xinc_Project_Config_Exception_InvalidElement();
             }*/
             
         }
-        
-        parent::__construct($array);
+
+        parent::__construct($elements);
     }
-  
 }

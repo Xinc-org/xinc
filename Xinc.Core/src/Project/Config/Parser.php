@@ -2,51 +2,50 @@
 /**
  * Parses an array of SimpleXMLElements and generates Projects out of it
  * 
- * @package Xinc.Project
- * @author Arno Schneider
- * @version 2.0
+ * @package   Xinc.Core
+ * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
- *    This file is part of Xinc.
- *    Xinc is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published
- *    by the Free Software Foundation; either version 2.1 of the License, or    
- *    (at your option) any later version.
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
+ *            This file is part of Xinc.
+ *            Xinc is free software; you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation; either version 2.1 of
+ *            the License, or (at your option) any later version.
  *
- *    Xinc is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
+ *            Xinc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *            GNU Lesser General Public License for more details.
  *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with Xinc, write to the Free Software
- *    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-require_once 'Xinc/Project/Config/File.php';
-require_once 'Xinc/Project/Config/Iterator.php';
+ *            You should have received a copy of the GNU Lesser General Public
+ *            License along with Xinc, write to the Free Software Foundation,
+ *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @link      http://code.google.com/p/xinc/
+ */
 
-class Xinc_Project_Config_Parser
+namespace Xinc\Core\Project\Config;
+
+class Parser
 {
     /**
-     *
-     * @var Xinc_Project_Config_File
+     * @var Xinc\Core\Project\Config\File
      */
-    private $_configFile;
+    private $configFile;
     
-    public function __construct(Xinc_Project_Config_File $configFile)
+    public function __construct(File $configFile)
     {
-        $this->_configFile = $configFile;
+        $this->configFile = $configFile;
     }
     
     /**
      * generates an array of all configured projects
      *
-     * @return Xinc_Project_Iterator
+     * @return Xinc\Core\Project\Iterator
      */
     public function getProjects()
     {
-        $projects = $this->_configFile->xpath("//project");
-        return new Xinc_Project_Config_Iterator($projects);
+        $projects = $this->configFile->xpath("//project");
+        return new Iterator($projects);
     }
     
     /**
@@ -55,7 +54,7 @@ class Xinc_Project_Config_Parser
      */
     public function getEngineName()
     {
-        $xincAttributes = $this->_configFile->attributes();
+        $xincAttributes = $this->configFile->attributes();
         foreach ($xincAttributes as $name => $value) {
             if ($name == 'engine') return (string)$value;
         }

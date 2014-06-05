@@ -40,22 +40,22 @@ class Project
      *
      * @var string
      */
-    private $_name;
+    private $name;
 
     /**
      * Current status of the project
      *
-     * @see Xinc_Project_Status
+     * @see Xinc\Core\Project\Status
      * @var integer
      */
-    private $_status = 1;
+    private $status = 1;
     
     /**
      * The xml content of this projects configuration
      *
-     * @var Xinc_Project_Config_File
+     * @var Xinc\Core\Project\Config\File
      */
-    private $_config;
+    private $config;
 
     /**
      * Sets the project name for display purposes.
@@ -64,16 +64,16 @@ class Project
      */
     public function setName($name)
     {
-        $this->_name = $name;
+        $this->name = $name;
     }
 
     /**
      *
-     * @param Xinc_Project_Config_File $config
+     * @param Xinc\Core\Project\Config\File $config
      */
-    public function setConfig(Xinc_Project_Config_File &$config)
+    public function setConfig(Project\Config\File $config)
     {
-        $this->_config = $config;
+        $this->config = $config;
     }
     
     /**
@@ -81,7 +81,7 @@ class Project
      */
     public function getConfig()
     {
-        return $this->_config;
+        return $this->config;
     }
 
     /**
@@ -91,7 +91,7 @@ class Project
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -103,7 +103,7 @@ class Project
     public function setStatus($status)
     {
         $this->info('Setting status to '.$status);
-        $this->_status = $status;
+        $this->status = $status;
     }
 
     /**
@@ -113,7 +113,7 @@ class Project
      */
     public function getStatus()
     {
-        return $this->_status;
+        return $this->status;
     }
 
     /**
