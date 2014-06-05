@@ -38,7 +38,6 @@ require_once 'Xinc/Engine/Repository.php';
 require_once 'Xinc/Build/Queue.php';
 require_once 'Xinc/Build/Status/Exception/NoDirectory.php';
 require_once 'Xinc/Build/Status/Exception/NonWriteable.php';
-require_once 'Xinc/Timezone.php';
 
 class Xinc extends \Core_Daemon
 {
@@ -133,6 +132,10 @@ class Xinc extends \Core_Daemon
 
         if (isset($this->opts['status-dir'])) {
             $this->setStatusDir($this->opts['status-dir']);
+        }
+var_dump($this->opts['project-file']);
+        if (isset($this->opts['project-file'])) {
+            $this->setProjectFiles($this->opts['project-file']);
         }
 
         $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
@@ -240,7 +243,7 @@ class Xinc extends \Core_Daemon
                 'project-dir' => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_PROJECT_DIR . DIRECTORY_SEPARATOR,
                 'status-dir'  => $workingDir . DIRECTORY_SEPARATOR . self::DEFAULT_STATUS_DIR . DIRECTORY_SEPARATOR,
                 'log-file'    => $workingDir . DIRECTORY_SEPARATOR . 'xinc.log',
-                'verbose'     => 2, //Xinc_Logger::DEFAULT_LOG_LEVEL,
+                'verbose'     => \Xinc\Core\Logger::DEFAULT_LOG_LEVEL,
             )
         );
 
@@ -375,7 +378,17 @@ class Xinc extends \Core_Daemon
         return realpath($strDirectory);
     }
 
+    public function addProjectFiles($files)
+    {
+        if (is_string($files)) {
+            $files = array($files);
+        }
 
+        foreach ($files as $file) {
+            \Xinc\Core\Logger::getInstance()->info('Loading Project-File: ' . $file);
+            $this->addProjectFile($file);
+        }
+    }
 
 
 
@@ -411,7 +424,6 @@ class Xinc extends \Core_Daemon
             declare(ticks = 2);
             $now = time();
             $nextBuildTime = Xinc::$buildQueue->getNextBuildTime();
-            Xinc_Timezone::reset();
 
             if ($nextBuildTime != null) {
                 Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
@@ -452,12 +464,7 @@ class Xinc extends \Core_Daemon
      */
     public static function main($args = '')
     {
-        self::$systemTimezone = Xinc_Timezone::get();
         try {
-            /**
-             * Set up the logging
-             */
-
             // get the project config files
             if (isset($arguments['projectFiles'])) {
                 /**
@@ -516,6 +523,7 @@ class Xinc extends \Core_Daemon
 
         self::$instance->shutDown();
     }
+
 
     /**
      * Add a projectfile to the xinc processing
