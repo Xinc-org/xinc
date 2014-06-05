@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Project
+ * @package   Xinc.Core
  * @author    David Ellis <username@example.com>
  * @author    Gavin Foster <username@example.com>
  * @author    Arno Schneider <username@example.com>
@@ -26,12 +26,14 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
+
+namespace Xinc\Core;
 
 require_once 'Xinc/Build/Scheduler/Interface.php';
 
-class Xinc_Project
+class Project
 {
     /**
      * The name of the project.

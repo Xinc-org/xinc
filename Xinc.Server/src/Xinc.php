@@ -33,7 +33,6 @@
 namespace Xinc\Server;
 
 require_once 'Xinc/Plugin/Parser.php';
-require_once 'Xinc/Project/Config.php';
 require_once 'Xinc/Engine/Repository.php';
 require_once 'Xinc/Build/Queue.php';
 require_once 'Xinc/Build/Status/Exception/NoDirectory.php';
@@ -133,9 +132,9 @@ class Xinc extends \Core_Daemon
         if (isset($this->opts['status-dir'])) {
             $this->setStatusDir($this->opts['status-dir']);
         }
-var_dump($this->opts['project-file']);
+
         if (isset($this->opts['project-file'])) {
-            $this->setProjectFiles($this->opts['project-file']);
+            $this->addProjectFiles($this->opts['project-file']);
         }
 
         $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
@@ -464,62 +463,7 @@ var_dump($this->opts['project-file']);
      */
     public static function main($args = '')
     {
-        try {
-            // get the project config files
-            if (isset($arguments['projectFiles'])) {
-                /**
-                 * pre-process projectFiles
-                 */
-                $merge = array();
-                for ($i = 0; $i < count($arguments['projectFiles']); $i++) {
-                    $projectFile = $arguments['projectFiles'][$i];
-                    if (!file_exists($projectFile) && strstr($projectFile, '*')) {
-                        // we are probably under windows and the command line does not
-                        // autoexpand *.xml
-                        $array = glob($projectFile);
-                        /**
-                         * get rid of the not expanded file
-                         */
-                        unset($arguments['projectFiles'][$i]);
-                        /**
-                         * merge the glob'ed files
-                         */
-                        $merge = array_merge($merge, $array);
-                    } else {
-                        $arguments['projectFiles'][$i] = realpath($projectFile);
-                    }
-                }
-                /**
-                 * merge all the autoglobbed files with the original ones
-                 */
-                $arguments['projectFiles'] = array_merge($arguments['projectFiles'], $merge);
-
-                foreach ($arguments['projectFiles'] as $projectFile) {
-                    $logger->info('Loading Project-File: ' . $projectFile);
-                    self::$instance->addProjectFile($projectFile);
-                }
-            }
-            self::$instance->start($arguments['daemon']);
-        } catch (Xinc_Build_Status_Exception_NoDirectory $statusNoDir) {
-            $logger->error(
-                'Xinc stopped: ' . 'Status Dir: "'
-                . $statusNoDir->getDirectory() . '" is not a directory',
-                STDERR
-            );
-        } catch (Xinc_Exception_IO $ioException) {
-            $logger->error(
-                'Xinc stopped: ' . $ioException->getMessage(),
-                STDERR
-            );
-        } catch (Exception $e) {
-            // we need to catch everything here
-            $logger->error(
-                'Xinc stopped due to an uncaught exception: '
-                . $e->getMessage() . ' in File : ' . $e->getFile() . ' on line '
-                . $e->getLine() . $e->getTraceAsString(),
-                STDERR
-            );
-        }
+        self::$instance->start($arguments['daemon']);
 
         self::$instance->shutDown();
     }
@@ -533,7 +477,7 @@ var_dump($this->opts['project-file']);
     private function addProjectFile($fileName)
     {
         try {
-            $config = new Xinc_Project_Config($fileName);
+            $config = new \Xinc\Core\Project\Config($fileName);
             $engineName = $config->getEngineName();
 
             $engine = Xinc_Engine_Repository::getInstance()->getEngine($engineName);
