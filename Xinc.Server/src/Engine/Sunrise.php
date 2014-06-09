@@ -27,12 +27,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Build/Interface.php';
-require_once 'Xinc/Engine/Interface.php';
-require_once 'Xinc/Engine/Sunrise/Parser.php';
-require_once 'Xinc/Timezone.php';
+namespace Xinc\Server\Engine;
 
-class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
+class Sunrise implements EngineInterface
 {
     const NAME = 'Sunrise';
 
@@ -250,7 +247,7 @@ class Xinc_Engine_Sunrise implements Xinc_Engine_Interface
      * @return Xinc_Build_Iterator
      * @throws Xinc_Build_Exception_Invalid
      */
-    public function parseProjects(Xinc_Project_Iterator $projects)
+    public function parseProjects(Iterator $projects)
     {
         $parser = new Xinc_Engine_Sunrise_Parser($this);
         $buildsArr = $parser->parseProjects($projects);

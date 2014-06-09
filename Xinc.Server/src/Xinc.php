@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc
+ * @package   Xinc.Server
  * @author    David Ellis  <username@example.org>
  * @author    Gavin Foster <username@example.org>
  * @author    Jamie Talbot <username@example.org>
@@ -476,22 +476,25 @@ class Xinc extends \Core_Daemon
      */
     private function addProjectFile($fileName)
     {
+        // TODO: Add Sunrise Engine now. No Plugable way yet.
+        $engine = new \Xinc\Server\Engine\Sunrise();
+        Engine\Repository::getInstance()->registerEngine($engine);
         try {
             $config = new \Xinc\Core\Project\Config($fileName);
             $engineName = $config->getEngineName();
 
-            $engine = Xinc_Engine_Repository::getInstance()->getEngine($engineName);
+            $engine = Engine\Repository::getInstance()->getEngine($engineName);
 
             $builds = $engine->parseProjects($config->getProjects());
 
             Xinc::$buildQueue->addBuilds($builds);
 
         } catch (\Xinc\Core\Project\Config\Exception\FileNotFoundException $notFound) {
-            Xinc_Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
+            \Xinc\Core\Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
         } catch (\Xinc\Core\Project\Config\Exception\InvalidEntryException $invalid) {
-            Xinc_Logger::getInstance()->error('Project Config File has an invalid entry: ' . $invalid->getMessage());
+            \Xinc\Core\Logger::getInstance()->error('Project Config File has an invalid entry: ' . $invalid->getMessage());
         } catch (Xinc_Engine_Exception_NotFound $engineNotFound) {
-            Xinc_Logger::getInstance()->error(
+            \Xinc\Core\Logger::getInstance()->error(
                 'Project Config File references an unknown Engine: ' . $engineNotFound->getMessage()
             );
         }

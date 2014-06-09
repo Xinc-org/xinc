@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Engine
+ * @package   Xinc.Server
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -27,7 +27,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-interface Xinc_Engine_Interface
+namespace Xinc\Server\Engine;
+
+interface EngineInterface
 {
 
     /**

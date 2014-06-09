@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Engine
+ * @package   Xinc.Server
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -24,79 +24,79 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Engine/Iterator.php';
-require_once 'Xinc/Engine/Exception/NotFound.php';
+namespace Xinc\Server\Engine;
 
-class Xinc_Engine_Repository
+class Repository
 {
 
-    private static $_instance;
+    private static $instance;
     
-    private $_defaultEngine;
+    private $defaultEngine;
 
-    private $_engines = array();
+    private $engines = array();
 
     /**
      * Get an instance of the Plugin Repository
      *
-     * @return Xinc_Engine_Repository
+     * @return Xinc\Server\Engine\Repository
      */
     public static function getInstance()
     {
-        if (!Xinc_Engine_Repository::$_instance) {
-            Xinc_Engine_Repository::$_instance = new Xinc_Engine_Repository();
+        if (!static::$instance) {
+            static::$instance = new Repository();
         }
-        return Xinc_Engine_Repository::$_instance;
+        return static::$instance;
     }
 
     /**
      * Register a engine with the repository so that
      * builds can use it
      *
-     * @param Xinc_Engine_Interface $engine
+     * @param Xinc\Server\Engine\EngineInterface $engine
      * @param boolean $default
      *
      * @return boolean
      */
-    public function registerEngine(Xinc_Engine_Interface &$engine, $default = false)
+    public function registerEngine(EngineInterface $engine, $default = false)
     {
         $engineClass = get_class($engine);
         
         if (!$engine->validate()) {
-            Xinc_Logger::getInstance()->error('cannot load engine '
-                                             . $engineClass);
+            \Xinc\Core\Logger::getInstance()->error(
+                'cannot load engine ' . $engineClass
+            );
                                              
             return false;
         }
        
-        if (isset($this->_engines[$engine->getName()]) || isset($this->_engines[$engineClass])) {
-            Xinc_Logger::getInstance()->error('cannot load engine '
-                                             . $engineClass
-                                             . ' already registered');
+        if (isset($this->engines[$engine->getName()]) || isset($this->engines[$engineClass])) {
+            \Xinc\Core\Logger::getInstance()->error(
+                'cannot load engine ' . $engineClass . ' already registered'
+            );
                                              
             return false;
         }
-        $this->_engines[$engine->getName()] = $engine;
-        $this->_engines[$engineClass] = $engine;
+        $this->engines[$engine->getName()] = $engine;
+        $this->engines[$engineClass] = $engine;
         
         if ($default) {
-            $this->_defaultEngine = $engine;
+            $this->defaultEngine = $engine;
         }
         
         return true;
     }
-    
+
     /**
      * Returns Plugin Iterator
      *
-     * @return Xinc_Iterator
+     * @return Xinc\Core\Iterator
      */
     public function getEngines()
     {
-        return new Xinc_Engine_Iterator($this->_engines);
+        return new Iterator($this->engines);
     }
     
     /**
@@ -105,17 +105,18 @@ class Xinc_Engine_Repository
      * @param string $name
      *
      * @return Xinc_Engine_Interface
-     * @throws Xinc_Engine_Exception_NotFound
+     *
+     * @throws Xinc\Server\Engine\Exception\NotFoundException
      */
     public function getEngine($name)
     {
-        if (empty($name) && isset($this->_defaultEngine)) {
-            return $this->_defaultEngine;
+        if (empty($name) && isset($this->defaultEngine)) {
+            return $this->defaultEngine;
         }
-        if (isset($this->_engines[$name])) {
-            return $this->_engines[$name];
+        if (isset($this->engines[$name])) {
+            return $this->engines[$name];
         } else {
-            throw new Xinc_Engine_Exception_NotFound($name);
+            throw new Exception\NotFoundException($name);
         }
     }
 
@@ -125,6 +126,6 @@ class Xinc_Engine_Repository
      */
     public static function tearDown()
     {
-        self::$_instance = null;
+        static::$instance = null;
     }
 }

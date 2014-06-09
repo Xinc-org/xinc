@@ -1,12 +1,12 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Exception, engine was not found
+ * Iterator over an array of SimpleXMLElement objects defining Xinc Engines
  *
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Engine.Exception
+ * @package   Xinc.Engine
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -24,18 +24,35 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-class Xinc_Engine_Exception_NotFound extends Exception
+namespace Xinc\Server\Engine;
+
+class Iterator extends \Xinc\Core\Iterator
 {
+  
     /**
-     * Constructor, generates an Exception Message.
+     * Constructor
      *
-     * @param string $strEngineName Name of the engine which is missed.
+     * @param Xinc_Engine_Interface[] $array
+     *
+     * @throws Xinc_Engine_Exception_Invalid If array element isn't instance of
+     *                                       Xinc_Engine_Interface
      */
-    public function __construct($strEngineName)
+    public function __construct(array $array)
     {
-        parent::__construct('Engine ' . $strEngineName . ' not found.');
+        foreach ($array as $element) {
+            if (!$element instanceof Xinc_Engine_Interface ) {
+                if (is_object($element)) {
+                    throw new Xinc_Engine_Exception_Invalid(get_class($element));
+                } else {
+                    throw new Xinc_Engine_Exception_Invalid('No object');
+                }
+            }
+            
+        }
+        
+        parent::__construct($array);
     }
 }

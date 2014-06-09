@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Engine.Exception
+ * @package   Xinc.Server
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -24,10 +24,12 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-class Xinc_Engine_Exception_FileNotFound extends Exception
+namespace Xinc\Server\Engine\Exception;
+
+class FileNotFoundException extends \Exception
 {
     /**
      * Constructor, generates an Exception Message.

@@ -86,9 +86,9 @@ class Config
                 if (method_exists($projectObject, $method)) {
                     $projectObject->$method((string)$value);
                 } else {
-                    \Xinc\Logger::getInstance()->error('Trying to set "'
-                                                     . $name
-                                                     .'" on Xinc Project failed. No such setter.');
+                    \Xinc\Core\Logger::getInstance()->error(
+                        'Trying to set "' . $name .'" on Xinc Project failed. No such setter.'
+                    );
                 }
             }
             $projectObject->setConfig($projectConfig);
