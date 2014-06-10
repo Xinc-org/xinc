@@ -53,7 +53,7 @@ interface EngineInterface
      *
      * @return Xinc_Build_Iterator
      */
-    public function parseProjects(Xinc_Project_Iterator $projects);
+    public function parseProjects(\Xinc\Core\Project\Iterator $projects);
 
     /**
      * returns the interval in seconds in which the engine checks for new builds

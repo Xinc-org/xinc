@@ -49,7 +49,7 @@ class Sunrise implements EngineInterface
      */
     public function __construct()
     {
-        register_shutdown_function(array(&$this, 'shutdown'));
+        register_shutdown_function(array($this, 'shutdown'));
     }
 
     /**
@@ -242,17 +242,17 @@ class Sunrise implements EngineInterface
     /**
      * Parses Project-Xml and returns
      *
-     * @param Xinc_Project_Iterator $projects
+     * @param Xinc\Core\Project\Iterator $projects
      *
-     * @return Xinc_Build_Iterator
-     * @throws Xinc_Build_Exception_Invalid
+     * @return Xinc\Core\Build\Iterator
+     * @throws Xinc\Core\Build\Exception\InvalidException
      */
-    public function parseProjects(Iterator $projects)
+    public function parseProjects(\Xinc\Core\Project\Iterator $projects)
     {
-        $parser = new Xinc_Engine_Sunrise_Parser($this);
+        $parser = new Sunrise\Parser($this);
         $buildsArr = $parser->parseProjects($projects);
 
-        $buildIterator = new Xinc_Build_Iterator($buildsArr);
+        $buildIterator = new \Xinc\Core\Build\Iterator($buildsArr);
 
         return $buildIterator;
     }

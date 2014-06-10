@@ -29,11 +29,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Build.php';
-require_once 'Xinc/Build/Tasks/Registry.php';
-require_once 'Xinc/Build/Exception/NotFound.php';
+namespace Xinc\Server\Engine\Sunrise;
 
-class Xinc_Engine_Sunrise_Parser
+class Parser
 {
     /**
      * All the plugins that parse values
@@ -41,20 +39,20 @@ class Xinc_Engine_Sunrise_Parser
      *
      * @var Xinc_Iterator
      */
-    private $_setters;
+    private $setters;
 
     /**
-     * @var Xinc_Engine_Sunrise
+     * @var Xinc\Server\Engine\Sunrise
      */
-    private $_engine;
+    private $engine;
 
     /**
      *
-     * @param Xinc_Engine_Sunrise $engine
+     * @param Xinc\Server\Engine\Sunrise $engine
      */
-    public function __construct(Xinc_Engine_Sunrise &$engine)
+    public function __construct(\Xinc\Server\Engine\Sunrise $engine)
     {
-        $this->_engine = $engine;
+        $this->engine = $engine;
     }
 
     /**
@@ -62,14 +60,14 @@ class Xinc_Engine_Sunrise_Parser
      * loads all the tasks
      * assigns them to the builds
      *
-     * @param Xinc_Project_Config_Iterator $projects
+     * @param Xinc\Core\Project\Iterator $projects
      *
      * @return array the builds
      */
-    public function parseProjects(Xinc_Project_Iterator &$projects)
+    public function parseProjects(\Xinc\Core\Project\Iterator $projects)
     {
         $builds = array();
-        $this->_setters = Xinc_Plugin_Repository::getInstance()
+        $this->setters = Xinc_Plugin_Repository::getInstance()
             ->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
 
         while ($projects->hasNext()) {
@@ -93,7 +91,7 @@ class Xinc_Engine_Sunrise_Parser
             }
             $projectXml = $project->getConfig();
             if (!$build instanceof Xinc_Build_Interface) {
-                $build = new Xinc_Build($this->_engine, $project);
+                $build = new Xinc_Build($this->engine, $project);
             }
 
             $build->getProperties()->set('project.name', $project->getName());
@@ -158,11 +156,11 @@ class Xinc_Engine_Sunrise_Parser
                 /**
                  * Call PROJECT_SET_VALUES plugins
                  */
-                while ($this->_setters->hasNext()) {
-                    $setterObj = $this->_setters->next();
+                while ($this->setters->hasNext()) {
+                    $setterObj = $this->setters->next();
                     $value = $setterObj->set($build, $value);
                 }
-                $this->_setters->rewind();
+                $this->setters->rewind();
                 $taskObject->$setter((string)$value, $build);
             }
 
