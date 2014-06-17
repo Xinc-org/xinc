@@ -1,7 +1,7 @@
 <?php
 /**
  * Iterator over an array of SimpleXMLElement objects defining Projects
- * 
+ *
  * @package   Xinc.Core
  * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
@@ -27,24 +27,8 @@ namespace Xinc\Core\Project\Config;
 
 class Iterator extends \Xinc\Core\Iterator
 {
-  
     /**
-     *
-     * @param array $elements
-     *
-     * @throws Xinc\Core\Project\Config\Exception\InvalidElementException
+     * @var typeOf The Name of the class this elements should be.
      */
-    public function __construct(array $elements)
-    {
-        foreach ($elements as $xmlElement) {
-            if (!$xmlElement instanceof File) {
-                throw new Exception\InvalidElementException();
-            } /**else if ($name != 'project') {
-                throw new Xinc_Project_Config_Exception_InvalidElement();
-            }*/
-            
-        }
-
-        parent::__construct($elements);
-    }
+    protected $typeOf = '\Xinc\Core\Project\Config\File';
 }

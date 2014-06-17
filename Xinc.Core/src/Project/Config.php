@@ -1,7 +1,7 @@
 <?php
 /**
  * Main configuration class, handles the system.xml
- * 
+ *
  * @package   Xinc.Core
  * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
@@ -27,21 +27,21 @@ namespace Xinc\Core\Project;
 
 class Config
 {
-    
+
     /**
      *  Iterator holding all the project configuration in xml
      *
      *  @var Xinc\Core\Project\Config\Iterator
      */
     private $projectConfigs;
-    
+
     /**
      * Iterator holding all the configured projects
      *
      * @var Xinc\Core\Project\Iterator
      */
     private $projects;
-    
+
     /**
      * Name of the engine
      *
@@ -62,25 +62,23 @@ class Config
     {
         $configFile = Config\File::load($fileName);
         $configParser = new Config\Parser($configFile);
-        
+
         $this->projectConfigs = $configParser->getProjects();
         $this->engineName = $configParser->getEngineName();
         $this->generateProjects();
     }
-    
+
     private function generateProjects()
     {
         $projects = array();
 
-        while ($this->projectConfigs->hasNext()) {
-            $projectConfig = $this->projectConfigs->next();
-            
+        foreach ($this->projectConfigs as $key => $projectConfig) {
             $projectObject = new \Xinc\Core\Project();
-            
+
             foreach ($projectConfig->attributes() as $name => $value ) {
                 $method = 'set' . ucfirst(strtolower($name));
                 /**
-                 * Catch unsupported methods by checking if method exists or 
+                 * Catch unsupported methods by checking if method exists or
                  * having a magic function __set and __get on all objects
                  */
                 if (method_exists($projectObject, $method)) {
@@ -94,11 +92,11 @@ class Config
             $projectObject->setConfig($projectConfig);
             $projects[] = $projectObject;
         }
-        
+
         $this->projects = new Iterator($projects);
     }
-    
-    
+
+
     /**
      * returns the configured Projects
      *
@@ -108,7 +106,7 @@ class Config
     {
         return $this->projects;
     }
-    
+
     public function getEngineName()
     {
         return $this->engineName;

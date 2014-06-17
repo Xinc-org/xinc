@@ -29,61 +29,49 @@
 
 namespace Xinc\Core;
 
-class Iterator
+class Iterator extends \ArrayIterator
 {
     /**
-     * Internal array
-     *
-     * @var array
+     * @var typeOf The Name of the class this elements should be.
      */
-    protected $array;
-    
-    /**
-     * Pointer for the current index
-     *
-     * @var integer
-     */
-    private $pointer = 0;
-    
-    /**
-     * size of the array
-     *
-     * @var integer
-     */
-    protected $size = 0;
-    
+    protected $typeOf = null;
+
     public function __construct($array = array())
     {
-        $this->array = $array;
-        $this->size = count($this->array);
+        $this->testValues($array);
+        parent::__construct($array);
     }
-    
-    public function add($item)
+
+    public function append($value)
     {
-        $this->array[] = $item;
-        $this->size++;
+        $this->testValue($value);
+        parent::apend($value);
     }
-    
-    public function hasNext()
+
+    public function offsetSet($index, $value)
     {
-        return $this->pointer < $this->size;
-    }
-    
-    public function rewind()
-    {
-        $this->pointer = 0;
+        $this->testValue($value);
+        parent::offsetSet($index, $value);
     }
 
     /**
-     * @return Xinc_Build_Interface
+     * @throws Exception
      */
-    public function &next()
+    public function testValues($array)
     {
-        return $this->array[$this->pointer++];
+        foreach($array as $value) {
+            $this->testValue($value);
+        }
     }
-    
-    public function count()
+
+    /**
+     * @throws Exception
+     */
+    public function testValue($value)
     {
-        return $this->size;
+        if (!is_a($value, $this->typeOf)) {
+debug_print_backtrace();
+            throw new \Exception('Element is not an instance of: ' . $this->typeOf);
+        }
     }
 }

@@ -31,28 +31,8 @@ namespace Xinc\Server\Engine;
 
 class Iterator extends \Xinc\Core\Iterator
 {
-  
     /**
-     * Constructor
-     *
-     * @param Xinc_Engine_Interface[] $array
-     *
-     * @throws Xinc_Engine_Exception_Invalid If array element isn't instance of
-     *                                       Xinc_Engine_Interface
+     * @var typeOf The Name of the class this elements should be.
      */
-    public function __construct(array $array)
-    {
-        foreach ($array as $element) {
-            if (!$element instanceof Xinc_Engine_Interface ) {
-                if (is_object($element)) {
-                    throw new Xinc_Engine_Exception_Invalid(get_class($element));
-                } else {
-                    throw new Xinc_Engine_Exception_Invalid('No object');
-                }
-            }
-            
-        }
-        
-        parent::__construct($array);
-    }
+    protected $typeOf = '\Xinc\Server\Engine\EnginInterface';
 }
