@@ -37,7 +37,7 @@ class Parser
      * All the plugins that parse values
      * before they are set on the task processors
      *
-     * @var Xinc_Iterator
+     * @var Xinc\Core\Iterator
      */
     private $setters;
 
@@ -67,17 +67,16 @@ class Parser
     public function parseProjects(\Xinc\Core\Project\Iterator $projects)
     {
         $builds = array();
-        $this->setters = Xinc_Plugin_Repository::getInstance()
-            ->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
+//         $this->setters = Xinc_Plugin_Repository::getInstance()
+//             ->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
 
-        while ($projects->hasNext()) {
-            $project = $projects->next();
+        foreach($projects as $key => $project) {
             $build = null;
             /**
              * trying to recover the last build information
              */
             try {
-                $build = Xinc_Build::unserialize($project);
+                $build = \Xinc\Core\Build::unserialize($project);
                 $build->setBuildTime(null);
                 $build->resetConfigDirective();
             } catch (Xinc_Build_Exception_NotFound $e) {

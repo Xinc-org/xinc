@@ -1,7 +1,7 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Iterator over an array of elements
+ * Registry interface
  *
  * PHP version 5
  *
@@ -27,50 +27,37 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Core;
+namespace Xinc\Core\Registry;
 
-class Iterator extends \ArrayIterator
+interface RegistryInterface extends IteratorAggregate
 {
-    /**
-     * @var typeOf The Name of the class this elements should be.
-     */
-    protected $typeOf = null;
-
-    public function __construct($array = array())
-    {
-        $this->testValues($array);
-        parent::__construct($array);
-    }
-
-    public function append($value)
-    {
-        $this->testValue($value);
-        parent::apend($value);
-    }
-
-    public function offsetSet($index, $value)
-    {
-        $this->testValue($value);
-        parent::offsetSet($index, $value);
-    }
+    public static function getInstance();
 
     /**
-     * @throws Exception
+     * Registers an object
+     *
+     * @param string $name
+     * @param object $object
+     * @return void
+     * @throws Xinc\Core\Registry\Exception
      */
-    public function testValues($array)
-    {
-        foreach($array as $value) {
-            $this->testValue($value);
-        }
-    }
+    public function register($name, $object);
 
     /**
-     * @throws Exception
+     * Unregisters an Object
+     *
+     * @param string $name
+     * @return object the unregistered Object
+     * @throws Xinc\Core\Registry\Exception
      */
-    public function testValue($value)
-    {
-        if (!is_a($value, $this->typeOf)) {
-            throw new \Exception('Element is not an instance of: ' . $this->typeOf);
-        }
-    }
+    public function unregister($name);
+
+    /**
+     * Returns the registered object
+     *
+     * @param string $name
+     * @return object
+     * @throws Xinc\Core\Registry\Exception
+     */
+    public function get($name);
 }

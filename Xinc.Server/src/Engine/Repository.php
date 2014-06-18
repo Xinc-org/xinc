@@ -33,7 +33,7 @@ class Repository
 {
 
     private static $instance;
-    
+
     private $defaultEngine;
 
     private $engines = array();
@@ -63,29 +63,29 @@ class Repository
     public function registerEngine(EngineInterface $engine, $default = false)
     {
         $engineClass = get_class($engine);
-        
+
         if (!$engine->validate()) {
             \Xinc\Core\Logger::getInstance()->error(
                 'cannot load engine ' . $engineClass
             );
-                                             
+
             return false;
         }
-       
+
         if (isset($this->engines[$engine->getName()]) || isset($this->engines[$engineClass])) {
             \Xinc\Core\Logger::getInstance()->error(
                 'cannot load engine ' . $engineClass . ' already registered'
             );
-                                             
+
             return false;
         }
         $this->engines[$engine->getName()] = $engine;
         $this->engines[$engineClass] = $engine;
-        
+
         if ($default) {
             $this->defaultEngine = $engine;
         }
-        
+
         return true;
     }
 
@@ -98,7 +98,7 @@ class Repository
     {
         return new Iterator($this->engines);
     }
-    
+
     /**
      * returns the specified engine
      *

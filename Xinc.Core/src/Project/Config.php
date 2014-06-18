@@ -48,6 +48,7 @@ class Config
      * @var string
      */
     private $engineName;
+
     /**
      * Reads the system.xml
      * - parses it

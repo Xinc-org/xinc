@@ -31,41 +31,14 @@
 
 namespace Xinc\Core;
 
-require_once 'Xinc/Build/Scheduler/Interface.php';
-
 class Project
 {
-    /**
-     * The name of the project.
-     *
-     * @var string
-     */
-    private $name;
-
-    /**
-     * Current status of the project
-     *
-     * @see Xinc\Core\Project\Status
-     * @var integer
-     */
-    private $status = 1;
-    
     /**
      * The xml content of this projects configuration
      *
      * @var Xinc\Core\Project\Config\File
      */
     private $config;
-
-    /**
-     * Sets the project name for display purposes.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
 
     /**
      *
@@ -75,7 +48,7 @@ class Project
     {
         $this->config = $config;
     }
-    
+
     /**
      * @return Xinc_Project_Config_File
      */
@@ -85,48 +58,16 @@ class Project
     }
 
     /**
-     * Returns this project's name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * sets the status of the project
-     *
-     * @see Xinc_Project_Status
-     * @param integer $status
-     */
-    public function setStatus($status)
-    {
-        $this->info('Setting status to '.$status);
-        $this->status = $status;
-    }
-
-    /**
-     * Retrieves the status of the current project
-     * @see Xinc_Project_Status
-     * @return integer
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
      * Logs a message of priority info
      *
      * @param string $message
      */
     public function info($message)
     {
-        Xinc_Logger::getInstance()->info('[project] ' 
-                                        . $this->getName() 
+        Xinc_Logger::getInstance()->info('[project] '
+                                        . $this->getName()
                                         . ': '.$message);
-            
+
     }
 
     /**
@@ -136,10 +77,10 @@ class Project
      */
     public function warn($message)
     {
-        Xinc_Logger::getInstance()->warn('[project] ' 
-                                        . $this->getName() 
+        Xinc_Logger::getInstance()->warn('[project] '
+                                        . $this->getName()
                                         . ': '.$message);
-            
+
     }
 
     /**
@@ -149,10 +90,10 @@ class Project
      */
     public function verbose($message)
     {
-        Xinc_Logger::getInstance()->verbose('[project] ' 
-                                            . $this->getName() 
+        Xinc_Logger::getInstance()->verbose('[project] '
+                                            . $this->getName()
                                             . ': '.$message);
-            
+
     }
 
     /**
@@ -162,10 +103,10 @@ class Project
      */
     public function debug($message)
     {
-        Xinc_Logger::getInstance()->debug('[project] ' 
-                                         . $this->getName() 
+        Xinc_Logger::getInstance()->debug('[project] '
+                                         . $this->getName()
                                          . ': '.$message);
-            
+
     }
 
     /**
@@ -175,9 +116,9 @@ class Project
      */
     public function error($message)
     {
-        Xinc_Logger::getInstance()->error('[project] ' 
-                                         . $this->getName() 
+        Xinc_Logger::getInstance()->error('[project] '
+                                         . $this->getName()
                                          . ': '.$message);
-            
+
     }
 }

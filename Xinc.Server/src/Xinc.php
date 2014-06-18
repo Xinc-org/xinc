@@ -478,13 +478,13 @@ class Xinc extends \Core_Daemon
     {
         // TODO: Add Sunrise Engine now. No Plugable way yet.
         $engine = new \Xinc\Server\Engine\Sunrise();
-        Engine\Repository::getInstance()->registerEngine($engine);
+        Engine\Repository::getInstance()->registerEngine($engine, true);
         try {
             $config = new \Xinc\Core\Project\Config($fileName);
             $engineName = $config->getEngineName();
 
             $engine = Engine\Repository::getInstance()->getEngine($engineName);
-
+var_dump($config->getProjects());
             $builds = $engine->parseProjects($config->getProjects());
 
             Xinc::$buildQueue->addBuilds($builds);

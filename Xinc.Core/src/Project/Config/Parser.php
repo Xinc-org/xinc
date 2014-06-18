@@ -1,7 +1,7 @@
 <?php
 /**
  * Parses an array of SimpleXMLElements and generates Projects out of it
- * 
+ *
  * @package   Xinc.Core
  * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
@@ -31,12 +31,12 @@ class Parser
      * @var Xinc\Core\Project\Config\File
      */
     private $configFile;
-    
+
     public function __construct(File $configFile)
     {
         $this->configFile = $configFile;
     }
-    
+
     /**
      * generates an array of all configured projects
      *
@@ -47,7 +47,7 @@ class Parser
         $projects = $this->configFile->xpath("//project");
         return new Iterator($projects);
     }
-    
+
     /**
      * Returns the name of the engine that has to be used for these Projects
      * @return mixed String or null if not found

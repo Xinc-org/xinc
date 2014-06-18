@@ -1,9 +1,9 @@
 <?php
 /**
  * Xinc Configuration File in XML Format
- * 
+ *
  * Reads a Xinc configuration file, parses it for validity
- * 
+ *
  * @package   Xinc.Core
  * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
@@ -29,12 +29,12 @@ namespace Xinc\Core\Project\Config;
 
 class File extends \SimpleXMLElement
 {
-    
+
     private static $allowedElements = array(
         'xinc',
         'xinc/project',
     );
-    
+
     /**
      * Constructs a SimpleXMLElement
      *
@@ -44,19 +44,18 @@ class File extends \SimpleXMLElement
      */
     public static function load($fileName)
     {
-       
         if (!file_exists($fileName)) {
             throw new Exception\FileNotFoundException($fileName);
         } else {
             $data = file_get_contents($fileName);
         }
         $file = new File($data);
-        
+
         $file->validate();
-        
+
         return $file;
     }
-    
+
     /**
      * @throws Xinc\Core\Project\Config\Exception\InvalidEntryException
      */
@@ -66,7 +65,7 @@ class File extends \SimpleXMLElement
         foreach ($this->children() as $elementName => $element) {
             $parent = 'xinc/' . $elementName;
             $array[] = $parent;
-            
+
         }
 
         foreach ($array as $path) {
