@@ -32,12 +32,6 @@
 
 namespace Xinc\Server;
 
-require_once 'Xinc/Plugin/Parser.php';
-require_once 'Xinc/Engine/Repository.php';
-require_once 'Xinc/Build/Queue.php';
-require_once 'Xinc/Build/Status/Exception/NoDirectory.php';
-require_once 'Xinc/Build/Status/Exception/NonWriteable.php';
-
 class Xinc extends \Core_Daemon
 {
     const VERSION = '2.3.90';
@@ -479,6 +473,7 @@ class Xinc extends \Core_Daemon
         // TODO: Add Sunrise Engine now. No Plugable way yet.
         $engine = new \Xinc\Server\Engine\Sunrise();
         Engine\Repository::getInstance()->registerEngine($engine, true);
+
         try {
             $config = new \Xinc\Core\Project\Config($fileName);
             $engineName = $config->getEngineName();
