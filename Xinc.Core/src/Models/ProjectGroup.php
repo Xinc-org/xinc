@@ -38,6 +38,11 @@ class ProjectGroup
     private $name;
 
     /**
+     * @var string Name of the used engine.
+     */
+    private $engineName = '';
+
+    /**
      * @var array Used Processes
      */
     private $projects = array();
@@ -64,6 +69,27 @@ class ProjectGroup
     }
 
     /**
+     * Sets the project name of the used engine.
+     *
+     * @param string $engine
+     * @return void
+     */
+    public function setEngineName($engineName)
+    {
+        $this->engineName = $engineName;
+    }
+
+    /**
+     * Returns this name of the engine of this project.
+     *
+     * @return string
+     */
+    public function getEngineName()
+    {
+        return $this->engineName;
+    }
+
+    /**
      * Adds a project to this group.
      *
      * @param Xinc\Core\Models\Project $project
@@ -77,7 +103,7 @@ class ProjectGroup
     /**
      * Returns the projects in this group.
      *
-     * @return array
+     * @return Xinc\Core\Models\Project[]
      */
     public function getProjects()
     {

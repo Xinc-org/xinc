@@ -35,7 +35,12 @@ class Project
     /**
      * @var string The name of the project.
      */
-    private $name;
+    private $name = '';
+
+    /**
+     * @var string Name of the used engine.
+     */
+    private $engineName = '';
 
     /**
      * @see Xinc\Core\Project\Status
@@ -61,13 +66,34 @@ class Project
     }
 
     /**
-     * Returns this project's name.
+     * Returns this name of the project.
      *
      * @return string
      */
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Sets the project name of the used engine.
+     *
+     * @param string $engine
+     * @return void
+     */
+    public function setEngineName($engineName)
+    {
+        $this->engineName = $engineName;
+    }
+
+    /**
+     * Returns this name of the engine of this project.
+     *
+     * @return string
+     */
+    public function getEngineName()
+    {
+        return $this->engineName;
     }
 
     /**

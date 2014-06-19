@@ -70,6 +70,7 @@ class Iterator extends \ArrayIterator
     public function testValue($value)
     {
         if (!is_a($value, $this->typeOf)) {
+            debug_print_backtrace();
             throw new \Exception('Element is not an instance of: ' . $this->typeOf);
         }
     }

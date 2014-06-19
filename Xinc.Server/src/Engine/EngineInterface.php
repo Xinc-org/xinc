@@ -47,9 +47,14 @@ interface EngineInterface
     public function build(Xinc_Build_Interface $build);
 
     /**
+     * adds a project to the engine.
+     */
+    public function addProject(\Xinc\Core\Models\Project $project);
+
+    /**
      * Parses Project-Xml and returns
      *
-     * @param Xinc_Project_Config_Iterator $projects
+     * @param \Xinc\Core\Project\Iterator $projects
      *
      * @return Xinc_Build_Iterator
      */

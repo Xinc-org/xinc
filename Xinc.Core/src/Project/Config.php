@@ -36,25 +36,18 @@ class Config
     private $projectConfigs;
 
     /**
-     * Iterator holding all the configured projects
+     * Group of projects.
      *
-     * @var Xinc\Core\Project\Iterator
+     * @var Xinc\Core\Models\ProjectGroup
      */
-    private $projects;
+    private $projectGroup;
 
     /**
-     * Name of the engine
-     *
-     * @var string
-     */
-    private $engineName;
-
-    /**
-     * Reads the system.xml
+     * Reads the projects XML files
      * - parses it
      * - loads projects
      *
-     * @param string $fileName path to system.xml
+     * @param string $fileName File name of the project XML file.
      *
      * @throws Xinc\Core\Project\Config\Exception\FileNotFound
      * @throws Xinc\Core\Project\Config\Exception\InvalidEntry
@@ -64,8 +57,9 @@ class Config
         $configFile = Config\File::load($fileName);
         $configParser = new Config\Parser($configFile);
 
+        $this->projectGroup = new \Xinc\Core\Models\ProjectGroup();
+        $this->projectGroup->setEngineName($configParser->getEngineName());
         $this->projectConfigs = $configParser->getProjects();
-        $this->engineName = $configParser->getEngineName();
         $this->generateProjects();
     }
 
@@ -74,7 +68,7 @@ class Config
         $projects = array();
 
         foreach ($this->projectConfigs as $key => $projectConfig) {
-            $projectObject = new \Xinc\Core\Project();
+            $projectObject = new \Xinc\Core\Models\Project();
 
             foreach ($projectConfig->attributes() as $name => $value ) {
                 $method = 'set' . ucfirst(strtolower($name));
@@ -90,26 +84,22 @@ class Config
                     );
                 }
             }
-            $projectObject->setConfig($projectConfig);
-            $projects[] = $projectObject;
+//             $projectObject->setConfig($projectConfig);
+            if ($projectObject->getEngineName() === '') {
+                $projectObject->setEngineName = $this->projectGroup->getEngineName();
+            }
+            $this->projectGroup->addProject($projectObject);
         }
-
-        $this->projects = new Iterator($projects);
     }
 
 
     /**
      * returns the configured Projects
      *
-     * @return Xinc\Core\Project\Iterator
+     * @return Xinc\Core\Models\ProjectGroup
      */
-    public function getProjects()
+    public function getProjectGroup()
     {
-        return $this->projects;
-    }
-
-    public function getEngineName()
-    {
-        return $this->engineName;
+        return $this->projectGroup;
     }
 }

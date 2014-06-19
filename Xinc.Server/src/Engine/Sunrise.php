@@ -63,6 +63,14 @@ class Sunrise implements EngineInterface
     }
 
     /**
+     * adds a project to the engine.
+     */
+    public function addProject(\Xinc\Core\Models\Project $project)
+    {
+
+    }
+
+    /**
      * serializes the build before shutting down
      *
      * @return void

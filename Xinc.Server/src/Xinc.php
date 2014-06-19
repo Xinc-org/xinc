@@ -42,20 +42,6 @@ class Xinc extends \Core_Daemon
     public $buildActive = false;
 
     /**
-     * Registry holding all scheduled builds
-     *
-     * @var Xinc_Build_Queue_Interface
-     */
-    private static $buildQueue;
-
-    /**
-     * The actually running build
-     *
-     * @var Xinc_Build_Interface
-     */
-    private static $currentBuild;
-
-    /**
      * Current working directory
      * containing the default xinc projects
      *
@@ -83,15 +69,6 @@ class Xinc extends \Core_Daemon
      * @var array Holding the merged cli parameters.
      */
     private $opts = array();
-
-    /**
-     * Constructor
-     */
-    protected function __construct()
-    {
-//         self::$buildQueue = new Xinc_Build_Queue();
-        parent::__construct();
-    }
 
     /**
      * This is where you implement any once-per-execution setup code.
@@ -286,9 +263,9 @@ class Xinc extends \Core_Daemon
      *
      * @return string
      */
-    public function getProjectDir()
+    public function getWorkingDir()
     {
-        return $this->projectDir;
+        return $this->workingDir;
     }
 
     /**
@@ -308,9 +285,9 @@ class Xinc extends \Core_Daemon
      *
      * @return string
      */
-    public function getWorkingDir()
+    public function getProjectDir()
     {
-        return $this->workingDir;
+        return $this->projectDir;
     }
 
     /**
@@ -383,86 +360,6 @@ class Xinc extends \Core_Daemon
         }
     }
 
-
-
-
-
-    /**
-     * Processes the projects that have been configured
-     * in the config-file and executes each project
-     * if the scheduled time has expired
-     *
-     */
-    public function processBuildsRunOnce()
-    {
-        /**
-         * trigger the build queue to be populated
-         */
-        $nextBuildTime = Xinc::$buildQueue->getNextBuildTime();
-
-        while (($nextBuild = Xinc::$buildQueue->getNextBuild()) !== null) {
-            $nextBuild->build();
-        }
-    }
-
-    /**
-     * Processes the projects that have been configured
-     * in the config-file and executes each project
-     * if the scheduled time has expired
-     *
-     */
-    public function processBuildsDaemon()
-    {
-        while (true) {
-            declare(ticks = 2);
-            $now = time();
-            $nextBuildTime = Xinc::$buildQueue->getNextBuildTime();
-
-            if ($nextBuildTime != null) {
-                Xinc_Logger::getInstance()->info('Next buildtime: ' . date('Y-m-d H:i:s', $nextBuildTime));
-                $sleep = $nextBuildTime - $now;
-            } else {
-                $sleep = 1;
-            }
-            if ($sleep > 0) {
-                usleep($this->defaultSleep);
-            }
-            while (($nextBuild = Xinc::$buildQueue->getNextBuild()) !== null) {
-                $this->buildActive = true;
-                $nextBuild->build();
-            }
-        }
-    }
-
-    /**
-     * Starts the continuous loop.
-     */
-    protected function start($daemon)
-    {
-        if ($daemon) {
-            Xinc_Logger::getInstance()->info('Registering shutdown function: ' . ($res ? 'OK' : 'NOK'));
-            $this->processBuildsDaemon();
-        } else {
-            Xinc_Logger::getInstance()->info('Run-once mode (project interval is negative)');
-            //Xinc_Logger::getInstance()->flush();
-            $this->processBuildsRunOnce();
-        }
-    }
-
-
-    /**
-     * Static main function called by bin script
-     *
-     * @param $args string argument string handled by Xinc_Config_GetOpt
-     */
-    public static function main($args = '')
-    {
-        self::$instance->start($arguments['daemon']);
-
-        self::$instance->shutDown();
-    }
-
-
     /**
      * Add a projectfile to the xinc processing
      *
@@ -476,18 +373,14 @@ class Xinc extends \Core_Daemon
 
         try {
             $config = new \Xinc\Core\Project\Config($fileName);
-            $engineName = $config->getEngineName();
+            $group = $config->getProjectGroup();
 
-            $engine = Engine\Repository::getInstance()->getEngine($engineName);
-var_dump($config->getProjects());
-            $builds = $engine->parseProjects($config->getProjects());
-
-            Xinc::$buildQueue->addBuilds($builds);
-
+            foreach ($group->getProjects() as $project) {
+                $engine = Engine\Repository::getInstance()->getEngine($project->getEngineName());
+                $engine->addProject($project);
+            }
         } catch (\Xinc\Core\Project\Config\Exception\FileNotFoundException $notFound) {
             \Xinc\Core\Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
-        } catch (\Xinc\Core\Project\Config\Exception\InvalidEntryException $invalid) {
-            \Xinc\Core\Logger::getInstance()->error('Project Config File has an invalid entry: ' . $invalid->getMessage());
         } catch (Xinc_Engine_Exception_NotFound $engineNotFound) {
             \Xinc\Core\Logger::getInstance()->error(
                 'Project Config File references an unknown Engine: ' . $engineNotFound->getMessage()
@@ -496,28 +389,7 @@ var_dump($config->getProjects());
     }
 
     /**
-     * Returns current running build
-     *
-     * @return Xinc_Build_Interface
-     */
-    public static function getCurrentBuild()
-    {
-        return self::$currentBuild;
-    }
-
-    /**
-     * Sets the build that is currently being processed
-     *
-     * @param Xinc_Build_Interface $build
-     *
-     * @return void
-     */
-    public static function setCurrentBuild(Xinc_Build_Interface $build)
-    {
-        self::$currentBuild = $build;
-    }
-
-    /**
+     * TODO: Needs to be somewhere else?
      * returns the builtin properties that can be used
      * in all xinc config files
      *

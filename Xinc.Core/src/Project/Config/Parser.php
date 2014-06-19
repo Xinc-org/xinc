@@ -50,13 +50,26 @@ class Parser
 
     /**
      * Returns the name of the engine that has to be used for these Projects
-     * @return mixed String or null if not found
+     * @return string|null String or null if not found
      */
     public function getEngineName()
     {
         $xincAttributes = $this->configFile->attributes();
-        foreach ($xincAttributes as $name => $value) {
-            if ($name == 'engine') return (string)$value;
+        if (isset($xincAttributes['engine'])) {
+            return (string) $xincAttributes['engine'];
+        }
+        return null;
+    }
+
+    /**
+     * Returns the name of the group for this projects.
+     * @return string|null String or null if not found
+     */
+    public function getName()
+    {
+        $xincAttributes = $this->configFile->attributes();
+        if (isset($xincAttributes['engine'])) {
+            return (string) $xincAttributes['engine'];
         }
         return null;
     }
