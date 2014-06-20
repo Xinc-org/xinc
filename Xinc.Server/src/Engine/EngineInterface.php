@@ -29,7 +29,7 @@
 
 namespace Xinc\Server\Engine;
 
-interface EngineInterface
+interface EngineInterface extends \Core_IWorker
 {
 
     /**
@@ -75,11 +75,4 @@ interface EngineInterface
      * @see <xinc engine="name" heartbeat="10"/>
      */
     public function setHeartBeat($seconds);
-
-    /**
-     * Validate if the engine can run properly on this system
-     *
-     * @return boolean True if engine can run properly otherwise false.
-     */
-    public function validate();
 }

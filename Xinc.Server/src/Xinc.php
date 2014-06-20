@@ -63,7 +63,7 @@ class Xinc extends \Core_Daemon
      */
     private $statusDir;
 
-    protected $loop_interval = -1;
+    protected $loop_interval = 5;
 
     /**
      * @var array Holding the merged cli parameters.
@@ -104,11 +104,17 @@ class Xinc extends \Core_Daemon
             $this->setStatusDir($this->opts['status-dir']);
         }
 
+        // TODO: Add Sunrise Engine now. No Plugable way yet.
+        $engine = new \Xinc\Server\Engine\Sunrise();
+        Engine\Repository::getInstance()->registerEngine($engine, true);
+
         if (isset($this->opts['project-file'])) {
             $this->addProjectFiles($this->opts['project-file']);
         }
 
         $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
+
+        $this->startEngines();
     }
 
     /**
@@ -355,7 +361,6 @@ class Xinc extends \Core_Daemon
         }
 
         foreach ($files as $file) {
-            \Xinc\Core\Logger::getInstance()->info('Loading Project-File: ' . $file);
             $this->addProjectFile($file);
         }
     }
@@ -367,9 +372,7 @@ class Xinc extends \Core_Daemon
      */
     private function addProjectFile($fileName)
     {
-        // TODO: Add Sunrise Engine now. No Plugable way yet.
-        $engine = new \Xinc\Server\Engine\Sunrise();
-        Engine\Repository::getInstance()->registerEngine($engine, true);
+        \Xinc\Core\Logger::getInstance()->info('Loading Project-File: ' . $fileName);
 
         try {
             $config = new \Xinc\Core\Project\Config($fileName);
@@ -385,6 +388,20 @@ class Xinc extends \Core_Daemon
             \Xinc\Core\Logger::getInstance()->error(
                 'Project Config File references an unknown Engine: ' . $engineNotFound->getMessage()
             );
+        }
+    }
+
+    private function startEngines()
+    {
+        $engines = Engine\Repository::getInstance()->getEngines();
+        foreach ($engines as $name => $engine) {
+            if ($name !== $engine->getName()) {
+                continue;
+            }
+            $this->worker('Sunrise', $engine);
+            $this->$name->workers(1);
+            $this->$name->setup();
+            $this->$name->doWork();
         }
     }
 

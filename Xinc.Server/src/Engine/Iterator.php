@@ -34,5 +34,5 @@ class Iterator extends \Xinc\Core\Iterator
     /**
      * @var typeOf The Name of the class this elements should be.
      */
-    protected $typeOf = '\Xinc\Server\Engine\EnginInterface';
+    protected $typeOf = '\Xinc\Server\Engine\EngineInterface';
 }

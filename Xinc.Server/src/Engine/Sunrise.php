@@ -43,13 +43,29 @@ class Sunrise implements EngineInterface
      */
     public $build;
 
-    /**
-     * constructor, registering a shutdown function
-     *
-     */
-    public function __construct()
+    public function setup()
     {
-        register_shutdown_function(array($this, 'shutdown'));
+
+    }
+
+    /**
+     * serializes the build before shutting down
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        var_dump('TearDown Sunrise');
+        if ($this->build != null) {
+            $this->serializeBuild($this->build);
+            $this->build = null;
+        }
+    }
+
+
+    public function check_environment(array $errors = array())
+    {
+
     }
 
     /**
@@ -70,16 +86,10 @@ class Sunrise implements EngineInterface
 
     }
 
-    /**
-     * serializes the build before shutting down
-     *
-     * @return void
-     */
-    public function shutdown()
+    public function doWork()
     {
-        if ($this->build != null) {
-            $this->serializeBuild($this->build);
-            $this->build = null;
+        while (0 !== 1) {
+            usleep(1000);
         }
     }
 
@@ -285,15 +295,5 @@ class Sunrise implements EngineInterface
     public function setHeartBeat($seconds)
     {
         $this->heartBeat = (int) $seconds;
-    }
-
-    /**
-     * Validate if the engine can run properly on this system
-     *
-     * @return boolean Returns always true.
-     */
-    public function validate()
-    {
-        return true;
     }
 }

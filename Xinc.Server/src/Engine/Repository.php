@@ -64,14 +64,6 @@ class Repository
     {
         $engineClass = get_class($engine);
 
-        if (!$engine->validate()) {
-            \Xinc\Core\Logger::getInstance()->error(
-                'cannot load engine ' . $engineClass
-            );
-
-            return false;
-        }
-
         if (isset($this->engines[$engine->getName()]) || isset($this->engines[$engineClass])) {
             \Xinc\Core\Logger::getInstance()->error(
                 'cannot load engine ' . $engineClass . ' already registered'
