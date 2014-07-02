@@ -45,7 +45,7 @@ class Sunrise implements EngineInterface
 
     public function setup()
     {
-
+        $this->mediator->log('Setup Sunrise');
     }
 
     /**
@@ -55,13 +55,14 @@ class Sunrise implements EngineInterface
      */
     public function tearDown()
     {
-        var_dump('TearDown Sunrise');
-        if ($this->build != null) {
-            $this->serializeBuild($this->build);
-            $this->build = null;
+        if (!\Core_Daemon::is('parent')) {
+            $this->mediator->log('TearDown Sunrise');
+            if ($this->build != null) {
+                $this->serializeBuild($this->build);
+                $this->build = null;
+            }
         }
     }
-
 
     public function check_environment(array $errors = array())
     {
@@ -88,8 +89,9 @@ class Sunrise implements EngineInterface
 
     public function doWork()
     {
-        while (0 !== 1) {
-            usleep(1000);
+        $this->mediator->log('Sunrise is working');
+        while (!\Core_Daemon::is('shutdown')) {
+            usleep(100);
         }
     }
 

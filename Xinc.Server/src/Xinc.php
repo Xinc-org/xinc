@@ -144,9 +144,9 @@ class Xinc extends \Core_Daemon
      */
     protected function godown()
     {
-        echo "\n";
-        echo 'Goodbye. Shutting down Xinc';
-        echo "\n";
+        if ($this->is('parent')) {
+            $this->log('Goodbye. Shutting down Xinc');
+        }
     }
 
     /**
@@ -157,6 +157,9 @@ class Xinc extends \Core_Daemon
         if ($label !== '') {
             $message = $label . ': ' . $message;
         }
+
+        $message = getmypid() . ': ' . $message;
+
         \Xinc\Core\Logger::getInstance()->info($message);
         if ($this->is('stdout')) {
             echo $message . "\n";
@@ -400,6 +403,7 @@ class Xinc extends \Core_Daemon
             }
             $this->worker('Sunrise', $engine);
             $this->$name->workers(1);
+            $this->$name->timeout(0);
             $this->$name->setup();
             $this->$name->doWork();
         }
