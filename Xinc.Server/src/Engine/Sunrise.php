@@ -91,7 +91,7 @@ class Sunrise implements EngineInterface
     {
         $this->mediator->log('Sunrise is working');
         while (!\Core_Daemon::is('shutdown')) {
-            usleep(100);
+            usleep(1000);
         }
     }
 

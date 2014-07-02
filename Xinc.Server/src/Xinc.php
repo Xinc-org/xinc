@@ -32,14 +32,12 @@
 
 namespace Xinc\Server;
 
-class Xinc extends \Core_Daemon
+class Xinc
 {
     const VERSION = '2.3.90';
 
     const DEFAULT_PROJECT_DIR = 'projects';
     const DEFAULT_STATUS_DIR = 'status';
-
-    public $buildActive = false;
 
     /**
      * Current working directory
@@ -63,115 +61,17 @@ class Xinc extends \Core_Daemon
      */
     private $statusDir;
 
-    protected $loop_interval = 5;
-
     /**
      * @var array Holding the merged cli parameters.
      */
-    private $opts = array();
-
-    /**
-     * This is where you implement any once-per-execution setup code.
-     * @return void
-     *
-     * @throws Xinc\Core\Exception\IOException if setting dirs/files failed.
-     * @throws \Exception
-     */
-    protected function setup()
-    {
-        $logger = \Xinc\Core\Logger::getInstance();
-
-        $logger->setLogLevel($this->opts['verbose']);
-        $logger->setXincLogFile($this->opts['log-file']);
-
-        $logger->info('Starting up Xinc');
-        $logger->info('- Version:    ' . self::getVersion());
-        $logger->info('- Workingdir: ' . $this->opts['working-dir']);
-        $logger->info('- Projectdir: ' . $this->opts['project-dir']);
-        $logger->info('- Statusdir:  ' . $this->opts['status-dir']);
-        $logger->info('- Log Level:  ' . $this->opts['verbose']);
-        $logger->info('- Daemon:     ' . ($this->is('daemonized') ? 'yes' : 'no'));
-
-        if (isset($this->opts['working-dir'])) {
-            $this->setWorkingDir($this->opts['working-dir']);
-        }
-
-        if (isset($this->opts['project-dir'])) {
-            $this->setProjectDir($this->opts['project-dir']);
-        }
-
-        if (isset($this->opts['status-dir'])) {
-            $this->setStatusDir($this->opts['status-dir']);
-        }
-
-        // TODO: Add Sunrise Engine now. No Plugable way yet.
-        $engine = new \Xinc\Server\Engine\Sunrise();
-        Engine\Repository::getInstance()->registerEngine($engine, true);
-
-        if (isset($this->opts['project-file'])) {
-            $this->addProjectFiles($this->opts['project-file']);
-        }
-
-        $this->on(\Core_Daemon::ON_SHUTDOWN, array($this, 'godown'));
-
-        $this->startEngines();
-    }
-
-    /**
-     * This is where you implement the tasks you want your daemon to perform.
-     * This method is called at the frequency defined by loop_interval.
-     *
-     * @return void
-     */
-    protected function execute()
-    {
-    }
-
-    /**
-     * Dynamically build the file name for the log file. This simple algorithm
-     * will rotate the logs once per day and try to keep them in a central /var/log location.
-     *
-     * @return string
-     */
-    protected function log_file()
-    {
-    }
-
-    /**
-     * Shutdown the xinc instance.
-     *
-     * @param boolean $exit
-     */
-    protected function godown()
-    {
-        if ($this->is('parent')) {
-            $this->log('Goodbye. Shutting down Xinc');
-        }
-    }
-
-    /**
-     * @TODO send to logger
-     */
-    public function log($message, $label = '', $indent = 0)
-    {
-        if ($label !== '') {
-            $message = $label . ': ' . $message;
-        }
-
-        $message = getmypid() . ': ' . $message;
-
-        \Xinc\Core\Logger::getInstance()->info($message);
-        if ($this->is('stdout')) {
-            echo $message . "\n";
-        }
-    }
+    private $options = array();
 
     /**
      * Handle command line arguments.
      *
      * @return void
      */
-    protected function getopt()
+    protected function parseCliOptions()
     {
         $workingDir = dirname($_SERVER['argv'][0]);
 
@@ -199,15 +99,11 @@ class Xinc extends \Core_Daemon
         }
 
         if (isset($opts['help'])) {
-            $this->show_help();
+            $this->showHelp();
             exit();
         }
 
-        if (isset($opts['once']) || isset($opts['o'])) {
-            $this->set('daemonized', false);
-        }
-
-        $this->opts = $this->mergeOpts(
+        $this->options = $this->mergeOpts(
             $opts,
             array(
                 'w' => 'working-dir',
@@ -216,6 +112,7 @@ class Xinc extends \Core_Daemon
                 'f' => 'project-file',
                 'l' => 'log-file',
                 'v' => 'verbose',
+                'o' => 'once',
             ),
             array (
                 'working-dir' => $workingDir,
@@ -225,8 +122,18 @@ class Xinc extends \Core_Daemon
                 'verbose'     => \Xinc\Core\Logger::DEFAULT_LOG_LEVEL,
             )
         );
+    }
 
-        parent::getopt();
+    /**
+     * Validates the given options (working-dir, status-dir, project-dir)
+     *
+     * @throws Xinc\Core\Exception\IOException
+     */
+    protected function validateCliOptions()
+    {
+        $this->checkDirectory($this->options['working-dir']);
+        $this->checkDirectory($this->options['project-dir']);
+        $this->checkDirectory($this->options['status-dir']);
     }
 
     /**
@@ -253,73 +160,6 @@ class Xinc extends \Core_Daemon
         }
 
         return $merge;
-    }
-
-    /**
-     * Sets the working directory.
-     *
-     * @param string $strWorkingDir The working directory.
-     *
-     * @throws Xinc\Core\Exception\IOException
-     */
-    public function setWorkingDir($strWorkingDir)
-    {
-        \Xinc\Core\Logger::getInstance()->verbose('Setting workingdir: ' . $strWorkingDir);
-        $this->workingDir = $this->checkDirectory($strWorkingDir);
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getWorkingDir()
-    {
-        return $this->workingDir;
-    }
-
-    /**
-     * Set the directory in which to project files lies.
-     *
-     * @param string $strProjectDir Directory of the project files.
-     *
-     * @throws Xinc\Core\Exception\IOException
-     */
-    public function setProjectDir($strProjectDir)
-    {
-        \Xinc\Core\Logger::getInstance()->verbose('Setting projectdir: ' . $strProjectDir);
-        $this->projectDir = $this->checkDirectory($strProjectDir);
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getProjectDir()
-    {
-        return $this->projectDir;
-    }
-
-    /**
-     * Set the directory in which to save project status files
-     *
-     * @param string $strStatusDir Directory for the status files.
-     *
-     * @throws Xinc\Core\Exception\IOException
-     */
-    public function setStatusDir($strStatusDir)
-    {
-        \Xinc\Core\Logger::getInstance()->verbose('Setting statusdir: ' . $strStatusDir);
-        $this->statusDir = $this->checkDirectory($strStatusDir);
-    }
-
-    /**
-     * Returns the  Directory for the status files.
-     *
-     * @return string Directory for the status files.
-     */
-    public function getStatusDir()
-    {
-        return $this->statusDir;
     }
 
     /**
@@ -357,58 +197,6 @@ class Xinc extends \Core_Daemon
         return realpath($strDirectory);
     }
 
-    public function addProjectFiles($files)
-    {
-        if (is_string($files)) {
-            $files = array($files);
-        }
-
-        foreach ($files as $file) {
-            $this->addProjectFile($file);
-        }
-    }
-
-    /**
-     * Add a projectfile to the xinc processing
-     *
-     * @param string $fileName
-     */
-    private function addProjectFile($fileName)
-    {
-        \Xinc\Core\Logger::getInstance()->info('Loading Project-File: ' . $fileName);
-
-        try {
-            $config = new \Xinc\Core\Project\Config($fileName);
-            $group = $config->getProjectGroup();
-
-            foreach ($group->getProjects() as $project) {
-                $engine = Engine\Repository::getInstance()->getEngine($project->getEngineName());
-                $engine->addProject($project);
-            }
-        } catch (\Xinc\Core\Project\Config\Exception\FileNotFoundException $notFound) {
-            \Xinc\Core\Logger::getInstance()->error('Project Config File ' . $fileName . ' cannot be found');
-        } catch (Xinc_Engine_Exception_NotFound $engineNotFound) {
-            \Xinc\Core\Logger::getInstance()->error(
-                'Project Config File references an unknown Engine: ' . $engineNotFound->getMessage()
-            );
-        }
-    }
-
-    private function startEngines()
-    {
-        $engines = Engine\Repository::getInstance()->getEngines();
-        foreach ($engines as $name => $engine) {
-            if ($name !== $engine->getName()) {
-                continue;
-            }
-            $this->worker('Sunrise', $engine);
-            $this->$name->workers(1);
-            $this->$name->timeout(0);
-            $this->$name->setup();
-            $this->$name->doWork();
-        }
-    }
-
     /**
      * TODO: Needs to be somewhere else?
      * returns the builtin properties that can be used
@@ -416,26 +204,23 @@ class Xinc extends \Core_Daemon
      *
      * @return array
      */
-    public function getBuiltinProperties()
-    {
-        $properties = array();
-        $properties['workingdir'] = $this->getWorkingDir();
-        $properties['statusdir'] = $this->getStatusDir();
-        $properties['projectdir'] = $this->getProjectDir();
-
-        return $properties;
-    }
+//     public function getBuiltinProperties()
+//     {
+//         $properties = array();
+//         $properties['workingdir'] = $this->getWorkingDir();
+//         $properties['statusdir'] = $this->getStatusDir();
+//         $properties['projectdir'] = $this->getProjectDir();
+//
+//         return $properties;
+//     }
 
     /**
      * prints help message, describing different parameters to run xinc
      *
+     * @return void
      */
-    protected function show_help($msg = '')
+    protected function showHelp()
     {
-        if ($msg) {
-            echo 'ERROR:' . "\n" . wordwrap($msg, 72, "\n ");
-        }
-
         echo 'Usage: xinc [switches]' . "\n\n";
 
         echo '  -f --project-file=<file>  The project file to use.' . "\n"
@@ -452,20 +237,94 @@ class Xinc extends \Core_Daemon
     }
 
     /**
+     * Prints the startup information of xinc
+     *
+     * @return void
+     */
+    public function logStartupSettings()
+    {
+        $logger = \Xinc\Core\Logger::getInstance();
+
+        $logger->info('Starting up Xinc');
+        $logger->info('- Version:    ' . Xinc::VERSION);
+        $logger->info('- Workingdir: ' . $this->options['working-dir']);
+        $logger->info('- Projectdir: ' . $this->options['project-dir']);
+        $logger->info('- Statusdir:  ' . $this->options['status-dir']);
+        $logger->info('- Log Level:  ' . $this->options['verbose']);
+    }
+
+    /**
      * Prints the version of xinc
      */
     public function logVersion()
     {
-        $this->log('Xinc version ' . $this->getVersion());
+        \Xinc\Core\Logger::getInstance()->info('Xinc version ' . Xinc::VERSION);
     }
 
     /**
-     * Returns the Version of Xinc
+     * Initialize the logger with path to file and verbosity
      *
-     * @return string
+     * @return void
      */
-    public function getVersion()
+    public function initLogger()
     {
-        return Xinc::VERSION;
+        $logger = \Xinc\Core\Logger::getInstance();
+
+        $logger->setLogLevel($this->options['verbose']);
+        $logger->setXincLogFile($this->options['log-file']);
+    }
+
+    /**
+     * Initialize the Plugins
+     * TODO: Not yet done only Sunrise is registered as engine by hand.
+     *
+     * @return void
+     * @TODO Needs work.
+     */
+    protected function initPlugins()
+    {
+        // TODO: Add Sunrise Engine now. No Plugable way yet.
+        $engine = new \Xinc\Server\Engine\Sunrise();
+        Engine\Repository::getInstance()->registerEngine($engine, true);
+    }
+
+    /**
+     * Initialize the daemon
+     *
+     * @return void
+     */
+    protected function initDaemon()
+    {
+        $daemon = Daemon::getInstance();
+        if (!$daemon) {
+            throw new \Exception('Couldn\'t create instance, hopefully you got some error messages on console or in the log file.');
+        }
+
+        if (isset($this->options['once'])) {
+            $daemon->setRunOnce();
+        }
+
+        $daemon->setWorkingDir($this->options['working-dir']);
+        $daemon->setProjectDir($this->options['project-dir']);
+        $daemon->setStatusDir($this->options['status-dir']);
+        $daemon->addProjectFiles($this->options['project-file']);
+
+        return $daemon;
+    }
+
+    public static function execute()
+    {
+        try {
+            $xinc = new self();
+            $xinc->parseCliOptions();
+            $xinc->initLogger();
+            $xinc->initPlugins();
+            $xinc->validateCliOptions();
+            $daemon = $xinc->initDaemon();
+            $daemon->run();
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+            exit(1);
+        }
     }
 }
