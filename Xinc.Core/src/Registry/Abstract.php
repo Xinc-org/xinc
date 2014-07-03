@@ -41,24 +41,6 @@ abstract class RegistryAbstract implements RegistryInterface
      */
     private $registry = array();
 
-    private static $instance;
-
-    /**
-     * Empty constructor to define it private
-     */
-    private function __constructor()
-    {
-    }
-
-    public static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
     /**
      *
      * @param string $name

@@ -31,15 +31,8 @@
 
 namespace Xinc\Core;
 
-class Logger
+class Logger extends \Xinc\Core\Singleton
 {
-    /**
-     * Singleton instance variable.
-     *
-     * @var Xinc\Core\Logger
-     */
-    private static $instance;
-
     /**
      * Path to the log file.
      *
@@ -92,7 +85,7 @@ class Logger
      * Private singleton constructor.
      *
      */
-    private function __construct()
+    protected function __construct()
     {
         $this->logQueue = array();
     }
@@ -116,19 +109,6 @@ class Logger
     public function getLogLevel()
     {
         return $this->logLevel;
-    }
-
-    /**
-     * Singleton getInstance method.
-     *
-     * @return Xinc\Core\Logger
-     */
-    public static function getInstance()
-    {
-        if (!Logger::$instance) {
-            Logger::$instance = new Logger();
-        }
-        return Logger::$instance;
     }
 
     /**
@@ -340,10 +320,5 @@ class Logger
             throw new Logger\Exception\NonWriteableException($logFile);
         }
         $this->file = $logFile;
-    }
-
-    public static function tearDown()
-    {
-        self::$instance = null;
     }
 }
