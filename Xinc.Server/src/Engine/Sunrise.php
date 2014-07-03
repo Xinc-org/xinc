@@ -146,7 +146,7 @@ class Sunrise implements EngineInterface
     protected function serializeBuild(Xinc_Build_Interface $build)
     {
         try {
-           $build->serialize();
+            $build->serialize();
         } catch (Xinc_Build_Exception_NotRun $e1) {
             $build->error('Build cannot be serialized, it did not run.');
         } catch (Xinc_Build_Exception_Serialization $e2) {
@@ -232,14 +232,14 @@ class Sunrise implements EngineInterface
             $build->info('Code not up to date, building project');
             $build->updateTasks();
             $build->process(Xinc_Plugin_Slot::PROCESS);
-            if ( Xinc_Build_Interface::PASSED == $build->getStatus() ) {
+            if (Xinc_Build_Interface::PASSED == $build->getStatus()) {
                 $build->updateTasks();
                 $build->info("BUILD PASSED");
-            } else if ( Xinc_Build_Interface::STOPPED == $build->getStatus() ) {
+            } elseif (Xinc_Build_Interface::STOPPED == $build->getStatus()) {
                 //$build->setNumber($build->getNumber()-1);
                 $build->updateTasks();
                 $build->warn("BUILD STOPPED");
-            } else if (Xinc_Build_Interface::FAILED == $build->getStatus() ) {
+            } elseif (Xinc_Build_Interface::FAILED == $build->getStatus()) {
                 //if ($build->getLastBuild()->getStatus() == Xinc_Build_Interface::PASSED) {
                 //    $build->setNumber($build->getNumber()+1);
                 //}

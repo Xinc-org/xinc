@@ -141,7 +141,7 @@ class Parser
     private function parseTasks($build, $element, $repository)
     {
         foreach ($element as $taskName => $task) {
-            try{
+            try {
                 $taskObject = Xinc_Plugin_Repository::getInstance()->getTask($taskName, (string)$element);
                 $taskObject->init($build);
                 $taskObject->setXml($task);

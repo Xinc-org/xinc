@@ -190,7 +190,10 @@ class Xinc
                 'Directory "' . $strDirectory . '" is not writeable.'
             );
             throw new \Xinc\Core\Exception\IOException(
-                $strDirectory, null, null, \Xinc\Core\Exception\IOException::FAILURE_NOT_WRITEABLE
+                $strDirectory,
+                null,
+                null,
+                \Xinc\Core\Exception\IOException::FAILURE_NOT_WRITEABLE
             );
         }
 
@@ -297,7 +300,9 @@ class Xinc
     {
         $daemon = Daemon::getInstance();
         if (!$daemon) {
-            throw new \Exception('Couldn\'t create instance, hopefully you got some error messages on console or in the log file.');
+            throw new \Exception(
+                'Couldn\'t create instance, hopefully you got some error messages on console or in the log file.'
+            );
         }
 
         if (isset($this->options['once'])) {
