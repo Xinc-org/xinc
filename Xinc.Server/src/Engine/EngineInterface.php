@@ -47,18 +47,13 @@ interface EngineInterface extends \Core_IWorker
     public function build(Xinc_Build_Interface $build);
 
     /**
-     * adds a project to the engine.
+     * Adds a project to the engine.
+     *
+     * @param \Xinc\Core\Models\Project $project A project inside this engine.
+     *
+     * @return void
      */
     public function addProject(\Xinc\Core\Models\Project $project);
-
-    /**
-     * Parses Project-Xml and returns
-     *
-     * @param \Xinc\Core\Project\Iterator $projects
-     *
-     * @return Xinc_Build_Iterator
-     */
-    public function parseProjects(\Xinc\Core\Project\Iterator $projects);
 
     /**
      * returns the interval in seconds in which the engine checks for new builds

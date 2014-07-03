@@ -64,89 +64,89 @@ class Parser
      *
      * @return array the builds
      */
-    public function parseProjects(\Xinc\Core\Project\Iterator $projects)
+    public function parseProjectOld($project)
     {
         $builds = array();
 //         $this->setters = Xinc_Plugin_Repository::getInstance()
 //             ->getTasksForSlot(Xinc_Plugin_Slot::PROJECT_SET_VALUES);
 
-        foreach($projects as $key => $project) {
-            $build = null;
-            /**
-             * trying to recover the last build information
-             */
-            try {
-                $build = \Xinc\Core\Build::unserialize($project);
-                $build->setBuildTime(null);
-                $build->resetConfigDirective();
-            } catch (Xinc_Build_Exception_NotFound $e) {
-                Xinc_Logger::getInstance()->info(
-                    'No status data found for ' . $project->getName()
-                );
-            } catch (Exception $e) {
-                Xinc_Logger::getInstance()->error(
-                    'Could not unserialize old status of ' . $project->getName()
-                );
-            }
-            $projectXml = $project->getConfig();
-            if (!$build instanceof Xinc_Build_Interface) {
-                $build = new Xinc_Build($this->engine, $project);
-            }
-
-            $build->getProperties()->set('project.name', $project->getName());
-            $build->getProperties()->set('build.number', $build->getNumber());
-            $build->getProperties()->set('build.label', $build->getLabel());
-
-            $builtinProps = Xinc::getInstance()->getBuiltinProperties();
-
-            foreach ($builtinProps as $prop => $value) {
-                $build->getProperties()->set($prop, $value);
-            }
-
-            $taskRegistry = new Xinc_Build_Tasks_Registry();
-            $this->_parseTasks($build, $projectXml, $taskRegistry);
-
-            $build->setTaskRegistry($taskRegistry);
-            $build->process(Xinc_Plugin_Slot::PROJECT_INIT);
-
-            if (!$build->haveScheduler()) {
-                // set default scheduler
-                $scheduler = new Xinc_Build_Scheduler_Default();
-                $build->addScheduler($scheduler);
-            }
-
-            $labeler = $build->getLabeler();
-
-            if ($labeler == null) {
-                // set default scheduler
-                $labeler = new Xinc_Build_Labeler_Default();
-                $build->setLabeler($labeler);
-            }
-
-            $builds[] = $build;
+        $build = null;
+        /**
+         * trying to recover the last build information
+         */
+        try {
+            $build = \Xinc\Core\Build::unserialize($project);
+            $build->setBuildTime(null);
+            $build->resetConfigDirective();
+        } catch (Xinc_Build_Exception_NotFound $e) {
+            Xinc_Logger::getInstance()->info(
+                'No status data found for ' . $project->getName()
+            );
+        } catch (Exception $e) {
+            Xinc_Logger::getInstance()->error(
+                'Could not unserialize old status of ' . $project->getName()
+            );
         }
+        $projectXml = $project->getConfig();
+        if (!$build instanceof Xinc_Build_Interface) {
+            $build = new Xinc_Build($this->engine, $project);
+        }
+
+        $build->getProperties()->set('project.name', $project->getName());
+        $build->getProperties()->set('build.number', $build->getNumber());
+        $build->getProperties()->set('build.label', $build->getLabel());
+
+        $builtinProps = Xinc::getInstance()->getBuiltinProperties();
+
+        foreach ($builtinProps as $prop => $value) {
+            $build->getProperties()->set($prop, $value);
+        }
+
+        $taskRegistry = new Xinc_Build_Tasks_Registry();
+        $this->_parseTasks($build, $projectXml, $taskRegistry);
+
+        $build->setTaskRegistry($taskRegistry);
+        $build->process(Xinc_Plugin_Slot::PROJECT_INIT);
+
+        if (!$build->haveScheduler()) {
+            // set default scheduler
+            $scheduler = new Xinc_Build_Scheduler_Default();
+            $build->addScheduler($scheduler);
+        }
+
+        $labeler = $build->getLabeler();
+
+        if ($labeler == null) {
+            // set default scheduler
+            $labeler = new Xinc_Build_Labeler_Default();
+            $build->setLabeler($labeler);
+        }
+
+        $builds[] = $build;
+
         return $builds;
     }
 
+    public function parseProject($project)
+    {
+        $this->parseTasks(null, $project->getConfig(), null);
+    }
+
     /**
-     * Parses the task of a project-xml
+     * Parses the tasks/subtasks of a project-xml
      *
      * @param SimpleXmlElement $element
      * @param Xinc $project
      */
-    private function _parseTasks(Xinc_Build_Interface &$build, &$element, &$repository)
+    private function parseTasks($build, $element, $repository)
     {
-        $project = $build->getProject();
-
-        foreach ($element->children() as $taskName => $task) {
+        foreach ($element as $taskName => $task) {
             try{
                 $taskObject = Xinc_Plugin_Repository::getInstance()->getTask($taskName, (string)$element);
                 $taskObject->init($build);
                 $taskObject->setXml($task);
-            } catch(Exception $e){
-                Xinc_Logger::getInstance()->error('undefined task "'
-                                                 .$taskName.'"');
-                //throw new Xinc_Exception_MalformedConfig();
+            } catch (Exception $e) {
+                \Xinc\Core\Logger::getInstance()->error('undefined task "' . $taskName . '"');
                 $project->setStatus(Xinc_Project_Status::MISCONFIGURED);
                 return;
             }
@@ -163,14 +163,12 @@ class Parser
                 $taskObject->$setter((string)$value, $build);
             }
 
-            $this->_parseTasks($build, $task, $taskObject);
+            $this->parseTasks($build, $task, $taskObject);
             $repository->registerTask($taskObject);
 
 
-            if ( !$taskObject->validate() ) {
-                //throw new Xinc_Exception_MalformedConfig('Error validating '
-                //                                        .'config.xml for task: '
-                //                                        .$taskObject->getName());
+            if (!$taskObject->validate()) {
+                \Xinc\Core\Logger::getInstance()->error('Error validating config.xml for task: ' . $taskObject->getName());
                 $project->setStatus(Xinc_Project_Status::MISCONFIGURED);
                 return;
             }

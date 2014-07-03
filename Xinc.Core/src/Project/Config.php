@@ -68,7 +68,7 @@ class Config
         $projects = array();
 
         foreach ($this->projectConfigs as $key => $projectConfig) {
-            $projectObject = new \Xinc\Core\Models\Project();
+            $project = new \Xinc\Core\Models\Project();
 
             foreach ($projectConfig->attributes() as $name => $value ) {
                 $method = 'set' . ucfirst(strtolower($name));
@@ -76,19 +76,23 @@ class Config
                  * Catch unsupported methods by checking if method exists or
                  * having a magic function __set and __get on all objects
                  */
-                if (method_exists($projectObject, $method)) {
-                    $projectObject->$method((string)$value);
+                if (method_exists($project, $method)) {
+                    $project->$method((string)$value);
                 } else {
                     \Xinc\Core\Logger::getInstance()->error(
                         'Trying to set "' . $name .'" on Xinc Project failed. No such setter.'
                     );
                 }
             }
-//             $projectObject->setConfig($projectConfig);
-            if ($projectObject->getEngineName() === '') {
-                $projectObject->setEngineName = $this->projectGroup->getEngineName();
+
+            // TODO: I don't think this is the right place.
+            $project->setConfig($projectConfig);
+
+            if ($project->getEngineName() === '') {
+                $project->setEngineName = $this->projectGroup->getEngineName();
             }
-            $this->projectGroup->addProject($projectObject);
+            $this->projectGroup->addProject($project);
+            $project->setGroup($this->projectGroup);
         }
     }
 

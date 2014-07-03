@@ -46,13 +46,21 @@ class Project
      * @see Xinc\Core\Project\Status
      * @var integer Current status of the project
      */
-    private $status = 1;
+    private $status = \Xinc\Core\Project\Status::NEVERRUN;
 
     /**
      * @see Xinc\Core\Plugin\Slot
      * @var array Used Processes
      */
     private $processes = array();
+
+    /**
+     * @var Xinc\Core\Models\ProjectGroup The group this project belongs
+     */
+    private $group = null;
+
+    // TODO: Not the right direction.
+    private $config;
 
     /**
      * Sets the project name for display purposes.
@@ -119,6 +127,16 @@ class Project
         return $this->status;
     }
 
+    public function setGroup(ProjectGroup $group)
+    {
+        $this->group = $group;
+    }
+
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
     /**
      * Adds a process with appropriate slot to the project
      *
@@ -129,5 +147,15 @@ class Project
     public function addProcess($slot, $process)
     {
         $this->processes[$slot][] = $process;
+    }
+
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
     }
 }

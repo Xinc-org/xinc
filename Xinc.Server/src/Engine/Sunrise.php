@@ -41,11 +41,18 @@ class Sunrise implements EngineInterface
     /**
      * @var Xinc_Build_Interface The current build
      */
-    public $build;
+    private $build;
 
+    private $projects = array();
+
+    /**
+     * Setup worker
+     *
+     * @return void
+     */
     public function setup()
     {
-        $this->mediator->log('Setup Sunrise');
+        $this->mediator->log('Setup');
     }
 
     /**
@@ -56,7 +63,7 @@ class Sunrise implements EngineInterface
     public function tearDown()
     {
         if (!\Core_Daemon::is('parent')) {
-            $this->mediator->log('TearDown Sunrise');
+            $this->mediator->log('TearDown');
             if ($this->build != null) {
                 $this->serializeBuild($this->build);
                 $this->build = null;
@@ -70,6 +77,19 @@ class Sunrise implements EngineInterface
     }
 
     /**
+     * Start the engines own loop
+     *
+     * @return void
+     */
+    public function doWork()
+    {
+        $this->mediator->log('Sunrise is working');
+        while (!\Core_Daemon::is('shutdown')) {
+            usleep(1000);
+        }
+    }
+
+    /**
      * get the name of this engine
      *
      * @return string
@@ -80,19 +100,17 @@ class Sunrise implements EngineInterface
     }
 
     /**
-     * adds a project to the engine.
+     * Adds a project to the engine.
+     *
+     * @param \Xinc\Core\Models\Project $project A project inside this engine.
+     *
+     * @return void
      */
     public function addProject(\Xinc\Core\Models\Project $project)
     {
-
-    }
-
-    public function doWork()
-    {
-        $this->mediator->log('Sunrise is working');
-        while (!\Core_Daemon::is('shutdown')) {
-            usleep(1000);
-        }
+        $this->mediator->log('Add project ' . $project->getName());
+        $this->projects[] = $project;
+        $this->parseProject($project);
     }
 
     private function handleBuildConfig(Xinc_Build_Interface $build)
@@ -262,19 +280,14 @@ class Sunrise implements EngineInterface
     /**
      * Parses Project-Xml and returns
      *
-     * @param Xinc\Core\Project\Iterator $projects
-     *
-     * @return Xinc\Core\Build\Iterator
      * @throws Xinc\Core\Build\Exception\InvalidException
      */
-    public function parseProjects(\Xinc\Core\Project\Iterator $projects)
+    public function parseProject($project)
     {
         $parser = new Sunrise\Parser($this);
-        $buildsArr = $parser->parseProjects($projects);
+        $buildsArr = $parser->parseProject($project);
 
-        $buildIterator = new \Xinc\Core\Build\Iterator($buildsArr);
-
-        return $buildIterator;
+        $this->buildIterator = new \Xinc\Core\Build\Iterator($buildsArr);
     }
 
     /**

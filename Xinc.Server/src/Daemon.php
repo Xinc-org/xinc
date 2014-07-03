@@ -131,7 +131,8 @@ class Daemon extends \Core_Daemon
     }
 
     /**
-     * @TODO send to logger
+     * Writes all log messages to the Xinc logger as info. And writes it to console if available.
+     * TODO: No difference between error, warning, info yet ... PSR3 logger needed.
      */
     public function log($message, $label = '', $indent = 0)
     {

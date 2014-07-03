@@ -35,4 +35,5 @@ class Status
     const DISABLED = 0;
     const MISCONFIGURED = -1;
     const BUILDING = 2;
+    const NEVERRUN = 3;
 }
