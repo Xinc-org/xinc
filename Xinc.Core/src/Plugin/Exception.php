@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Plugin
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -26,6 +26,8 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-class Xinc_Plugin_Exception extends Exception
+namespace Xinc\Core\Plugin;
+
+class Exception extends \Exception
 {
 }

@@ -50,6 +50,14 @@ class Repository extends \Xinc\Core\Singleton
     private $slotReference = array();
 
     /**
+     * Load the plugin config, which is handled by composer xinc package installer.
+     */
+    public function loadPluginConfig()
+    {
+
+    }
+
+    /**
      * Enter description here...
      *
      * @param Xinc_Plugin_Interface $plugin
@@ -141,7 +149,7 @@ class Repository extends \Xinc\Core\Singleton
      * @param Xinc_Plugin_Task_Interface $task
      * @param array $parentTasks
      *
-     * @throws Xinc_Plugin_Task_Exception
+     * @throws Xinc\Core\Plugin\Task\Exception
      */
     private function registerTaskDependencies(
         Xinc_Plugin_Interface $plugin,
@@ -162,7 +170,7 @@ class Repository extends \Xinc\Core\Singleton
             $fullTaskName = strtolower($fullTaskName);
 
             if (isset($this->definedTasks[$fullTaskName])) {
-                throw new Xinc_Plugin_Task_Exception();
+                throw new Task\Exception();
             }
             $this->definedTasks[$fullTaskName] = array(
                 'classname' => $taskClass,
@@ -171,6 +179,9 @@ class Repository extends \Xinc\Core\Singleton
         }
     }
 
+    /**
+     * @throws Xinc\Core\Plugin\Task\Exception
+     */
     public function getTask($taskname, $parentElement = null)
     {
         $taskname = strtolower($taskname);
@@ -183,12 +194,12 @@ class Repository extends \Xinc\Core\Singleton
         } elseif (isset($this->definedTasks[$taskname])) {
             $taskData = $this->definedTasks[$taskname];
         } else {
-            throw new Xinc_Plugin_Task_Exception('undefined task ' . $taskname);
+            throw new Task\Exception('undefined task ' . $taskname);
         }
 
         if (!isset($this->plugins[$taskData['plugin']['classname']])) {
             $plugin = new $taskData['plugin']['classname'];
-            $this->plugins[$taskData['plugin']['classname']] = &$plugin;
+            $this->plugins[$taskData['plugin']['classname']] = $plugin;
         } else {
             $plugin = $this->plugins[$taskData['plugin']['classname']];
         }
