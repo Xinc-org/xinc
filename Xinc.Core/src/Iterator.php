@@ -59,7 +59,7 @@ class Iterator extends \ArrayIterator
      */
     public function testValues($array)
     {
-        foreach($array as $value) {
+        foreach ($array as $value) {
             $this->testValue($value);
         }
     }

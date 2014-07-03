@@ -57,8 +57,11 @@ class IOException extends \Xinc\Core\Exception
      * @param Exception $previous        Exception if nested exception.
      */
     public function __construct(
-        $strResourceName, $strResourcePath = null, $strMessage = null,
-        $nCode = self::FAILURE_IO, Exception $previous = null
+        $strResourceName,
+        $strResourcePath = null,
+        $strMessage = null,
+        $nCode = self::FAILURE_IO,
+        Exception $previous = null
     ) {
         $this->strResourceName = $strResourceName;
         $this->strResourcePath = $strResourcePath;
@@ -93,9 +96,8 @@ class IOException extends \Xinc\Core\Exception
      *
      * @return string A message for this error.
      */
-    protected function getErrorMessage(
-        $nCode, $strMessage = null
-    ) {
+    protected function getErrorMessage($nCode, $strMessage = null)
+    {
         $strReturn = 'Failure: ';
         if (null !== $this->strResourcePath) {
             $strReturn = 'Path: "' . $this->strResourcePath . '" ';

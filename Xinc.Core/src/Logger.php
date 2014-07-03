@@ -171,7 +171,7 @@ class Logger
             } else {
                 error_log($message, 3, $this->file);
             }
-        } else if ($fileHandle !== null) {
+        } elseif ($fileHandle !== null) {
             fputs($fileHandle, $message);
         }
 
@@ -241,7 +241,7 @@ class Logger
      */
     public function emptyLogQueue()
     {
-        $this->_resetLogQueue();
+        $this->resetLogQueue();
     }
 
     /**
@@ -250,8 +250,8 @@ class Logger
      */
     public function flush()
     {
-        if ( null == $this->buildLogFile) {
-            $this->_resetLogQueue();
+        if (null == $this->buildLogFile) {
+            $this->resetLogQueue();
             return;
         }
         $messageElements = array();
@@ -309,10 +309,10 @@ class Logger
         } else {
             self::error('Cannot open: ' . $this->buildLogFile . ' for writing.');
         }
-        $this->_resetLogQueue();
+        $this->resetLogQueue();
     }
 
-    private function _resetLogQueue()
+    private function resetLogQueue()
     {
         $this->logQueue = array();
     }

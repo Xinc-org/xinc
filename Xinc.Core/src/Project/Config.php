@@ -70,7 +70,7 @@ class Config
         foreach ($this->projectConfigs as $key => $projectConfig) {
             $project = new \Xinc\Core\Models\Project();
 
-            foreach ($projectConfig->attributes() as $name => $value ) {
+            foreach ($projectConfig->attributes() as $name => $value) {
                 $method = 'set' . ucfirst(strtolower($name));
                 /**
                  * Catch unsupported methods by checking if method exists or

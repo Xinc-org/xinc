@@ -64,9 +64,7 @@ class Project
      */
     public function info($message)
     {
-        Xinc_Logger::getInstance()->info('[project] '
-                                        . $this->getName()
-                                        . ': '.$message);
+        Xinc_Logger::getInstance()->info('[project] ' . $this->getName() . ': '.$message);
 
     }
 
@@ -77,9 +75,7 @@ class Project
      */
     public function warn($message)
     {
-        Xinc_Logger::getInstance()->warn('[project] '
-                                        . $this->getName()
-                                        . ': '.$message);
+        Xinc_Logger::getInstance()->warn('[project] ' . $this->getName() . ': '.$message);
 
     }
 
@@ -90,9 +86,7 @@ class Project
      */
     public function verbose($message)
     {
-        Xinc_Logger::getInstance()->verbose('[project] '
-                                            . $this->getName()
-                                            . ': '.$message);
+        Xinc_Logger::getInstance()->verbose('[project] ' . $this->getName() . ': '.$message);
 
     }
 
@@ -103,9 +97,7 @@ class Project
      */
     public function debug($message)
     {
-        Xinc_Logger::getInstance()->debug('[project] '
-                                         . $this->getName()
-                                         . ': '.$message);
+        Xinc_Logger::getInstance()->debug('[project] ' . $this->getName() . ': '.$message);
 
     }
 
@@ -116,9 +108,7 @@ class Project
      */
     public function error($message)
     {
-        Xinc_Logger::getInstance()->error('[project] '
-                                         . $this->getName()
-                                         . ': '.$message);
+        Xinc_Logger::getInstance()->error('[project] ' . $this->getName() . ': '.$message);
 
     }
 }
