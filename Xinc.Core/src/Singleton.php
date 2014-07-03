@@ -44,6 +44,11 @@ class Singleton
     {
     }
 
+    protected function __wakeup()
+    {
+        throw news \Exception('You can\'t wakeup Singletons.');
+    }
+
     /**
      * Get an instance of the Plugin Repository
      *

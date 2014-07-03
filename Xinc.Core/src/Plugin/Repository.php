@@ -6,7 +6,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Plugin
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -27,15 +27,10 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Exception.php';
-require_once 'Xinc/Plugin/Iterator.php';
-require_once 'Xinc/Gui/Widget/Repository.php';
-require_once 'Xinc/Api/Module/Repository.php';
+namespace Xinc\Core\Plugin;
 
-class Xinc_Plugin_Repository
+class Repository extends \Xinc\Core\Singleton
 {
-    private static $instance;
-
     /**
      * @var Xinc_Plugin_Task_Interface[]
      */
@@ -53,19 +48,6 @@ class Xinc_Plugin_Repository
      * @var array
      */
     private $slotReference = array();
-
-    /**
-     * Get an instance of the Plugin Repository
-     *
-     * @return Xinc_Plugin_Repository
-     */
-    public static function getInstance()
-    {
-        if (!Xinc_Plugin_Repository::$instance) {
-            Xinc_Plugin_Repository::$instance = new Xinc_Plugin_Repository();
-        }
-        return Xinc_Plugin_Repository::$instance;
-    }
 
     /**
      * Enter description here...
@@ -189,7 +171,7 @@ class Xinc_Plugin_Repository
         }
     }
 
-    public function &getTask($taskname, $parentElement = null)
+    public function getTask($taskname, $parentElement = null)
     {
         $taskname = strtolower($taskname);
         if ($parentElement != null) {
@@ -241,10 +223,5 @@ class Xinc_Plugin_Repository
         } else {
             return new Xinc_Iterator($this->slotReference[$slot]);
         }
-    }
-
-    public static function tearDown()
-    {
-        self::$instance = null;
     }
 }

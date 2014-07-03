@@ -142,7 +142,7 @@ class Parser
     {
         foreach ($element as $taskName => $task) {
             try {
-                $taskObject = Xinc_Plugin_Repository::getInstance()->getTask($taskName, (string)$element);
+                $taskObject = \Xinc\Core\Plugin\Repository::getInstance()->getTask($taskName, (string)$element);
                 $taskObject->init($build);
                 $taskObject->setXml($task);
             } catch (Exception $e) {
