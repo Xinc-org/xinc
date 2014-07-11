@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<project name="Xinc Build File" basedir="." default="build">
-    <target name="build" depends="">
-        <echo message="Nothing to build here, use phing insige subprojects." />
-    </target>
-</project>
