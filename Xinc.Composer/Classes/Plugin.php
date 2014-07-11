@@ -18,17 +18,84 @@
 namespace Xinc\Composer;
 
 use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
+use Composer\Package\Package;
 use Composer\Plugin\PluginInterface;
+use Composer\Script\CommandEvent;
+use Composer\Script\Event;
+use Composer\Script\PackageEvent;
+use Composer\Script\ScriptEvents;
 
-class Plugin implements PluginInterface
+class Plugin implements PluginInterface, EventSubscriberInterface
 {
+    protected $composer;
+    protected $io;
+
     public function activate(Composer $composer, IOInterface $io)
     {
         // Register our own installer
         $composer->getInstallationManager()->addInstaller(
             new Installer($io, $composer)
         );
-        $io->write('addInstaller');
+
+        $this->composer = $composer;
+        $this->io = $io;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateAndInstall',
+            ScriptEvents::POST_INSTALL_CMD => 'onPostUpdateAndInstall',
+            ScriptEvents::PRE_PACKAGE_UPDATE => 'onPostPackageUpdateAndInstall',
+            ScriptEvents::POST_PACKAGE_INSTALL => 'onPostPackageUpdateAndInstall',
+            ScriptEvents::PRE_AUTOLOAD_DUMP => 'onPreAutoloadDump',
+        );
+    }
+
+    public function onPostUpdateAndInstall(CommandEvent $event)
+    {
+        if ($this->addAutoLoaderForPackager()) {
+            \Xinc\Packager\Composer\Inside::postUpdateAndInstall($event);
+        }
+    }
+
+    public function onPostPackageUpdateAndInstall(PackageEvent $event)
+    {
+        if ($this->addAutoLoaderForPackager()) {
+            \Xinc\Packager\Composer\Inside::postPackageUpdateAndInstall($event);
+        }
+    }
+
+    public function onPreAutoloadDump(Event $event)
+    {
+        if ($this->addAutoLoaderForPackager()) {
+            \Xinc\Packager\Composer\Inside::preAutoloadDump($event);
+        }
+    }
+
+    protected function addAutoLoaderForPackager()
+    {
+        if (!class_exists('Xinc\\Packager\\Composer\\Inside')) {
+            $packages = $this->composer->getRepositoryManager()->getLocalRepository()->findPackages('xinc/packager');
+            if (count($packages) === 1) {
+                $package = reset($packages);
+                $path = $this->composer->getInstallationManager()->getInstallPath($package);
+
+                $generator = $this->composer->getAutoloadGenerator();
+                $map = $generator->parseAutoloads(
+                    array(array($package, $path)),
+                    new Package('dummy', '1.0.0.0', '1.0.0')
+                );
+                $classLoader = $generator->createLoader($map);
+                $classLoader->register();
+            }
+        } else {
+            return true;
+        }
+
+        $this->io->write('Xinc.Packager seams not installed yet');
+        return false;
     }
 }
