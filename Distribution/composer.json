@@ -1,0 +1,19 @@
+{
+    "name": "xinc/xinc-core-distribution",
+    "description" : "Xinc core distribution",
+    "license": "LGPL-3.0+",
+    "config": {
+        "vendor-dir": "Packages/Libraries",
+        "bin-dir": "Executes"
+    },
+    "require": {
+        "xinc/core": "2.3.90"
+    },
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "artifact",
+            "url": "../xinc-packages"
+        }
+    ]
+}
