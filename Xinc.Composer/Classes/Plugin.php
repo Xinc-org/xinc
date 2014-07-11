@@ -21,6 +21,7 @@ use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Package\Package;
+use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\CommandEvent;
 use Composer\Script\Event;
@@ -29,9 +30,23 @@ use Composer\Script\ScriptEvents;
 
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
+    /**
+     * @var Composer The running composer instance.
+     */
     protected $composer;
+
+    /**
+     * @var IOInterface The IO control system.
+     */
     protected $io;
 
+    /**
+     * Apply plugin modifications to composer
+     *
+     * @param Composer $composer
+     * @param IOInterface $io
+     * @return void
+     */
     public function activate(Composer $composer, IOInterface $io)
     {
         // Register our own installer
@@ -43,6 +58,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->io = $io;
     }
 
+    /**
+     * Returns an array of event names we want to listen to with the names of the callback functions.
+     *
+     * @return array The event names to listen with callback function.
+     */
     public static function getSubscribedEvents()
     {
         return array(
@@ -54,6 +74,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         );
     }
 
+    /**
+     * Callback function for POST_UPDATE_CMD and POST_INSTALL_CMD.
+     *
+     * @param CommandEvent $event The occured event.
+     * @return void
+     */
     public function onPostUpdateAndInstall(CommandEvent $event)
     {
         if ($this->addAutoLoaderForPackager()) {
@@ -61,6 +87,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
     }
 
+    /**
+     * Callback function for PRE_PACKAGE_UPDATE and POST_PACKAGE_INSTALL
+     *
+     * @param PackageEvent $event The occured event.
+     * @return void
+     */
     public function onPostPackageUpdateAndInstall(PackageEvent $event)
     {
         if ($this->addAutoLoaderForPackager()) {
@@ -68,6 +100,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
     }
 
+    /**
+     * Callback function for PRE_AUTOLOAD_DUMP.
+     *
+     * @param Event $event The occured event.
+     * @return void
+     */
     public function onPreAutoloadDump(Event $event)
     {
         if ($this->addAutoLoaderForPackager()) {
@@ -75,21 +113,18 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
     }
 
+    /**
+     * Creates an AutoLoader for the Xinc.Packager package if it isn't already autoloadable and if package is installed.
+     *
+     * @return bool True if Xinc.Packager was available otherwise false.
+     */
     protected function addAutoLoaderForPackager()
     {
         if (!class_exists('Xinc\\Packager\\Composer\\Inside')) {
             $packages = $this->composer->getRepositoryManager()->getLocalRepository()->findPackages('xinc/packager');
             if (count($packages) === 1) {
-                $package = reset($packages);
-                $path = $this->composer->getInstallationManager()->getInstallPath($package);
-
-                $generator = $this->composer->getAutoloadGenerator();
-                $map = $generator->parseAutoloads(
-                    array(array($package, $path)),
-                    new Package('dummy', '1.0.0.0', '1.0.0')
-                );
-                $classLoader = $generator->createLoader($map);
-                $classLoader->register();
+                $this->addAutoLoader(reset($packages));
+                return true;
             }
         } else {
             return true;
@@ -97,5 +132,24 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $this->io->write('Xinc.Packager seams not installed yet');
         return false;
+    }
+
+    /**
+     * Create an AutoLoader for given package.
+     *
+     * @param PackageInterface $package The package to create AutoLoader from.
+     * @return void
+     */
+    protected function addAutoLoader(PackageInterface $package)
+    {
+        $path = $this->composer->getInstallationManager()->getInstallPath($package);
+
+        $generator = $this->composer->getAutoloadGenerator();
+        $map = $generator->parseAutoloads(
+            array(array($package, $path)),
+            new Package('dummy', '1.0.0.0', '1.0.0')
+        );
+        $classLoader = $generator->createLoader($map);
+        $classLoader->register();
     }
 }
