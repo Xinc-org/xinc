@@ -1,0 +1,21 @@
+{
+    "name": "xinc/packager",
+    "type": "xinc-application-package",
+    "description": "Install helper for Xinc",
+    "homepage": "http://code.google.com/p/xinc/",
+    "license": "LGPL-3.0+",
+    "version": "2.3.90",
+    "require": {
+        "composer-plugin-api": "1.0.0",
+        "xinc/composer": ">=0.1.0",
+        "php": ">=5.4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xinc\\Packager\\": "Classes"
+        }
+    },
+    "bin": [
+        "Executes/xinc-packager"
+    ]
+}

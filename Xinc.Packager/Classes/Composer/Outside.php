@@ -16,9 +16,9 @@
  * @link     http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Packager;
+namespace Xinc\Packager\Composer;
 
-class ComposerBridge
+class Outside
 {
     public function __construct($binDir, $jsonDir)
     {

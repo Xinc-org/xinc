@@ -55,7 +55,7 @@ class Manager
      * @return void
      */
     public function install($name) {
-        $bridge = new ComposerBridge($this->composerBinDir, $this->composerJsonDir);
+        $bridge = new Composer\Outside($this->composerBinDir, $this->composerJsonDir);
         if ($bridge->isInstalled($name)) {
             throw new Exception('Package "' . $name . '" already installed.');
         }
