@@ -1,0 +1,21 @@
+{
+    "name": "xinc/server",
+    "type": "xinc-application-package",
+    "description": "Xinc Server Deamon with the Sunrise build engine.",
+    "homepage": "http://code.google.com/p/xinc/",
+    "license": "LGPL-3.0+",
+    "version": "2.3.90",
+    "require": {
+        "composer-plugin-api": "1.0.0",
+        "xinc/core": "=2.3.90",
+        "php": ">=5.4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xinc\\Server\\": "Classes"
+        }
+    },
+    "bin": [
+        "Executes/xincd"
+    ]
+}
