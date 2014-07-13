@@ -1,6 +1,0 @@
-#!/usr/bin/env php
-<?php
-
-require_once '../../../xinc-composer/vendor/autoload.php';
-
-Xinc\Server\Xinc::execute();
