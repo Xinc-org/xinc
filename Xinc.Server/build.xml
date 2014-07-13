@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<project name="Build - Xinc Server" basedir="." default="build">
-    <import file="../build/build.xml" />
-</project>
