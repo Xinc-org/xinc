@@ -32,6 +32,7 @@ class Inside
     static public function postPackageUpdateAndInstall(PackageEvent $event)
     {
         $event->getIO()->write('postPackageUpdateAndInstall called: ' . $event->getOperation()->getReason());
+        $event->getIO()->write('job: ' . $event->getOperation()->getJobType());
     }
 
     static public function preAutoloadDump(Event $event)
