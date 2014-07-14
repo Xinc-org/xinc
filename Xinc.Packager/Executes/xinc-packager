@@ -17,6 +17,6 @@
  * @link     http://code.google.com/p/xinc/
  */
 
-require_once __DIR__ . '../../../Libraries/vendor/autoload.php';
+require_once __DIR__ . '/../../../Libraries/autoload.php';
 
 Xinc\Packager\Cli::execute();
