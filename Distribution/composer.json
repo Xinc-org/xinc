@@ -41,9 +41,6 @@
             "tags-path": false,
             "branches-path": false,
             "package-path": "Xinc.Server"
-        },
-        {
-            "packagist": false
         }
     ]
 }
