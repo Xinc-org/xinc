@@ -7,7 +7,7 @@
     "version": "2.3.90",
     "require": {
         "composer-plugin-api": "1.0.0",
-        "xinc/core": "=2.3.90",
+        "xinc/core": "*",
         "php": ">=5.4.4"
     },
     "autoload": {
