@@ -7,13 +7,43 @@
         "bin-dir": "Executes"
     },
     "require": {
-        "xinc/core": "2.3.90"
+        "xinc/core": "*"
     },
     "minimum-stability": "dev",
     "repositories": [
         {
-            "type": "artifact",
-            "url": "../xinc-packages"
+            "type": "vcs",
+            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Composer",
+            "tags-path": false,
+            "branches-path": false,
+            "package-path": "Xinc.Composer"
+        },
+        {
+            "type": "vcs",
+            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Core",
+            "trunk-path": false,
+            "tags-path": false,
+            "branches-path": false,
+            "package-path": "Xinc.Core"
+        },
+        {
+            "type": "vcs",
+            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Packager",
+            "trunk-path": false,
+            "tags-path": false,
+            "branches-path": false,
+            "package-path": "Xinc.Packager"
+        },
+        {
+            "type": "vcs",
+            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Server",
+            "trunk-path": false,
+            "tags-path": false,
+            "branches-path": false,
+            "package-path": "Xinc.Server"
+        },
+        {
+            "packagist": false
         }
     ]
 }
