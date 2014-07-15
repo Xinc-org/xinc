@@ -31,8 +31,20 @@ class Inside
 
     static public function postPackageUpdateAndInstall(PackageEvent $event)
     {
-        $event->getIO()->write('postPackageUpdateAndInstall called: ' . $event->getOperation()->getReason());
-        $event->getIO()->write('job: ' . $event->getOperation()->getJobType());
+        $operation = $event->getOperation();
+        if (!$operation instanceof \Composer\DependencyResolver\Operation\InstallOperation &&
+            !$operation instanceof \Composer\DependencyResolver\Operation\UpdateOperation) {
+            throw new \Exception('JobType "' . $operation->getJobType() . '" is not supported.');
+        }
+        $package = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
+
+        $event->getIO()->write('postPackageUpdateAndInstall called: ' . $operation->getReason());
+        $event->getIO()->write('job: ' . $operation->getJobType());
+        $event->getIO()->write('package Name: ' . $package->getName());
+        $event->getIO()->write('package Pretty: ' . $package->getPrettyName());
+        $event->getIO()->write('package Names: ' . json_encode($package->getNames()));
+
+        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     }
 
     static public function preAutoloadDump(Event $event)
