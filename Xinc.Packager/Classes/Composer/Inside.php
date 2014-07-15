@@ -24,6 +24,11 @@ use Composer\Script\PackageEvent;
 
 class Inside
 {
+    static public function preUpdateAndInstall(CommandEvent $event)
+    {
+        $event->getIO()->write('preUpdateAndInstall called');
+    }
+
     static public function postUpdateAndInstall(CommandEvent $event)
     {
         $event->getIO()->write('postUpdateAndInstall called');

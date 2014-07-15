@@ -42,6 +42,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     /**
      * Apply plugin modifications to composer
+     * TODO: If we get updated by composer there will be 2 instances afterwards.
+     * The old as Xinc\Composer\Plugin and the new one as Xinc\Composer\Plugin_composer_tmp0
+     * So we activate 2 Installer.
      *
      * @param Composer $composer
      * @param IOInterface $io
@@ -60,18 +63,36 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     /**
      * Returns an array of event names we want to listen to with the names of the callback functions.
+     * TODO: If we get updated by composer there will be 2 instances afterwards.
+     * The old as Xinc\Composer\Plugin and the new one as Xinc\Composer\Plugin_composer_tmp0
+     * So we subscribe 2 times to the events.
      *
      * @return array The event names to listen with callback function.
      */
     public static function getSubscribedEvents()
     {
         return array(
+            ScriptEvents::PRE_UPDATE_CMD => 'onPreUpdateAndInstall',
+            ScriptEvents::PRE_INSTALL_CMD => 'onPreUpdateAndInstall',
             ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateAndInstall',
             ScriptEvents::POST_INSTALL_CMD => 'onPostUpdateAndInstall',
             ScriptEvents::PRE_PACKAGE_UPDATE => 'onPostPackageUpdateAndInstall',
             ScriptEvents::POST_PACKAGE_INSTALL => 'onPostPackageUpdateAndInstall',
             ScriptEvents::PRE_AUTOLOAD_DUMP => 'onPreAutoloadDump',
         );
+    }
+
+    /**
+     * Callback function for PRE_UPDATE_CMD and PRE_INSTALL_CMD.
+     *
+     * @param CommandEvent $event The occured event.
+     * @return void
+     */
+    public function onPreUpdateAndInstall(CommandEvent $event)
+    {
+        if ($this->addAutoLoaderForPackager()) {
+            \Xinc\Packager\Composer\Inside::preUpdateAndInstall($event);
+        }
     }
 
     /**
