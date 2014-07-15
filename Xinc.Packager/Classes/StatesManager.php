@@ -18,12 +18,25 @@
 
 namespace Xinc\Packager;
 
-use Composer\Package\PackageInterface;
-
-class States
+class StatesManager
 {
-    public function add(PackageInterface $package)
+    public function startInstallMode()
     {
-        ECHO 'YO package will be added.';
+
+    }
+
+    public function stopInstallMode()
+    {
+
+    }
+
+    public function isInstallMode()
+    {
+
+    }
+
+    public function addPackageActivated(Models\Package $package)
+    {
+        ECHO 'YO package "' . $package->getName() . '" will be added.';
     }
 }

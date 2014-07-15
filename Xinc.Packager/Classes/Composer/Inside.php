@@ -24,14 +24,25 @@ use Composer\Script\PackageEvent;
 
 class Inside
 {
+    static private $statesManager = null;
+
     static public function preUpdateAndInstall(CommandEvent $event)
     {
-        $event->getIO()->write('preUpdateAndInstall called');
+        if (static::$statesManager === null) {
+            static::$statesManager = new \Xinc\Packager\StatesManager();
+        }
+        static::$statesManager->startInstallMode();
     }
 
     static public function postUpdateAndInstall(CommandEvent $event)
     {
-        $event->getIO()->write('postUpdateAndInstall called');
+        if (static::$statesManager === null) {
+            throw new \Exception('postUpdateAndInstall event without preUpdatePostAndInstall event.');
+        }
+        // @TODO We are called twice till yet, so test state.
+        if (static::$statesManager->inInstallMode()) {
+            static::$statesManager->stopInstallMode();
+        }
     }
 
     static public function postPackageUpdateAndInstall(PackageEvent $event)
@@ -41,20 +52,29 @@ class Inside
             !$operation instanceof \Composer\DependencyResolver\Operation\UpdateOperation) {
             throw new \Exception('JobType "' . $operation->getJobType() . '" is not supported.');
         }
-        $package = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
+        $composerPackage = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
 
-        $event->getIO()->write('postPackageUpdateAndInstall called: ' . $operation->getReason());
+        static::$statesManager->addPackageActivated(
+            static::composerPackage2PackagerPackage($composerPackage)
+        );
+
+        $event->getIO()->write('postPackageUpdateAndInstall called: ' . $operation->getReason()->getPrettyString());
         $event->getIO()->write('job: ' . $operation->getJobType());
-        $event->getIO()->write('package Name: ' . $package->getName());
-        $event->getIO()->write('package Pretty: ' . $package->getPrettyName());
-        $event->getIO()->write('package Names: ' . json_encode($package->getNames()));
-
-        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $event->getIO()->write('package Name: ' . $composerPackage->getName());
+        $event->getIO()->write('package Pretty: ' . $composerPackage->getPrettyName());
+        $event->getIO()->write('package Names: ' . json_encode($composerPackage->getNames()));
+        $event->getIO()->write('package Pretty String: ' . getPrettyString());
     }
 
     static public function preAutoloadDump(Event $event)
     {
         $event->getIO()->write('preAutoloadDump called');
+    }
+
+    static function composerPackage2PackagerPackage($composerPackage)
+    {
+        $package = new \Xinc\Packager\Models\Package();
+        $package->setName($composerPackage->getPrettyName());
     }
 
 //     protected function addAutoLoaderForPackagerOnInstallation(PackageEvent $event)
