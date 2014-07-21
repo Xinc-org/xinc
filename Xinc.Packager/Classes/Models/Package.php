@@ -91,4 +91,14 @@ class Package
     {
         $this->state = $state;
     }
+
+    public function setStateActive()
+    {
+        $this->state = 'active';
+    }
+
+    public function setStateInactive()
+    {
+        $this->state = 'inactive';
+    }
 }

@@ -49,21 +49,40 @@ class Inside
     {
         $operation = $event->getOperation();
         if (!$operation instanceof \Composer\DependencyResolver\Operation\InstallOperation &&
+            !$operation instanceof \Composer\DependencyResolver\Operation\UninstallOperation &&
             !$operation instanceof \Composer\DependencyResolver\Operation\UpdateOperation) {
             throw new \Exception('JobType "' . $operation->getJobType() . '" is not supported.');
         }
-        $composerPackage = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
+
+        switch ($operation->getJobType()) {
+            case 'install':
+                $composerPackage = $operation->getPackage();
+                $packege = static::composerPackage2PackagerPackage($composerPackage);
+                $package->setState('active');
+                try {
+                    static::$statesManager->addPackage($packege);
+                } catch (\Exception $e) {
+                    // @TODO: Catch exception as we may called twice
+                }
+                break;
+            case 'update':
+                $composerPackage = $operation->getTargetPackage();
+                static::$statesManager->updatePackage(
+                    static::composerPackage2PackagerPackage($composerPackage)
+                );
+                break;
+            case 'uninstall':
+                $composerPackage = $operation->getPackage();
+                static::$statesManager->removePackage(
+                    static::composerPackage2PackagerPackageName($composerPackage)
+                );
+                break;
+        }
+        $composerPackage = ($operation->getJobType() === 'update') ? $operation->getPackage() : $operation->getTargetPackage();
 
         static::$statesManager->addPackageActivated(
             static::composerPackage2PackagerPackage($composerPackage)
         );
-
-        $event->getIO()->write('postPackageUpdateAndInstall called: ' . $operation->getReason()->getPrettyString());
-        $event->getIO()->write('job: ' . $operation->getJobType());
-        $event->getIO()->write('package Name: ' . $composerPackage->getName());
-        $event->getIO()->write('package Pretty: ' . $composerPackage->getPrettyName());
-        $event->getIO()->write('package Names: ' . json_encode($composerPackage->getNames()));
-        $event->getIO()->write('package Pretty String: ' . getPrettyString());
     }
 
     static public function preAutoloadDump(Event $event)
@@ -74,16 +93,12 @@ class Inside
     static function composerPackage2PackagerPackage($composerPackage)
     {
         $package = new \Xinc\Packager\Models\Package();
-        $package->setName($composerPackage->getPrettyName());
+        $package->setName(static::composerPackage2PackagerPackageName($composerPackage));
+        $package->setComposerName($composerPackage->getPrettyName());
     }
 
-//     protected function addAutoLoaderForPackagerOnInstallation(PackageEvent $event)
-//     {
-//         if ($event->getOperation()->getJobType() === 'install') {
-//             $package = $event->getOperation()->getPackage();
-//             if ($package->getName() === 'xinc/packager') {
-//                 $this->addAutoLoader($package);
-//             }
-//         }
-//     }
+    static function composerPackage2PackagerPackageName($composerPackage)
+    {
+        return str_replace('/', '.', $composerPackage->getPrettyName());
+    }
 }
