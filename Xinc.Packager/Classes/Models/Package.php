@@ -20,17 +20,17 @@ namespace Xinc\Packager\Models;
 
 class Package
 {
-    private name;
+    private $name;
 
-    private composerName;
+    private $composerName;
 
-    private pathManifest;
+    private $pathManifest;
 
-    private pathPackage;
+    private $pathPackage;
 
-    private pathClasses;
+    private $pathClasses;
 
-    private state;
+    private $state;
 
     public function getName()
     {

@@ -57,32 +57,33 @@ class Inside
         switch ($operation->getJobType()) {
             case 'install':
                 $composerPackage = $operation->getPackage();
-                $packege = static::composerPackage2PackagerPackage($composerPackage);
-                $package->setState('active');
-                try {
-                    static::$statesManager->addPackage($packege);
-                } catch (\Exception $e) {
-                    // @TODO: Catch exception as we may called twice
+                if ($composerPackage->getType() === 'xinc-application-package') {
+                    $packege = static::composerPackage2PackagerPackage($composerPackage);
+                    $package->setState('active');
+                    try {
+                        static::$statesManager->addPackage($packege);
+                    } catch (\Exception $e) {
+                        // @TODO: Catch exception as we may called twice
+                    }
                 }
                 break;
             case 'update':
                 $composerPackage = $operation->getTargetPackage();
-                static::$statesManager->updatePackage(
-                    static::composerPackage2PackagerPackage($composerPackage)
-                );
+                if ($composerPackage->getType() === 'xinc-application-package') {
+                    static::$statesManager->updatePackage(
+                        static::composerPackage2PackagerPackage($composerPackage)
+                    );
+                }
                 break;
             case 'uninstall':
                 $composerPackage = $operation->getPackage();
-                static::$statesManager->removePackage(
-                    static::composerPackage2PackagerPackageName($composerPackage)
-                );
+                if ($composerPackage->getType() === 'xinc-application-package') {
+                    static::$statesManager->removePackage(
+                        static::composerPackage2PackagerPackageName($composerPackage)
+                    );
+                }
                 break;
         }
-        $composerPackage = ($operation->getJobType() === 'update') ? $operation->getPackage() : $operation->getTargetPackage();
-
-        static::$statesManager->addPackageActivated(
-            static::composerPackage2PackagerPackage($composerPackage)
-        );
     }
 
     static public function preAutoloadDump(Event $event)
@@ -95,10 +96,14 @@ class Inside
         $package = new \Xinc\Packager\Models\Package();
         $package->setName(static::composerPackage2PackagerPackageName($composerPackage));
         $package->setComposerName($composerPackage->getPrettyName());
+
+        return $package;
     }
 
     static function composerPackage2PackagerPackageName($composerPackage)
     {
-        return str_replace('/', '.', $composerPackage->getPrettyName());
+        $nameParts = preg_split('/\//', $composerPackage->getPrettyName(), -1, PREG_SPLIT_NO_EMPTY);
+        $nameParts = array_map('ucfirst', $nameParts);
+        return implode('.', $nameParts);
     }
 }

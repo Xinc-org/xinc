@@ -112,7 +112,7 @@ class StatesManager
     public function addPackage(Models\Package $package)
     {
         if (isset($this->packages[$package->getName()])) {
-            throw new \Exception('Package already exists');
+            throw new \Exception('Package ' . $package->getName() . ' already exists');
         }
         $this->packages[$package->getName()] = array(
             'manifestPath' => $package->getPathManifest(),
@@ -126,7 +126,7 @@ class StatesManager
     public function updatePackage(Models\Package $package)
     {
         if (!isset($this->packages[$package->getName()])) {
-            throw new \Exception('Package does not exists');
+            throw new \Exception('Package ' . $package->getName() . ' does not exists');
         }
         $this->packages[$package->getName()] = array(
             'manifestPath' => $package->getPathManifest(),
@@ -140,7 +140,7 @@ class StatesManager
     public function removePackage($packageName)
     {
         if (!isset($this->packages[$package->getName()])) {
-            throw new \Exception('Package does not exists');
+            throw new \Exception('Package ' . $package->getName() . ' does not exists');
         }
         unset($this->packages[$package->getName()]);
     }
