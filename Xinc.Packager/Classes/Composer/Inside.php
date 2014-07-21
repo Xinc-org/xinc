@@ -40,7 +40,7 @@ class Inside
             throw new \Exception('postUpdateAndInstall event without preUpdatePostAndInstall event.');
         }
         // @TODO We are called twice till yet, so test state.
-        if (static::$statesManager->inInstallMode()) {
+        if (static::$statesManager->isInstallMode()) {
             static::$statesManager->stopInstallMode();
         }
     }

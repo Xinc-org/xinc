@@ -55,7 +55,7 @@ class StatesManager
     public function readPackages()
     {
         $statesPathAndFilename = $this->getStatesPathAndFilename();
-        $configuration = file_exists($this->$statesPathAndFilename) ? include($this->$statesPathAndFilename) : array();
+        $configuration = file_exists($statesPathAndFilename) ? include($statesPathAndFilename) : array();
 
         if (!isset($configuration['version']) || $configuration['version'] < 4) {
             $this->packages = array();
@@ -88,10 +88,10 @@ class StatesManager
 
     public function getStatesPathAndFilename()
     {
-        $path = realpath(__DIR__ . '/../../../Configuration');
+        $path = realpath(__DIR__ . '/../../../../Configuration');
         if ($path === false) {
-            @mkdir(__DIR__ . '/../../../Configuration');
-            $path = realpath(__DIR__ . '/../../../Configuration');
+            @mkdir(__DIR__ . '/../../../../Configuration');
+            $path = realpath(__DIR__ . '/../../../../Configuration');
             if ($path === false) {
                 throw new \Exception('Configuration path not found');
             }
