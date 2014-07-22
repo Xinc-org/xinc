@@ -1,19 +1,15 @@
 <?php
 /**
  * Xinc - Cross integration and continous management.
- * This script belongs to the Xinc Packager framework.
+ * This script belongs to the Xinc package "Xinc.Packager".
  *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License, either version 3
- * of the License, or (at your option) any later version.
+ * It is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License, either version 3 of the License, or (at your option) any later version.
  *
- * PHP version 5
- *
- * @category Development
- * @package  Xinc.Packager
- * @author   Alexander Opitz <opitz.alexander@googlemail.com>
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
- * @link     http://code.google.com/p/xinc/
+ * @package Xinc.Packager
+ * @author  Alexander Opitz <opitz.alexander@googlemail.com>
+ * @license http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
+ * @see     http://code.google.com/p/xinc/
  */
 
 namespace Xinc\Packager\Composer;
@@ -21,11 +17,24 @@ namespace Xinc\Packager\Composer;
 use Composer\Script\CommandEvent;
 use Composer\Script\Event;
 use Composer\Script\PackageEvent;
+use Composer\Package\PackageInterface;
 
+/**
+ * The class handles composer events and should only be used from inside the composer. Otherwise the composer classes
+ * won't be found. Calls are staticaly.
+ */
 class Inside
 {
+    /** @type \Xinc\Packager\StatesManager The manager over package states. */
     static private $statesManager = null;
 
+    /**
+     * Called from composer before update/install of packages generally.
+     *
+     * @param \Composer\Script\CommandEvent $event The event themself
+     *
+     * @return void
+     */
     static public function preUpdateAndInstall(CommandEvent $event)
     {
         if (static::$statesManager === null) {
@@ -34,6 +43,13 @@ class Inside
         static::$statesManager->startInstallMode();
     }
 
+    /**
+     * Called from composer after update/install of packages generally.
+     *
+     * @param \Composer\Script\CommandEvent $event The event themself
+     *
+     * @return void
+     */
     static public function postUpdateAndInstall(CommandEvent $event)
     {
         if (static::$statesManager === null) {
@@ -45,6 +61,13 @@ class Inside
         }
     }
 
+    /**
+     * Called from composer after update/install/uninstall of a package.
+     *
+     * @param \Composer\Script\PackageEvent $event The event themself
+     *
+     * @return void
+     */
     static public function postPackageUpdateAndInstall(PackageEvent $event)
     {
         $operation = $event->getOperation();
@@ -86,12 +109,26 @@ class Inside
         }
     }
 
+    /**
+     * Called from composer before starting the generation of the autoloader files.
+     *
+     * @param \Composer\Script\Event $event The event themself
+     *
+     * @return void
+     */
     static public function preAutoloadDump(Event $event)
     {
         $event->getIO()->write('preAutoloadDump called');
     }
 
-    static function composerPackage2PackagerPackage($composerPackage)
+    /**
+     * Converts a composer package object to a Xinc.Packager package object.
+     *
+     * @param \Composer\Package\PackageInterface $composerPackage The composer package to convert
+     *
+     * @return \Xinc\Packager\Models\Package The Xinc.Packager package model.
+     */
+    static function composerPackage2PackagerPackage(PackageInterface $composerPackage)
     {
         $package = new \Xinc\Packager\Models\Package();
         $package->setName(static::composerPackage2PackagerPackageName($composerPackage));
@@ -100,7 +137,15 @@ class Inside
         return $package;
     }
 
-    static function composerPackage2PackagerPackageName($composerPackage)
+
+    /**
+     * Converts a composer package object to a Xinc.Packager package name.
+     *
+     * @param \Composer\Package\PackageInterface $composerPackage The composer package to convert
+     *
+     * @return string The name in Xinc.Packager format
+     */
+    static function composerPackage2PackagerPackageName(PackageInterface $composerPackage)
     {
         $nameParts = preg_split('/\//', $composerPackage->getPrettyName(), -1, PREG_SPLIT_NO_EMPTY);
         $nameParts = array_map('ucfirst', $nameParts);

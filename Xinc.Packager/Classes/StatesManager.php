@@ -1,35 +1,28 @@
 <?php
 /**
  * Xinc - Cross integration and continous management.
- * This script belongs to the Xinc Packager framework.
+ * This script belongs to the Xinc package "Xinc.Packager".
  *
- * Usage and handling inspired by the CMS TYPO3.Neos / TYPO3.CMS which is LGPL 3+ licensed.
+ * It is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License, either version 3 of the License, or (at your option) any later version.
  *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License, either version 3
- * of the License, or (at your option) any later version.
- *
- * PHP version 5
- *
- * @category Development
- * @package  Xinc.Packager
- * @author   Alexander Opitz <opitz.alexander@googlemail.com>
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
- * @link     http://code.google.com/p/xinc/
+ * @package Xinc.Packager
+ * @author  Alexander Opitz <opitz.alexander@googlemail.com>
+ * @license http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
+ * @see     http://code.google.com/p/xinc/
  */
 
 namespace Xinc\Packager;
 
+/**
+ * Management over the PackageStates.php
+ */
 class StatesManager
 {
-    /**
-     * @var bool Is true if we are in install mode.
-     */
+    /** @type bool Is true if we are in install mode. */
     private $installMode = false;
 
-    /**
-     * @var array Packages with their states.
-     */
+    /** @type array Packages with their states. */
     private $packages = array();
 
     public function startInstallMode()
@@ -81,7 +74,7 @@ class StatesManager
         $statesPathAndFilename = $this->getStatesPathAndFilename();
 
         $result = @file_put_contents($statesPathAndFilename, $packageStatesCode);
-        if ($result === FALSE) {
+        if ($result === false) {
             throw new \Exception('Couldn\'t write PackageStates.php');
         }
     }

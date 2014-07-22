@@ -1,38 +1,31 @@
 <?php
 /**
  * Xinc - Cross integration and continous management.
- * This script belongs to the Xinc Packager framework.
+ * This script belongs to the Xinc package "Xinc.Packager".
  *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License, either version 3
- * of the License, or (at your option) any later version.
+ * It is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License, either version 3 of the License, or (at your option) any later version.
  *
- * PHP version 5
- *
- * @category Development
- * @package  Xinc.Packager
- * @author   Alexander Opitz <opitz.alexander@googlemail.com>
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
- * @link     http://code.google.com/p/xinc/
+ * @package Xinc.Packager
+ * @author  Alexander Opitz <opitz.alexander@googlemail.com>
+ * @license http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
+ * @see     http://code.google.com/p/xinc/
  */
 
 namespace Xinc\Packager;
 
+/**
+ * Management of packages install/uninstall/update
+ */
 class Manager
 {
-    /**
-     * @var string
-     */
+    /** @type string directory to the composer binary */
     private $composerBinDir = '';
 
-    /**
-     * @var string
-     */
+    /** @type string directory to the composer json file */
     private $composerJsonDir = '';
 
-    /**
-     * @var string
-     */
+    /** @type string directory to the packager dir */
     private $packageDir = '';
 
     /**
@@ -54,7 +47,8 @@ class Manager
      *
      * @return void
      */
-    public function install($name) {
+    public function install($name)
+    {
         $bridge = new Composer\Outside($this->composerBinDir, $this->composerJsonDir);
         if ($bridge->isInstalled($name)) {
             throw new Exception('Package "' . $name . '" already installed.');
@@ -67,7 +61,8 @@ class Manager
      *
      * @return void
      */
-    public function deinstall($name) {
+    public function deinstall($name)
+    {
         throw new Exception('Not yet implemented.');
     }
 
@@ -76,7 +71,8 @@ class Manager
      *
      * @return void
      */
-    public function activate($name) {
+    public function activate($name)
+    {
         throw new Exception('Not yet implemented.');
     }
 
@@ -85,7 +81,8 @@ class Manager
      *
      * @return void
      */
-    public function deactivate($name) {
+    public function deactivate($name)
+    {
         throw new Exception('Not yet implemented.');
     }
 }

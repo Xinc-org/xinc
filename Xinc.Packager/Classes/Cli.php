@@ -1,28 +1,25 @@
 <?php
 /**
  * Xinc - Cross integration and continous management.
- * This script belongs to the Xinc Packager framework.
+ * This script belongs to the Xinc package "Xinc.Packager".
  *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License, either version 3
- * of the License, or (at your option) any later version.
+ * It is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License, either version 3 of the License, or (at your option) any later version.
  *
- * PHP version 5
- *
- * @category Development
- * @package  Xinc.Packager
- * @author   Alexander Opitz <opitz.alexander@googlemail.com>
- * @license  http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
- * @link     http://code.google.com/p/xinc/
+ * @package Xinc.Packager
+ * @author  Alexander Opitz <opitz.alexander@googlemail.com>
+ * @license http://www.gnu.org/copyleft/lgpl.html GNU LGPL 3+
+ * @see     http://code.google.com/p/xinc/
  */
 
 namespace Xinc\Packager;
 
+/**
+ * This is the entry class for command line interface operations.
+ */
 class Cli
 {
-    /**
-     * @var array Holding the merged cli parameters.
-     */
+    /** @type array Holding the merged cli parameters. */
     private $options = array();
 
     /**
@@ -198,13 +195,13 @@ class Cli
     }
 
     /**
-     * prints help message, describing different parameters to run packager
+     * Prints help message, describing different parameters to run packager.
      *
      * @return void
      */
     protected function showHelp()
     {
-        echo 'Usage: packager [switches]' . "\n\n";
+        echo 'Usage: xinc-packager [switches]' . "\n\n";
 
         echo '  -p --package-dir=<dir>       The directory to the package configuration.' . "\n"
             . '  -c --composer-bin-dir=<dir>  The directory to composer executable.' . "\n"
@@ -217,6 +214,11 @@ class Cli
             . '  -h --help                    Prints this help message.' . "\n";
     }
 
+    /**
+     * Executes the given parameter on the Manager.
+     *
+     * @return void
+     */
     protected function executeManagement()
     {
         $manager = new Manager(
