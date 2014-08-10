@@ -82,7 +82,7 @@ class Inside
                 $composerPackage = $operation->getPackage();
                 if ($composerPackage->getType() === 'xinc-application-package') {
                     $packege = static::composerPackage2PackagerPackage($composerPackage);
-                    $package->setState('active');
+                    $packege->setState('active');
                     try {
                         static::$statesManager->addPackage($packege);
                     } catch (\Exception $e) {
