@@ -70,6 +70,16 @@ class Inside
      */
     static public function postPackageUpdateAndInstall(PackageEvent $event)
     {
+        if (static::$statesManager === null) {
+            static::$statesManager = new \Xinc\Packager\StatesManager();
+        }
+
+        $needStoppingStatesManager = false;
+        if (!static::$statesManager->isInstallMode()) {
+            static::$statesManager->startInstallMode();
+            $needStoppingStatesManager = true;
+        }
+
         $operation = $event->getOperation();
         if (!$operation instanceof \Composer\DependencyResolver\Operation\InstallOperation &&
             !$operation instanceof \Composer\DependencyResolver\Operation\UninstallOperation &&
@@ -106,6 +116,10 @@ class Inside
                     );
                 }
                 break;
+        }
+
+        if ($needStoppingStatesManager) {
+            static::$statesManager->stopInstallMode();
         }
     }
 
