@@ -19,7 +19,7 @@ namespace Xinc\Packager;
  */
 class Persistence
 {
-    /** @type array Packages with their states. */
+    /** @type array Packages with their states for caching. */
     private $packages = null;
 
     public function getPackages()
@@ -43,8 +43,9 @@ class Persistence
         }
     }
 
-    public function writePackages()
+    public function writePackages($packages)
     {
+        $this->packages = $packages;
         $states = array(
             'packages' => $this->packages,
             'version' => 4,

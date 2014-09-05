@@ -34,7 +34,7 @@ class StatesManager
             throw new \Exception('Already in install mode');
         }
         $this->injectPersistence();
-        $this->persistence->readPackages();
+        $this->packages = $this->persistence->getPackages();
 
         $this->installMode = true;
     }
@@ -45,7 +45,7 @@ class StatesManager
             throw new \Exception('Not in install mode');
         }
         $this->injectPersistence();
-        $this->persistence->writePackages();
+        $this->persistence->writePackages($this->packages);
 
         $this->installMode = false;
     }
