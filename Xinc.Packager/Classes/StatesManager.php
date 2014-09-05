@@ -25,12 +25,16 @@ class StatesManager
     /** @type array Packages with their states. */
     private $packages = array();
 
+    /** @type Persistence */
+    private $persistence = null;
+
     public function startInstallMode()
     {
         if ($this->installMode) {
             throw new \Exception('Already in install mode');
         }
-        $this->readPackages();
+        $this->injectPersistence();
+        $this->persistence->readPackages();
 
         $this->installMode = true;
     }
@@ -40,56 +44,10 @@ class StatesManager
         if (!$this->installMode) {
             throw new \Exception('Not in install mode');
         }
-        $this->writePackages();
+        $this->injectPersistence();
+        $this->persistence->writePackages();
 
         $this->installMode = false;
-    }
-
-    public function readPackages()
-    {
-        $statesPathAndFilename = $this->getStatesPathAndFilename();
-        $configuration = file_exists($statesPathAndFilename) ? include($statesPathAndFilename) : array();
-
-        if (!isset($configuration['version']) || $configuration['version'] < 4) {
-            $this->packages = array();
-        } else {
-            $this->packages = $configuration['packages'];
-        }
-    }
-
-    public function writePackages()
-    {
-        $states = array(
-            'packages' => $this->packages,
-            'version' => 4,
-        );
-        $fileDescription = "# PackageStates.php\n\n";
-        $fileDescription .= "# This file is maintained by Xincs package management. Although you can edit it\n";
-        $fileDescription .= "# manually, you should rather use the command line commands for maintaining packages.\n";
-        $fileDescription .= "# Or with the composer commands.\n";
-        $fileDescription .= "# If you remove this file you will lost the information about installed packages.\n";
-        $fileDescription .= "# The file will be recreated in an empty state.\n";
-
-        $packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($states, true) . ';';
-        $statesPathAndFilename = $this->getStatesPathAndFilename();
-
-        $result = @file_put_contents($statesPathAndFilename, $packageStatesCode);
-        if ($result === false) {
-            throw new \Exception('Couldn\'t write PackageStates.php');
-        }
-    }
-
-    public function getStatesPathAndFilename()
-    {
-        $path = realpath(__DIR__ . '/../../../../Configuration');
-        if ($path === false) {
-            @mkdir(__DIR__ . '/../../../../Configuration');
-            $path = realpath(__DIR__ . '/../../../../Configuration');
-            if ($path === false) {
-                throw new \Exception('Configuration path not found');
-            }
-        }
-        return $path . '/PackageStates.php';
     }
 
     /**
@@ -136,5 +94,12 @@ class StatesManager
             throw new \Exception('Package ' . $package->getName() . ' does not exists');
         }
         unset($this->packages[$package->getName()]);
+    }
+
+    private function injectPersistence()
+    {
+        if ($this->persistence === null) {
+            $this->persistence = new Persistence();
+        }
     }
 }
