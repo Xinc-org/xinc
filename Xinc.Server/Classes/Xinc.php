@@ -314,7 +314,9 @@ class Xinc
         $daemon->setWorkingDir($this->options['working-dir']);
         $daemon->setProjectDir($this->options['project-dir']);
         $daemon->setStatusDir($this->options['status-dir']);
-        $daemon->addProjectFiles($this->options['project-file']);
+        if (isset($this->options['project-file'])) {
+            $daemon->addProjectFiles($this->options['project-file']);
+        }
 
         return $daemon;
     }

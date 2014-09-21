@@ -166,6 +166,7 @@ class Daemon extends \Core_Daemon
     }
 
     /**
+     * Gets the working directory.
      *
      * @return string
      */
@@ -187,6 +188,7 @@ class Daemon extends \Core_Daemon
     }
 
     /**
+     * Returns the directory in which to project files lies.
      *
      * @return string
      */
@@ -223,8 +225,10 @@ class Daemon extends \Core_Daemon
      * TODO: This seams not the work of this class.
      *
      * @param array $files
+     *
+     * @return void
      */
-    public function addProjectFiles($files)
+    public function addProjectFiles(array $files)
     {
         if (is_string($files)) {
             $files = array($files);
@@ -239,6 +243,8 @@ class Daemon extends \Core_Daemon
      * Add a projectfile to the xinc processing
      *
      * @param string $fileName
+     *
+     * @return void
      */
     private function addProjectFile($fileName)
     {
