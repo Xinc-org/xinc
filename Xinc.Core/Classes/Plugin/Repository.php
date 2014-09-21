@@ -54,7 +54,10 @@ class Repository extends \Xinc\Core\Singleton
      */
     public function loadPluginConfig()
     {
-        $packages = include(__DIR__ . '/../../../Configuration/PackageStates.php');
+        // @TODO Only load active packages.
+        $packagePersistence = new \Xinc\Packager\Persistence();
+        $packages = $packagePersistence->getPackages();
+
         var_dump($packages);
     }
 
