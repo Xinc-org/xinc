@@ -51,21 +51,32 @@ class Installer extends LibraryInstaller
     public function getInstallPath(PackageInterface $package)
     {
         if ($package->getType() === $this->type) {
-            $autoload = $package->getAutoload();
-            if (isset($autoload['psr-4']) && is_array($autoload['psr-4'])) {
-                $namespace = key($autoload['psr-4']);
-            } elseif (isset($autoload['psr-0']) && is_array($autoload['psr-0'])) {
-                $namespace = key($autoload['psr-0']);
-            } else {
-                throw new \InvalidArgumentException(
-                    'Your Package needs to support PSR-4 or at least PSR-0.'
-                );
-            }
-            return 'Packages/Applications/' . rtrim(str_replace('\\', '.', $namespace), '.');
+            return 'Packages/Applications/' . self::getPathName($package);
         }
 
         throw new \InvalidArgumentException(
             'Sorry the package type of this package is not supported.'
         );
     }
+    
+    /**
+     * Returns the path name for given package.
+     *
+     * @param PackageInterface $package Package to install.
+     * @return string path name.
+     */
+    public static function getPathName(PackageInterface $package)
+    {
+        $autoload = $package->getAutoload();
+        if (isset($autoload['psr-4']) && is_array($autoload['psr-4'])) {
+            $namespace = key($autoload['psr-4']);
+        } elseif (isset($autoload['psr-0']) && is_array($autoload['psr-0'])) {
+            $namespace = key($autoload['psr-0']);
+        } else {
+            throw new \InvalidArgumentException(
+                'Your Package needs to support PSR-4 or at least PSR-0.'
+            );
+        }
+        return rtrim(str_replace('\\', '.', $namespace), '.');
+    }    
 }
