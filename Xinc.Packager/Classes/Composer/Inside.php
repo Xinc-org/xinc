@@ -147,6 +147,8 @@ class Inside
         $package = new \Xinc\Packager\Models\Package();
         $package->setName(static::composerPackage2PackagerPackageName($composerPackage));
         $package->setComposerName($composerPackage->getPrettyName());
+        $package->setPathPackage('Applications/' . \Xinc\Composer\Installer::getPathName($composerPackage) . '/');
+        $package->setPathClasses('Classes/');
 
         return $package;
     }
