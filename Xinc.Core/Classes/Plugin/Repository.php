@@ -56,9 +56,29 @@ class Repository extends \Xinc\Core\Singleton
     {
         // @TODO Only load active packages.
         $packagePersistence = new \Xinc\Packager\Persistence();
-        $packages = $packagePersistence->getPackages();
+        $packages = $packagePersistence->getPackagesAsClass();
 
-        var_dump($packages);
+        // @var $package \Xinc\Packager\Models\Package
+        foreach ($packages as $package) {
+            $this->registerPackage($package);
+        }
+    }
+
+    /**
+     * Loads plugins, tca, ... from a package.
+     *
+     * @param \Xinc\Packager\Models\Package $package The package to register.
+     * @return void
+     */
+    public function registerPackage(\Xinc\Packager\Models\Package $package)
+    {
+        $configPath = $this->getConfigurationPath($package);
+        var_dump($configPath);
+    }
+
+    public function getConfigurationPath(\Xinc\Packager\Models\Package $package)
+    {
+        $path = 'Packages/' . $package->getPathPackage() . '/Configuration';
     }
 
     /**
