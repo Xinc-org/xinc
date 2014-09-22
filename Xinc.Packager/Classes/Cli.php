@@ -82,7 +82,7 @@ class Cli
      */
     protected function getPackageDir()
     {
-        return __DIR__ . '/../../Configuration';
+        return __DIR__ . '/../../../../Configuration';
     }
 
     /**
@@ -92,7 +92,7 @@ class Cli
      */
     protected function getComposerBinDir()
     {
-        return __DIR__ . '/../..';
+        return __DIR__ . '/../../../..';
     }
 
     /**
@@ -102,7 +102,7 @@ class Cli
      */
     protected function getComposerJsonDir()
     {
-        return __DIR__ . '/../..';
+        return __DIR__ . '/../../../..';
     }
 
     /**
