@@ -290,7 +290,7 @@ class Xinc
         $engine = new \Xinc\Server\Engine\Sunrise();
         Engine\Repository::getInstance()->registerEngine($engine, true);
 
-        \Xinc\Core\Plugin\Repository::loadPluginConfig();
+        \Xinc\Core\Plugin\Repository::getInstance()->loadPluginConfig();
     }
 
     /**
