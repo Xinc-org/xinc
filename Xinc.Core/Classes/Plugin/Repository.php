@@ -78,7 +78,7 @@ class Repository extends \Xinc\Core\Singleton
 
     public function getConfigurationPath(\Xinc\Packager\Models\Package $package)
     {
-        $path = 'Packages/' . $package->getPathPackage() . '/Configuration';
+        return 'Packages/' . $package->getPathPackage() . '/Configuration';
     }
 
     /**
