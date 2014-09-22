@@ -31,6 +31,28 @@ class Persistence
         return $this->packages;
     }
 
+    public function getPackagesAsClass()
+    {
+        if ($this->packages === null) {
+            $this->readPackages();
+        }
+
+        $packagesAsClass = array();
+
+        foreach ($this->packages as $name => $packageArray) {
+            $package = new Models\Package();
+            $package->setName($name);
+            $package->setComposerName($packageArray['composerName']);
+            $package->setPathManifest($packageArray['manifestPath']);
+            $package->setPathPackage($packageArray['packagePath']);
+            $package->setPathClasses($packageArray['classesPath']);
+            $package->setState($packageArray['state']);
+            $packagesAsClass[] = $package;
+        }
+
+        return $packagesAsClass;
+    }
+
     public function readPackages()
     {
         $statesPathAndFilename = $this->getStatesPathAndFilename();
