@@ -65,6 +65,7 @@ class Singleton
 
     public static function tearDown()
     {
+        $class = get_called_class();
         unset(static::$instances[$class]);
     }
 }
