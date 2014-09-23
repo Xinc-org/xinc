@@ -286,10 +286,6 @@ class Xinc
      */
     protected function initPlugins()
     {
-        // TODO: Add Sunrise Engine now. No Plugable way yet.
-        $engine = new \Xinc\Server\Engine\Sunrise();
-        Engine\Repository::getInstance()->registerEngine($engine, true);
-
         \Xinc\Core\Plugin\Repository::getInstance()->loadPluginConfig();
     }
 
