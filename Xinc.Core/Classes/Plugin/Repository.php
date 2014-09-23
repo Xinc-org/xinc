@@ -73,12 +73,66 @@ class Repository extends \Xinc\Core\Singleton
     public function registerPackage(\Xinc\Packager\Models\Package $package)
     {
         $configPath = $this->getConfigurationPath($package);
-        var_dump($configPath);
+        $this->registerTca($configPath);
+        $this->registerSignals($configPath);
+        $this->registerSlots($configPath);
+        $this->registerPlugins($configPath);
     }
 
     public function getConfigurationPath(\Xinc\Packager\Models\Package $package)
     {
-        return 'Packages/' . $package->getPathPackage() . '/Configuration';
+        // @TODO get it working from other pathes
+        return 'Packages/' . $package->getPathPackage() . 'Configuration/';
+    }
+
+    /**
+     * TCA Configuration
+     * Not yet Supported
+     *
+     * @TODO
+     * @return void
+     */
+    public function registerTca($configPath)
+    {
+        $files = glob($configPath . 'TCA/*.php');
+    }
+
+    /**
+     * Signals Configuration
+     *
+     * @param string $configPath path to the configuration of the package wich includes the Signals directory.
+     * @return void
+     */
+    public function registerSignals($configPath)
+    {
+        $files = glob($configPath . 'Signals/*.php');
+    }
+
+    /**
+     * Slot Configuration
+     *
+     * @param string $configPath path to the configuration of the package wich includes the Signals directory.
+     * @return void
+     */
+    public function registerSlots($configPath)
+    {
+        $files = glob($configPath . 'Slots/*.php');
+    }
+
+    /**
+     * Register more Configuration data
+     *
+     * @param string $configPath path to the configuration of the package wich includes the Signals directory.
+     * @return void
+     */
+    public function registerPlugins($configPath)
+    {
+        $files = glob($configPath . 'Plugin.php');
+        foreach ($files as $file) {
+            if (is_readable($file)) {
+                include $file;
+            }
+        }
     }
 
     /**
