@@ -29,27 +29,13 @@
 
 namespace Xinc\Server\Engine;
 
-class Repository
+use Xinc\Core\Singleton;
+
+class Repository extends Singleton
 {
-
-    private static $instance;
-
     private $defaultEngine;
 
     private $engines = array();
-
-    /**
-     * Get an instance of the Plugin Repository
-     *
-     * @return Xinc\Server\Engine\Repository
-     */
-    public static function getInstance()
-    {
-        if (!static::$instance) {
-            static::$instance = new Repository();
-        }
-        return static::$instance;
-    }
 
     /**
      * Register a engine with the repository so that
@@ -110,14 +96,5 @@ class Repository
         } else {
             throw new Exception\NotFoundException($name);
         }
-    }
-
-    /**
-     * remove reference of instance
-     *
-     */
-    public static function tearDown()
-    {
-        static::$instance = null;
     }
 }
