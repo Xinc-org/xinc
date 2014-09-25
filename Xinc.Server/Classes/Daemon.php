@@ -224,11 +224,11 @@ class Daemon extends \Core_Daemon
      *
      * TODO: This seams not the work of this class.
      *
-     * @param array $files
+     * @param array|string $files
      *
      * @return void
      */
-    public function addProjectFiles(array $files)
+    public function addProjectFiles($files)
     {
         if (is_string($files)) {
             $files = array($files);

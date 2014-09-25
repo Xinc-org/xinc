@@ -129,7 +129,12 @@ class Parser
 
     public function parseProject($project)
     {
-        $this->parseTasks(null, $project->getConfig(), null);
+        try {
+            $this->parseTasks(null, $project->getConfig(), null);
+        } catch (\Exception $e) {
+            \Xinc\Core\Logger::getInstance()->error($e->getMessage());
+            $project->setStatus(\Xinc\Core\Project\Status::MISCONFIGURED);
+        }
     }
 
     /**
@@ -141,15 +146,9 @@ class Parser
     private function parseTasks($build, $element, $repository)
     {
         foreach ($element as $taskName => $task) {
-            try {
-                $taskObject = \Xinc\Core\Plugin\Repository::getInstance()->getTask($taskName, (string)$element);
-                $taskObject->init($build);
-                $taskObject->setXml($task);
-            } catch (Exception $e) {
-                \Xinc\Core\Logger::getInstance()->error('undefined task "' . $taskName . '"');
-                $project->setStatus(Xinc_Project_Status::MISCONFIGURED);
-                return;
-            }
+            $taskObject = \Xinc\Core\Plugin\Repository::getInstance()->getTask($taskName, (string)$element);
+            $taskObject->init($build);
+            $taskObject->setXml($task);
             foreach ($task->attributes() as $name => $value) {
                 $setter = 'set'.$name;
                 /**
