@@ -113,7 +113,8 @@ class Project
      */
     public function setStatus($status)
     {
-        Xinc_Logger::getInstance()->info('[project] ' . $this->getName() . ': Setting status to ' . $status);
+        // @TODO Nothing a model should do.
+        \Xinc\Core\Logger::getInstance()->info('[project] ' . $this->getName() . ': Setting status to ' . $status);
         $this->status = $status;
     }
 
