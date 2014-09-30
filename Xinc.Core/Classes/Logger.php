@@ -135,14 +135,13 @@ class Logger extends \Xinc\Core\Singleton
         while (strlen($prioritystr) < 7) {
             $prioritystr .= ' ';
         }
-        $message = ' ' . $prioritystr . '  ' . $timestr . ' ' . $msg."\n";
+        $message = $prioritystr . '  ' . $timestr . ' ' . $msg . "\n";
+        $message = getmypid() . ': ' . $message;
 
-        if ($this->logLevel == self::LOG_LEVEL_VERBOSE) {
-            if (defined('STDERR')) {
-                fputs(STDERR, $message);
-            } else {
-                echo '<!-- LogMessage: ' . $message . " -->\n";
-            }
+        if (defined('STDERR')) {
+            fputs(STDERR, getmypid() . ': ' . $prioritystr . '  ' . $msg . "\n");
+        } else {
+            echo '<!-- LogMessage: ' . $message . " -->\n";
         }
 
         if ($this->file != null) {
