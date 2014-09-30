@@ -1,12 +1,12 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Iterator over an array of Xinc_Plugin_Task_Interface objects
+ * Iterator over an array of Xinc\Core\Project\Tasks\Registry objects
  *
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Build.Task
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -24,13 +24,12 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Iterator.php';
-require_once 'Xinc/Build/Exception/Invalid.php';
+namespace Xinc\Core\Project\Tasks;
 
-class Xinc_Build_Tasks_Iterator extends Xinc_Iterator
+class Iterator extends \Xinc\Core\Iterator
 {
     /**
      * Adds a task to the iterator.

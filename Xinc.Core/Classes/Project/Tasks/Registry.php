@@ -1,13 +1,12 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Interface for holding all tasks that need to be
- * executed for a build project
+ * Interface for holding all tasks that need to be executed to run a project
  *
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Build.Task
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -25,37 +24,34 @@
  *            You should have received a copy of the GNU Lesser General Public
  *            License along with Xinc, write to the Free Software Foundation,
  *            Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- * @link      http://xincplus.sourceforge.net
+ * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Build/Tasks/Iterator.php';
+namespace Xinc\Core\Project\Tasks;
 
-class Xinc_Build_Tasks_Registry
+class Registry
 {
-
     /**
-     * tasks that need to be executed
-     * for each slot
+     * tasks that need to be executed for each slot
      *
-     * @var Xinc_Build_Tasks_Iterator[]
+     * @var Iterator[]
      */
-    private $_slots = array();
-    
+    private $slots = array();
+
     /**
      * Adds a task to the slot
      * 
      * this task will be executed in the specified slot
      *
-     * @param mixed $slot
      * @param Xinc_Plugin_Task_Interface $task
      */
     public function registerTask(Xinc_Plugin_Task_Interface $task)
     {
         $slot = $task->getPluginSlot();
-        if (!isset($this->_slots[$slot])) {
-            $this->_slots[$slot] = new Xinc_Build_Tasks_Iterator();
+        if (!isset($this->slots[$slot])) {
+            $this->slots[$slot] = new Xinc_Build_Tasks_Iterator();
         }
-        $this->_slots[$slot]->add($task);
+        $this->slots[$slot]->add($task);
     }
 
     /**
@@ -71,10 +67,10 @@ class Xinc_Build_Tasks_Registry
             $buildIterator = new Xinc_Build_Tasks_Iterator();
             return $buildIterator;
         }
-        
-        return $this->_slots[$slot];
+
+        return $this->slots[$slot];
     }
-    
+
     /**
      * Get all tasks registered
      *
@@ -83,13 +79,13 @@ class Xinc_Build_Tasks_Registry
     public function getTasks()
     {
         $buildTaskIterator = new Xinc_Build_Tasks_Iterator();
-        foreach ($this->_slots as $slot => $iterator) {
+        foreach ($this->slots as $slot => $iterator) {
             while ($iterator->hasNext()) {
                 $buildTaskIterator->add($iterator->next());
             }
             $iterator->rewind();
         }
-        
+
         return $buildTaskIterator;
     }
 }
