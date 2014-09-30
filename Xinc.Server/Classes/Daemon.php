@@ -140,12 +140,7 @@ class Daemon extends \Core_Daemon
             $message = $label . ': ' . $message;
         }
 
-        $message = getmypid() . ': ' . $message;
-
         \Xinc\Core\Logger::getInstance()->info($message);
-        if ($this->is('stdout')) {
-            echo $message . "\n";
-        }
     }
 
     public function setRunOnce()
