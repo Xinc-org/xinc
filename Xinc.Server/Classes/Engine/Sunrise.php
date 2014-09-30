@@ -285,9 +285,7 @@ class Sunrise implements EngineInterface
     public function parseProject($project)
     {
         $parser = new Sunrise\Parser($this);
-        $buildsArr = $parser->parseProject($project);
-
-        $this->buildIterator = new \Xinc\Core\Build\Iterator($buildsArr);
+        $parser->parseProject($project);
     }
 
     /**

@@ -130,7 +130,9 @@ class Parser
     public function parseProject($project)
     {
         try {
-            $this->parseTasks(null, $project->getConfig(), null);
+            $taskRegistry = new \Xinc\Core\Project\Tasks\Registry();
+            $this->parseTasks(null, $project->getConfig(), $taskRegistry);
+            $project->setTaskRegistry($taskRegistry);
         } catch (\Exception $e) {
             \Xinc\Core\Logger::getInstance()->error($e->getMessage());
             $project->setStatus(\Xinc\Core\Project\Status::MISCONFIGURED);
@@ -143,7 +145,7 @@ class Parser
      * @param SimpleXmlElement $element
      * @param Xinc $project
      */
-    private function parseTasks($build, $element, $repository)
+    private function parseTasks($build, $element, $taskRegistry)
     {
         foreach ($element as $taskName => $task) {
             $taskObject = \Xinc\Core\Plugin\Repository::getInstance()->getTask($taskName, (string)$element);
@@ -163,7 +165,7 @@ class Parser
             }
 
             $this->parseTasks($build, $task, $taskObject);
-            $repository->registerTask($taskObject);
+            $taskRegistry->registerTask($taskObject);
 
 
             if (!$taskObject->validate()) {
