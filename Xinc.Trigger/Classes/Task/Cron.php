@@ -12,8 +12,7 @@
  * PHP version 5
  *
  * @category   Development
- * @package    Xinc.Plugin
- * @subpackage Trigger
+ * @package    Xinc.Trigger
  * @author     Arno Schneider <username@example.org>
  * @copyright  2007 Arno Schneider, Barcelona
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -34,9 +33,9 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Trigger/Task/AbstractTask.php';
+namespace Xinc\Trigger\Task;
 
-class Xinc_Trigger_Task_Cron extends Xinc_Trigger_Task_AbstractTask
+class Cron extends Xinc_Trigger_Task_AbstractTask
 {
     const PC_MINUTE=1;
     const PC_HOUR=2;

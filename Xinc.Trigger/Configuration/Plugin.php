@@ -5,11 +5,9 @@
  * PHP version 5
  *
  * @category   Development
- * @package    Xinc.Plugin
- * @subpackage Trigger
- * @author     Arno Schneider <username@example.org>
+ * @package    Xinc.Trigger
  * @author     Alexander Opitz <opitz.alexander@gmail.com>
- * @copyright  2007 Arno Schneider, Barcelona
+ * @copyright  2014 Alexander Opitz, Leipzig
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *             This file is part of Xinc.
  *             Xinc is free software; you can redistribute it and/or modify
@@ -28,27 +26,15 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Abstract.php';
-
-require_once 'Xinc/Trigger/Task.php';
-require_once 'Xinc/Trigger/Task/Cron.php';
-require_once 'Xinc/Trigger/Task/Scheduler.php';
-require_once 'Xinc/Trigger/Task/Sensor.php';
-
-class Xinc_Trigger_Plugin extends Xinc_Plugin_Abstract
-{
-    /**
-     * Returns the defined tasks of the plugin
-     *
-     * @return Xinc_Plugin_Task[]
-     */
-    public function getTaskDefinitions()
-    {
-        return array(
-            new Xinc_Trigger_Task($this),
-            new Xinc_Trigger_Task_Cron($this),
-            new Xinc_Trigger_Task_Scheduler($this),
-            new Xinc_Trigger_Task_Sensor($this),
-        );
-    }
-}
+\Xinc\Core\Registry\Task::getInstance()->register(
+    'trigger', new \Xinc\Trigger\Task\Triggers()
+);
+\Xinc\Core\Registry\Task::getInstance()->register(
+    'cron', new \Xinc\Trigger\Task\Cron()
+);
+\Xinc\Core\Registry\Task::getInstance()->register(
+    'scheduler', new \Xinc\Trigger\Task\Scheduler()
+);
+\Xinc\Core\Registry\Task::getInstance()->register(
+    'sensor', new \Xinc\Trigger\Task\Sensor()
+);

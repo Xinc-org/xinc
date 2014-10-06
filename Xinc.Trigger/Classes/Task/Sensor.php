@@ -5,8 +5,7 @@
  * PHP version 5
  *
  * @category   Development
- * @package    Xinc.Plugin
- * @subpackage Trigger
+ * @package    Xinc.Trigger
  * @author     Arno Schneider <username@example.org>
  * @copyright  2007 Arno Schneider, Barcelona
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -27,9 +26,9 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Trigger/Task/AbstractTask.php';
+namespace Xinc\Trigger\Task;
 
-class Xinc_Trigger_Task_Sensor extends Xinc_Trigger_Task_AbstractTask
+class Sensor extends Xinc_Trigger_Task_AbstractTask
 {
     /**
      * @var integer Task Slot INIT_PROCESS

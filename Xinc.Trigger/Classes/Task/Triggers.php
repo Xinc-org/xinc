@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * @category   Development
- * @package    Xinc.Plugin
+ * @package    Xinc.Trigger
  * @subpackage Trigger
  * @author     Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright  2013 Alexander Opitz, Leipzig
@@ -27,10 +27,9 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Slot.php';
-require_once 'Xinc/Plugin/Task/Abstract.php';
+namespace Xinc\Trigger\Task;
 
-class Xinc_Trigger_Task extends Xinc_Plugin_Task_Abstract
+class Triggers extends Xinc_Plugin_Task_Abstract
 {
     /**
      * @var integer Task Slot INIT_PROCESS
