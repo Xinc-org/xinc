@@ -1,7 +1,7 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Abstract Registry Class to be extended by projects, buildqueue etc.
+ * Registry interface
  *
  * PHP version 5
  *
@@ -29,70 +29,35 @@
 
 namespace Xinc\Core\Registry;
 
-abstract class RegistryAbstract implements RegistryInterface
+interface RegistryInterface extends \IteratorAggregate
 {
-    /**
-     * @var typeOf The Name of the class this elements should be.
-     */
-    protected $typeOf = null;
+    public static function getInstance();
 
     /**
-     * @var array Array of registered elements
-     */
-    private $registry = array();
-
-    /**
+     * Registers an object
      *
      * @param string $name
      * @param object $object
+     * @return void
      * @throws Xinc\Core\Registry\Exception
      */
-    public function register($name, $object)
-    {
-        if (isset($this->registry[$name])) {
-            throw new Exception('Object with name "' . $name . '" is already registered');
-        }
-        if (!is_a($object, $this->typeOf)) {
-            throw new Exception('Element is not an instance of: ' . $this->typeOf);
-        }
-
-        $this->registry[$name] = $object;
-    }
+    public function register($name, $object);
 
     /**
+     * Unregisters an Object
+     *
+     * @param string $name
+     * @return object the unregistered Object
+     * @throws Xinc\Core\Registry\Exception
+     */
+    public function unregister($name);
+
+    /**
+     * Returns the registered object
      *
      * @param string $name
      * @return object
      * @throws Xinc\Core\Registry\Exception
      */
-    public function unregister($name)
-    {
-        if (!isset($this->registry[$name])) {
-            throw new Exception('Object with name "' . $name . '" is not registered');
-        }
-
-        $object = $this->registry[$name];
-        unset($this->registry[$name]);
-        return $object;
-    }
-
-    /**
-     *
-     * @param string $name
-     * @return object
-     * @throws Xinc\Core\Registry\Exception
-     */
-    public function get($name)
-    {
-        if (!isset($this->registry[$name])) {
-            throw new Exception('Object with name "' . $name . '" is not registered');
-        }
-
-        return $this->registry[$name];
-    }
-
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->registry);
-    }
+    public function get($name);
 }

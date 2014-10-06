@@ -28,7 +28,7 @@
 
 namespace Xinc\Core\Registry;
 
-class Task extends \Xinc\Core\Singleton implements RegistryAbstract
+class Task extends RegistryAbstract
 {
     /**
      * @var typeOf The Name of the class this elements should be.
@@ -42,27 +42,30 @@ class Task extends \Xinc\Core\Singleton implements RegistryAbstract
 
     /**
      *
+     * @param string $name
      * @param object $task
      * @throws Xinc\Core\Registry\Exception
      */
-    public function register($task)
+    public function register($name, $task)
     {
-        parent::register($task->getName(), $task);
+        parent::register($name, $task);
 
-        $this->slot[$task->getPluginSlot()][$task->getName()] = $task;
+        $this->slot[$task->getPluginSlot()][$name] = $task;
     }
 
     /**
      *
-     * @param object $task
+     * @param string $name
      * @return object
      * @throws Xinc\Core\Registry\Exception
      */
-    public function unregister($task)
+    public function unregister($name)
     {
-        unset($this->slot[$task->getPluginSlot()][$task->getName()]);
+        $task = $parent::unregister($name);
 
-        return $parent::unregister($task->getName());
+        unset($this->slot[$task->getPluginSlot()][$name]);
+
+        return $task;
     }
 
     /**
