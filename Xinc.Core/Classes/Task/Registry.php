@@ -26,14 +26,14 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Core\Registry;
+namespace Xinc\Core\Task;
 
-class Task extends RegistryAbstract
+class Registry extends \Xinc\Core\Registry\RegistryAbstract
 {
     /**
      * @var typeOf The Name of the class this elements should be.
      */
-    protected $typeOf = null;
+    protected $typeOf = '\Xinc\Core\TaskInterface';
 
     /**
      * @var array Array of registered elements

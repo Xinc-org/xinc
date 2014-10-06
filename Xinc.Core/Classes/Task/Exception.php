@@ -1,9 +1,12 @@
 <?php
 /**
- * Iterator over an array of SimpleXMLElement objects defining Projects
+ * Xinc - Continuous Integration.
  *
+ * PHP version 5
+ *
+ * @category  Development
  * @package   Xinc.Core
- * @author    Arno Schneider <username@example.com>
+ * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
@@ -23,12 +26,8 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Core\Project;
+namespace Xinc\Core\Task;
 
-class Task extends \Xinc\Core\Iterator
+class Exception extends \Exception
 {
-    /**
-     * @var typeOf The Name of the class this elements should be.
-     */
-    protected $typeOf = '\Xinc\Core\Models\Project';
 }

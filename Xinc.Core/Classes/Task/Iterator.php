@@ -1,14 +1,9 @@
 <?php
 /**
- * Xinc - Continuous Integration.
- * Interface for plugin tasks that want to implement
- * the listener for all "setValue"'s on the project tasks
+ * Iterator over an array of SimpleXMLElement objects defining Projects
  *
- * PHP version 5
- *
- * @category  Development
- * @package   Xinc.Plugin.Task
- * @author    Arno Schneider <username@example.org>
+ * @package   Xinc.Core
+ * @author    Arno Schneider <username@example.com>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
  *            This file is part of Xinc.
@@ -28,16 +23,12 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-interface Xinc_Plugin_Task_Setter_Interface
-{
+namespace Xinc\Core\Task;
 
+class Iterator extends \Xinc\Core\Iterator
+{
     /**
-     * is called whenever a value is set on a task
-     *
-     * @param Xinc_Build_Interface $build
-     * @param string $value
-     *
-     * @return string modified $value
+     * @var typeOf The Name of the class this elements should be.
      */
-    public function set(Xinc_Build_Interface $build, $value);
+    protected $typeOf = '\Xinc\Core\TaskInterface';
 }

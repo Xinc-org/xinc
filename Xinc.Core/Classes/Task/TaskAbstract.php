@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Plugin.Task
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -26,11 +26,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Build/Interface.php';
-require_once 'Xinc/Plugin/Task/Interface.php';
-require_once 'Xinc/Plugin/Interface.php';
+namespace Xinc\Core\Task;
 
-abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
+abstract class TaskAbstract implements TaskInterface
 {
     /**
      * @var array Subtasks for this task
@@ -125,11 +123,11 @@ abstract class Xinc_Plugin_Task_Abstract implements Xinc_Plugin_Task_Interface
     /**
      * Support for subtasks, empty by default.
      *
-     * @param Xinc_Plugin_Task_Interface $task Task to register
+     * @param TaskInterface $task Task to register
      *
      * @return void
      */
-    public function registerTask(Xinc_Plugin_Task_Interface $task)
+    public function registerTask(TaskInterface $task)
     {
         Xinc_Logger::getInstance()->debug('Registering Task: ' . get_class($task));
         if (null !== $this->subtaskInstance && ! $task instanceof $this->subtaskInstance) {
