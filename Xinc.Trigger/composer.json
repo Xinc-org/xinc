@@ -1,0 +1,18 @@
+{
+    "name": "xinc/trigger",
+    "type": "xinc-application-package",
+    "description": "Xinc Trigger to start tasks in projects.",
+    "homepage": "http://code.google.com/p/xinc/",
+    "license": "LGPL-3.0+",
+    "version": "2.3.90",
+    "require": {
+        "php": ">=5.4.4",
+        "xinc/core": "*",
+        "shaneharter/php-daemon": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xinc\\Trigger\\": "Classes"
+        }
+    }
+}
