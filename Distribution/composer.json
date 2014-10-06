@@ -8,7 +8,8 @@
     },
     "require": {
         "xinc/core": "*",
-        "xinc/server": "*"
+        "xinc/server": "*",
+        "xinc/trigger": "*"
     },
     "minimum-stability": "dev",
     "repositories": [
