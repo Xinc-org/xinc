@@ -7,7 +7,8 @@
         "bin-dir": "Executes"
     },
     "require": {
-        "xinc/core": "*"
+        "xinc/core": "*",
+        "xinc/server": "*"
     },
     "minimum-stability": "dev",
     "repositories": [
@@ -41,6 +42,14 @@
             "tags-path": false,
             "branches-path": false,
             "package-path": "Xinc.Server"
+        },
+        {
+            "type": "vcs",
+            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Trigger",
+            "trunk-path": false,
+            "tags-path": false,
+            "branches-path": false,
+            "package-path": "Xinc.Trigger"
         }
     ]
 }
