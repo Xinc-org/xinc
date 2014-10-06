@@ -26,15 +26,15 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-\Xinc\Core\Registry\Task::getInstance()->register(
+\Xinc\Core\Task\Registry::getInstance()->register(
     'trigger', new \Xinc\Trigger\Task\Triggers()
 );
-\Xinc\Core\Registry\Task::getInstance()->register(
+\Xinc\Core\Task\Registry::getInstance()->register(
     'cron', new \Xinc\Trigger\Task\Cron()
 );
-\Xinc\Core\Registry\Task::getInstance()->register(
+\Xinc\Core\Task\Registry::getInstance()->register(
     'scheduler', new \Xinc\Trigger\Task\Scheduler()
 );
-\Xinc\Core\Registry\Task::getInstance()->register(
+\Xinc\Core\Task\Registry::getInstance()->register(
     'sensor', new \Xinc\Trigger\Task\Sensor()
 );

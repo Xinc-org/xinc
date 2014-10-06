@@ -29,7 +29,7 @@
 
 namespace Xinc\Trigger\Task;
 
-class Triggers extends Xinc_Plugin_Task_Abstract
+class Triggers extends \Xinc\Core\Task\TaskAbstract
 {
     /**
      * @var integer Task Slot INIT_PROCESS
