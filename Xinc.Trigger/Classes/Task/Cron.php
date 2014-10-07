@@ -35,7 +35,7 @@
 
 namespace Xinc\Trigger\Task;
 
-class Cron extends Xinc_Trigger_Task_AbstractTask
+class Cron extends TaskAbstract
 {
     const PC_MINUTE=1;
     const PC_HOUR=2;
@@ -45,11 +45,6 @@ class Cron extends Xinc_Trigger_Task_AbstractTask
     const PC_CMD=7;
     const PC_COMMENT=8;
     const PC_CRONLINE=20;
-
-    /**
-     * @var integer Task Slot INIT_PROCESS
-     */
-    protected $pluginSlot = Xinc_Plugin_Slot::INIT_PROCESS;
 
     /**
      * @var string Name of the task
@@ -99,13 +94,13 @@ class Cron extends Xinc_Trigger_Task_AbstractTask
     /**
      * Calculates the next build timestamp.
      *
-     * @param Xinc_Build_Interface $build
+     * @param Xinc\Core\Job\JobInterface $job
      *
      * @return integer next build timestamp
      */
-    public function getNextTime(Xinc_Build_Interface $build)
+    public function getNextTime(\Xinc\Core\Job\JobInterface $job)
     {
-        if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
+        if ($build->getStatus() == \Xinc\Core\Job\JobInterface::STOPPED) {
             return null;
         }
         //var_dump($build);

@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * @category   Development
- * @package    Xinc.Plugin
+ * @package    Xinc.Trigger
  * @subpackage Trigger
  * @author     Alexander Opitz <opitz.alexander@gmail.com>
  * @copyright  2013 Alexander Opitz, Leipzig
@@ -27,15 +27,14 @@
  * @link       http://code.google.com/p/xinc/
  */
 
-require_once 'Xinc/Plugin/Task/Abstract.php';
-require_once 'Xinc/Build/Scheduler/Interface.php';
+namespace Xinc\Trigger\Task;
 
-abstract class Xinc_Trigger_Task_AbstractTask extends Xinc_Plugin_Task_Abstract implements Xinc_Build_Scheduler_Interface
+abstract class TaskAbstract extends \Xinc\Core\Task\TaskAbstract //implements Xinc_Build_Scheduler_Interface
 {
     /**
      * @var integer Task Slot INIT_PROCESS
      */
-    protected $pluginSlot = Xinc_Plugin_Slot::INIT_PROCESS;
+    protected $pluginSlot = \Xinc\Core\Task\Slot::INIT_PROCESS;
 
     /**
      * @var string Name of the task
@@ -45,23 +44,23 @@ abstract class Xinc_Trigger_Task_AbstractTask extends Xinc_Plugin_Task_Abstract 
     /**
      * Initialize the task
      *
-     * @param Xinc_Build_Interface $build Build to initialize this task for.
+     * @param Xinc\Core\Job\JobInterface $job Build to initialize this task for.
      *
      * @return void
      */
-    public function init(Xinc_Build_Interface $build)
+    public function init(\Xinc\Core\Job\JobInterface $job)
     {
-        $build->addScheduler($this);
+        $job->addScheduler($this);
     }
 
     /**
      * Process the task
      *
-     * @param Xinc_Build_Interface $build Build to process this task for.
+     * @param Xinc\Core\Job\JobInterface $job Build to process this task for.
      *
      * @return void
      */
-    public function process(Xinc_Build_Interface $build)
+    public function process(\Xinc\Core\Job\JobInterface $job)
     {
         if (time() >= $this->nextBuildTime) {
             $this->nextBuildTime = null;
@@ -71,14 +70,14 @@ abstract class Xinc_Trigger_Task_AbstractTask extends Xinc_Plugin_Task_Abstract 
     /**
      * Gets the last calculated build timestamp.
      *
-     * @param Xinc_Build_Interface $build
+     * @param Xinc\Core\Job\JobInterface $job
      *
      * @return integer next build timestamp
      */
-    public function getNextBuildTime(Xinc_Build_Interface $build)
+    public function getNextBuildTime(\Xinc\Core\Job\JobInterface $job)
     {
         if ($this->nextBuildTime === null) {
-            $this->nextBuildTime = $this->getNextTime($build);
+            $this->nextBuildTime = $this->getNextTime($job);
         }
         return $this->nextBuildTime;
     }
@@ -86,9 +85,9 @@ abstract class Xinc_Trigger_Task_AbstractTask extends Xinc_Plugin_Task_Abstract 
     /**
      * Calculates the real next build timestamp.
      *
-     * @param Xinc_Build_Interface $build
+     * @param Xinc\Core\Job\JobInterface $job
      *
      * @return integer next build timestamp
      */
-    abstract function getNextTime(Xinc_Build_Interface $build);
+    abstract function getNextTime(\Xinc\Core\Job\JobInterface $job);
 }

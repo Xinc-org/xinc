@@ -28,7 +28,7 @@
 
 namespace Xinc\Trigger\Task;
 
-class Scheduler extends Xinc_Trigger_Task_AbstractTask
+class Scheduler extends TaskAbstract
 {
     /**
      * @var string Name of the task
@@ -75,13 +75,13 @@ class Scheduler extends Xinc_Trigger_Task_AbstractTask
     /**
      * Calculates the next build timestamp.
      *
-     * @param Xinc_Build_Interface $build
+     * @param Xinc\Core\Job\JobInterface $job
      *
      * @return integer next build timestamp
      */
-    public function getNextTime(Xinc_Build_Interface $build)
+    public function getNextTime(\Xinc\Core\Job\JobInterface $job)
     {
-        if ($build->getStatus() == Xinc_Build_Interface::STOPPED) {
+        if ($build->getStatus() == \Xinc\Core\Job\JobInterface::STOPPED) {
             return null;
         }
         $lastBuild = $build->getLastBuild()->getBuildTime();

@@ -28,13 +28,8 @@
 
 namespace Xinc\Trigger\Task;
 
-class Sensor extends Xinc_Trigger_Task_AbstractTask
+class Sensor extends TaskAbstract
 {
-    /**
-     * @var integer Task Slot INIT_PROCESS
-     */
-    protected $pluginSlot = Xinc_Plugin_Slot::INIT_PROCESS;
-
     /**
      * @var string Name of the task
      */
@@ -89,16 +84,17 @@ class Sensor extends Xinc_Trigger_Task_AbstractTask
     /**
      * Calculates the next build timestamp.
      *
-     * @param Xinc_Build_Interface $build
+     * @param Xinc\Core\Job\JobInterface $job
      *
      * @return integer next build timestamp
      */
-    public function getNextTime(Xinc_Build_Interface $build)
+    public function getNextTime(\Xinc\Core\Job\JobInterface $build)
     {
         if (file_exists($this->file)) {
             unlink($this->file);
             return time();
         }
+
         return null;
     }
 }
