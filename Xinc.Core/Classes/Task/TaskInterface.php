@@ -32,19 +32,17 @@ interface TaskInterface
 {
     /**
      * Constructor
-     *
-     * @param Xinc_Plugin_Interface $plugin The plugin of this task.
      */
-    public function __construct(Xinc_Plugin_Interface $plugin);
+    public function __construct();
 
     /**
      * Initialize the task
      *
-     * @param Xinc_Build_Interface $build Build to initialize this task for.
+     * @param Xinc\Core\Job\JobInterface $job Job to initialize this task for.
      *
      * @return void
      */
-    public function init(Xinc_Build_Interface $build);
+    public function init(\Xinc\Core\Job\JobInterface $job);
 
     /**
      * Validates if a task can run by checking configs, directries and so on.
@@ -56,11 +54,11 @@ interface TaskInterface
     /**
      * Process the task
      *
-     * @param Xinc_Build_Interface $build Build to process this task for.
+     * @param Xinc\Core\Job\JobInterface $job Job to process this task for.
      *
      * @return void
      */
-    public function process(Xinc_Build_Interface $build);
+    public function process(\Xinc\Core\Job\JobInterface $job);
 
     /**
      * Returns name of task.
@@ -94,5 +92,5 @@ interface TaskInterface
     public function getTasks();
 
     public function getXml();
-    public function setXml(SimpleXMLElement $element);
+    public function setXml(\SimpleXMLElement $element);
 }

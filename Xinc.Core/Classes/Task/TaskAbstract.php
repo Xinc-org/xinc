@@ -61,26 +61,20 @@ abstract class TaskAbstract implements TaskInterface
     protected $subtaskInstance = null;
 
     /**
-     * Constructor, stores a reference to the plugin for usage of functionality
-     *
-     * @param Xinc_Plugin_Interface $plugin The plugin of this task.
+     * Constructor
      */
-    public function __construct(Xinc_Plugin_Interface $plugin)
+    public function __construct()
     {
-        $this->plugin = $plugin;
-        if (null === $this->name) {
-            $this->name = strtolower(get_class($this));
-        }
     }
 
     /**
      * Initialize the task
      *
-     * @param Xinc_Build_Interface $build Build to initialize this task for.
+     * @param Xinc\Core\Job\JobInterface $job Build to initialize this task for.
      *
      * @return void
      */
-    public function init(Xinc_Build_Interface $build)
+    public function init(\Xinc\Core\Job\JobInterface $job)
     {
     }
 
@@ -151,7 +145,7 @@ abstract class TaskAbstract implements TaskInterface
         return $this->xml;
     }
 
-    public function setXml(SimpleXMLElement $element)
+    public function setXml(\SimpleXMLElement $element)
     {
         $this->xml = $element;
     }

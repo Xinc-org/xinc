@@ -1,14 +1,14 @@
 <?php
 /**
  * Xinc - Continuous Integration.
- * Build interface
+ * Job interface
  *
  * Used by the engines to process a build
  *
  * PHP version 5
  *
  * @category  Development
- * @package   Xinc.Build
+ * @package   Xinc.Core
  * @author    Arno Schneider <username@example.org>
  * @copyright 2007 Arno Schneider, Barcelona
  * @license   http://www.gnu.org/copyleft/lgpl.html GNU/LGPL, see license.php
@@ -29,9 +29,9 @@
  * @link      http://code.google.com/p/xinc/
  */
 
-namespace Xinc\Interfaces;
+namespace Xinc\Core\Job;
 
-interface Build
+interface JobInterface
 {
     const INITIALIZED = -2;
     const FAILED = 0;
@@ -48,8 +48,8 @@ interface Build
      * @param integer $buildTimestamp
      */
     public function __construct(
-        Xinc_Engine_Interface &$engine,
-        Xinc_Project &$project,
+        Xinc\Server\Engine\EngineInterface $engine, // @TODO Decouple
+        \Xinc\Core\Models\Project $project,
         $buildTimestamp = null
     );
 

@@ -28,7 +28,6 @@
 
 namespace Xinc\Core\Registry;
 
-class Exception extends Exception
+class Exception extends \Exception
 {
-
 }
