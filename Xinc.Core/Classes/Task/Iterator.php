@@ -30,5 +30,5 @@ class Iterator extends \Xinc\Core\Iterator
     /**
      * @var typeOf The Name of the class this elements should be.
      */
-    protected $typeOf = '\Xinc\Core\TaskInterface';
+    protected $typeOf = '\Xinc\Core\Task\TaskInterface';
 }

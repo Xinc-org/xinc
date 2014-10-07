@@ -33,7 +33,7 @@ class Registry extends \Xinc\Core\Registry\RegistryAbstract
     /**
      * @var typeOf The Name of the class this elements should be.
      */
-    protected $typeOf = '\Xinc\Core\TaskInterface';
+    protected $typeOf = '\Xinc\Core\Task\TaskInterface';
 
     /**
      * @var array Array of registered elements
