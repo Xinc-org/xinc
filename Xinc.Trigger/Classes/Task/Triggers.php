@@ -34,7 +34,7 @@ class Triggers extends \Xinc\Core\Task\TaskAbstract
     /**
      * @var integer Task Slot INIT_PROCESS
      */
-    protected $pluginSlot = Xinc_Plugin_Slot::INIT_PROCESS;
+    protected $pluginSlot = \Xinc\Core\Task\Slot::INIT_PROCESS;
 
     /**
      * @var string Name of the task
@@ -49,11 +49,11 @@ class Triggers extends \Xinc\Core\Task\TaskAbstract
     /**
      * Process the task
      *
-     * @param Xinc_Build_Interface $build Build to process this task for.
+     * @param Xinc\Core\Job\JobInterface $job Job to process this task for.
      *
      * @return void
      */
-    public function process(Xinc_Build_Interface $build)
+    public function process(\Xinc\Core\Job\JobInterface $job)
     {
         foreach ($this->arSubtasks as $task) {
             $task->process($build);
