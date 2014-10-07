@@ -28,7 +28,7 @@
 
 namespace Xinc\Core\Task;
 
-interface TaskInterface
+interface TaskInterface extends \Xinc\Core\Registry\RegistryInterface
 {
     /**
      * Constructor
@@ -38,11 +38,12 @@ interface TaskInterface
     /**
      * Initialize the task
      *
+     * @TODO Needed?
      * @param Xinc\Core\Job\JobInterface $job Job to initialize this task for.
      *
      * @return void
      */
-    public function init(\Xinc\Core\Job\JobInterface $job);
+    public function init(\Xinc\Core\Job\JobInterface $job = null);
 
     /**
      * Validates if a task can run by checking configs, directries and so on.
@@ -74,15 +75,6 @@ interface TaskInterface
      * @see Xinc/Plugin/Slot.php for available slots
      */
     public function getPluginSlot();
-
-    /**
-     * Support for subtasks, empty by default.
-     *
-     * @param TaskInterface $task Task to register
-     *
-     * @return void
-     */
-    public function registerTask(TaskInterface $task);
 
     /**
      * Gets registered subtask for this task.

@@ -28,13 +28,8 @@
 
 namespace Xinc\Core\Task;
 
-abstract class TaskAbstract implements TaskInterface
+abstract class TaskAbstract extends \Xinc\Core\Registry\RegistryAbstract implements TaskInterface
 {
-    /**
-     * @var array Subtasks for this task
-     */
-    protected $arSubtasks = array();
-
     /**
      * @var Xinc_Plugin_Interface
      */
@@ -56,11 +51,6 @@ abstract class TaskAbstract implements TaskInterface
     protected $name = null;
 
     /**
-     * @var string Name of class from which subtask must be an instanceof.
-     */
-    protected $subtaskInstance = null;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -74,7 +64,7 @@ abstract class TaskAbstract implements TaskInterface
      *
      * @return void
      */
-    public function init(\Xinc\Core\Job\JobInterface $job)
+    public function init(\Xinc\Core\Job\JobInterface $job = null)
     {
     }
 
@@ -112,22 +102,6 @@ abstract class TaskAbstract implements TaskInterface
     public function getPluginSlot()
     {
         return $this->pluginSlot;
-    }
-
-    /**
-     * Support for subtasks, empty by default.
-     *
-     * @param TaskInterface $task Task to register
-     *
-     * @return void
-     */
-    public function registerTask(TaskInterface $task)
-    {
-        Xinc_Logger::getInstance()->debug('Registering Task: ' . get_class($task));
-        if (null !== $this->subtaskInstance && ! $task instanceof $this->subtaskInstance) {
-            throw new Exception('Subtask must be an instance of: ' . $this->subtaskInstance);
-        }
-        $this->arSubtasks[] = $task;
     }
 
     /**
