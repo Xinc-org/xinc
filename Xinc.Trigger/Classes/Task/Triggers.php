@@ -44,7 +44,7 @@ class Triggers extends \Xinc\Core\Task\TaskAbstract
     /**
      * @var string Name of class from which subtask must be an instanceof.
      */
-    protected $subtaskInstance = 'Xinc_Trigger_Task_AbstractTask';
+    protected $typeOf = 'Xinc\Trigger\Task\TaskAbstract';
 
     /**
      * Process the task
@@ -55,6 +55,7 @@ class Triggers extends \Xinc\Core\Task\TaskAbstract
      */
     public function process(\Xinc\Core\Job\JobInterface $job)
     {
+        // @TODO false array needs to use registry
         foreach ($this->arSubtasks as $task) {
             $task->process($build);
         }

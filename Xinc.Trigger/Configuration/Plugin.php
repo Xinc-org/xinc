@@ -33,7 +33,7 @@
     'cron', new \Xinc\Trigger\Task\Cron()
 );
 \Xinc\Core\Task\Registry::getInstance()->register(
-    'scheduler', new \Xinc\Trigger\Task\Scheduler()
+    'schedule', new \Xinc\Trigger\Task\Scheduler()
 );
 \Xinc\Core\Task\Registry::getInstance()->register(
     'sensor', new \Xinc\Trigger\Task\Sensor()

@@ -48,9 +48,9 @@ abstract class TaskAbstract extends \Xinc\Core\Task\TaskAbstract //implements Xi
      *
      * @return void
      */
-    public function init(\Xinc\Core\Job\JobInterface $job)
+    public function init(\Xinc\Core\Job\JobInterface $job = null)
     {
-        $job->addScheduler($this);
+        // $job->addScheduler($this);
     }
 
     /**
