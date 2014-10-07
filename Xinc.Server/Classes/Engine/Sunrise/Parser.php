@@ -130,7 +130,7 @@ class Parser
     public function parseProject($project)
     {
         try {
-            $taskRegistry = new \Xinc\Core\Project\Tasks\Registry();
+            $taskRegistry = \Xinc\Core\Task\Registry::getInstance();
             $this->parseTasks(null, $project->getConfig(), $taskRegistry);
             $project->setTaskRegistry($taskRegistry);
         } catch (\Exception $e) {
@@ -148,24 +148,24 @@ class Parser
     private function parseTasks($build, $element, $taskRegistry)
     {
         foreach ($element as $taskName => $task) {
-            $taskObject = \Xinc\Core\Plugin\Repository::getInstance()->getTask($taskName, (string)$element);
-            $taskObject->init($build);
+            $taskObject = \Xinc\Core\Task\Registry::getInstance()->get($taskName);
+            $taskObject->init(null);
             $taskObject->setXml($task);
             foreach ($task->attributes() as $name => $value) {
                 $setter = 'set'.$name;
                 /**
                  * Call PROJECT_SET_VALUES plugins
                  */
-                while ($this->setters->hasNext()) {
+/*                while ($this->setters->hasNext()) {
                     $setterObj = $this->setters->next();
                     $value = $setterObj->set($build, $value);
                 }
-                $this->setters->rewind();
+                $this->setters->rewind();*/
                 $taskObject->$setter((string)$value, $build);
             }
 
             $this->parseTasks($build, $task, $taskObject);
-            $taskRegistry->registerTask($taskObject);
+            $taskRegistry->register($taskName, $taskObject);
 
 
             if (!$taskObject->validate()) {
