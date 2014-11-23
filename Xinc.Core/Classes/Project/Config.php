@@ -72,15 +72,11 @@ class Config
 
             foreach ($projectConfig->attributes() as $name => $value) {
                 $method = 'set' . ucfirst(strtolower($name));
-                /**
-                 * Catch unsupported methods by checking if method exists or
-                 * having a magic function __set and __get on all objects
-                 */
                 if (method_exists($project, $method)) {
                     $project->$method((string)$value);
                 } else {
                     \Xinc\Core\Logger::getInstance()->error(
-                        'Trying to set "' . $name .'" on Xinc Project failed. No such setter.'
+                        'Trying to set "' . $name .'" on Xinc Project "' . $project->getName() . '" failed. No such setter.'
                     );
                 }
             }
