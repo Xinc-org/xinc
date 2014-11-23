@@ -152,21 +152,17 @@ class Parser
             $taskObject->init(null);
             $taskObject->setXml($task);
             foreach ($task->attributes() as $name => $value) {
-                $setter = 'set'.$name;
-                /**
-                 * Call PROJECT_SET_VALUES plugins
-                 */
-/*                while ($this->setters->hasNext()) {
-                    $setterObj = $this->setters->next();
-                    $value = $setterObj->set($build, $value);
+                $method = 'set' . ucfirst(strtolower($name));
+                if (method_exists($taskObject, $method)) {
+                    $taskObject->$method((string)$value, $build);
+                } else {
+                    \Xinc\Core\Logger::getInstance()->error(
+                        'Trying to set "' . $name .'" on task "' . $taskName . '" failed. No such setter.'
+                    );
                 }
-                $this->setters->rewind();*/
-                $taskObject->$setter((string)$value, $build);
             }
 
             $this->parseTasks($build, $task, $taskObject);
-            $taskRegistry->register($taskName, $taskObject);
-
 
             if (!$taskObject->validate()) {
                 \Xinc\Core\Logger::getInstance()->error('Error validating config.xml for task: ' . $taskObject->getName());
