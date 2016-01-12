@@ -15,14 +15,14 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Composer",
+            "url": "https://github.com/Xinc-org/Xinc.Composer",
             "tags-path": false,
             "branches-path": false,
             "package-path": "Xinc.Composer"
         },
         {
             "type": "vcs",
-            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Core",
+            "url": "https://github.com/Xinc-org/Xinc.Core",
             "trunk-path": false,
             "tags-path": false,
             "branches-path": false,
@@ -30,7 +30,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Packager",
+            "url": "https://github.com/Xinc-org/Xinc.Packager",
             "trunk-path": false,
             "tags-path": false,
             "branches-path": false,
@@ -38,7 +38,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Server",
+            "url": "https://github.com/Xinc-org/Xinc.Server",
             "trunk-path": false,
             "tags-path": false,
             "branches-path": false,
@@ -46,7 +46,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://xinc.googlecode.com/svn/trunk/Xinc.Trigger",
+            "url": "https://github.com/Xinc-org/Xinc.Trigger",
             "trunk-path": false,
             "tags-path": false,
             "branches-path": false,
