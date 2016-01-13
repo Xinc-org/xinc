@@ -12,6 +12,12 @@ What is Xinc
 
 Xinc is a server system to manage continous integration and monitoring.
 
+What is this repository for.
+------------
+
+This repository is taken from the old SVN. All newer parts are already moved to their own repositories so packaging
+can be done. All files in this repository will be moved or otherwise reorganized.
+
 Xinc System Requirements
 ------------------------
 
